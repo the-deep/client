@@ -10,6 +10,10 @@ import {
     DropdownMenu,
     DropdownMenuItem,
 } from '@the-deep/deep-ui';
+import {
+    useQuery,
+    gql,
+} from '@apollo/client';
 
 import { useModalState } from '#hooks/stateManagement';
 import ProjectSwitcher from '#components/general/ProjectSwitcher';
@@ -25,9 +29,25 @@ import _ts from '#ts';
 import LeadEditModal from '#components/general/LeadEditModal';
 import BulkUploadModal from '#components/general/BulkUploadModal';
 
+import {
+    ConnectorSourcesCountQuery,
+    ConnectorSourcesCountQueryVariables,
+} from '#generated/types';
+
 import UnifiedConnectorModal from './UnifiedConnectorModal';
 
 import styles from './styles.css';
+
+export const CONNECTOR_SOURCES_COUNT = gql`
+    query ConnectorSourcesCount($projectId: ID!) {
+        project(id: $projectId) {
+            id
+            unifiedConnector {
+                sourceCountWithoutIngnoredAndAdded
+            }
+        }
+    }
+`;
 
 interface Props {
     className?: string;
@@ -37,6 +57,20 @@ function Tagging(props: Props) {
     const { className } = props;
     const { user } = useContext(UserContext);
     const { project } = useContext(ProjectContext);
+
+    const variables = useMemo(() => (
+        project?.id ? { projectId: project.id } : undefined
+    ), [project]);
+
+    const {
+        data,
+    } = useQuery<ConnectorSourcesCountQuery, ConnectorSourcesCountQueryVariables>(
+        CONNECTOR_SOURCES_COUNT,
+        {
+            skip: !variables,
+            variables,
+        },
+    );
 
     const defaultRoute = generatePath(routes.sources.path, { projectId: project?.id });
 
@@ -78,6 +112,8 @@ function Tagging(props: Props) {
     const isConnectorsAccessible = !!user
         ?.accessibleFeatures?.some((feature) => feature.key === 'CONNECTORS');
 
+    const newSourcesCount = data?.project?.unifiedConnector?.sourceCountWithoutIngnoredAndAdded;
+
     const subNavbarComponents = (
         <>
             <SubNavbarIcons>
@@ -104,7 +140,7 @@ function Tagging(props: Props) {
                             onClick={showUnifiedConnectorModal}
                             name={undefined}
                         >
-                            Add sources from connectors
+                            {`Add sources from connectors (${newSourcesCount ?? 0} new)`}
                         </DropdownMenuItem>
                     )}
                 </DropdownMenu>

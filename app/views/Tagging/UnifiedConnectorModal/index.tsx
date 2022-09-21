@@ -29,6 +29,7 @@ import { RequestItem } from '#hooks/useBatchManager';
 
 import { CONNECTOR_SOURCE_LEADS } from './LeadsPane/ConnectorSourceItem';
 import ProjectConnectorsPane from './ProjectConnectorsPane';
+import { CONNECTOR_SOURCES_COUNT } from '../index';
 import LeadsPane from './LeadsPane';
 import FormLeadsPane from './FormLeadsPane';
 import styles from './styles.css';
@@ -112,6 +113,7 @@ function UnifiedConnectorModal(props: Props) {
                 include: [
                     getOperationName(PROJECT_SOURCES),
                     getOperationName(CONNECTOR_SOURCE_LEADS),
+                    getOperationName(CONNECTOR_SOURCES_COUNT),
                 ].filter(isDefined),
             });
         },
