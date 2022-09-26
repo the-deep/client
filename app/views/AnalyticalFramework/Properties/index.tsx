@@ -13,18 +13,14 @@ import {
     Error,
 } from '@togglecorp/toggle-form';
 
-import {
-    FrameworkProperties,
-} from '#types/newAnalyticalFramework';
-
 import NonFieldError from '#components/NonFieldError';
 
 import { WidgetsType, PropertiesType } from '../schema';
 import styles from './styles.css';
 
-const widgetIdSelector = (w: { id: number }) => w.id;
+const widgetIdSelector = (w: { id: string }) => w.id;
 
-const widgetLabelSelector = (w: { id: number; title: string }) => w.title;
+const widgetLabelSelector = (w: { id: string; title: string }) => w.title;
 
 interface PropertiesProps<K extends string> {
     className?: string;
@@ -58,7 +54,7 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
         const createdWidgets = allWidgets
             ?.filter((w) => isDefined(w.id))
             .map((w) => ({
-                id: +w.id,
+                id: w.id,
                 title: w.title,
                 widgetId: w.widgetId,
             }));
@@ -73,57 +69,75 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
         });
     }, [allWidgets]);
 
-    const onFieldChange = useFormObject(name, onChange, {} as FrameworkProperties);
-    const onStatsConfigChange = useFormObject('stats_config', onFieldChange, {} as FrameworkProperties['stats_config']);
+    const onFieldChange = useFormObject(name, onChange, {});
+    const onStatsConfigChange = useFormObject('statsConfig', onFieldChange, {});
 
     const error = getErrorObject(riskyError);
-    const statsConfigError = getErrorObject(error?.stats_config);
+    const statsConfigError = getErrorObject(error?.statsConfig);
 
-    const onAffectedGroupsChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'affected_groups_widget');
+    const onGeoWidgetChange = useCallback((newVal: string | undefined) => {
+        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'geoWidget');
     }, [onStatsConfigChange]);
 
-    const onGeoWidgetChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'geo_widget');
+    const onSeverityWidgetChange = useCallback((newVal: string | undefined) => {
+        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'severityWidget');
     }, [onStatsConfigChange]);
 
-    const onSeverityWidgetChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'severity_widget');
+    const onReliabilityWidgetChange = useCallback((newVal: string | undefined) => {
+        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'reliabilityWidget');
     }, [onStatsConfigChange]);
 
-    const onReliabilityWidgetChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'reliability_widget');
-    }, [onStatsConfigChange]);
-
-    const onSpecificNeedsWidgetChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'specific_needs_groups_widgets');
-    }, [onStatsConfigChange]);
-
-    const onMatrix1dValueChange = useCallback((newVal: number[] | undefined) => {
+    const onMultiSelectWidgetChange = useCallback((newVal: string[] | undefined) => {
         if (!newVal) {
-            onStatsConfigChange(undefined, 'widget_1d');
+            onStatsConfigChange(undefined, 'multiselectWidgets');
         } else {
             const transformedNewVal = newVal.map((d) => ({ pk: d }));
-            onStatsConfigChange(transformedNewVal, 'widget_1d');
+            onStatsConfigChange(transformedNewVal, 'multiselectWidgets');
         }
     }, [onStatsConfigChange]);
 
-    const onMatrix2dValueChange = useCallback((newVal: number[] | undefined) => {
+    const onOrganigramWidgetsChange = useCallback((newVal: string[] | undefined) => {
         if (!newVal) {
-            onStatsConfigChange(undefined, 'widget_2d');
+            onStatsConfigChange(undefined, 'organigramWidgets');
         } else {
             const transformedNewVal = newVal.map((d) => ({ pk: d }));
-            onStatsConfigChange(transformedNewVal, 'widget_2d');
+            onStatsConfigChange(transformedNewVal, 'organigramWidgets');
+        }
+    }, [onStatsConfigChange]);
+
+    const onMatrix1dValueChange = useCallback((newVal: string[] | undefined) => {
+        if (!newVal) {
+            onStatsConfigChange(undefined, 'widget1d');
+        } else {
+            const transformedNewVal = newVal.map((d) => ({ pk: d }));
+            onStatsConfigChange(transformedNewVal, 'widget1d');
+        }
+    }, [onStatsConfigChange]);
+
+    const onMatrix2dValueChange = useCallback((newVal: string[] | undefined) => {
+        if (!newVal) {
+            onStatsConfigChange(undefined, 'widget2d');
+        } else {
+            const transformedNewVal = newVal.map((d) => ({ pk: d }));
+            onStatsConfigChange(transformedNewVal, 'widget2d');
         }
     }, [onStatsConfigChange]);
 
     const matrix1dValue = useMemo(() => (
-        value?.stats_config?.widget_1d?.map((d) => d.pk).filter(isDefined)
-    ), [value?.stats_config]);
+        value?.statsConfig?.widget1d?.map((d) => d.pk).filter(isDefined)
+    ), [value?.statsConfig]);
 
     const matrix2dValue = useMemo(() => (
-        value?.stats_config?.widget_2d?.map((d) => d.pk).filter(isDefined)
-    ), [value?.stats_config]);
+        value?.statsConfig?.widget2d?.map((d) => d.pk).filter(isDefined)
+    ), [value?.statsConfig]);
+
+    const organigramValue = useMemo(() => (
+        value?.statsConfig?.organigramWidgets?.map((d) => d.pk).filter(isDefined)
+    ), [value?.statsConfig]);
+
+    const multiselectValue = useMemo(() => (
+        value?.statsConfig?.multiselectWidgets?.map((d) => d.pk).filter(isDefined)
+    ), [value?.statsConfig]);
 
     return (
         <Container
@@ -139,7 +153,7 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
                 options={matrix1dWidgets}
                 name={undefined}
                 value={matrix1dValue}
-                error={getErrorString(statsConfigError?.widget_1d)}
+                error={getErrorString(statsConfigError?.widget1d)}
                 onChange={onMatrix1dValueChange}
                 keySelector={widgetIdSelector}
                 labelSelector={widgetLabelSelector}
@@ -150,7 +164,7 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
                 options={matrix2dWidgets}
                 name={undefined}
                 value={matrix2dValue}
-                error={getErrorString(statsConfigError?.widget_2d)}
+                error={getErrorString(statsConfigError?.widget2d)}
                 onChange={onMatrix2dValueChange}
                 keySelector={widgetIdSelector}
                 labelSelector={widgetLabelSelector}
@@ -159,9 +173,9 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
             <SelectInput
                 label="Geo Widget"
                 options={geoWidgets}
-                name="geo_widget"
-                value={value?.stats_config?.geo_widget?.pk}
-                error={getErrorString(statsConfigError?.geo_widget)}
+                name="geoWidget"
+                value={value?.statsConfig?.geoWidget?.pk}
+                error={getErrorString(statsConfigError?.geoWidget)}
                 onChange={onGeoWidgetChange}
                 keySelector={widgetIdSelector}
                 labelSelector={widgetLabelSelector}
@@ -170,9 +184,9 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
             <SelectInput
                 label="Severity Widget"
                 options={scaleWidgets}
-                name="severity_widget"
-                value={value?.stats_config?.severity_widget?.pk}
-                error={getErrorString(statsConfigError?.severity_widget)}
+                name="severityWidget"
+                value={value?.statsConfig?.severityWidget?.pk}
+                error={getErrorString(statsConfigError?.severityWidget)}
                 onChange={onSeverityWidgetChange}
                 keySelector={widgetIdSelector}
                 labelSelector={widgetLabelSelector}
@@ -181,32 +195,32 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
             <SelectInput
                 label="Reliability Widget"
                 options={scaleWidgets}
-                name="reliability_widget"
-                value={value?.stats_config?.reliability_widget?.pk}
-                error={getErrorString(statsConfigError?.reliability_widget)}
+                name="reliabilityWidget"
+                value={value?.statsConfig?.reliabilityWidget?.pk}
+                error={getErrorString(statsConfigError?.reliabilityWidget)}
                 onChange={onReliabilityWidgetChange}
                 keySelector={widgetIdSelector}
                 labelSelector={widgetLabelSelector}
                 disabled={disabled}
             />
-            <SelectInput
-                label="Affected Groups"
+            <MultiSelectInput
+                label="Organigram Widgets"
                 options={organigramWidgets}
-                name="affected_groups_widget"
-                value={value?.stats_config?.affected_groups_widget?.pk}
-                error={getErrorString(statsConfigError?.affected_groups_widget)}
-                onChange={onAffectedGroupsChange}
+                name={undefined}
+                value={organigramValue}
+                error={getErrorString(statsConfigError?.organigramWidgets)}
+                onChange={onOrganigramWidgetsChange}
                 keySelector={widgetIdSelector}
                 labelSelector={widgetLabelSelector}
                 disabled={disabled}
             />
-            <SelectInput
-                label="Specific Needs Groups"
+            <MultiSelectInput
+                label="Multiselect Widgets"
                 options={multiSelectWidgets}
-                name="specific_needs_groups_widgets"
-                value={value?.stats_config?.specific_needs_groups_widgets?.pk}
-                error={getErrorString(statsConfigError?.specific_needs_groups_widgets)}
-                onChange={onSpecificNeedsWidgetChange}
+                name={undefined}
+                value={multiselectValue}
+                error={getErrorString(statsConfigError?.multiselectWidgets)}
+                onChange={onMultiSelectWidgetChange}
                 keySelector={widgetIdSelector}
                 labelSelector={widgetLabelSelector}
                 disabled={disabled}
