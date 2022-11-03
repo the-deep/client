@@ -1,5 +1,18 @@
 .organization {
     display: flex;
-    align-items: center;
-    gap: var(--dui-spacing-extra-small);
+    flex-direction: column;
+    justify-content: center;
+
+    .title {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-extra-small);
+    }
+
+    .abbreviation {
+        display: flex;
+        color: var(--dui-color-text-label);
+        font-size: var(--dui-font-size-small);
+        font-weight: var(--dui-font-weight-light);
+    }
 }
