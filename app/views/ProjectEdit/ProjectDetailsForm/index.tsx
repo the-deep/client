@@ -15,7 +15,6 @@ import {
     Container,
     Checkbox,
     PendingMessage,
-    Message,
     TextInput,
     DateInput,
     TextArea,
@@ -672,7 +671,6 @@ function ProjectDetailsForm(props: Props) {
     }, [hideConfidentialDocumentSharingModal]);
 
     const handleConfidentialDocumentSharing = useCallback((val: boolean) => {
-        console.warn('val', val);
         if (val) {
             showConfidentialDocumentSharingModal();
         } else {
@@ -1012,7 +1010,6 @@ function ProjectDetailsForm(props: Props) {
                     heading="Document Sharing"
                     size="extraSmall"
                     onCloseButtonClick={hideConfidentialDocumentSharingModal}
-                    footerClassName={styles.actionButtonsRow}
                     footerActions={(
                         <>
                             <Button
@@ -1031,11 +1028,10 @@ function ProjectDetailsForm(props: Props) {
                             </Button>
                         </>
                     )}
+                    freeHeight
                 >
-                    <Message
-                        className={styles.confidentialText}
-                        message="Are you sure you want to allow links for Confidential documents to be viewed publicly?"
-                    />
+                    Are you sure you want to allow links for
+                    confidential documents to be viewed publicly?
                 </Modal>
             )}
         </div>

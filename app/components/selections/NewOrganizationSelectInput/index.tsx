@@ -32,11 +32,11 @@ export type BasicOrganization = {
     id: string;
     title: string;
     verified?: boolean;
-    shortName: string;
+    shortName?: string;
     mergedAs?: {
         id: string;
         title: string;
-        shortName: string;
+        shortName?: string;
     } | null | undefined;
 };
 

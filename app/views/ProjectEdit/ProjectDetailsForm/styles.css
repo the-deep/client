@@ -149,7 +149,3 @@
     overflow-y: auto;
     font-size: 0.9rem;
 }
-
-.confidential-text {
-    color: var(--dui-color-text);
-}
