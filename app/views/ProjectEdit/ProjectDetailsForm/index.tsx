@@ -15,6 +15,7 @@ import {
     Container,
     Checkbox,
     PendingMessage,
+    Message,
     TextInput,
     DateInput,
     TextArea,
@@ -597,6 +598,12 @@ function ProjectDetailsForm(props: Props) {
         hideTermsModal,
     ] = useModalState(false);
 
+    const [
+        isConfidentialDocumentSharingModalShown,
+        showConfidentialDocumentSharingModal,
+        hideConfidentialDocumentSharingModal,
+    ] = useModalState(false);
+
     const pending = projectDetailsLoading
         || createProjectPending
         || updateProjectPending;
@@ -654,6 +661,24 @@ function ProjectDetailsForm(props: Props) {
         setTermsAccepted(false);
         hideTermsModal();
     }, [hideTermsModal]);
+
+    const handleConfidentialDocumentSharingAccept = useCallback(() => {
+        setFieldValue(true, 'hasPubliclyViewableConfidentialLeads');
+        hideConfidentialDocumentSharingModal();
+    }, [hideConfidentialDocumentSharingModal, setFieldValue]);
+
+    const handleConfidentialDocumentSharingCancel = useCallback(() => {
+        hideConfidentialDocumentSharingModal();
+    }, [hideConfidentialDocumentSharingModal]);
+
+    const handleConfidentialDocumentSharing = useCallback((val: boolean) => {
+        console.warn('val', val);
+        if (val) {
+            showConfidentialDocumentSharingModal();
+        } else {
+            setFieldValue(false, 'hasPubliclyViewableConfidentialLeads');
+        }
+    }, [showConfidentialDocumentSharingModal, setFieldValue]);
 
     const shouldTermsBeAccepted = !projectId && !termsAccepted;
 
@@ -824,7 +849,7 @@ function ProjectDetailsForm(props: Props) {
                         <Switch
                             name="hasPubliclyViewableConfidentialLeads"
                             value={value?.hasPubliclyViewableConfidentialLeads}
-                            onChange={setFieldValue}
+                            onChange={handleConfidentialDocumentSharing}
                             label={(
                                 <>
                                     Allow links for
@@ -911,7 +936,7 @@ function ProjectDetailsForm(props: Props) {
                                         name="delete"
                                         onClick={handleProjectDeleteConfirm}
                                         disabled={projectDetails?.title !== projectTitleToDelete
-                                        || projectDeletePending}
+                                            || projectDeletePending}
                                     >
                                         {_ts('projectEdit', 'deleteProjectButtonLabel')}
                                     </Button>
@@ -980,6 +1005,37 @@ function ProjectDetailsForm(props: Props) {
                     <ReactMarkdown className={styles.termsContent}>
                         {termsNotice}
                     </ReactMarkdown>
+                </Modal>
+            )}
+            {isConfidentialDocumentSharingModalShown && (
+                <Modal
+                    heading="Document Sharing"
+                    size="extraSmall"
+                    onCloseButtonClick={hideConfidentialDocumentSharingModal}
+                    footerClassName={styles.actionButtonsRow}
+                    footerActions={(
+                        <>
+                            <Button
+                                name={undefined}
+                                onClick={handleConfidentialDocumentSharingCancel}
+                                variant="secondary"
+                            >
+                                No
+                            </Button>
+                            <Button
+                                name={undefined}
+                                onClick={handleConfidentialDocumentSharingAccept}
+                                variant="primary"
+                            >
+                                Yes
+                            </Button>
+                        </>
+                    )}
+                >
+                    <Message
+                        className={styles.confidentialText}
+                        message="Are you sure you want to allow links for Confidential documents to be viewed publicly?"
+                    />
                 </Modal>
             )}
         </div>
