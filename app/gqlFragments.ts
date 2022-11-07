@@ -256,9 +256,11 @@ export const ORGANIZATION_FRAGMENT = gql`
         id
         title
         verified
+        shortName
         mergedAs {
             id
             title
+            shortName
         }
     }
 `;

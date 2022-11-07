@@ -32,9 +32,11 @@ export type BasicOrganization = {
     id: string;
     title: string;
     verified?: boolean;
+    shortName?: string;
     mergedAs?: {
         id: string;
         title: string;
+        shortName?: string;
     } | null | undefined;
 };
 
@@ -57,19 +59,26 @@ export function organizationTitleSelector(org: BasicOrganization) {
 
 function organizationTitleWithStatusSelector(org: BasicOrganization) {
     const title = org.mergedAs ? org.mergedAs.title : org.title;
+    const shortName = org.mergedAs ? org.mergedAs.shortName : org.shortName;
 
     return (
         <div className={styles.organization}>
-            {title}
-            {org.verified && (
-                <Tag
-                    spacing="compact"
-                    variant="gradient1"
-                >
-                    Verified
-                </Tag>
-            )}
+            <div className={styles.title}>
+                {title}
+                {org.verified && (
+                    <Tag
+                        spacing="compact"
+                        variant="gradient1"
+                    >
+                        Verified
+                    </Tag>
+                )}
+            </div>
+            <div className={styles.abbreviation}>
+                {shortName}
+            </div>
         </div>
+
     );
 }
 

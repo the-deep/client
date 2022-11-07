@@ -6,7 +6,6 @@ import {
 import { GrDrag } from 'react-icons/gr';
 import {
     Button,
-    TextInput,
     TextArea,
     QuickActionButton,
     ControlledExpandableContainer,
@@ -221,7 +220,7 @@ function CellInput(props: CellInputProps) {
             )}
         >
             <NonFieldError error={error} />
-            <TextInput
+            <TextArea
                 autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
@@ -234,7 +233,7 @@ function CellInput(props: CellInputProps) {
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
-                rows={2}
+                rows={3}
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
@@ -382,7 +381,7 @@ function RowInput(props: RowInputProps) {
             )}
         >
             <NonFieldError error={error} />
-            <TextInput
+            <TextArea
                 autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
@@ -395,7 +394,7 @@ function RowInput(props: RowInputProps) {
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
-                rows={2}
+                rows={3}
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
@@ -639,7 +638,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
                 )}
             >
                 <NonFieldError error={error} />
-                <TextInput
+                <TextArea
                     // FIXME: use translation
                     label="Title"
                     name="title"

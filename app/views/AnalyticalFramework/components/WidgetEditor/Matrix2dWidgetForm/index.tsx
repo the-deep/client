@@ -6,7 +6,6 @@ import {
 import { GrDrag } from 'react-icons/gr';
 import {
     Button,
-    TextInput,
     TextArea,
     QuickActionButton,
     ControlledExpandableContainer,
@@ -288,7 +287,7 @@ function SubRowInput(props: SubRowInputProps) {
             )}
         >
             <NonFieldError error={error} />
-            <TextInput
+            <TextArea
                 autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
@@ -301,7 +300,7 @@ function SubRowInput(props: SubRowInputProps) {
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
-                rows={2}
+                rows={3}
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
@@ -451,7 +450,7 @@ function RowInput(props: RowInputProps) {
             )}
         >
             <NonFieldError error={error} />
-            <TextInput
+            <TextArea
                 autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
@@ -464,7 +463,7 @@ function RowInput(props: RowInputProps) {
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
-                rows={2}
+                rows={3}
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
@@ -582,7 +581,7 @@ function SubColumnInput(props: SubColumnInputProps) {
             )}
         >
             <NonFieldError error={error} />
-            <TextInput
+            <TextArea
                 autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
@@ -595,7 +594,7 @@ function SubColumnInput(props: SubColumnInputProps) {
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
-                rows={2}
+                rows={3}
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
@@ -747,7 +746,7 @@ function ColumnInput(props: ColumnInputProps) {
             )}
         >
             <NonFieldError error={error} />
-            <TextInput
+            <TextArea
                 autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
@@ -760,7 +759,7 @@ function ColumnInput(props: ColumnInputProps) {
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
-                rows={2}
+                rows={3}
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
@@ -1132,7 +1131,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
                 )}
             >
                 <NonFieldError error={error} />
-                <TextInput
+                <TextArea
                     // FIXME: use translation
                     label="Title"
                     name="title"
