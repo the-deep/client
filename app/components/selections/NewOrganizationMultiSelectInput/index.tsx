@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import Highlighter from 'react-highlight-words';
 import {
     SearchMultiSelectInput,
     SearchMultiSelectInputProps,
@@ -71,30 +72,6 @@ export function organizationTitleSelector(org: BasicOrganization) {
     return org.title;
 }
 
-function organizationTitleWithStatusSelector(org: BasicOrganization) {
-    const title = org.mergedAs ? org.mergedAs.title : org.title;
-    const shortName = org.mergedAs ? org.mergedAs.shortName : org.shortName;
-
-    return (
-        <div className={styles.organization}>
-            <div className={styles.title}>
-                {title}
-                {org.verified && (
-                    <Tag
-                        spacing="compact"
-                        variant="gradient1"
-                    >
-                        Verified
-                    </Tag>
-                )}
-            </div>
-            <div className={styles.abbreviation}>
-                {shortName}
-            </div>
-        </div>
-    );
-}
-
 function OrganizationSearchMultiSelectInput<K extends string>(
     props: OrganizationMultiSelectInputProps<K>,
 ) {
@@ -165,6 +142,44 @@ function OrganizationSearchMultiSelectInput<K extends string>(
         variables,
         data?.organizations?.page,
     ]);
+
+    const searchTerms = useMemo(() => ([
+        debouncedSearchText,
+    ]), [debouncedSearchText]);
+
+    const organizationTitleWithStatusSelector = useCallback((org: BasicOrganization) => {
+        const title = org.mergedAs ? org.mergedAs.title : org.title;
+        const shortName = org.mergedAs ? org.mergedAs.shortName : org.shortName;
+
+        return (
+            <div className={styles.organization}>
+                <div className={styles.title}>
+                    <Highlighter
+                        searchWords={searchTerms}
+                        autoEscape
+                        textToHighlight={title}
+                    />
+                    {org.verified && (
+                        <Tag
+                            spacing="compact"
+                            variant="gradient1"
+                        >
+                            Verified
+                        </Tag>
+                    )}
+                </div>
+                <div className={styles.abbreviation}>
+                    {shortName && (
+                        <Highlighter
+                            searchWords={searchTerms}
+                            autoEscape
+                            textToHighlight={shortName}
+                        />
+                    )}
+                </div>
+            </div>
+        );
+    }, [searchTerms]);
 
     return (
         <SearchMultiSelectInput
