@@ -47,6 +47,12 @@ function Routes(props: Props) {
                 </Route>
                 <Route
                     exact
+                    path={routes.newExplore.path}
+                >
+                    {routes.newExplore.load({ className })}
+                </Route>
+                <Route
+                    exact
                     path={routes.projectCreate.path}
                 >
                     {routes.projectCreate.load({ className })}
