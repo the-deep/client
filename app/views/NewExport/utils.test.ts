@@ -929,24 +929,13 @@ test('create report structure', () => {
             "nodes": []
         }
     ]);
+
+    // NOTE: Test sector first without sub-columns
     expect(createReportStructure(
         SECTOR_FIRST,
         false,
         analysisFramework,
-        [
-            {
-                "filterKey": "kpdn2663nioq6wqu",
-                "value": undefined,
-                "valueList": [
-                    "n2ayqobf3zv6ycle"
-                ],
-                "valueGte": undefined,
-                "valueLte": undefined,
-                "includeSubRegions": undefined,
-                "useAndOperator": undefined,
-                "useExclude": undefined
-            }
-        ],
+        [],
     )).toStrictEqual([
         {
             "title": "fruits",
@@ -962,6 +951,21 @@ test('create report structure', () => {
                     "nodes": [
                         {
                             "key": "ef14urs3ymfk23yy-n2ayqobf3zv6ycle",
+                            "title": "ripe",
+                            "selected": true,
+                            "draggable": true,
+                            "nodes": undefined,
+                        }
+                    ]
+                },
+                {
+                    "key": "o6o8y0bfki5sd1xa",
+                    "title": "avocado",
+                    "selected": true,
+                    "draggable": true,
+                    "nodes": [
+                        {
+                            "key": "o6o8y0bfki5sd1xa-ur4tz3nalikmrp80",
                             "title": "ripe",
                             "selected": true,
                             "draggable": true,
@@ -1017,24 +1021,13 @@ test('create report structure', () => {
             "nodes": []
         }
     ]);
+
+    // NOTE: Test sector first with sub-columns
     expect(createReportStructure(
         SECTOR_FIRST,
         true,
         analysisFramework,
-        [
-            {
-                "filterKey": "kpdn2663nioq6wqu",
-                "value": undefined,
-                "valueList": [
-                    "n2ayqobf3zv6ycle"
-                ],
-                "valueGte": undefined,
-                "valueLte": undefined,
-                "includeSubRegions": undefined,
-                "useAndOperator": undefined,
-                "useExclude": undefined
-            }
-        ],
+        [],
     )).toStrictEqual([
         {
             "title": "fruits",
@@ -1050,6 +1043,21 @@ test('create report structure', () => {
                     "nodes": [
                         {
                             "key": "ef14urs3ymfk23yy-n2ayqobf3zv6ycle",
+                            "title": "ripe",
+                            "selected": true,
+                            "draggable": true,
+                            "nodes": undefined,
+                        }
+                    ]
+                },
+                {
+                    "key": "o6o8y0bfki5sd1xa",
+                    "title": "avocado",
+                    "selected": true,
+                    "draggable": true,
+                    "nodes": [
+                        {
+                            "key": "o6o8y0bfki5sd1xa-ur4tz3nalikmrp80",
                             "title": "ripe",
                             "selected": true,
                             "draggable": true,
@@ -1143,24 +1151,13 @@ test('create report structure', () => {
             "nodes": []
         }
     ]);
+
+    // NOTE: Test dimension first without sub-columns
     expect(createReportStructure(
         DIMENSION_FIRST,
         false,
         analysisFramework,
-        [
-            {
-                "filterKey": "kpdn2663nioq6wqu",
-                "value": undefined,
-                "valueList": [
-                    "n2ayqobf3zv6ycle"
-                ],
-                "valueGte": undefined,
-                "valueLte": undefined,
-                "includeSubRegions": undefined,
-                "useAndOperator": undefined,
-                "useExclude": undefined
-            }
-        ],
+        [],
     )).toStrictEqual([
         {
             "title": "fruits",
@@ -1176,6 +1173,21 @@ test('create report structure', () => {
                     "nodes": [
                         {
                             "key": "ef14urs3ymfk23yy-n2ayqobf3zv6ycle",
+                            "title": "ripe",
+                            "selected": true,
+                            "draggable": true,
+                            "nodes": undefined,
+                        }
+                    ]
+                },
+                {
+                    "key": "o6o8y0bfki5sd1xa",
+                    "title": "avocado",
+                    "selected": true,
+                    "draggable": true,
+                    "nodes": [
+                        {
+                            "key": "o6o8y0bfki5sd1xa-ur4tz3nalikmrp80",
                             "title": "ripe",
                             "selected": true,
                             "draggable": true,
@@ -1239,24 +1251,13 @@ test('create report structure', () => {
             "nodes": []
         }
     ]);
+
+    // NOTE: Test dimension first with sub-columns
     expect(createReportStructure(
         DIMENSION_FIRST,
         true,
         analysisFramework,
-        [
-            {
-                "filterKey": "kpdn2663nioq6wqu",
-                "value": undefined,
-                "valueList": [
-                    "n2ayqobf3zv6ycle"
-                ],
-                "valueGte": undefined,
-                "valueLte": undefined,
-                "includeSubRegions": undefined,
-                "useAndOperator": undefined,
-                "useExclude": undefined
-            }
-        ],
+        [],
     )).toStrictEqual([
         {
             "title": "fruits",
@@ -1272,6 +1273,21 @@ test('create report structure', () => {
                     "nodes": [
                         {
                             "key": "ef14urs3ymfk23yy-n2ayqobf3zv6ycle",
+                            "title": "ripe",
+                            "selected": true,
+                            "draggable": true,
+                            "nodes": undefined,
+                        }
+                    ]
+                },
+                {
+                    "key": "o6o8y0bfki5sd1xa",
+                    "title": "avocado",
+                    "selected": true,
+                    "draggable": true,
+                    "nodes": [
+                        {
+                            "key": "o6o8y0bfki5sd1xa-ur4tz3nalikmrp80",
                             "title": "ripe",
                             "selected": true,
                             "draggable": true,
@@ -1364,6 +1380,51 @@ test('create report structure', () => {
             "draggable": true,
             "nodes": []
         }
+    ]);
+
+    // NOTE: Test filters
+    expect(createReportStructure(
+        SECTOR_FIRST,
+        false,
+        analysisFramework,
+        [
+            {
+                "filterKey": "kpdn2663nioq6wqu",
+                "value": undefined,
+                "valueList": [
+                    "n2ayqobf3zv6ycle"
+                ],
+                "valueGte": undefined,
+                "valueLte": undefined,
+                "includeSubRegions": undefined,
+                "useAndOperator": undefined,
+                "useExclude": undefined
+            }
+        ],
+    )).toStrictEqual([
+        {
+            "title": "fruits",
+            "key": "1",
+            "selected": true,
+            "draggable": true,
+            "nodes": [
+                {
+                    "key": "ef14urs3ymfk23yy",
+                    "title": "apple",
+                    "selected": true,
+                    "draggable": true,
+                    "nodes": [
+                        {
+                            "key": "ef14urs3ymfk23yy-n2ayqobf3zv6ycle",
+                            "title": "ripe",
+                            "selected": true,
+                            "draggable": true,
+                            "nodes": undefined,
+                        }
+                    ]
+                }
+            ]
+        },
     ]);
 });
 
