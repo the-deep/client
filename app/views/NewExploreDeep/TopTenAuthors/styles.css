@@ -1,0 +1,33 @@
+.top-ten-authors {
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .table {
+        display: table;
+        width: 100%;
+
+        .table-item {
+            display: table-row;
+
+            .source-count,
+            .project-count,
+            .title {
+                display: table-cell;
+                padding: var(--dui-spacing-small) var(--dui-spacing-small);
+            }
+
+            .source-count,
+            .project-count {
+                text-align: right;
+            }
+
+            .title {
+                font-weight: var(--dui-font-weight-bold);
+            }
+        }
+    }
+
+    .chart {
+        min-height: 300px;
+        overflow-y: hidden;
+    }
+}
