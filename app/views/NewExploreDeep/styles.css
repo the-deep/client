@@ -1,0 +1,86 @@
+.explore-deep {
+    background-color: var(--dui-color-foreground);
+    padding: var(--dui-spacing-medium) 0 0;
+
+    .header {
+        padding: 0 var(--dui-spacing-super-large);
+    }
+
+    .header-description {
+        .stats-container {
+            display: flex;
+            gap: var(--dui-spacing-medium);
+
+            .stat-card {
+                display: flex;
+                flex-grow: 1;
+                justify-content: space-around;
+                gap: var(--dui-spacing-medium);
+
+                &.project-stats-card {
+                    border-radius: var(--dui-border-radius-card);
+                    background-color: var(--dui-color-background-information);
+                }
+
+                &.source-stats-card {
+                    border-radius: var(--dui-border-radius-card);
+                    background-color: var(--dui-color-background-information);
+                }
+
+                &.entry-stats-card {
+                    border-radius: var(--dui-border-radius-card);
+                    background-color: var(--dui-color-background-information);
+                }
+
+                >* {
+                    flex-grow: 1;
+                }
+
+                .info-card {
+                    flex-grow: unset;
+                    background-color: inherit;
+
+                    &:first-child {
+                        border-right: var(--dui-width-separator-thin) solid var(--dui-color-grey5);
+                        border-radius: 0;
+                        padding-right: var(--dui-spacing-extra-large);
+                    }
+                }
+            }
+        }
+
+        .filters {
+            display: flex;
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        padding: 0 var(--dui-spacing-super-large);
+        overflow: unset;
+        gap: var(--dui-spacing-large);
+
+        .top-container {
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            border-radius: 8px;
+
+            .content-header {
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            }
+        }
+
+        .bottom-container {
+            background-color: transparent;
+
+            .bottom-container-content {
+                display: flex;
+                gap: var(--dui-spacing-large);
+
+                .top-ten-card {
+                    flex-basis: calc(50% - var(--dui-spacing-large) / 2);
+                }
+            }
+        }
+    }
+}
