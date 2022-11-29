@@ -231,10 +231,27 @@ export const createReportStructure = (
         valueList: filter?.valueList,
     }));
 
+    const supportedExportables = exportables.filter(
+        (exportable) => exportable.widgetType === 'MATRIX2D' || exportable.widgetType === 'MATRIX1D',
+    );
+
+    const appliedFilterKeys = listToMap(
+        filterWithWidgetId,
+        (widget) => widget.widgetKey ?? '',
+        () => true,
+    );
+
+    const filteredExportables = supportedExportables.filter(
+        (exportable) => isDefined(appliedFilterKeys?.[exportable.widgetKey]),
+    );
+
+    const exportablesForNodes = (filteredExportables.length > 0)
+        ? filteredExportables : supportedExportables;
+
     // FIXME: we are creating exportable for Matrix2d,
     // if we create exportable for Matrix1d we can just not read exportable on
     // client at all
-    const nodes = exportables.map((exportable) => {
+    const nodes = exportablesForNodes.map((exportable) => {
         if (exportable.widgetType === 'MATRIX2D') {
             const widget = widgets.find((w) => w.key === exportable.widgetKey);
             if (!widget || widget.widgetId !== exportable.widgetType || !widget.properties) {
@@ -298,14 +315,16 @@ export const createReportStructure = (
         return undefined;
     }).filter(isDefined);
 
-    nodes.push({
-        title: _ts('export', 'uncategorizedTitle'),
-        key: 'uncategorized',
-        selected: true,
-        draggable: true,
-        // FIXME: added line below, check if this works
-        nodes: [],
-    });
+    if (filteredExportables.length === 0) {
+        nodes.push({
+            title: _ts('export', 'uncategorizedTitle'),
+            key: 'uncategorized',
+            selected: true,
+            draggable: true,
+            // FIXME: added line below, check if this works
+            nodes: [],
+        });
+    }
 
     return nodes;
 };

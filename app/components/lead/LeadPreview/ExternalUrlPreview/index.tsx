@@ -85,6 +85,7 @@ function ExternalUrlPreview(props: Props) {
             try {
                 urlObject = new URL(url);
             } catch {
+                // eslint-disable-next-line no-console
                 console.error('undefined URL');
             }
 
