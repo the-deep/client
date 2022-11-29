@@ -125,8 +125,10 @@ function Preview(props: Props) {
         } else if (response && response.url && response.status === 'processed') {
             iframeError = (
                 <iframe
+                    key={url}
                     title={url}
                     className={_cs(className, styles.viewer)}
+                    sandbox="allow-scripts allow-same-origin allow-popups"
                     src={!response.url.startsWith('http://') && !response.url.startsWith('https://') ? `http://${response.url}` : response.url}
                 />
             );
@@ -179,7 +181,8 @@ function Preview(props: Props) {
         }
         return (
             <iframe
-                sandbox="allow-scripts allow-same-origin"
+                key={url}
+                sandbox="allow-scripts allow-same-origin allow-popups"
                 title={url}
                 className={_cs(className, styles.viewer)}
                 src={url}
@@ -209,6 +212,7 @@ function Preview(props: Props) {
         ) {
             return (
                 <iframe
+                    key={url}
                     title={url}
                     src={url}
                     className={_cs(className, styles.viewer)}
@@ -218,6 +222,7 @@ function Preview(props: Props) {
 
         return (
             <iframe
+                key={url}
                 title={url}
                 src={createUrlForGoogleViewer(url)}
                 className={_cs(className, styles.viewer)}
@@ -234,7 +239,8 @@ function Preview(props: Props) {
         }
         return (
             <iframe
-                sandbox="allow-scripts allow-same-origin"
+                key={url}
+                sandbox="allow-scripts allow-same-origin allow-popups"
                 title={url}
                 className={_cs(className, styles.viewer)}
                 src={url}
