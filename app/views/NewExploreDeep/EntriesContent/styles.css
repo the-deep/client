@@ -1,0 +1,4 @@
+.entries-content {
+    display: flex;
+    padding: var(--dui-spacing-medium);
+}

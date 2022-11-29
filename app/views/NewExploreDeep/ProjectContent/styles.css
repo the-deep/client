@@ -1,0 +1,15 @@
+.project-content {
+    display: flex;
+    flex-direction: column;
+    padding: var(--dui-spacing-medium);
+
+    .tabs {
+        display: flex;
+        flex-shrink: 0;
+        justify-content: flex-end;
+
+        .tab {
+            border-bottom: none;
+        }
+    }
+}
