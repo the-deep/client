@@ -13,7 +13,8 @@ import { ApolloProvider } from '@apollo/client';
 import ReactGA from 'react-ga';
 import { setMapboxToken } from '@togglecorp/re-map';
 
-import '@the-deep/deep-ui/build/index.css';
+import '@the-deep/deep-ui/build/esm/index.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 import Init from '#base/components/Init';
 import browserHistory from '#base/configs/history';
@@ -38,7 +39,6 @@ import {
     RequestContext,
     DeepContextInterface,
 } from '#base/utils/restRequest';
-import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { apolloClient } from '#base/configs/apollo';
 import localforageInstance from '#base/configs/localforage';
