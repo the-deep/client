@@ -6,11 +6,14 @@ import {
     useParams,
 } from 'react-router-dom';
 import {
+    useAlert,
     Tabs,
+    QuickActionButton,
     Tab,
     TabList,
     TabPanel,
 } from '@the-deep/deep-ui';
+import { IoShareSocialOutline } from 'react-icons/io5';
 
 import SubNavbar, {
     SubNavbarChildren,
@@ -49,6 +52,7 @@ function ProjectEdit() {
     );
 
     const history = useHistory();
+    const alert = useAlert();
 
     const { projectId } = useParams<{ projectId: string | undefined }>();
     const userId = user?.id;
@@ -69,6 +73,18 @@ function ProjectEdit() {
         ? project.title
         : _ts('projectEdit', 'createProjectLabel');
 
+    const copyToClipboard = useCallback(() => {
+        const url = `${window.location.protocol}//${window.location.host}${generatePath(routes.project.path, { projectId })}`;
+        navigator.clipboard.writeText(url);
+
+        alert.show(
+            'Successfully copied URL to clipboard.',
+            {
+                variant: 'info',
+            },
+        );
+    }, [projectId, alert]);
+
     return (
         <div className={styles.projectEdit}>
             <SubNavbarContext.Provider value={navbarContextValue}>
@@ -81,11 +97,24 @@ function ProjectEdit() {
                         heading={heading}
                         homeLinkShown
                         defaultActions={(
-                            <BackLink
-                                defaultLink="/"
-                            >
-                                {_ts('projectEdit', 'closeButtonLabel')}
-                            </BackLink>
+                            <>
+                                {projectId && (
+                                    <QuickActionButton
+                                        className={styles.shareButton}
+                                        name="copy"
+                                        variant="secondary"
+                                        title="Share project to other users"
+                                        onClick={copyToClipboard}
+                                    >
+                                        <IoShareSocialOutline />
+                                    </QuickActionButton>
+                                )}
+                                <BackLink
+                                    defaultLink="/"
+                                >
+                                    {_ts('projectEdit', 'closeButtonLabel')}
+                                </BackLink>
+                            </>
                         )}
                     />
                     <SubNavbarChildren>

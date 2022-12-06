@@ -1,11 +1,22 @@
-import React, { useMemo, useContext, Suspense } from 'react';
+import React, {
+    useMemo,
+    useContext,
+    Suspense,
+    useCallback,
+    useState,
+} from 'react';
 import { Switch, Route, useParams } from 'react-router-dom';
 import { useQuery, gql, useMutation } from '@apollo/client';
+import {
+    Button,
+} from '@the-deep/deep-ui';
 
 import PreloadMessage from '#base/components/PreloadMessage';
 import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
+import { useModalState } from '#hooks/stateManagement';
+import ProjectJoinModal from '#components/general/ProjectJoinModal';
 
 import {
     CurrentProjectQuery,
@@ -13,21 +24,13 @@ import {
     SetLastActiveProjectMutation,
     SetLastActiveProjectMutationVariables,
 } from '#generated/types';
+import { LAST_ACTIVE_PROJECT_FRAGMENT } from '#gqlFragments';
 
 const CURRENT_PROJECT = gql`
+    ${LAST_ACTIVE_PROJECT_FRAGMENT}
     query CurrentProject($id: ID!) {
         project(id: $id) {
-            allowedPermissions
-            currentUserRole
-            analysisFramework {
-                id
-            }
-            hasAssessmentTemplate
-            id
-            isPrivate
-            title
-            isVisualizationEnabled
-            isVisualizationAvailable
+            ...LastActiveProjectResponse
         }
     }
 `;
@@ -51,6 +54,18 @@ function Project(props: Props) {
 
     const { project, setProject } = useContext(ProjectContext);
 
+    const [
+        showProjectJoinModal,
+        setModalVisible,
+        setModalHidden,
+    ] = useModalState(false);
+
+    const [joinButtonVisible, setJoinButtonVisibility] = useState(true);
+
+    const handleJoinRequestSuccess = useCallback(() => {
+        setJoinButtonVisibility(false);
+    }, []);
+
     const variables = useMemo(
         (): CurrentProjectQueryVariables => ({
             id: projectId,
@@ -64,7 +79,11 @@ function Project(props: Props) {
     );
 
     // Let's make sure last active project
-    const { loading, error } = useQuery<CurrentProjectQuery, CurrentProjectQueryVariables>(
+    const {
+        loading,
+        error,
+        data: fetchedProject,
+    } = useQuery<CurrentProjectQuery, CurrentProjectQueryVariables>(
         CURRENT_PROJECT,
         {
             variables,
@@ -112,12 +131,44 @@ function Project(props: Props) {
         // NOTE: This branch will be called when user requests project without
         // any permissions
         return (
-            <FullPageErrorMessage
-                className={className}
-                errorTitle="Oh no!"
-                errorMessage="You do not have permission to access this page"
-                krakenVariant="hi"
-            />
+            <>
+                <FullPageErrorMessage
+                    className={className}
+                    errorTitle="Oh no!"
+                    errorMessage={(
+                        <div>
+                            You do not have permission to access this page.
+                            {fetchedProject?.project?.membershipPending && (
+                                <div>
+                                    Your request to join the project is
+                                    pending approval from admins of the project.
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    krakenVariant="hi"
+                    buttons={(
+                        projectId
+                        && !fetchedProject?.project?.membershipPending
+                        && !fetchedProject?.project?.isRejected
+                        && joinButtonVisible
+                    ) && (
+                        <Button
+                            name={undefined}
+                            onClick={setModalVisible}
+                        >
+                            Request to join project
+                        </Button>
+                    )}
+                />
+                {showProjectJoinModal && (
+                    <ProjectJoinModal
+                        projectId={projectId}
+                        onModalClose={setModalHidden}
+                        onJoinRequestSuccess={handleJoinRequestSuccess}
+                    />
+                )}
+            </>
         );
     }
 

@@ -80,6 +80,7 @@ import {
     ProjectUpdateMutationVariables,
     ProjectOrganizationTypeEnum,
 } from '#generated/types';
+import { LAST_ACTIVE_PROJECT_FRAGMENT } from '#gqlFragments';
 
 import StakeholderList from './StakeholderList';
 import RequestPrivateProjectButton from './RequestPrivateProjectButton';
@@ -212,6 +213,7 @@ const initialValue: PartialFormType = {
 };
 
 const LAST_ACTIVE_PROJECT = gql`
+    ${LAST_ACTIVE_PROJECT_FRAGMENT}
     query UserLastActiveProject {
         me {
             id
@@ -221,17 +223,7 @@ const LAST_ACTIVE_PROJECT = gql`
                 key
             }
             lastActiveProject {
-                allowedPermissions
-                hasAssessmentTemplate
-                analysisFramework {
-                    id
-                }
-                currentUserRole
-                id
-                isPrivate
-                title
-                isVisualizationEnabled
-                isVisualizationAvailable
+                ...LastActiveProjectResponse
             }
         }
     }

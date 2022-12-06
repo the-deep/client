@@ -36,6 +36,7 @@ import {
 } from '#generated/types';
 import UserContext from '#base/context/UserContext';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
+import { LAST_ACTIVE_PROJECT_FRAGMENT } from '#gqlFragments';
 
 import ChangePasswordButton from './ChangePasswordButton';
 import UserDeleteConfirmModal from './UserDeleteConfirmModal';
@@ -93,6 +94,7 @@ const ME_DETAILS = gql`
 `;
 
 const UPDATE_ME = gql`
+    ${LAST_ACTIVE_PROJECT_FRAGMENT}
     mutation UpdateMe($data: UserMeInputType!) {
         updateMe(data: $data) {
             errors
@@ -111,14 +113,7 @@ const UPDATE_ME = gql`
                     key
                 }
                 lastActiveProject {
-                    allowedPermissions
-                    currentUserRole
-                    id
-                    hasAssessmentTemplate
-                    isPrivate
-                    title
-                    isVisualizationEnabled
-                    isVisualizationAvailable
+                    ...LastActiveProjectResponse
                 }
             }
         }
