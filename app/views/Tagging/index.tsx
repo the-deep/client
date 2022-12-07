@@ -10,10 +10,7 @@ import {
     DropdownMenu,
     DropdownMenuItem,
 } from '@the-deep/deep-ui';
-import {
-    useQuery,
-    gql,
-} from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import { useModalState } from '#hooks/stateManagement';
 import ProjectSwitcher from '#components/general/ProjectSwitcher';
@@ -35,19 +32,9 @@ import {
 } from '#generated/types';
 
 import UnifiedConnectorModal from './UnifiedConnectorModal';
+import { CONNECTOR_SOURCES_COUNT } from './queries';
 
 import styles from './styles.css';
-
-export const CONNECTOR_SOURCES_COUNT = gql`
-    query ConnectorSourcesCount($projectId: ID!) {
-        project(id: $projectId) {
-            id
-            unifiedConnector {
-                sourceCountWithoutIngnoredAndAdded
-            }
-        }
-    }
-`;
 
 interface Props {
     className?: string;
