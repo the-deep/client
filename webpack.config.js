@@ -98,6 +98,7 @@ module.exports = () => {
                 },
                 {
                     test: /\.css$/,
+                    sideEffects: true,
                     include: getPath('node_modules/'),
                     use: [
                         isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
