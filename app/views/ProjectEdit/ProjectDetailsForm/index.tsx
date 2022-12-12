@@ -87,6 +87,8 @@ import RequestPrivateProjectButton from './RequestPrivateProjectButton';
 
 import styles from './styles.css';
 
+const privacyTooltip = 'Public projects will be visible in the "Explore DEEP" section. Any registered users will be able to see the project name, the target country, a scheenshot of the framework and the number of users, entries and sources it contains. This is the default option in DEEP as to foster collaboration and avoid duplication or efforts.  Private projects will not be visible in the "Explore DEEP" section. This feature can be exceptionally requested for projects dealing with sensitive information or topics. Requests are assessed case by case and the feature is activated only in the case specific harm to the users, data or the platform itself is possible.';
+
 const DELETE_PROJECT = gql`
     mutation deleteProject($projectId: ID!) {
         project(id: $projectId) {
@@ -781,7 +783,7 @@ function ProjectDetailsForm(props: Props) {
                         headingDescription={(
                             <IoInformationCircleOutline
                                 className={styles.infoIcon}
-                                title="Private projects will be visible to only project members."
+                                title={privacyTooltip}
                             />
                         )}
                     >

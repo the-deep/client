@@ -24,7 +24,7 @@ function getProxiedUrl(url: string) {
     }
     const proxyUrl = proxyMap[urlObject.host];
     if (proxyUrl) {
-        urlObject.host = proxyMap[proxyUrl];
+        urlObject.host = proxyUrl;
         return urlObject.toString();
     }
     return url;
