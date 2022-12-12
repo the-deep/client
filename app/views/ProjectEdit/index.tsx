@@ -74,7 +74,7 @@ function ProjectEdit() {
         : _ts('projectEdit', 'createProjectLabel');
 
     const copyToClipboard = useCallback(() => {
-        const url = `${window.location.protocol}//${window.location.host}${generatePath(routes.project.path, { projectId })}`;
+        const url = `${window.location.protocol}//${window.location.host}${generatePath(routes.tagging.path, { projectId })}`;
         navigator.clipboard.writeText(url);
 
         alert.show(
