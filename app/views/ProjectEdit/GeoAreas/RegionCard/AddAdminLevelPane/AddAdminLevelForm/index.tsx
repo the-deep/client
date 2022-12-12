@@ -168,7 +168,7 @@ function AddAdminLevelForm(props: Props) {
                 <DeepFileInput
                     name="geoShapeFile"
                     className={styles.input}
-                    label="Upload a file and select the corresponding field names from your file"
+                    label="Upload a geojson file and select the corresponding field names from your geojson file"
                     onChange={setFieldValue}
                     option={fileUploadOption}
                     setOption={setFileUploadOption}
