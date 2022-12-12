@@ -29,7 +29,7 @@ import { RequestItem } from '#hooks/useBatchManager';
 
 import { CONNECTOR_SOURCE_LEADS } from './LeadsPane/ConnectorSourceItem';
 import ProjectConnectorsPane from './ProjectConnectorsPane';
-import { CONNECTOR_SOURCES_COUNT } from '../index';
+import { CONNECTOR_SOURCES_COUNT } from '../queries';
 import LeadsPane from './LeadsPane';
 import FormLeadsPane from './FormLeadsPane';
 import styles from './styles.css';

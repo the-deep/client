@@ -37,6 +37,7 @@ import { hidUrl } from '#base/configs/hid';
 import NonFieldError from '#components/NonFieldError';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import routes from '#base/configs/routes';
+import { LAST_ACTIVE_PROJECT_FRAGMENT } from '#gqlFragments';
 
 import _ts from '#ts';
 import {
@@ -67,6 +68,7 @@ interface LoginFields {
 }
 
 const LOGIN = gql`
+    ${LAST_ACTIVE_PROJECT_FRAGMENT}
     mutation Login($input: LoginInputType!) {
         login(data: $input) {
             result {
@@ -78,14 +80,7 @@ const LOGIN = gql`
                     key
                 }
                 lastActiveProject {
-                    allowedPermissions
-                    currentUserRole
-                    id
-                    hasAssessmentTemplate
-                    isPrivate
-                    title
-                    isVisualizationEnabled
-                    isVisualizationAvailable
+                    ...LastActiveProjectResponse
                 }
             }
             captchaRequired
@@ -96,6 +91,7 @@ const LOGIN = gql`
 `;
 
 const LOGIN_WITH_HID = gql`
+    ${LAST_ACTIVE_PROJECT_FRAGMENT}
     mutation LoginWithHid($input: HIDLoginInputType!) {
         loginWithHid(data: $input) {
             result {
@@ -107,14 +103,7 @@ const LOGIN_WITH_HID = gql`
                     key
                 }
                 lastActiveProject {
-                    allowedPermissions
-                    currentUserRole
-                    hasAssessmentTemplate
-                    id
-                    isPrivate
-                    title
-                    isVisualizationEnabled
-                    isVisualizationAvailable
+                    ...LastActiveProjectResponse
                 }
             }
             errors

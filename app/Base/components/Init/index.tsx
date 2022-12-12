@@ -14,10 +14,12 @@ import {
 import { Project } from '#base/types/project';
 
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
+import { LAST_ACTIVE_PROJECT_FRAGMENT } from '#gqlFragments';
 
 import { MeQuery } from '#generated/types';
 
 const ME = gql`
+    ${LAST_ACTIVE_PROJECT_FRAGMENT}
     query Me {
         me {
             id
@@ -28,17 +30,7 @@ const ME = gql`
                 key
             }
             lastActiveProject {
-                allowedPermissions
-                hasAssessmentTemplate
-                analysisFramework {
-                    id
-                }
-                currentUserRole
-                id
-                isPrivate
-                title
-                isVisualizationEnabled
-                isVisualizationAvailable
+                ...LastActiveProjectResponse
             }
         }
     }

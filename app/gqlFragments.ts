@@ -264,3 +264,21 @@ export const ORGANIZATION_FRAGMENT = gql`
         }
     }
 `;
+
+export const LAST_ACTIVE_PROJECT_FRAGMENT = gql`
+    fragment LastActiveProjectResponse on ProjectDetailType {
+        allowedPermissions
+        currentUserRole
+        analysisFramework {
+            id
+        }
+        hasAssessmentTemplate
+        id
+        isPrivate
+        title
+        isVisualizationEnabled
+        isVisualizationAvailable
+        membershipPending
+        isRejected
+    }
+`;
