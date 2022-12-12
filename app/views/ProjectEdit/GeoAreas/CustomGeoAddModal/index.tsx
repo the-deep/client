@@ -133,7 +133,7 @@ function CustomGeoAddModal(props: Props) {
                     value={value.code}
                     onChange={setFieldValue}
                     error={error?.code}
-                    label="Code"
+                    label="ISO3 Code"
                     disabled={addRegionsPending}
                 />
             </div>
