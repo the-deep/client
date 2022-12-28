@@ -4,6 +4,7 @@ import {
     _cs,
     isDefined,
     randomString,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import produce from 'immer';
 import {
@@ -26,6 +27,7 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     IoAdd,
+    IoCopyOutline,
     IoEye,
 } from 'react-icons/io5';
 
@@ -356,6 +358,15 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         setOrganizationAddType('author');
     }, [setShowAddOrganizationModalTrue]);
 
+    const handleAddPublisherAsAuthor = useCallback(() => {
+        if (value.source) {
+            onAuthorOrganizationOptionsChange((oldValue) => (
+                [...(oldValue ?? []), ...(sourceOrganizationOptions ?? [])]
+            ));
+            setFieldValue([value.source], 'authors');
+        }
+    }, [value, setFieldValue, onAuthorOrganizationOptionsChange, sourceOrganizationOptions]);
+
     const handleLeadDataExtract = useCallback(() => {
         getUserToken();
     }, [getUserToken]);
@@ -423,7 +434,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
             )}
             {pdfUrlOptions && (
                 <BadgeInput
-                    listClassName={styles.badgeInput}
                     value={selectedPdf}
                     name="selectedPdf"
                     label="Other sources:"
@@ -520,7 +530,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                             title="Add new organization"
                         >
                             <IoAdd />
-
                         </QuickActionButton>
                     )}
                 />
@@ -537,16 +546,28 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     // hint={isTruthyString(value.authorRaw) && `Previous organization: ${value.authorRaw}`}
                     error={getErrorString(error?.authors)}
                     actions={(
-                        <QuickActionButton
-                            name="add organizations"
-                            title="Add new organization"
-                            variant="transparent"
-                            onClick={handleAddAuthorOrganizationsClick}
-                            disabled={pendingLeadOptions || disabled}
-                        >
-                            <IoAdd />
-
-                        </QuickActionButton>
+                        <>
+                            <QuickActionButton
+                                name={undefined}
+                                title="Same as publishing organization"
+                                variant="transparent"
+                                onClick={handleAddPublisherAsAuthor}
+                                disabled={
+                                    pendingLeadOptions || disabled || isNotDefined(value.source)
+                                }
+                            >
+                                <IoCopyOutline />
+                            </QuickActionButton>
+                            <QuickActionButton
+                                name={undefined}
+                                title="Add new organization"
+                                variant="transparent"
+                                onClick={handleAddAuthorOrganizationsClick}
+                                disabled={pendingLeadOptions || disabled}
+                            >
+                                <IoAdd />
+                            </QuickActionButton>
+                        </>
                     )}
                 />
             </div>

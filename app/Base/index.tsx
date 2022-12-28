@@ -254,17 +254,15 @@ function Base() {
                     </ApolloProvider>
                 </RequestContext.Provider>
             </ErrorBoundary>
-            {!navbarShown && (
-                <Button
-                    name={undefined}
-                    title="Bug/Feedback?"
-                    variant="action"
-                    className={styles.zendeskHelpButton}
-                    onClick={openZendeskFeedback}
-                >
-                    Bug / Feedback?
-                </Button>
-            )}
+            <Button
+                name={undefined}
+                title="Bug/Feedback?"
+                variant="action"
+                className={styles.zendeskHelpButton}
+                onClick={openZendeskFeedback}
+            >
+                Bug / Feedback?
+            </Button>
         </div>
     );
 }
