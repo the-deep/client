@@ -15,10 +15,6 @@ import {
     Legend,
 } from 'recharts';
 
-import {
-    organizationTitleSelector as organizationLabelSelector,
-} from '#components/selections/NewOrganizationMultiSelectInput';
-
 import styles from './styles.css';
 
 const chartMargins = {
@@ -31,54 +27,50 @@ const chartMargins = {
 const emptyTickFormatter = () => '';
 
 interface TableItemProps {
-    title: string;
+    analysisFrameworkTitle: string | undefined;
+    entryCount: number | undefined;
     projectCount: number | undefined;
-    sourceCount: number | undefined;
 }
 
 function TableItem(props: TableItemProps) {
     const {
-        title,
+        analysisFrameworkTitle,
+        entryCount,
         projectCount,
-        sourceCount,
     } = props;
 
     return (
         <div className={styles.tableItem}>
-            <div className={styles.title}>
-                {title}
+            <div className={styles.frameworkTitle}>
+                {analysisFrameworkTitle}
             </div>
-            <div className={styles.projectCount}>
-                {`${projectCount ?? 0} projects`}
+            <div className={styles.count}>
+                {`${entryCount ?? 0} entries`}
             </div>
-            <div className={styles.sourceCount}>
-                {`${sourceCount ?? 0} sources`}
+            <div className={styles.count}>
+                {`${projectCount ?? 0} sources`}
             </div>
         </div>
     );
 }
 
-export interface TopAuthor {
-    id: string;
-    mergedAs?: {
-        id: string;
-        title: string;
-    } | undefined | null;
-    title: string;
+export interface TopFrameworks {
+    analysisFrameworkId: string;
+    analysisFrameworkTitle?: string | null | undefined;
+    entryCount?: number | null | undefined;
     projectCount?: number | null | undefined;
-    sourceCount?: number | null | undefined;
 }
 
-const keySelector = (item: TopAuthor) => item.id;
+const keySelector = (item: TopFrameworks) => item.analysisFrameworkId;
 
 interface Props {
     className?: string;
-    data: TopAuthor[] | null | undefined;
+    data: TopFrameworks[] | null | undefined;
     label: string;
     mode: 'table' | 'chart';
 }
 
-function TopTenAuthors(props: Props) {
+function TopTenFrameworks(props: Props) {
     const {
         className,
         data,
@@ -86,10 +78,10 @@ function TopTenAuthors(props: Props) {
         mode,
     } = props;
 
-    const tableItemRendererParams = useCallback((_: string, datum: TopAuthor) => ({
-        title: organizationLabelSelector(datum),
+    const tableItemRendererParams = useCallback((_: string, datum: TopFrameworks) => ({
+        analysisFrameworkTitle: datum.analysisFrameworkTitle ?? undefined,
+        entryCount: datum.entryCount ?? undefined,
         projectCount: datum.projectCount ?? undefined,
-        sourceCount: datum.sourceCount ?? undefined,
     }), []);
 
     if (!data || data.length <= 0) {
@@ -98,7 +90,7 @@ function TopTenAuthors(props: Props) {
 
     return (
         <ContainerCard
-            className={_cs(className, styles.topTenAuthors)}
+            className={_cs(className, styles.topTenFrameworks)}
             heading={label}
             borderBelowHeaderWidth="thin"
             headingSize="extraSmall"
@@ -127,7 +119,7 @@ function TopTenAuthors(props: Props) {
                     >
                         <XAxis type="number" />
                         <YAxis
-                            dataKey="title"
+                            dataKey="analysisFrameworkTitle"
                             type="category"
                             scale="band"
                             tickFormatter={emptyTickFormatter}
@@ -137,14 +129,14 @@ function TopTenAuthors(props: Props) {
                         <Bar
                             label={false}
                             legendType="none"
-                            name="Sources Count"
-                            dataKey="sourceCount"
+                            name="Entries Count"
+                            dataKey="entryCount"
                             barSize={16}
                             fill="var(--dui-color-accent)"
                             opacity="0.4"
                         >
                             <LabelList
-                                dataKey="title"
+                                dataKey="analysisFrameworkTitle"
                                 position="insideLeft"
                             />
                         </Bar>
@@ -155,4 +147,4 @@ function TopTenAuthors(props: Props) {
     );
 }
 
-export default TopTenAuthors;
+export default TopTenFrameworks;
