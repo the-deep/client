@@ -75,6 +75,7 @@
 
             .bottom-container-content {
                 display: flex;
+                flex-wrap: wrap;
                 gap: var(--dui-spacing-large);
 
                 .top-ten-card {

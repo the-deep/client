@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import {
     _cs,
     formatDateToString,
@@ -6,6 +6,7 @@ import {
 import {
     Card,
     Container,
+    PendingMessage,
     SegmentInput,
     DateDualRangeInput,
     DropdownMenu,
@@ -24,44 +25,95 @@ import {
     IoPerson,
     IoWalk,
 } from 'react-icons/io5';
+import { useQuery, gql } from '@apollo/client';
 
 import StatsInformationCard from '#components/StatsInformationCard';
+import {
+    ExploreDeepStatsQuery,
+    ExploreDeepStatsQueryVariables,
+} from '#generated/types';
 
 import ProjectFilters, { FormType } from './ProjectFilters';
 import ProjectContent from './ProjectContent';
 import EntriesContent from './EntriesContent';
-import TopTenAuthors, { TopAuthor } from './TopTenAuthors';
+import TopTenAuthors from './TopTenAuthors';
+import TopTenFrameworks from './TopTenFrameworks';
+import TopTenProjectsByUser from './TopTenProjectsByUser';
+import TopTenProjectsByEntries from './TopTenProjectsByEntries';
 
 import styles from './styles.css';
 
-const topTenAuthorDummy: TopAuthor[] = [
-    {
-        id: '11',
-        title: '1st organization',
-        mergedAs: {
-            id: '12',
-            title: '1st Parent',
-        },
-        projectCount: 12,
-        sourceCount: 11423,
-    },
-    {
-        id: '14',
-        title: '2st organization',
-        mergedAs: {
-            id: '13',
-            title: '2st Parent',
-        },
-        projectCount: 12,
-        sourceCount: 1123,
-    },
-    {
-        id: '3',
-        title: '3rd organization',
-        projectCount: 12,
-        sourceCount: 1023,
-    },
-];
+const EXPLORE_DEEP_STATS = gql`
+query ExploreDeepStats(
+    $dateFrom: Date!,
+    $dateTo: Date!,
+    $includeEntryLessThan: Boolean,
+    $includeTestProject: Boolean,
+    $organizations: [ID!],
+    $regions: [ID!],
+    $search: String,
+) {
+    deepExploreStats(
+        filter: {
+            dateFrom: $dateFrom,
+            dateTo: $dateTo,
+            project: {
+                includeEntryLessThan: $includeEntryLessThan,
+                includeTestProject: $includeTestProject,
+                organizations: $organizations,
+                regions: $regions,
+                search: $search,
+            },
+        }
+    ) {
+        projectAggregationMonthly {
+            date
+            projectCount
+        }
+        topTenAuthors {
+            id
+            title
+            verified
+            shortName
+            mergedAs {
+                id
+                title
+                shortName
+            }
+            projectCount
+            sourceCount
+        }
+        projectByRegion {
+            id
+            centroid
+            projectsId
+        }
+        topTenFrameworks {
+            analysisFrameworkId
+            entryCount
+            projectCount
+            analysisFrameworkTitle
+        }
+        topTenProjectEntries {
+            entryCount
+            sourceCount
+            projectTitle
+            projectId
+        }
+        topTenProjectUsers {
+            projectId
+            projectTitle
+            userCount
+        }
+        totalActiveUsers
+        totalAuthors
+        totalEntries
+        totalLeads
+        totalProjects
+        totalPublishers
+        totalRegisteredUsers
+    }
+}`;
 
 interface Option {
     key: 'table' | 'chart';
@@ -70,6 +122,8 @@ interface Option {
 
 const representationKeySelector = (d: Option) => d.key;
 const representationLabelSelector = (d: Option) => d.label;
+
+const todaysDate = formatDateToString(new Date(), 'yyyy-MM-dd');
 
 const representationOptions: Option[] = [
     {
@@ -92,9 +146,31 @@ function NewExploreDeep(props: Props) {
     } = props;
 
     const [startDate, setStartDate] = useState<string | undefined>('2018-01-01');
-    const [endDate, setEndDate] = useState<string | undefined>(formatDateToString(new Date(), 'yyyy-MM-dd'));
+    const [endDate, setEndDate] = useState<string | undefined>(todaysDate);
     const [filters, setFilters] = useState<FormType | undefined>(undefined);
     const [representationType, setRepresentationType] = useState<Option['key']>('table');
+
+    const variables: ExploreDeepStatsQueryVariables = useMemo(() => ({
+        dateFrom: startDate ?? '2018-01-01',
+        dateTo: endDate ?? todaysDate,
+        search: filters?.search,
+        includeTestProject: !filters?.excludeTestProject,
+        organizations: filters?.organizations,
+        regions: filters?.regions,
+        includeEntryLessThan: !filters?.excludeProjectsLessThan,
+    }), [filters, startDate, endDate]);
+
+    const {
+        data,
+        loading: pending,
+    } = useQuery<ExploreDeepStatsQuery, ExploreDeepStatsQueryVariables>(
+        EXPLORE_DEEP_STATS,
+        {
+            variables,
+        },
+    );
+
+    console.warn('here', data);
 
     const handleJpegExportClick = useCallback(() => {
         console.warn('jpeg export clicked');
@@ -165,7 +241,7 @@ function NewExploreDeep(props: Props) {
                                     <IoDocument />
                                 )}
                                 label="Projects"
-                                totalValue={201}
+                                totalValue={data?.deepExploreStats?.totalProjects}
                                 variant="accent"
                             />
                             <StatsInformationCard
@@ -174,7 +250,7 @@ function NewExploreDeep(props: Props) {
                                     <IoPerson />
                                 )}
                                 label="Users"
-                                totalValue={15}
+                                totalValue={data?.deepExploreStats?.totalRegisteredUsers}
                                 variant="accent"
                             />
                             <StatsInformationCard
@@ -183,7 +259,7 @@ function NewExploreDeep(props: Props) {
                                     <IoWalk />
                                 )}
                                 label="Active Users"
-                                totalValue={5}
+                                totalValue={data?.deepExploreStats?.totalActiveUsers}
                                 variant="accent"
                             />
                         </Card>
@@ -194,7 +270,7 @@ function NewExploreDeep(props: Props) {
                                     <IoDocument />
                                 )}
                                 label="Sources"
-                                totalValue={201}
+                                totalValue={data?.deepExploreStats?.totalLeads}
                                 variant="accent"
                             />
                             <StatsInformationCard
@@ -203,7 +279,7 @@ function NewExploreDeep(props: Props) {
                                     <IoGlobe />
                                 )}
                                 label="Authors"
-                                totalValue={201}
+                                totalValue={data?.deepExploreStats?.totalAuthors}
                                 variant="accent"
                             />
                             <StatsInformationCard
@@ -212,7 +288,7 @@ function NewExploreDeep(props: Props) {
                                     <IoGlobe />
                                 )}
                                 label="Publishers"
-                                totalValue={201}
+                                totalValue={data?.deepExploreStats?.totalPublishers}
                                 variant="accent"
                             />
                         </Card>
@@ -223,7 +299,7 @@ function NewExploreDeep(props: Props) {
                                     <IoLayers />
                                 )}
                                 label="Entries"
-                                totalValue={201}
+                                totalValue={data?.deepExploreStats?.totalEntries}
                                 variant="accent"
                             />
                             <StatsInformationCard
@@ -232,7 +308,8 @@ function NewExploreDeep(props: Props) {
                                     <IoTimeSharp />
                                 )}
                                 label="Added last week"
-                                totalValue={21}
+                                // TODO: Get entries last week
+                                totalValue={data?.deepExploreStats?.totalEntries}
                                 variant="accent"
                             />
                         </Card>
@@ -246,6 +323,7 @@ function NewExploreDeep(props: Props) {
             )}
             headingSize="large"
         >
+            {pending && <PendingMessage />}
             <Tabs
                 defaultHash="projects"
                 useHash
@@ -289,15 +367,33 @@ function NewExploreDeep(props: Props) {
                 >
                     <TopTenAuthors
                         className={styles.topTenCard}
-                        data={topTenAuthorDummy}
+                        data={data?.deepExploreStats?.topTenAuthors}
                         mode={representationType}
                         label="Top Ten Authors"
                     />
                     <TopTenAuthors
                         className={styles.topTenCard}
-                        data={topTenAuthorDummy}
+                        data={data?.deepExploreStats?.topTenAuthors}
                         mode={representationType}
                         label="Top Ten Publishers"
+                    />
+                    <TopTenFrameworks
+                        className={styles.topTenCard}
+                        data={data?.deepExploreStats?.topTenFrameworks}
+                        mode={representationType}
+                        label="Top Ten Frameworks"
+                    />
+                    <TopTenProjectsByUser
+                        className={styles.topTenCard}
+                        data={data?.deepExploreStats?.topTenProjectUsers}
+                        mode={representationType}
+                        label="Top Ten Projects (Users)"
+                    />
+                    <TopTenProjectsByEntries
+                        className={styles.topTenCard}
+                        data={data?.deepExploreStats?.topTenProjectEntries}
+                        mode={representationType}
+                        label="Top Ten Frameworks"
                     />
                 </Container>
             </Tabs>
