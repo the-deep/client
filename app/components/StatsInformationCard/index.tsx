@@ -15,7 +15,7 @@ export interface Props {
     className?: string;
     icon?: React.ReactNode;
     label: string;
-    totalValue?: number;
+    totalValue?: number | null;
     filteredValue?: number;
     variant: InformationVariant;
     valuePrecision?: number;
