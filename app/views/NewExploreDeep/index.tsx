@@ -66,7 +66,7 @@ query ExploreDeepStats(
             },
         }
     ) {
-        projectAggregationMonthly {
+        projectAggregationDaily {
             date
             projectCount
         }
@@ -183,6 +183,13 @@ function NewExploreDeep(props: Props) {
     const handleExcelExportClick = useCallback(() => {
         console.warn('excel export clicked');
     }, []);
+
+    const timeseriesData = useMemo(() => (
+        data?.deepExploreStats?.projectAggregationDaily?.map((item) => ({
+            date: item.date,
+            projectCount: Number(item.projectCount ?? 0),
+        }))
+    ), [data?.deepExploreStats?.projectAggregationDaily]);
 
     return (
         <Container
@@ -344,7 +351,9 @@ function NewExploreDeep(props: Props) {
                         </Tab>
                     </div>
                     <TabPanel name="projects">
-                        <ProjectContent />
+                        <ProjectContent
+                            timeseries={timeseriesData}
+                        />
                     </TabPanel>
                     <TabPanel name="entries">
                         <EntriesContent />

@@ -12,4 +12,18 @@
             border-bottom: none;
         }
     }
+
+    .chart-container {
+        flex-shrink: 0;
+
+        .content {
+            flex-shrink: 0;
+            height: 400px;
+            overflow: unset;
+
+            .responsive-container {
+                height: 100%;
+            }
+        }
+    }
 }
