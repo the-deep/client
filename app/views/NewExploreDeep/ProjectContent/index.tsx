@@ -3,6 +3,7 @@ import {
     _cs,
     listToMap,
     isDefined,
+    compareNumber,
 } from '@togglecorp/fujs';
 import {
     Tabs,
@@ -88,11 +89,6 @@ type Timeseries = {
     projectCount: number;
 }
 
-type TimeseriesItem = {
-    date: number;
-    total: number;
-}
-
 function timeSpentLabelFormatter(value: number) {
     return [value, 'Total projects'];
 }
@@ -129,23 +125,21 @@ function ProjectContent(props: Props) {
                     date: foo.date,
                     total: foo.total + bar.total,
                 }),
-            ).sort((a, b) => (a.date - b.date));
+            ).sort((a, b) => compareNumber(a.date, b.date));
         },
         [timeseries, resolution],
     );
 
-    // eslint-disable-next-line no-nested-ternary
-    const timeFormatter = resolution === 'day'
-        ? formatDate
-        : (resolution === 'month' ? formatMonth : formatYear);
+    const timeFormatter = useMemo(() => {
+        if (resolution === 'day') {
+            return formatDate;
+        }
+        return resolution === 'month' ? formatMonth : formatYear;
+    }, [resolution]);
 
-    const timeseriesWithoutGaps: TimeseriesItem[] | undefined = useMemo(
+    const timeseriesWithoutGaps = useMemo(
         () => {
-            if (!timeseriesData) {
-                return undefined;
-            }
-
-            if (timeseriesData.length <= 0) {
+            if (!timeseriesData || timeseriesData.length <= 0) {
                 return [
                     {
                         total: 0,
@@ -166,7 +160,7 @@ function ProjectContent(props: Props) {
                 resolution,
             );
 
-            return timestamps.map((item): TimeseriesItem => ({
+            return timestamps.map((item) => ({
                 total: mapping[item] ?? 0,
                 date: item,
             }));

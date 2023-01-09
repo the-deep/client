@@ -43,6 +43,8 @@ import TopTenProjectsByEntries from './TopTenProjectsByEntries';
 
 import styles from './styles.css';
 
+const DEEP_START_DATE = '2018-01-01';
+
 const EXPLORE_DEEP_STATS = gql`
 query ExploreDeepStats(
     $dateFrom: Date!,
@@ -145,13 +147,16 @@ function NewExploreDeep(props: Props) {
         className,
     } = props;
 
-    const [startDate, setStartDate] = useState<string | undefined>('2018-01-01');
+    const [
+        startDate = DEEP_START_DATE,
+        setStartDate,
+    ] = useState<string | undefined>(DEEP_START_DATE);
     const [endDate, setEndDate] = useState<string | undefined>(todaysDate);
     const [filters, setFilters] = useState<FormType | undefined>(undefined);
     const [representationType, setRepresentationType] = useState<Option['key']>('table');
 
     const variables: ExploreDeepStatsQueryVariables = useMemo(() => ({
-        dateFrom: startDate ?? '2018-01-01',
+        dateFrom: startDate,
         dateTo: endDate ?? todaysDate,
         search: filters?.search,
         includeTestProject: !filters?.excludeTestProject,
@@ -170,9 +175,7 @@ function NewExploreDeep(props: Props) {
         },
     );
 
-    console.warn('here', data);
-
-    const handleJpegExportClick = useCallback(() => {
+    const handleImageExportClick = useCallback(() => {
         console.warn('jpeg export clicked');
     }, []);
 
@@ -184,6 +187,7 @@ function NewExploreDeep(props: Props) {
         console.warn('excel export clicked');
     }, []);
 
+    // FIXME: Remove this after fixed in server
     const timeseriesData = useMemo(() => (
         data?.deepExploreStats?.projectAggregationDaily?.map((item) => ({
             date: item.date,
@@ -216,10 +220,10 @@ function NewExploreDeep(props: Props) {
                 >
                     <DropdownMenuItem
                         name={undefined}
-                        onClick={handleJpegExportClick}
+                        onClick={handleImageExportClick}
                         disabled
                     >
-                        Jpeg
+                        Image
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         name={undefined}
@@ -323,7 +327,7 @@ function NewExploreDeep(props: Props) {
                     </div>
                     <ProjectFilters
                         className={styles.filters}
-                        filters={filters}
+                        initialValue={filters}
                         onFiltersChange={setFilters}
                     />
                 </>
