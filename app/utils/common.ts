@@ -260,6 +260,7 @@ export function mergeLists<T>(
     return finalList;
 }
 
+// FIXME: Add tests
 export function mergeItems<T, K extends string>(
     list: T[],
     keySelector: (item: T) => K,
