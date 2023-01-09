@@ -200,6 +200,7 @@ function ExploreDeepTableView(props: Props) {
             createStringColumn<Project, string>(
                 'location',
                 'Location',
+                // FIXME: Create CommaSeparateStringColumn
                 (item) => item?.regions?.map((region) => region.title)?.join(', '),
             ),
             createDateColumn<Project, string>(

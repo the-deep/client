@@ -18,7 +18,7 @@
 
         .content {
             flex-shrink: 0;
-            height: 400px;
+            height: 25rem;
             overflow: unset;
 
             .responsive-container {

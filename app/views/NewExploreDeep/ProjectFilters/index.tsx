@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
     doesObjectHaveNoData,
@@ -50,31 +50,24 @@ const schema: FormSchema = {
     }),
 };
 
-const initialValue: FormType = {};
-
 interface Props {
     className?: string;
-    filters: FormType | undefined;
+    initialValue: FormType | undefined;
     onFiltersChange: (filters: FormType | undefined) => void;
 }
 
 function ProjectFilters(props: Props) {
     const {
         className,
-        filters,
         onFiltersChange,
+        initialValue,
     } = props;
 
     const {
         pristine,
         value,
-        setValue,
         setFieldValue,
-    } = useForm(schema, initialValue);
-
-    useEffect(() => {
-        setValue(filters ?? initialValue);
-    }, [filters, setValue]);
+    } = useForm(schema, initialValue ?? {});
 
     const isFilterEmpty = useMemo(() => (
         doesObjectHaveNoData(value, [''])

@@ -154,7 +154,7 @@ function ExploreDeepMapView(props: Props) {
         return true;
     }, [clusterClicked, onClusterClickedChange, onClickedFeaturePropertiesChange]);
 
-    const createClusterMarker = useCallback((markerProps: object) => {
+    const createClusterMarker = useCallback((markerProps: unknown) => {
         const {
             project_ids: projectIds,
         } = markerProps as ClusterProperties;
@@ -163,6 +163,7 @@ function ExploreDeepMapView(props: Props) {
             projectIds?.split(',').filter((id) => id.length > 0) ?? [],
             (id) => id,
         );
+
         const uniqueProjectsCount = Math.max(uniqueProjects.length, 1);
 
         const width = Math.min(8 * Math.log10(uniqueProjectsCount) + 20, 100);
