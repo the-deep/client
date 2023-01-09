@@ -73,6 +73,7 @@ function ActionCell(props: Props) {
                             variant: 'success',
                         },
                     );
+                    onMemberStatusChange();
                 } else {
                     alert.show(
                         'Failed to cancel project join request.',
@@ -81,7 +82,6 @@ function ActionCell(props: Props) {
                         },
                     );
                 }
-                onMemberStatusChange();
             },
             onError: () => {
                 alert.show(
