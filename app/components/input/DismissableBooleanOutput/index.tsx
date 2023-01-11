@@ -9,6 +9,7 @@ interface DismissableBooleanOutputProps<T extends string | number | undefined> {
     value?: boolean;
     name: T;
     onDismiss: (value: undefined, name: T) => void;
+    readOnly?: boolean;
 }
 function DismissableBooleanOutput<T extends string | number | undefined>(
     props: DismissableBooleanOutputProps<T>,
@@ -20,6 +21,7 @@ function DismissableBooleanOutput<T extends string | number | undefined>(
         value,
         name,
         onDismiss,
+        readOnly,
     } = props;
 
     if (value === true) {
@@ -28,6 +30,7 @@ function DismissableBooleanOutput<T extends string | number | undefined>(
                 label={label}
                 name={name}
                 onDismiss={onDismiss}
+                readOnly={readOnly}
             >
                 {trueLabel}
             </DismissableTag>
@@ -40,6 +43,7 @@ function DismissableBooleanOutput<T extends string | number | undefined>(
                 label={label}
                 name={name}
                 onDismiss={onDismiss}
+                readOnly={readOnly}
             >
                 {falseLabel}
             </DismissableTag>

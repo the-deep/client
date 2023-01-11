@@ -8,7 +8,7 @@ import {
 import {
     Tabs,
     Tab,
-    Container,
+    ContainerCard,
     SegmentInput,
     TabList,
     TabPanel,
@@ -26,7 +26,6 @@ import {
     YAxis,
     Area,
     Tooltip,
-    CartesianGrid,
 } from 'recharts';
 
 import {
@@ -39,7 +38,7 @@ import {
 import { mergeItems } from '#utils/common';
 
 import TableView from './TableView';
-import MapView from './MapView';
+import MapView, { Projects as ProjectsByRegion } from './MapView';
 
 import styles from './styles.css';
 
@@ -96,13 +95,18 @@ function timeSpentLabelFormatter(value: number) {
 interface Props {
     className?: string;
     timeseries: Timeseries[] | undefined;
+    projectsByRegion: ProjectsByRegion[] | undefined;
+    readOnlyMode: boolean;
 }
 
 function ProjectContent(props: Props) {
     const {
         className,
         timeseries,
+        projectsByRegion,
+        readOnlyMode,
     } = props;
+    console.warn('i am here', projectsByRegion);
 
     const [activeView, setActiveView] = useState<'map' | 'table' | undefined>('map');
     const [resolution, setResolution] = React.useState<'year' | 'month' | 'day'>('day');
@@ -171,25 +175,28 @@ function ProjectContent(props: Props) {
     return (
         <div className={_cs(className, styles.projectContent)}>
             <Tabs
-                value={activeView}
+                // NOTE: Only showing map in readonly mode
+                value={readOnlyMode ? 'map' : activeView}
                 onChange={setActiveView}
             >
-                <TabList className={styles.tabs}>
-                    <Tab
-                        name="table"
-                        className={styles.tab}
-                        transparentBorder
-                    >
-                        <IoList />
-                    </Tab>
-                    <Tab
-                        name="map"
-                        className={styles.tab}
-                        transparentBorder
-                    >
-                        <IoMapOutline />
-                    </Tab>
-                </TabList>
+                {!readOnlyMode && (
+                    <TabList className={styles.tabs}>
+                        <Tab
+                            name="table"
+                            className={styles.tab}
+                            transparentBorder
+                        >
+                            <IoList />
+                        </Tab>
+                        <Tab
+                            name="map"
+                            className={styles.tab}
+                            transparentBorder
+                        >
+                            <IoMapOutline />
+                        </Tab>
+                    </TabList>
+                )}
                 <TabPanel name="table">
                     <TableView
                         filters={undefined}
@@ -197,13 +204,14 @@ function ProjectContent(props: Props) {
                 </TabPanel>
                 <TabPanel name="map">
                     <MapView
-                        filters={undefined}
+                        projects={projectsByRegion}
                     />
                 </TabPanel>
             </Tabs>
-            <Container
+            <ContainerCard
                 className={styles.chartContainer}
                 heading="Newly Created Projects"
+                headingSize="extraSmall"
                 contentClassName={styles.content}
                 headerActions={(
                     <>
@@ -227,6 +235,8 @@ function ProjectContent(props: Props) {
                         />
                     </>
                 )}
+                borderBelowHeaderWidth="thin"
+                borderBelowHeader
             >
                 <ResponsiveContainer className={styles.responsiveContainer}>
                     <AreaChart
@@ -238,10 +248,6 @@ function ProjectContent(props: Props) {
                                 <stop offset="95%" stopColor="var(--dui-color-accent)" stopOpacity={0} />
                             </linearGradient>
                         </defs>
-                        <CartesianGrid
-                            strokeDasharray="0"
-                            vertical={false}
-                        />
                         <XAxis
                             dataKey="date"
                             type="number"
@@ -277,7 +283,7 @@ function ProjectContent(props: Props) {
                         />
                     </AreaChart>
                 </ResponsiveContainer>
-            </Container>
+            </ContainerCard>
         </div>
     );
 }

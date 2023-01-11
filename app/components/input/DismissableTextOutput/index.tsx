@@ -10,6 +10,7 @@ interface DismissableTextOutputProps<T extends string | number | undefined> {
     value?: string;
     name: T;
     onDismiss: (value: undefined, name: T) => void;
+    readOnly?: boolean;
 }
 
 function DismissableTextOutput<T extends string | number | undefined>(
@@ -20,6 +21,7 @@ function DismissableTextOutput<T extends string | number | undefined>(
         value,
         name,
         onDismiss,
+        readOnly,
     } = props;
 
     if (doesObjectHaveNoData(value)) {
@@ -31,6 +33,7 @@ function DismissableTextOutput<T extends string | number | undefined>(
             label={label}
             name={name}
             onDismiss={onDismiss}
+            readOnly={readOnly}
         >
             {value}
         </DismissableTag>

@@ -7,18 +7,22 @@ import {
 
 import DismissableTag from '../DismissableTag';
 
-interface DismissableSelectOutputProps<D, V extends string | number, N> {
-    label: React.ReactNode;
+interface DismissableListOutputProps<
+    D,
+    V extends string | number,
+    N extends string | number | undefined
+> {
+    label?: React.ReactNode;
+    value: V[] | undefined;
     name: N;
-    value?: V;
     onDismiss: (value: undefined, name: N) => void;
     keySelector: (value: D) => V;
     labelSelector: (value: D) => string;
     options: D[] | undefined | null;
+    readOnly?: boolean;
 }
-
-function DismissableSelectOutput<D, V extends string | number, N>(
-    props: DismissableSelectOutputProps< D, V, N >,
+function DismissableListOutput<D, V extends string | number, N extends string | number | undefined>(
+    props: DismissableListOutputProps<D, V, N>,
 ) {
     const {
         name,
@@ -27,6 +31,7 @@ function DismissableSelectOutput<D, V extends string | number, N>(
         label,
         labelSelector,
         keySelector,
+        readOnly,
         options,
     } = props;
 
@@ -38,21 +43,24 @@ function DismissableSelectOutput<D, V extends string | number, N>(
         if (isNotDefined(value)) {
             return undefined;
         }
-        return labelMap?.[value];
+
+        return value?.map((val) => labelMap?.[val])?.join(', ');
     }, [value, labelMap]);
 
     if (doesObjectHaveNoData(value)) {
         return null;
     }
+
     return (
         <DismissableTag
             label={label}
             name={name}
             onDismiss={onDismiss}
+            readOnly={readOnly}
         >
             {content}
         </DismissableTag>
     );
 }
 
-export default DismissableSelectOutput;
+export default DismissableListOutput;

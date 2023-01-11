@@ -35,8 +35,8 @@ type PublicAnalysisFrameworkMultiSelectInputProps<K extends string> = SearchMult
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
 >;
 
-const keySelector = (d: AnalysisFramework) => d.id;
-const labelSelector = (d: AnalysisFramework) => d.title;
+export const keySelector = (d: AnalysisFramework) => d.id;
+export const labelSelector = (d: AnalysisFramework) => d.title;
 
 function PublicAnalysisFrameworkSearchMultiSelectInput<K extends string>(
     props: PublicAnalysisFrameworkMultiSelectInputProps<K>,
