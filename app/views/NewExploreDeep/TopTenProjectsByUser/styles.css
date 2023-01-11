@@ -1,25 +1,42 @@
 .top-ten-project-by-users {
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
+    .header {
+        padding: var(--dui-spacing-medium) var(--dui-spacing-large);
+    }
+
+    .header-actions {
+        .table-header {
+            width: 4rem;
+            text-align: right;
+            font-weight: var(--dui-font-weight-bold);
+        }
+    }
+
     .table {
-        display: table;
+        padding: var(--dui-spacing-small) 0;
         width: 100%;
 
         .table-item {
-            display: table-row;
+            display: flex;
+            align-items: center;
+            padding: var(--dui-spacing-small) var(--dui-spacing-large);
 
-            .project-count,
-            .project-title {
-                display: table-cell;
-                padding: var(--dui-spacing-small) var(--dui-spacing-small);
+            .title {
+                flex-grow: 1;
             }
 
-            .project-count {
+            .number-output {
+                flex-shrink: 0;
+                justify-content: flex-end;
+                width: 4rem;
                 text-align: right;
+                font-size: var(--dui-font-size-large);
+                font-weight: var(--dui-font-weight-bold);
             }
 
-            .project-title {
-                font-weight: var(--dui-font-weight-bold);
+            &:hover {
+                background-color: var(--dui-color-background-hover);
             }
         }
     }

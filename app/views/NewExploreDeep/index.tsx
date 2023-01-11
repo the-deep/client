@@ -25,14 +25,13 @@ import {
 import {
     IoPrint,
     IoClose,
-    IoLayers,
-    IoTimeSharp,
+    IoLayersOutline,
+    IoTimeOutline,
     IoListOutline,
     IoBarChartOutline,
-    IoGlobe,
-    IoDocument,
-    IoPerson,
-    IoWalk,
+    IoGlobeOutline,
+    IoDocumentOutline,
+    IoPersonOutline,
 } from 'react-icons/io5';
 import { useMutation, useQuery, gql } from '@apollo/client';
 
@@ -293,6 +292,7 @@ function NewExploreDeep(props: Props) {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 variant="secondary"
+                                spacing="compact"
                             >
                                 Download
                             </ButtonLikeLink>
@@ -454,46 +454,52 @@ function NewExploreDeep(props: Props) {
                 contentClassName={styles.content}
                 headerClassName={styles.header}
                 heading="Explore DEEP"
+                spacing="loose"
                 inlineHeadingDescription
-                headingDescription={!printPreviewMode ? (
-                    <DateDualRangeInput
-                        variant="general"
-                        fromName="fromDate"
-                        fromOnChange={setStartDate}
-                        fromValue={startDate}
-                        toName="toDate"
-                        toOnChange={setEndDate}
-                        toValue={endDate}
-                        label=""
-                    />
-                ) : (
-                    <Heading size="small">
+                headingDescriptionClassName={styles.headingDescription}
+                headingDescription={(
+                    <Heading
+                        className={styles.dateRangeOutput}
+                        size="small"
+                    >
                         {`(${startDate} - ${endDate})`}
                     </Heading>
                 )}
                 headerActions={!printPreviewMode && (
-                    <DropdownMenu
-                        label="Download"
-                    >
-                        <DropdownMenuItem
-                            name={undefined}
-                            onClick={handleImageExportClick}
+                    <>
+                        <DateDualRangeInput
+                            variant="general"
+                            fromName="fromDate"
+                            fromOnChange={setStartDate}
+                            fromValue={startDate}
+                            toName="toDate"
+                            toOnChange={setEndDate}
+                            toValue={endDate}
+                        />
+                        <DropdownMenu
+                            label="Download"
+                            disabled={!!exportIdToDownload}
                         >
-                            Image
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            name={undefined}
-                            onClick={handlePdfExportClick}
-                        >
-                            PDF
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            name={undefined}
-                            onClick={handleExcelExportClick}
-                        >
-                            Excel
-                        </DropdownMenuItem>
-                    </DropdownMenu>
+                            <DropdownMenuItem
+                                name={undefined}
+                                onClick={handleImageExportClick}
+                            >
+                                Image
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                name={undefined}
+                                onClick={handlePdfExportClick}
+                            >
+                                PDF
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                name={undefined}
+                                onClick={handleExcelExportClick}
+                            >
+                                Excel
+                            </DropdownMenuItem>
+                        </DropdownMenu>
+                    </>
                 )}
                 headerDescriptionClassName={styles.headerDescription}
                 headerDescription={(
@@ -503,16 +509,17 @@ function NewExploreDeep(props: Props) {
                                 <StatsInformationCard
                                     className={styles.infoCard}
                                     icon={(
-                                        <IoDocument />
+                                        <IoDocumentOutline />
                                     )}
                                     label="Projects"
                                     totalValue={data?.deepExploreStats?.totalProjects}
                                     variant="accent"
                                 />
+                                <div className={styles.separator} />
                                 <StatsInformationCard
                                     className={styles.infoCard}
                                     icon={(
-                                        <IoPerson />
+                                        <IoPersonOutline />
                                     )}
                                     label="Users"
                                     totalValue={data?.deepExploreStats?.totalRegisteredUsers}
@@ -521,7 +528,7 @@ function NewExploreDeep(props: Props) {
                                 <StatsInformationCard
                                     className={styles.infoCard}
                                     icon={(
-                                        <IoWalk />
+                                        <IoPersonOutline />
                                     )}
                                     label="Active Users"
                                     totalValue={data?.deepExploreStats?.totalActiveUsers}
@@ -532,16 +539,17 @@ function NewExploreDeep(props: Props) {
                                 <StatsInformationCard
                                     className={styles.infoCard}
                                     icon={(
-                                        <IoDocument />
+                                        <IoDocumentOutline />
                                     )}
                                     label="Sources"
                                     totalValue={data?.deepExploreStats?.totalLeads}
                                     variant="accent"
                                 />
+                                <div className={styles.separator} />
                                 <StatsInformationCard
                                     className={styles.infoCard}
                                     icon={(
-                                        <IoGlobe />
+                                        <IoGlobeOutline />
                                     )}
                                     label="Authors"
                                     totalValue={data?.deepExploreStats?.totalAuthors}
@@ -550,7 +558,7 @@ function NewExploreDeep(props: Props) {
                                 <StatsInformationCard
                                     className={styles.infoCard}
                                     icon={(
-                                        <IoGlobe />
+                                        <IoGlobeOutline />
                                     )}
                                     label="Publishers"
                                     totalValue={data?.deepExploreStats?.totalPublishers}
@@ -561,16 +569,17 @@ function NewExploreDeep(props: Props) {
                                 <StatsInformationCard
                                     className={styles.infoCard}
                                     icon={(
-                                        <IoLayers />
+                                        <IoLayersOutline />
                                     )}
                                     label="Entries"
                                     totalValue={data?.deepExploreStats?.totalEntries}
                                     variant="accent"
                                 />
+                                <div className={styles.separator} />
                                 <StatsInformationCard
                                     className={styles.infoCard}
                                     icon={(
-                                        <IoTimeSharp />
+                                        <IoTimeOutline />
                                     )}
                                     label="Added last week"
                                     // TODO: Get entries last week
@@ -588,15 +597,15 @@ function NewExploreDeep(props: Props) {
                     </>
                 )}
                 headingSize="large"
-                spacing="loose"
             >
                 {pending && <PendingMessage />}
                 {printPreviewMode ? (
                     <>
                         <Container
-                            className={styles.sectionContainer}
                             heading="Projects"
                             headingSize="small"
+                            headerClassName={styles.sectionHeader}
+                            spacing="none"
                         >
                             <ProjectContent
                                 timeseries={timeseriesData}
@@ -605,9 +614,10 @@ function NewExploreDeep(props: Props) {
                             />
                         </Container>
                         <Container
-                            className={styles.sectionContainer}
                             heading="Entries / Sources"
+                            headerClassName={styles.sectionHeader}
                             headingSize="small"
+                            spacing="none"
                         >
                             <EntriesContent />
                         </Container>
@@ -688,7 +698,7 @@ function NewExploreDeep(props: Props) {
                         className={styles.topTenCard}
                         data={data?.deepExploreStats?.topTenProjectEntries}
                         mode={representationType}
-                        label="Top Ten Frameworks"
+                        label="Top Ten Projects (Entries)"
                     />
                 </Container>
             </Container>

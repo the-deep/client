@@ -3,11 +3,11 @@ import {
     _cs,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
-import { IoClose } from 'react-icons/io5';
 import {
     TextInput,
     Container,
     Button,
+    InputLabel,
     Checkbox,
 } from '@the-deep/deep-ui';
 import {
@@ -230,7 +230,7 @@ function ProjectFilters(props: Props) {
             ) : (
                 <Container
                     className={styles.excludeContainer}
-                    heading="Exclude"
+                    heading={<InputLabel>Exclude</InputLabel>}
                     headingSize="extraSmall"
                     spacing="compact"
                     contentClassName={styles.excludeContent}
@@ -253,20 +253,21 @@ function ProjectFilters(props: Props) {
                 <>
                     <Button
                         name={undefined}
-                        onClick={handleSubmit}
-                        disabled={pristine}
-                        variant="transparent"
+                        disabled={isClearDisabled}
+                        onClick={handleClearFilters}
+                        variant="secondary"
+                        spacing="compact"
                     >
-                        Apply
+                        Clear
                     </Button>
                     <Button
                         name={undefined}
-                        disabled={isClearDisabled}
-                        onClick={handleClearFilters}
-                        actions={<IoClose />}
-                        variant="transparent"
+                        onClick={handleSubmit}
+                        disabled={pristine}
+                        variant="primary"
+                        spacing="compact"
                     >
-                        Clear
+                        Apply
                     </Button>
                 </>
             )}

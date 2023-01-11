@@ -203,6 +203,12 @@ function ExploreDeepTableView(props: Props) {
                 'Location',
                 (item) => item?.regions?.map((region) => region.title)?.join(', '),
             ),
+            createStringColumn<Project, string>(
+                'organizations',
+                'Organizations',
+                (item) => item?.organizations
+                    ?.map((org) => organizationTitleSelector(org.organization))?.join(', '),
+            ),
             createDateColumn<Project, string>(
                 'CREATED_AT',
                 'Created At',
@@ -231,21 +237,15 @@ function ExploreDeepTableView(props: Props) {
                     sortable: true,
                 },
             ),
-            createStringColumn<Project, string>(
-                'organizations',
-                'Organizations',
-                (item) => item?.organizations
-                    ?.map((org) => organizationTitleSelector(org.organization))?.join(', '),
-            ),
             actionsColumn,
         ]);
     }, [refetch]);
 
     return (
-        <>
+        <div className={_cs(styles.tableContainer, className)}>
             <SortContext.Provider value={sortState}>
                 <TableView
-                    className={_cs(className, styles.table)}
+                    className={styles.table}
                     columns={columns}
                     keySelector={projectKeySelector}
                     data={data?.projects?.results}
@@ -268,7 +268,7 @@ function ExploreDeepTableView(props: Props) {
                     />
                 )}
             />
-        </>
+        </div>
     );
 }
 
