@@ -106,7 +106,6 @@ function ProjectContent(props: Props) {
         projectsByRegion,
         readOnlyMode,
     } = props;
-    console.warn('i am here', projectsByRegion);
 
     const [activeView, setActiveView] = useState<'map' | 'table' | undefined>('map');
     const [resolution, setResolution] = React.useState<'year' | 'month' | 'day'>('day');
@@ -174,50 +173,54 @@ function ProjectContent(props: Props) {
 
     return (
         <div className={_cs(className, styles.projectContent)}>
-            <Tabs
-                // NOTE: Only showing map in readonly mode
-                value={readOnlyMode ? 'map' : activeView}
-                onChange={setActiveView}
-            >
-                {!readOnlyMode && (
-                    <TabList className={styles.tabs}>
-                        <Tab
-                            name="table"
-                            className={styles.tab}
-                            transparentBorder
-                        >
-                            <IoList />
-                        </Tab>
-                        <Tab
-                            name="map"
-                            className={styles.tab}
-                            transparentBorder
-                        >
-                            <IoMapOutline />
-                        </Tab>
-                    </TabList>
-                )}
-                <TabPanel name="table">
-                    <TableView
-                        filters={undefined}
-                    />
-                </TabPanel>
-                <TabPanel name="map">
-                    <MapView
-                        projects={projectsByRegion}
-                    />
-                </TabPanel>
-            </Tabs>
+            <div className={styles.mapAndTable}>
+                <Tabs
+                    // NOTE: Only showing map in readonly mode
+                    value={readOnlyMode ? 'map' : activeView}
+                    onChange={setActiveView}
+                >
+                    {!readOnlyMode && (
+                        <TabList className={styles.tabs}>
+                            <Tab
+                                name="table"
+                                className={styles.tab}
+                                transparentBorder
+                            >
+                                <IoList />
+                            </Tab>
+                            <Tab
+                                name="map"
+                                className={styles.tab}
+                                transparentBorder
+                            >
+                                <IoMapOutline />
+                            </Tab>
+                        </TabList>
+                    )}
+                    <TabPanel name="table">
+                        <TableView
+                            filters={undefined}
+                        />
+                    </TabPanel>
+                    <TabPanel name="map">
+                        <MapView
+                            projects={projectsByRegion}
+                        />
+                    </TabPanel>
+                </Tabs>
+            </div>
             <ContainerCard
                 className={styles.chartContainer}
                 heading="Newly Created Projects"
                 headingSize="extraSmall"
+                spacing="loose"
                 contentClassName={styles.content}
                 headerActions={(
                     <>
                         <SegmentInput
                             className={className}
                             name={undefined}
+                            spacing="compact"
                             onChange={setResolution}
                             options={resolutionOptions}
                             keySelector={resolutionKeySelector}
@@ -228,6 +231,7 @@ function ProjectContent(props: Props) {
                             className={className}
                             name={undefined}
                             onChange={setChartType}
+                            spacing="compact"
                             options={chartTypeOptions}
                             keySelector={chartTypeKeySelector}
                             labelSelector={chartTypeLabelSelector}
@@ -259,6 +263,7 @@ function ProjectContent(props: Props) {
                             minTickGap={20}
                             interval="preserveStartEnd"
                             padding={{ left: 10, right: 30 }}
+                            hide
                         />
                         <YAxis
                             axisLine={false}
@@ -266,6 +271,7 @@ function ProjectContent(props: Props) {
                             type="number"
                             dataKey="total"
                             padding={{ top: 0, bottom: 0 }}
+                            hide
                         />
                         <Tooltip
                             labelFormatter={timeFormatter}

@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     ContainerCard,
     ListView,
+    NumberOutput,
 } from '@the-deep/deep-ui';
 import {
     ResponsiveContainer,
@@ -18,17 +19,16 @@ import {
 import {
     organizationTitleSelector as organizationLabelSelector,
 } from '#components/selections/NewOrganizationMultiSelectInput';
+import BarLabel from '#components/charts/BarLabel';
 
 import styles from './styles.css';
 
 const chartMargins = {
-    top: 0,
-    bottom: 0,
-    right: 10,
-    left: 10,
+    top: 20,
+    bottom: 20,
+    right: 20,
+    left: 20,
 };
-
-const emptyTickFormatter = () => '';
 
 interface TableItemProps {
     title: string;
@@ -48,12 +48,14 @@ function TableItem(props: TableItemProps) {
             <div className={styles.title}>
                 {title}
             </div>
-            <div className={styles.projectCount}>
-                {`${projectCount ?? 0} projects`}
-            </div>
-            <div className={styles.sourceCount}>
-                {`${sourceCount ?? 0} sources`}
-            </div>
+            <NumberOutput
+                className={styles.numberOutput}
+                value={projectCount ?? 0}
+            />
+            <NumberOutput
+                className={styles.numberOutput}
+                value={sourceCount ?? 0}
+            />
         </div>
     );
 }
@@ -102,6 +104,15 @@ function TopTenAuthors(props: Props) {
             heading={label}
             borderBelowHeaderWidth="thin"
             headingSize="extraSmall"
+            spacing="none"
+            headerClassName={styles.header}
+            headerActionsContainerClassName={styles.headerActions}
+            headerActions={mode === 'table' && (
+                <>
+                    <div className={styles.tableHeader}>Entries</div>
+                    <div className={styles.tableHeader}>Projects</div>
+                </>
+            )}
             borderBelowHeader
         >
             {mode === 'table' && (
@@ -130,22 +141,26 @@ function TopTenAuthors(props: Props) {
                             dataKey="title"
                             type="category"
                             scale="band"
-                            tickFormatter={emptyTickFormatter}
+                            hide
                         />
-                        <Tooltip />
+                        <Tooltip
+                            isAnimationActive={false}
+                        />
                         <Legend verticalAlign="top" />
                         <Bar
                             label={false}
+                            isAnimationActive={false}
                             legendType="none"
                             name="Sources Count"
                             dataKey="sourceCount"
-                            barSize={16}
-                            fill="var(--dui-color-accent)"
-                            opacity="0.4"
+                            barSize={20}
+                            fill="var(--dui-color-brand)"
+                            opacity={0.2}
                         >
                             <LabelList
                                 dataKey="title"
                                 position="insideLeft"
+                                content={BarLabel}
                             />
                         </Bar>
                     </BarChart>
