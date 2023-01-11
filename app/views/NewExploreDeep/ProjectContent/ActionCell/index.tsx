@@ -110,6 +110,7 @@ function ActionCell(props: Props) {
                     onClick={showJoinModal}
                     variant={variant}
                     disabled={disabled}
+                    spacing="compact"
                 >
                     Join
                 </Button>
@@ -120,6 +121,7 @@ function ActionCell(props: Props) {
                     variant="secondary"
                     message="Are you sure you want to cancel your join request?"
                     disabled={disabled}
+                    spacing="compact"
                 >
                     Cancel Join
                 </ConfirmButton>
