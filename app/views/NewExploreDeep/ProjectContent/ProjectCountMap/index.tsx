@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import {
+    _cs,
     unique,
     isDefined,
 } from '@togglecorp/fujs';
@@ -76,7 +77,7 @@ interface ClusterProperties {
 interface Project {
     centroid?: unknown;
     id?: string;
-    projectsId?: null | undefined | string[];
+    projectIds?: null | undefined | string[];
 }
 
 interface Props {
@@ -84,22 +85,25 @@ interface Props {
     clusterClicked: boolean;
     onClusterClickedChange: React.Dispatch<React.SetStateAction<boolean>>;
     projects: Project[] | undefined | null;
+    className?: string;
 }
 
 function ExploreDeepMapView(props: Props) {
     const {
+        className,
         clusterClicked,
         onClusterClickedChange,
         onClickedFeaturePropertiesChange,
         projects,
     } = props;
+    console.warn('here', projects);
 
     const geoJson: GeoJSON.FeatureCollection<GeoJSON.Point> | undefined = useMemo(() => {
         if (!projects) {
             return undefined;
         }
         const projectFeatures = projects.map((projectByRegion) => (
-            projectByRegion.projectsId?.map((project) => ({
+            projectByRegion.projectIds?.map((project) => ({
                 id: project,
                 type: 'Feature' as const,
                 geometry: projectByRegion.centroid as GeoJSON.Point,
@@ -196,7 +200,7 @@ function ExploreDeepMapView(props: Props) {
             scaleControlShown={false}
             navControlShown={false}
         >
-            <MapContainer className={styles.map} />
+            <MapContainer className={_cs(className, styles.map)} />
             <MapSource
                 sourceKey="region"
                 sourceOptions={sourceOptions}
