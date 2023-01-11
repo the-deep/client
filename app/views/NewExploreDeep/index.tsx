@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import {
     _cs,
     formatDateToString,
@@ -6,6 +6,8 @@ import {
 } from '@togglecorp/fujs';
 import {
     Card,
+    useAlert,
+    AlertContext,
     Element,
     Heading,
     Container,
@@ -18,6 +20,7 @@ import {
     Tab,
     TabPanel,
     Tabs,
+    ButtonLikeLink,
 } from '@the-deep/deep-ui';
 import {
     IoPrint,
@@ -31,12 +34,16 @@ import {
     IoPerson,
     IoWalk,
 } from 'react-icons/io5';
-import { useQuery, gql } from '@apollo/client';
+import { useMutation, useQuery, gql } from '@apollo/client';
 
 import StatsInformationCard from '#components/StatsInformationCard';
 import {
     ExploreDeepStatsQuery,
     ExploreDeepStatsQueryVariables,
+    GenericExportCreateMutation,
+    GenericExportCreateMutationVariables,
+    GenericExportQuery,
+    GenericExportQueryVariables,
 } from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
 
@@ -51,6 +58,7 @@ import TopTenProjectsByEntries from './TopTenProjectsByEntries';
 import styles from './styles.css';
 
 const DEEP_START_DATE = '2018-01-01';
+const DOWNLOAD_ALERT_NAME = 'generic-export-download';
 
 const EXPLORE_DEEP_STATS = gql`
 query ExploreDeepStats(
@@ -124,6 +132,61 @@ query ExploreDeepStats(
     }
 }`;
 
+const GENERIC_EXPORT = gql`
+    query GenericExport(
+        $id: ID!,
+    ) {
+        genericExport(id: $id) {
+            id
+            status
+            fileDownloadUrl
+        }
+    }
+`;
+
+const GENERIC_EXPORT_CREATE = gql`
+    mutation GenericExportCreate(
+        $dateFrom: DateTime!,
+        $dateTo: DateTime!,
+        # FIXME: Enable this
+        # $includeEntryLessThan: Boolean,
+        $isTest: Boolean,
+        $organizations: [ID!],
+        $regions: [ID!],
+        $search: String,
+    ) {
+        genericExportCreate(data: {
+            filters: {
+                entry: {
+                    createdAtGte: $dateFrom,
+                    createdAtLte: $dateTo,
+                },
+                lead: {
+                    createdAtGte: $dateFrom,
+                    createdAtLte: $dateTo,
+                },
+                project: {
+                    createdAtGte: $dateFrom,
+                    createdAtLte: $dateTo,
+                    organizations: $organizations,
+                    regions: $regions,
+                    search: $search,
+                    isTest: $isTest,
+                },
+            },
+            format: CSV,
+            type: PROJECTS_STATS,
+        }) {
+            ok
+            errors
+            result {
+                id
+                status
+            }
+        }
+    }
+`;
+
 interface Option {
     key: 'table' | 'chart';
     label: React.ReactNode;
@@ -154,12 +217,22 @@ function NewExploreDeep(props: Props) {
         className,
     } = props;
 
+    const {
+        addAlert,
+        removeAlert,
+        updateAlertContent,
+    } = useContext(AlertContext);
+
     const [
         startDate = DEEP_START_DATE,
         setStartDate,
     ] = useState<string | undefined>(DEEP_START_DATE);
     const [endDate, setEndDate] = useState<string | undefined>(todaysDate);
     const [filters, setFilters] = useState<FormType | undefined>(undefined);
+    const [
+        exportIdToDownload,
+        setExportIdToDownload,
+    ] = useState<string | undefined>();
     const [representationType, setRepresentationType] = useState<Option['key']>('table');
     const [
         printPreviewMode,
@@ -177,6 +250,7 @@ function NewExploreDeep(props: Props) {
         includeEntryLessThan: !filters?.excludeProjectsLessThan,
     }), [filters, startDate, endDate]);
 
+    const alert = useAlert();
     const {
         data,
         loading: pending,
@@ -187,9 +261,116 @@ function NewExploreDeep(props: Props) {
         },
     );
 
+    const {
+        data: genericExportData,
+        loading: pendingGenericExport,
+        startPolling,
+        stopPolling,
+    } = useQuery<GenericExportQuery, GenericExportQueryVariables>(
+        GENERIC_EXPORT,
+        {
+            skip: !exportIdToDownload,
+            variables: exportIdToDownload ? {
+                id: exportIdToDownload,
+            } : undefined,
+            onCompleted: (response) => {
+                if (!response) {
+                    setExportIdToDownload(undefined);
+                    removeAlert(DOWNLOAD_ALERT_NAME);
+                    setExportIdToDownload(undefined);
+                    alert.show(
+                        'There was an issue creating the export.',
+                        { variant: 'error' },
+                    );
+                }
+                if (response?.genericExport?.status === 'SUCCESS') {
+                    setExportIdToDownload(undefined);
+                    updateAlertContent(DOWNLOAD_ALERT_NAME, (
+                        <div className={styles.exportNotificationBody}>
+                            Export successfully created
+                            <ButtonLikeLink
+                                to={response?.genericExport?.fileDownloadUrl ?? ''}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                variant="secondary"
+                            >
+                                Download
+                            </ButtonLikeLink>
+                        </div>
+                    ));
+                } else if (response?.genericExport?.status === 'FAILURE') {
+                    removeAlert(DOWNLOAD_ALERT_NAME);
+                    setExportIdToDownload(undefined);
+                    alert.show(
+                        'There was an issue creating the export.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+        },
+    );
+
+    const [
+        createExport,
+        { loading },
+    ] = useMutation<GenericExportCreateMutation, GenericExportCreateMutationVariables>(
+        GENERIC_EXPORT_CREATE,
+        {
+            onCompleted: (response) => {
+                if (!response?.genericExportCreate || !response?.genericExportCreate?.ok) {
+                    alert.show(
+                        'There was an issue creating the export.',
+                        { variant: 'error' },
+                    );
+                    setExportIdToDownload(undefined);
+                }
+                if (
+                    response?.genericExportCreate?.ok
+                    && response?.genericExportCreate?.result?.id
+                ) {
+                    setExportIdToDownload(response.genericExportCreate.result.id);
+                    addAlert({
+                        variant: 'info',
+                        duration: Infinity,
+                        name: DOWNLOAD_ALERT_NAME,
+                        children: 'Please wait while the export is being prepared.',
+                    });
+                }
+            },
+            onError: (gqlError) => {
+                console.warn('here', gqlError);
+                setExportIdToDownload(undefined);
+            },
+        },
+    );
+
+    useEffect(
+        () => {
+            const shouldPoll = exportIdToDownload
+                && genericExportData?.genericExport?.status !== 'SUCCESS'
+                && genericExportData?.genericExport?.status !== 'FAILURE';
+
+            if (shouldPoll) {
+                startPolling(5000);
+            } else {
+                stopPolling();
+            }
+        },
+        [
+            removeAlert,
+            exportIdToDownload,
+            genericExportData,
+            startPolling,
+            stopPolling,
+        ],
+    );
+
     const handleImageExportClick = useCallback(() => {
-        console.warn('jpeg export clicked');
-    }, []);
+        // FIXME: Implement JPEG Export
+        showPrintPreview();
+    }, [
+        showPrintPreview,
+    ]);
 
     const handlePdfExportClick = useCallback(() => {
         showPrintPreview();
@@ -198,8 +379,23 @@ function NewExploreDeep(props: Props) {
     ]);
 
     const handleExcelExportClick = useCallback(() => {
-        console.warn('excel export clicked');
-    }, []);
+        createExport({
+            variables: {
+                dateFrom: new Date(startDate),
+                dateTo: new Date(endDate ?? todaysDate),
+                search: filters?.search,
+                isTest: filters?.excludeTestProject ? false : undefined,
+                organizations: filters?.organizations,
+                regions: filters?.regions,
+                includeEntryLessThan: !filters?.excludeProjectsLessThan,
+            },
+        });
+    }, [
+        startDate,
+        endDate,
+        filters,
+        createExport,
+    ]);
 
     // FIXME: Remove this after fixed in server
     const timeseriesData = useMemo(() => (
@@ -282,7 +478,6 @@ function NewExploreDeep(props: Props) {
                         <DropdownMenuItem
                             name={undefined}
                             onClick={handleImageExportClick}
-                            disabled
                         >
                             Image
                         </DropdownMenuItem>
@@ -295,7 +490,6 @@ function NewExploreDeep(props: Props) {
                         <DropdownMenuItem
                             name={undefined}
                             onClick={handleExcelExportClick}
-                            disabled
                         >
                             Excel
                         </DropdownMenuItem>
