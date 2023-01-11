@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     ContainerCard,
     ListView,
+    NumberOutput,
 } from '@the-deep/deep-ui';
 import {
     ResponsiveContainer,
@@ -14,17 +15,16 @@ import {
     LabelList,
     Legend,
 } from 'recharts';
+import BarLabel from '#components/charts/BarLabel';
 
 import styles from './styles.css';
 
 const chartMargins = {
-    top: 0,
-    bottom: 0,
-    right: 10,
-    left: 10,
+    top: 20,
+    bottom: 20,
+    right: 20,
+    left: 20,
 };
-
-const emptyTickFormatter = () => '';
 
 interface TableItemProps {
     projectTitle: string | undefined;
@@ -41,15 +41,17 @@ function TableItem(props: TableItemProps) {
 
     return (
         <div className={styles.tableItem}>
-            <div className={styles.projectTitle}>
+            <div className={styles.title}>
                 {projectTitle}
             </div>
-            <div className={styles.count}>
-                {`${entryCount ?? 0} entries`}
-            </div>
-            <div className={styles.count}>
-                {`${sourceCount ?? 0} sources`}
-            </div>
+            <NumberOutput
+                className={styles.numberOutput}
+                value={entryCount ?? 0}
+            />
+            <NumberOutput
+                className={styles.numberOutput}
+                value={sourceCount ?? 0}
+            />
         </div>
     );
 }
@@ -94,6 +96,15 @@ function TopTenProjectByEntries(props: Props) {
             heading={label}
             borderBelowHeaderWidth="thin"
             headingSize="extraSmall"
+            spacing="none"
+            headerClassName={styles.header}
+            headerActionsContainerClassName={styles.headerActions}
+            headerActions={mode === 'table' && (
+                <>
+                    <div className={styles.tableHeader}>Entries</div>
+                    <div className={styles.tableHeader}>Sources</div>
+                </>
+            )}
             borderBelowHeader
         >
             {mode === 'table' && (
@@ -122,22 +133,25 @@ function TopTenProjectByEntries(props: Props) {
                             dataKey="projectTitle"
                             type="category"
                             scale="band"
-                            tickFormatter={emptyTickFormatter}
+                            hide
                         />
-                        <Tooltip />
+                        <Tooltip
+                            isAnimationActive={false}
+                        />
                         <Legend verticalAlign="top" />
                         <Bar
                             label={false}
                             legendType="none"
                             name="Entries Count"
                             dataKey="entryCount"
-                            barSize={16}
-                            fill="var(--dui-color-accent)"
-                            opacity="0.4"
+                            barSize={20}
+                            fill="var(--dui-color-brand)"
+                            opacity={0.2}
                         >
                             <LabelList
                                 dataKey="projectTitle"
                                 position="insideLeft"
+                                content={BarLabel}
                             />
                         </Bar>
                     </BarChart>
