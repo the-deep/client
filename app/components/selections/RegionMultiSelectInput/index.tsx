@@ -32,8 +32,8 @@ const REGIONS = gql`
 
 export type BasicRegion = NonNullable<NonNullable<NonNullable<RegionsQuery['regions']>['results']>[number]>;
 
-const keySelector = (d: BasicRegion) => d.id;
-const labelSelector = (d: BasicRegion) => d.title;
+export const keySelector = (d: BasicRegion) => d.id;
+export const labelSelector = (d: BasicRegion) => d.title;
 
 type Def = { containerClassName?: string;}
 type RegionMultiSelectInputProps<K extends string, GK extends string> = SearchMultiSelectInputProps<

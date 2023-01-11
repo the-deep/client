@@ -14,6 +14,7 @@ N extends string | number | undefined
     toValue?: string;
     onDismissFromValue: (value: undefined, name: K) => void;
     onDismissToValue: (value: undefined, name: N) => void;
+    readOnly?: boolean;
 }
 
 function DismissableDateRangeOutput<
@@ -30,6 +31,7 @@ N extends string | number | undefined
         toValue,
         onDismissFromValue,
         onDismissToValue,
+        readOnly,
     } = props;
 
     const handleDismiss = React.useCallback(() => {
@@ -48,6 +50,7 @@ N extends string | number | undefined
             label={label}
             name={fromName}
             onDismiss={handleDismiss}
+            readOnly={readOnly}
         >
             {content}
         </DismissableTag>

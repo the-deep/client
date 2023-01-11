@@ -15,9 +15,9 @@ import {
 import SourcesFilterContext from '#components/leadFilters/SourcesFilterContext';
 import { PartialEntriesFilterDataType } from '#components/leadFilters/SourcesFilter/schema';
 
-import DismissableListOutput from '../../DismissableListOutput';
-import DismissableTextOutput from '../../DismissableTextOutput';
-import DismissableTag from '../../DismissableTag';
+import DismissableListOutput from '#components/input/DismissableListOutput';
+import DismissableTextOutput from '#components/input/DismissableTextOutput';
+import DismissableTag from '#components/input/DismissableTag';
 
 const filterKeySelector = (d: KeyLabel) => d.key;
 const filterLabelSelector = (d: KeyLabel) => d.label;

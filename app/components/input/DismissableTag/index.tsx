@@ -11,8 +11,9 @@ import styles from './styles.css';
 
 interface DismissableTagProps<T> extends TagProps {
     label?: React.ReactNode;
-    name: T,
+    name: T;
     onDismiss: (value: undefined, name: T) => void;
+    readOnly?: boolean;
 }
 
 function DismissableTag<T>(props: DismissableTagProps<T>) {
@@ -22,6 +23,7 @@ function DismissableTag<T>(props: DismissableTagProps<T>) {
         className,
         onDismiss,
         actions,
+        readOnly,
         ...otherProps
     } = props;
 
@@ -40,13 +42,15 @@ function DismissableTag<T>(props: DismissableTagProps<T>) {
                 actions={(
                     <>
                         {actions}
-                        <Button
-                            name={name}
-                            onClick={handleDismiss}
-                            variant="action"
-                        >
-                            <IoClose />
-                        </Button>
+                        {!readOnly && (
+                            <Button
+                                name={name}
+                                onClick={handleDismiss}
+                                variant="action"
+                            >
+                                <IoClose />
+                            </Button>
+                        )}
                     </>
                 )}
             />
