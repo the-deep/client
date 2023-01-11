@@ -15,16 +15,23 @@ import {
     useForm,
 } from '@togglecorp/toggle-form';
 
+import DismissableTextOutput from '#components/input/DismissableTextOutput';
+import DismissableListOutput from '#components/input/DismissableListOutput';
+import DismissableBooleanOutput from '#components/input/DismissableBooleanOutput';
 import PublicOrganizationMultiSelectInput, {
     BasicOrganization,
-} from '#components/selections/PublicOrganizationMultiSelectInput';
-
+    keySelector as organizationKeySelector,
+    organizationTitleSelector as organizationLabelSelector,
+} from '#components/selections/NewOrganizationMultiSelectInput';
 import PublicFrameworkMultiSelectInput, {
     AnalysisFramework,
+    keySelector as frameworkKeySelector,
+    labelSelector as frameworkLabelSelector,
 } from '#components/selections/PublicFrameworkMultiSelectInput';
-
 import RegionMultiSelectInput, {
     BasicRegion,
+    keySelector as regionKeySelector,
+    labelSelector as regionLabelSelector,
 } from '#components/selections/RegionMultiSelectInput';
 
 import styles from './styles.css';
@@ -54,6 +61,7 @@ interface Props {
     className?: string;
     initialValue: FormType | undefined;
     onFiltersChange: (filters: FormType | undefined) => void;
+    readOnlyMode: boolean;
 }
 
 function ProjectFilters(props: Props) {
@@ -61,11 +69,14 @@ function ProjectFilters(props: Props) {
         className,
         onFiltersChange,
         initialValue,
+        readOnlyMode,
     } = props;
 
     const {
         pristine,
+        setPristine,
         value,
+        setValue,
         setFieldValue,
     } = useForm(schema, initialValue ?? {});
 
@@ -77,7 +88,13 @@ function ProjectFilters(props: Props) {
 
     const handleClearFilters = useCallback(() => {
         onFiltersChange({});
-    }, [onFiltersChange]);
+        setPristine(true);
+        setValue({});
+    }, [
+        setPristine,
+        onFiltersChange,
+        setValue,
+    ]);
 
     const [
         organizationOptions,
@@ -95,83 +112,164 @@ function ProjectFilters(props: Props) {
     ] = useState<BasicRegion[] | undefined | null>();
 
     const handleSubmit = useCallback(() => {
+        setPristine(true);
         onFiltersChange(value);
-    }, [onFiltersChange, value]);
+    }, [
+        onFiltersChange,
+        value,
+        setPristine,
+    ]);
 
     return (
         <div className={_cs(styles.projectFilters, className)}>
-            <TextInput
-                name="search"
-                label="Search"
-                value={value?.search}
-                onChange={setFieldValue}
-                placeholder="any"
-            />
-            <PublicOrganizationMultiSelectInput
-                name="organizations"
-                label="Organizations"
-                value={value?.organizations}
-                onChange={setFieldValue}
-                options={organizationOptions}
-                onOptionsChange={setOrganizationOptions}
-                placeholder="any"
-            />
-            <PublicFrameworkMultiSelectInput
-                name="analysisFrameworks"
-                label="Analysis Frameworks"
-                placeholder="any"
-                value={value?.analysisFrameworks}
-                onChange={setFieldValue}
-                options={analysisFrameworkOptions}
-                onOptionsChange={setAnalysisFrameworkOptions}
-            />
-            <RegionMultiSelectInput
-                name="regions"
-                label="Location"
-                placeholder="any"
-                value={value?.regions}
-                onChange={setFieldValue}
-                options={regionOptions}
-                onOptionsChange={setRegionOptions}
-                publicRegions
-            />
-            <Container
-                className={styles.excludeContainer}
-                heading="Exclude"
-                headingSize="extraSmall"
-                spacing="compact"
-                contentClassName={styles.excludeContent}
-            >
-                <Checkbox
-                    name="excludeTestProject"
-                    label="Test Project"
-                    value={value?.excludeTestProject}
-                    onChange={setFieldValue}
+            {readOnlyMode ? (
+                <DismissableTextOutput
+                    name="search"
+                    label="Search"
+                    value={value?.search}
+                    onDismiss={setFieldValue}
+                    readOnly
                 />
-                <Checkbox
-                    name="excludeProjectsLessThan"
-                    label="Projects < 100 entries"
-                    value={value?.excludeProjectsLessThan}
+            ) : (
+                <TextInput
+                    name="search"
+                    label="Search"
+                    value={value?.search}
                     onChange={setFieldValue}
+                    placeholder="any"
                 />
-            </Container>
-            <Button
-                name={undefined}
-                onClick={handleSubmit}
-                disabled={pristine}
-                variant="transparent"
-            >
-                Apply
-            </Button>
-            <Button
-                name={undefined}
-                disabled={isClearDisabled}
-                onClick={handleClearFilters}
-                actions={<IoClose />}
-                variant="transparent"
-            >
-                Clear
-            </Button>
+            )}
+            {readOnlyMode ? (
+                <DismissableListOutput
+                    name="organizations"
+                    label="Organizations"
+                    value={value?.organizations}
+                    onDismiss={setFieldValue}
+                    options={organizationOptions}
+                    labelSelector={organizationLabelSelector}
+                    keySelector={organizationKeySelector}
+                    readOnly
+                />
+            ) : (
+                <PublicOrganizationMultiSelectInput
+                    name="organizations"
+                    label="Organizations"
+                    value={value?.organizations}
+                    onChange={setFieldValue}
+                    options={organizationOptions}
+                    onOptionsChange={setOrganizationOptions}
+                    placeholder="any"
+                />
+            )}
+            {readOnlyMode ? (
+                <DismissableListOutput
+                    name="analysisFrameworks"
+                    label="Organizations"
+                    value={value?.analysisFrameworks}
+                    onDismiss={setFieldValue}
+                    options={analysisFrameworkOptions}
+                    keySelector={frameworkKeySelector}
+                    labelSelector={frameworkLabelSelector}
+                    readOnly
+                />
+            ) : (
+                <PublicFrameworkMultiSelectInput
+                    name="analysisFrameworks"
+                    label="Analysis Frameworks"
+                    placeholder="any"
+                    value={value?.analysisFrameworks}
+                    onChange={setFieldValue}
+                    options={analysisFrameworkOptions}
+                    onOptionsChange={setAnalysisFrameworkOptions}
+                />
+            )}
+            {readOnlyMode ? (
+                <DismissableListOutput
+                    name="regions"
+                    label="Regions"
+                    value={value?.regions}
+                    onDismiss={setFieldValue}
+                    options={regionOptions}
+                    keySelector={regionKeySelector}
+                    labelSelector={regionLabelSelector}
+                    readOnly
+                />
+            ) : (
+                <RegionMultiSelectInput
+                    name="regions"
+                    label="Location"
+                    placeholder="any"
+                    value={value?.regions}
+                    onChange={setFieldValue}
+                    options={regionOptions}
+                    onOptionsChange={setRegionOptions}
+                    publicRegions
+                />
+            )}
+            {readOnlyMode ? (
+                <>
+                    <DismissableBooleanOutput
+                        label=""
+                        name="excludeTestProject"
+                        onDismiss={setFieldValue}
+                        trueLabel="Test projects excluded"
+                        falseLabel="Test projects included"
+                        value={value.excludeTestProject ?? false}
+                        readOnly
+                    />
+                    <DismissableBooleanOutput
+                        label=""
+                        name="excludeProjectsLessThan"
+                        onDismiss={setFieldValue}
+                        trueLabel="Projects less than 100 projects excluded"
+                        falseLabel="Projects less than 100 projects included"
+                        value={value.excludeProjectsLessThan ?? false}
+                        readOnly
+                    />
+                </>
+            ) : (
+                <Container
+                    className={styles.excludeContainer}
+                    heading="Exclude"
+                    headingSize="extraSmall"
+                    spacing="compact"
+                    contentClassName={styles.excludeContent}
+                >
+                    <Checkbox
+                        name="excludeTestProject"
+                        label="Test Project"
+                        value={value?.excludeTestProject}
+                        onChange={setFieldValue}
+                    />
+                    <Checkbox
+                        name="excludeProjectsLessThan"
+                        label="Projects < 100 entries"
+                        value={value?.excludeProjectsLessThan}
+                        onChange={setFieldValue}
+                    />
+                </Container>
+            )}
+            {!readOnlyMode && (
+                <>
+                    <Button
+                        name={undefined}
+                        onClick={handleSubmit}
+                        disabled={pristine}
+                        variant="transparent"
+                    >
+                        Apply
+                    </Button>
+                    <Button
+                        name={undefined}
+                        disabled={isClearDisabled}
+                        onClick={handleClearFilters}
+                        actions={<IoClose />}
+                        variant="transparent"
+                    >
+                        Clear
+                    </Button>
+                </>
+            )}
         </div>
     );
 }

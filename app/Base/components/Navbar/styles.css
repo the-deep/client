@@ -82,6 +82,10 @@
             --size: 1.8rem;
         }
     }
+
+    @media print {
+        display: none;
+    }
 }
 
 .popup {

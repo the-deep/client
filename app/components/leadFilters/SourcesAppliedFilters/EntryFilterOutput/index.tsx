@@ -20,11 +20,12 @@ import {
     enumLabelSelector,
 } from '#utils/common';
 
+import DismissableBooleanOutput from '#components/input/DismissableBooleanOutput';
+import DismissableDateRangeOutput from '#components/input/DismissableDateRangeOutput';
+import DismissableListOutput from '#components/input/DismissableListOutput';
+import DismissableTextOutput from '#components/input/DismissableTextOutput';
+
 import FrameworkFilterOutput from './FrameworkFilterOutput';
-import DismissableBooleanOutput from '../DismissableBooleanOutput';
-import DismissableDateRangeOutput from '../DismissableDateRangeOutput';
-import DismissableListOutput from '../DismissableListOutput';
-import DismissableTextOutput from '../DismissableTextOutput';
 
 import { FrameworkFilterType } from '#types/newAnalyticalFramework';
 

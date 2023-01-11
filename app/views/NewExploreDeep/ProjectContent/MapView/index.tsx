@@ -1,38 +1,15 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
-import {
-    PendingMessage,
-} from '@the-deep/deep-ui';
 
 import {
-    PublicProjectsByRegionQuery,
-    PublicProjectsByRegionQueryVariables,
     PublicProjectDetailsForMapViewQuery,
     PublicProjectDetailsForMapViewQueryVariables,
-    ProjectListQueryVariables,
 } from '#generated/types';
-import { convertDateToIsoDateTime } from '#utils/common';
 
 import ProjectCountMap from '../ProjectCountMap';
 import ProjectList from './ProjectList';
 import styles from './styles.css';
-
-const PROJECT_LIST = gql`
-    query PublicProjectsByRegion(
-        $projectFilter: RegionProjectFilterData,
-    ) {
-        publicProjectsByRegion(
-            projectFilter: $projectFilter,
-        ) {
-            results {
-                centroid
-                id
-                projectsId
-            }
-        }
-    }
-`;
 
 const PROJECT_DETAILS = gql`
     query PublicProjectDetailsForMapView(
@@ -63,38 +40,28 @@ const PROJECT_DETAILS = gql`
     }
 `;
 
-export type Project = NonNullable<NonNullable<NonNullable<PublicProjectsByRegionQuery['publicProjectsByRegion']>['results']>[number]>;
+export type Projects = {
+    id: string;
+    /*
+    centroid?: {
+        type: 'point';
+        coordinates: [number, number];
+    };
+    */
+    centroid?: unknown;
+    projectIds: string[] | undefined | null;
+};
 
 interface Props {
     className?: string;
-    filters: ProjectListQueryVariables | undefined;
+    projects: Projects[] | undefined;
 }
 
 function ExploreDeepMapView(props: Props) {
     const {
         className,
-        filters,
+        projects,
     } = props;
-
-    // FIXME: rename startDate to createdAtGte
-    // FIXME: rename endDate to createdAtLte
-    const variables = useMemo(() => ({
-        projectFilter: {
-            ...filters,
-            startDate: convertDateToIsoDateTime(filters?.startDate),
-            endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
-        },
-    }), [filters]);
-
-    const {
-        data,
-        loading,
-    } = useQuery<PublicProjectsByRegionQuery, PublicProjectsByRegionQueryVariables>(
-        PROJECT_LIST,
-        {
-            variables,
-        },
-    );
 
     const [clickedFeatureProperties, setClickedFeatureProperties] = useState<string[]>([]);
     const [clusterClicked, setClusterClicked] = useState(false);
@@ -145,12 +112,12 @@ function ExploreDeepMapView(props: Props) {
                     totalCount={projectDetails?.publicProjects?.totalCount ?? 0}
                 />
             )}
-            {loading && (<PendingMessage />)}
             <ProjectCountMap
+                className={styles.map}
                 clusterClicked={clusterClicked}
                 onClusterClickedChange={setClusterClicked}
                 onClickedFeaturePropertiesChange={handleClusterClick}
-                projects={data?.publicProjectsByRegion?.results}
+                projects={projects}
             />
         </div>
     );

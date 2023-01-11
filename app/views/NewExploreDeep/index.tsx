@@ -2,10 +2,14 @@ import React, { useMemo, useState, useCallback } from 'react';
 import {
     _cs,
     formatDateToString,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     Card,
+    Element,
+    Heading,
     Container,
+    Button,
     PendingMessage,
     SegmentInput,
     DateDualRangeInput,
@@ -16,6 +20,8 @@ import {
     Tabs,
 } from '@the-deep/deep-ui';
 import {
+    IoPrint,
+    IoClose,
     IoLayers,
     IoTimeSharp,
     IoListOutline,
@@ -32,6 +38,7 @@ import {
     ExploreDeepStatsQuery,
     ExploreDeepStatsQueryVariables,
 } from '#generated/types';
+import { useModalState } from '#hooks/stateManagement';
 
 import ProjectFilters, { FormType } from './ProjectFilters';
 import ProjectContent from './ProjectContent';
@@ -50,7 +57,7 @@ query ExploreDeepStats(
     $dateFrom: Date!,
     $dateTo: Date!,
     $includeEntryLessThan: Boolean,
-    $includeTestProject: Boolean,
+    $isTest: Boolean,
     $organizations: [ID!],
     $regions: [ID!],
     $search: String,
@@ -61,7 +68,7 @@ query ExploreDeepStats(
             dateTo: $dateTo,
             project: {
                 includeEntryLessThan: $includeEntryLessThan,
-                includeTestProject: $includeTestProject,
+                isTest: $isTest,
                 organizations: $organizations,
                 regions: $regions,
                 search: $search,
@@ -88,7 +95,7 @@ query ExploreDeepStats(
         projectByRegion {
             id
             centroid
-            projectsId
+            projectIds
         }
         topTenFrameworks {
             analysisFrameworkId
@@ -154,12 +161,17 @@ function NewExploreDeep(props: Props) {
     const [endDate, setEndDate] = useState<string | undefined>(todaysDate);
     const [filters, setFilters] = useState<FormType | undefined>(undefined);
     const [representationType, setRepresentationType] = useState<Option['key']>('table');
+    const [
+        printPreviewMode,
+        showPrintPreview,
+        hidePrintPreview,
+    ] = useModalState(false);
 
     const variables: ExploreDeepStatsQueryVariables = useMemo(() => ({
         dateFrom: startDate,
         dateTo: endDate ?? todaysDate,
         search: filters?.search,
-        includeTestProject: !filters?.excludeTestProject,
+        isTest: filters?.excludeTestProject ? false : undefined,
         organizations: filters?.organizations,
         regions: filters?.regions,
         includeEntryLessThan: !filters?.excludeProjectsLessThan,
@@ -180,8 +192,10 @@ function NewExploreDeep(props: Props) {
     }, []);
 
     const handlePdfExportClick = useCallback(() => {
-        console.warn('pdf export clicked');
-    }, []);
+        showPrintPreview();
+    }, [
+        showPrintPreview,
+    ]);
 
     const handleExcelExportClick = useCallback(() => {
         console.warn('excel export clicked');
@@ -195,177 +209,251 @@ function NewExploreDeep(props: Props) {
         }))
     ), [data?.deepExploreStats?.projectAggregationDaily]);
 
+    // FIXME: Remove this after fixed in server
+    const projectsByRegion = useMemo(() => (
+        data?.deepExploreStats?.projectByRegion
+            ?.filter(isDefined) ?? undefined
+    ), [data?.deepExploreStats?.projectByRegion]);
+
+    const handlePrintClick = useCallback(() => {
+        window.print();
+    }, []);
+
     return (
-        <Container
-            className={_cs(styles.exploreDeep, className)}
-            contentClassName={styles.content}
-            headerClassName={styles.header}
-            heading="Explore DEEP"
-            inlineHeadingDescription
-            headingDescription={(
-                <DateDualRangeInput
-                    variant="general"
-                    fromName="fromDate"
-                    fromOnChange={setStartDate}
-                    fromValue={startDate}
-                    toName="toDate"
-                    toOnChange={setEndDate}
-                    toValue={endDate}
-                    label=""
-                />
-            )}
-            headerActions={(
-                <DropdownMenu
-                    label="Download"
+        <>
+            {printPreviewMode && (
+                <Element
+                    icons={<Heading size="small">Print Preview</Heading>}
+                    className={styles.printPreviewBar}
+                    actions={(
+                        <>
+                            <Button
+                                name={undefined}
+                                variant="secondary"
+                                icons={<IoClose />}
+                                onClick={hidePrintPreview}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                name={undefined}
+                                variant="primary"
+                                icons={<IoPrint />}
+                                onClick={handlePrintClick}
+                            >
+                                Print
+                            </Button>
+                        </>
+                    )}
                 >
-                    <DropdownMenuItem
-                        name={undefined}
-                        onClick={handleImageExportClick}
-                        disabled
-                    >
-                        Image
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        name={undefined}
-                        onClick={handlePdfExportClick}
-                        disabled
-                    >
-                        PDF
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        name={undefined}
-                        onClick={handleExcelExportClick}
-                        disabled
-                    >
-                        Excel
-                    </DropdownMenuItem>
-                </DropdownMenu>
+                    Please update scale of printing to fit your needs.
+                </Element>
             )}
-            headerDescriptionClassName={styles.headerDescription}
-            headerDescription={(
-                <>
-                    <div className={styles.statsContainer}>
-                        <Card className={_cs(styles.statCard, styles.projectStatsCard)}>
-                            <StatsInformationCard
-                                className={styles.infoCard}
-                                icon={(
-                                    <IoDocument />
-                                )}
-                                label="Projects"
-                                totalValue={data?.deepExploreStats?.totalProjects}
-                                variant="accent"
-                            />
-                            <StatsInformationCard
-                                className={styles.infoCard}
-                                icon={(
-                                    <IoPerson />
-                                )}
-                                label="Users"
-                                totalValue={data?.deepExploreStats?.totalRegisteredUsers}
-                                variant="accent"
-                            />
-                            <StatsInformationCard
-                                className={styles.infoCard}
-                                icon={(
-                                    <IoWalk />
-                                )}
-                                label="Active Users"
-                                totalValue={data?.deepExploreStats?.totalActiveUsers}
-                                variant="accent"
-                            />
-                        </Card>
-                        <Card className={_cs(styles.statCard, styles.sourceStatsCard)}>
-                            <StatsInformationCard
-                                className={styles.infoCard}
-                                icon={(
-                                    <IoDocument />
-                                )}
-                                label="Sources"
-                                totalValue={data?.deepExploreStats?.totalLeads}
-                                variant="accent"
-                            />
-                            <StatsInformationCard
-                                className={styles.infoCard}
-                                icon={(
-                                    <IoGlobe />
-                                )}
-                                label="Authors"
-                                totalValue={data?.deepExploreStats?.totalAuthors}
-                                variant="accent"
-                            />
-                            <StatsInformationCard
-                                className={styles.infoCard}
-                                icon={(
-                                    <IoGlobe />
-                                )}
-                                label="Publishers"
-                                totalValue={data?.deepExploreStats?.totalPublishers}
-                                variant="accent"
-                            />
-                        </Card>
-                        <Card className={_cs(styles.statCard, styles.entryStatsCard)}>
-                            <StatsInformationCard
-                                className={styles.infoCard}
-                                icon={(
-                                    <IoLayers />
-                                )}
-                                label="Entries"
-                                totalValue={data?.deepExploreStats?.totalEntries}
-                                variant="accent"
-                            />
-                            <StatsInformationCard
-                                className={styles.infoCard}
-                                icon={(
-                                    <IoTimeSharp />
-                                )}
-                                label="Added last week"
-                                // TODO: Get entries last week
-                                totalValue={data?.deepExploreStats?.totalEntries}
-                                variant="accent"
-                            />
-                        </Card>
-                    </div>
-                    <ProjectFilters
-                        className={styles.filters}
-                        initialValue={filters}
-                        onFiltersChange={setFilters}
+            <Container
+                className={_cs(
+                    styles.exploreDeep,
+                    className,
+                    printPreviewMode && styles.printPreviewMode,
+                )}
+                contentClassName={styles.content}
+                headerClassName={styles.header}
+                heading="Explore DEEP"
+                inlineHeadingDescription
+                headingDescription={!printPreviewMode ? (
+                    <DateDualRangeInput
+                        variant="general"
+                        fromName="fromDate"
+                        fromOnChange={setStartDate}
+                        fromValue={startDate}
+                        toName="toDate"
+                        toOnChange={setEndDate}
+                        toValue={endDate}
+                        label=""
                     />
-                </>
-            )}
-            headingSize="large"
-        >
-            {pending && <PendingMessage />}
-            <Tabs
-                defaultHash="projects"
-                useHash
-            >
-                <div className={styles.topContainer}>
-                    <div className={styles.contentHeader}>
-                        <Tab
-                            name="projects"
-                            transparentBorder
+                ) : (
+                    <Heading size="small">
+                        {`(${startDate} - ${endDate})`}
+                    </Heading>
+                )}
+                headerActions={!printPreviewMode && (
+                    <DropdownMenu
+                        label="Download"
+                    >
+                        <DropdownMenuItem
+                            name={undefined}
+                            onClick={handleImageExportClick}
+                            disabled
                         >
-                            Projects
-                        </Tab>
-                        <Tab
-                            name="entries"
-                            transparentBorder
+                            Image
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            name={undefined}
+                            onClick={handlePdfExportClick}
                         >
-                            Entries / Sources
-                        </Tab>
-                    </div>
-                    <TabPanel name="projects">
-                        <ProjectContent
-                            timeseries={timeseriesData}
+                            PDF
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            name={undefined}
+                            onClick={handleExcelExportClick}
+                            disabled
+                        >
+                            Excel
+                        </DropdownMenuItem>
+                    </DropdownMenu>
+                )}
+                headerDescriptionClassName={styles.headerDescription}
+                headerDescription={(
+                    <>
+                        <div className={styles.statsContainer}>
+                            <Card className={_cs(styles.statCard, styles.projectStatsCard)}>
+                                <StatsInformationCard
+                                    className={styles.infoCard}
+                                    icon={(
+                                        <IoDocument />
+                                    )}
+                                    label="Projects"
+                                    totalValue={data?.deepExploreStats?.totalProjects}
+                                    variant="accent"
+                                />
+                                <StatsInformationCard
+                                    className={styles.infoCard}
+                                    icon={(
+                                        <IoPerson />
+                                    )}
+                                    label="Users"
+                                    totalValue={data?.deepExploreStats?.totalRegisteredUsers}
+                                    variant="accent"
+                                />
+                                <StatsInformationCard
+                                    className={styles.infoCard}
+                                    icon={(
+                                        <IoWalk />
+                                    )}
+                                    label="Active Users"
+                                    totalValue={data?.deepExploreStats?.totalActiveUsers}
+                                    variant="accent"
+                                />
+                            </Card>
+                            <Card className={_cs(styles.statCard, styles.sourceStatsCard)}>
+                                <StatsInformationCard
+                                    className={styles.infoCard}
+                                    icon={(
+                                        <IoDocument />
+                                    )}
+                                    label="Sources"
+                                    totalValue={data?.deepExploreStats?.totalLeads}
+                                    variant="accent"
+                                />
+                                <StatsInformationCard
+                                    className={styles.infoCard}
+                                    icon={(
+                                        <IoGlobe />
+                                    )}
+                                    label="Authors"
+                                    totalValue={data?.deepExploreStats?.totalAuthors}
+                                    variant="accent"
+                                />
+                                <StatsInformationCard
+                                    className={styles.infoCard}
+                                    icon={(
+                                        <IoGlobe />
+                                    )}
+                                    label="Publishers"
+                                    totalValue={data?.deepExploreStats?.totalPublishers}
+                                    variant="accent"
+                                />
+                            </Card>
+                            <Card className={_cs(styles.statCard, styles.entryStatsCard)}>
+                                <StatsInformationCard
+                                    className={styles.infoCard}
+                                    icon={(
+                                        <IoLayers />
+                                    )}
+                                    label="Entries"
+                                    totalValue={data?.deepExploreStats?.totalEntries}
+                                    variant="accent"
+                                />
+                                <StatsInformationCard
+                                    className={styles.infoCard}
+                                    icon={(
+                                        <IoTimeSharp />
+                                    )}
+                                    label="Added last week"
+                                    // TODO: Get entries last week
+                                    totalValue={data?.deepExploreStats?.totalEntries}
+                                    variant="accent"
+                                />
+                            </Card>
+                        </div>
+                        <ProjectFilters
+                            className={styles.filters}
+                            initialValue={filters}
+                            onFiltersChange={setFilters}
+                            readOnlyMode={printPreviewMode}
                         />
-                    </TabPanel>
-                    <TabPanel name="entries">
-                        <EntriesContent />
-                    </TabPanel>
-                </div>
+                    </>
+                )}
+                headingSize="large"
+                spacing="loose"
+            >
+                {pending && <PendingMessage />}
+                {printPreviewMode ? (
+                    <>
+                        <Container
+                            className={styles.sectionContainer}
+                            heading="Projects"
+                            headingSize="small"
+                        >
+                            <ProjectContent
+                                timeseries={timeseriesData}
+                                projectsByRegion={projectsByRegion}
+                                readOnlyMode={printPreviewMode}
+                            />
+                        </Container>
+                        <Container
+                            className={styles.sectionContainer}
+                            heading="Entries / Sources"
+                            headingSize="small"
+                        >
+                            <EntriesContent />
+                        </Container>
+                    </>
+                ) : (
+                    <Tabs
+                        defaultHash="projects"
+                        useHash
+                    >
+                        <div className={styles.topContainer}>
+                            <div className={styles.contentHeader}>
+                                <Tab
+                                    name="projects"
+                                    transparentBorder
+                                >
+                                    Projects
+                                </Tab>
+                                <Tab
+                                    name="entries"
+                                    transparentBorder
+                                >
+                                    Entries / Sources
+                                </Tab>
+                            </div>
+                            <TabPanel name="projects">
+                                <ProjectContent
+                                    timeseries={timeseriesData}
+                                    projectsByRegion={projectsByRegion}
+                                    readOnlyMode={printPreviewMode}
+                                />
+                            </TabPanel>
+                            <TabPanel name="entries">
+                                <EntriesContent />
+                            </TabPanel>
+                        </div>
+                    </Tabs>
+                )}
                 <Container
                     className={styles.bottomContainer}
-                    headerActions={(
+                    headerActions={!printPreviewMode && (
                         <SegmentInput
                             className={className}
                             name={undefined}
@@ -409,8 +497,8 @@ function NewExploreDeep(props: Props) {
                         label="Top Ten Frameworks"
                     />
                 </Container>
-            </Tabs>
-        </Container>
+            </Container>
+        </>
     );
 }
 
