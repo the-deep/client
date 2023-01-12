@@ -391,7 +391,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         organizationAddType,
         setFieldValue,
         onSourceOrganizationOptionsChange,
-        onAuthorOrganizationOptionsChange,
     ]);
 
     const handleAddLeadGroupClick = useCallback(() => {

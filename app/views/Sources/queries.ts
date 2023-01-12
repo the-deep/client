@@ -65,6 +65,7 @@ export const PROJECT_SOURCES = gql`
                 results {
                     id
                     confidentiality
+                    duplicateLeadsCount
                     clientId
                     status
                     statusDisplay

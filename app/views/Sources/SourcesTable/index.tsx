@@ -41,6 +41,7 @@ import {
 import _ts from '#ts';
 import { createDateColumn } from '#components/tableHelpers';
 import { useLazyRequest } from '#base/utils/restRequest';
+import { useModalState } from '#hooks/stateManagement';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import OrganizationLink, { Props as OrganizationLinkProps } from '#components/OrganizationLink';
 import LeadPreviewButton, { Props as LeadPreviewProps } from '#components/lead/LeadPreviewButton';
@@ -61,6 +62,7 @@ import { Lead } from './types';
 import Actions, { Props as ActionsProps } from './Actions';
 import BulkActions from './BulkActions';
 import EntryList from './EntryList';
+import LeadDuplicatesModal from './LeadDuplicatesModal';
 
 import { PROJECT_SOURCES } from '../queries';
 import styles from './styles.css';
@@ -147,6 +149,13 @@ function SourcesTable(props: Props) {
     const [maxItemsPerPage, setMaxItemsPerPage] = useState(defaultMaxItemsPerPage);
 
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
+    const [leadIdToViewDuplicates, setLeadIdToViewDuplicates] = useState<string | undefined>();
+
+    const [
+        isDuplicatesModalVisible,
+        showDuplicatesModal,
+        hideDuplicatesModal,
+    ] = useModalState(false);
 
     const [
         showSingleSourceModal,
@@ -317,6 +326,11 @@ function SourcesTable(props: Props) {
         setShowSingleSourceModalTrue();
     }, [setShowSingleSourceModalTrue]);
 
+    const handleShowDuplicates = useCallback((leadId: string) => {
+        setLeadIdToViewDuplicates(leadId);
+        showDuplicatesModal();
+    }, [showDuplicatesModal]);
+
     const handleSourceSaveSuccess = useCallback(() => {
         setShowSingleSourceModalFalse();
     }, [setShowSingleSourceModalFalse]);
@@ -443,11 +457,13 @@ function SourcesTable(props: Props) {
                 title: data.title,
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
+                onShowDuplicatesClick: handleShowDuplicates,
                 entriesCount: data.entriesCount?.total ?? 0,
                 filteredEntriesCount: data.filteredEntriesCount,
                 hasAssessment: !!data.assessmentId,
                 isAssessmentLead: data.isAssessmentLead,
                 sourceStatus: data.status,
+                duplicateLeadsCount: data.duplicateLeadsCount,
                 projectId,
             }),
             columnWidth: 196,
@@ -536,6 +552,7 @@ function SourcesTable(props: Props) {
         handleEdit,
         handleDelete,
         projectId,
+        handleShowDuplicates,
     ]);
 
     return (
@@ -592,6 +609,12 @@ function SourcesTable(props: Props) {
                         projectId={String(projectId)}
                         onClose={setShowSingleSourceModalFalse}
                         onLeadSaveSuccess={handleSourceSaveSuccess}
+                    />
+                )}
+                {isDuplicatesModalVisible && (
+                    <LeadDuplicatesModal
+                        onClose={hideDuplicatesModal}
+                        leadId={leadIdToViewDuplicates}
                     />
                 )}
             </Container>
