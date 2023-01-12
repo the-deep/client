@@ -33,6 +33,7 @@ import {
     ExploreDeepStatsQueryVariables,
 } from '#generated/types';
 
+import BrushLineChart from './BrushLineChart';
 import ProjectFilters, { FormType } from './ProjectFilters';
 import ProjectContent from './ProjectContent';
 import EntriesContent from './EntriesContent';
@@ -325,6 +326,10 @@ function NewExploreDeep(props: Props) {
                             />
                         </Card>
                     </div>
+                    <BrushLineChart
+                        width={600}
+                        height={600}
+                    />
                     <ProjectFilters
                         className={styles.filters}
                         initialValue={filters}
