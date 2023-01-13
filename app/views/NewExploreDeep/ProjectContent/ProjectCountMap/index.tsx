@@ -96,7 +96,6 @@ function ExploreDeepMapView(props: Props) {
         onClickedFeaturePropertiesChange,
         projects,
     } = props;
-    console.warn('here', projects);
 
     const geoJson: GeoJSON.FeatureCollection<GeoJSON.Point> | undefined = useMemo(() => {
         if (!projects) {
