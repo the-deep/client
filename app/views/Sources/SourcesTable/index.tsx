@@ -27,7 +27,6 @@ import {
 import {
     useMutation,
     useQuery,
-    gql,
 } from '@apollo/client';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
@@ -64,23 +63,8 @@ import BulkActions from './BulkActions';
 import EntryList from './EntryList';
 import LeadDuplicatesModal from './LeadDuplicatesModal';
 
-import { PROJECT_SOURCES } from '../queries';
+import { PROJECT_SOURCES, DELETE_LEAD } from '../queries';
 import styles from './styles.css';
-
-const DELETE_LEAD = gql`
-    mutation DeleteLead(
-        $projectId: ID!,
-        $leadId: ID!,
-    ) {
-        project(id: $projectId) {
-            id
-            leadDelete(id: $leadId) {
-                ok
-                errors
-            }
-        }
-    }
-`;
 
 // FIXME: use another util
 function sourcesKeySelector(d: Lead) {
@@ -611,10 +595,11 @@ function SourcesTable(props: Props) {
                         onLeadSaveSuccess={handleSourceSaveSuccess}
                     />
                 )}
-                {isDuplicatesModalVisible && (
+                {isDuplicatesModalVisible && leadIdToViewDuplicates && (
                     <LeadDuplicatesModal
                         onClose={hideDuplicatesModal}
                         leadId={leadIdToViewDuplicates}
+                        projectId={projectId}
                     />
                 )}
             </Container>

@@ -1,3 +1,37 @@
 .lead-duplicates-modal {
     display: flex;
+
+    .modal-body {
+        display: flex;
+        flex-grow: 1;
+        background-color: var(--dui-color-grey6);
+        padding: var(--dui-spacing-small);
+        gap: var(--dui-spacing-medium);
+
+        .original-lead {
+            display: flex;
+            flex-basis: 30%;
+            flex-grow: 0;
+            flex-shrink: 0;
+        }
+
+        .duplicate-lead {
+            display: flex;
+            flex-basis: 30%;
+            flex-shrink: 0;
+        }
+
+        .leads {
+            display: flex;
+            flex-grow: 1;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: var(--dui-spacing-extra-small);
+
+            .lead {
+                display: flex;
+            }
+        }
+    }
+
 }

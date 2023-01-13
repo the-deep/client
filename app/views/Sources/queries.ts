@@ -120,6 +120,21 @@ export const PROJECT_SOURCES = gql`
     }
 `;
 
+export const DELETE_LEAD = gql`
+    mutation DeleteLead(
+        $projectId: ID!,
+        $leadId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            leadDelete(id: $leadId) {
+                ok
+                errors
+            }
+        }
+    }
+`;
+
 export const SAVE_LEAD_FILTER = gql`
     mutation SaveLeadFilter($projectId: ID!, $filters: LeadsFilterDataInputType!) {
         project(id: $projectId) {

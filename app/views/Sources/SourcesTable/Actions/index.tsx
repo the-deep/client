@@ -96,10 +96,11 @@ function Actions<T extends string>(props: Props<T>) {
         hasAssessment,
         sourceStatus,
         projectId,
-        duplicateLeadsCount,
+        duplicateLeadsCount: duplicateLeadsCountFromProps,
         onShowDuplicatesClick,
     } = props;
 
+    const duplicateLeadsCount = 9;
     const hasDuplicates = (duplicateLeadsCount ?? 0) > 0;
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
