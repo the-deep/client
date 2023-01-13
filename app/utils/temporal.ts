@@ -55,12 +55,12 @@ export function getTimestamps(
         // NOTE: We are doing this to avoid issues due to timezone
         myDate.setUTCHours(0, 0, 0, 0);
 
+        // NOTE: Moved this up, but need to consult with @tnagorra
+        timestamps.push(myDate.getTime());
+        increment += 1;
         if (myDate > sanitizedEndDate) {
             break;
         }
-
-        timestamps.push(myDate.getTime());
-        increment += 1;
     }
 
     return timestamps;
@@ -97,6 +97,8 @@ export function getTimeseriesWithoutGaps(
         count: number;
     }[] | undefined,
     resolution: 'day' | 'month' | 'year',
+    startDate?: string,
+    endDate?: string,
 ) {
     const values = (timeseries ?? [])
         .filter((item) => isDefined(item.date))
@@ -116,12 +118,7 @@ export function getTimeseriesWithoutGaps(
     ).sort((a, b) => compareNumber(a.date, b.date));
 
     if (!timeseriesData || timeseriesData.length <= 0) {
-        return [
-            {
-                total: 0,
-                date: resolveTime(new Date(), resolution).getTime(),
-            },
-        ];
+        return [];
     }
 
     const mapping = listToMap(
@@ -131,8 +128,8 @@ export function getTimeseriesWithoutGaps(
     );
 
     const timestamps = getTimestamps(
-        timeseriesData[0].date,
-        timeseriesData[timeseriesData.length - 1].date,
+        startDate ?? timeseriesData[0].date,
+        endDate ?? timeseriesData[timeseriesData.length - 1].date,
         resolution,
     );
 

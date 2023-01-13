@@ -40,9 +40,12 @@ const apolloOptions: ApolloClientOptions<NormalizedCacheObject> = {
     link,
     cache: new InMemoryCache({
         typePolicies: {
+            // NOTE: empty keyFields means this is a singleton object
             UnifiedConnectorQueryType: {
                 keyFields: [],
-                // empty keyFields means this is a singleton object
+            },
+            ExploreDashboardStatType: {
+                keyFields: [],
             },
         },
     }),

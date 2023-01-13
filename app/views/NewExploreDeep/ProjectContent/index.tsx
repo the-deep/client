@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -14,30 +14,30 @@ import {
 } from 'react-icons/io5';
 import { useQuery, gql } from '@apollo/client';
 
-import BrushLineChart from '../BrushLineChart';
 import {
     DEEP_START_DATE,
+    convertDateToIsoDateTime,
     todaysDate,
 } from '#utils/common';
 import {
     ProjectCountTimeseriesQuery,
     ProjectCountTimeseriesQueryVariables,
 } from '#generated/types';
-import {
-    getTimeseriesWithoutGaps,
-} from '#utils/temporal';
+import { getTimeseriesWithoutGaps } from '#utils/temporal';
+import useSizeTracking from '#hooks/useSizeTracking';
 
 import EntityCreationLineChart from '../EntityCreationLineChart';
 import TableView from './TableView';
 import { FormType as ProjectFilterType } from '../ProjectFilters';
 import MapView, { Projects as ProjectsByRegion } from './MapView';
+import BrushLineChart from '../BrushLineChart';
 
 import styles from './styles.css';
 
 const PROJECT_COUNT_TIMESERIES = gql`
     query ProjectCountTimeseries(
-        $dateFrom: Date!,
-        $dateTo: Date!,
+        $dateFrom: DateTime!,
+        $dateTo: DateTime!,
         $includeEntryLessThan: Boolean,
         $isTest: Boolean,
         $organizations: [ID!],
@@ -64,31 +64,33 @@ const PROJECT_COUNT_TIMESERIES = gql`
         }
     }
 `;
-type Timeseries = {
-    date: string;
-    count: number;
-}
 
 interface Props {
     className?: string;
-    timeseries: Timeseries[] | undefined;
     projectsByRegion: ProjectsByRegion[] | undefined;
     readOnlyMode: boolean;
     projectFilters: ProjectFilterType | undefined;
+    endDate: number;
+    startDate: number;
+    onEndDateChange: (newDate: number | undefined) => void;
+    onStartDateChange: (newDate: number | undefined) => void;
 }
 
 function ProjectContent(props: Props) {
     const {
         className,
-        timeseries,
         projectsByRegion,
         readOnlyMode,
         projectFilters,
+        endDate,
+        startDate,
+        onEndDateChange,
+        onStartDateChange,
     } = props;
 
     const variables: ProjectCountTimeseriesQueryVariables = useMemo(() => ({
-        dateFrom: DEEP_START_DATE,
-        dateTo: todaysDate,
+        dateFrom: convertDateToIsoDateTime(DEEP_START_DATE),
+        dateTo: convertDateToIsoDateTime(todaysDate, { endOfDay: true }),
         search: projectFilters?.search,
         isTest: projectFilters?.excludeTestProject ? false : undefined,
         organizations: projectFilters?.organizations,
@@ -102,11 +104,20 @@ function ProjectContent(props: Props) {
             variables,
         },
     );
-
     const [activeView, setActiveView] = useState<'map' | 'table' | undefined>('map');
 
+    const barContainerRef = useRef<HTMLDivElement>(null);
+    const {
+        width,
+    } = useSizeTracking(barContainerRef) ?? {};
+
     const timeseriesWithoutGaps = useMemo(
-        () => getTimeseriesWithoutGaps(data?.deepExploreStats?.projectsCountByDay ?? undefined, 'day'),
+        () => getTimeseriesWithoutGaps(
+            data?.deepExploreStats?.projectsCountByDay ?? undefined,
+            'month',
+            DEEP_START_DATE,
+            todaysDate,
+        ),
         [data?.deepExploreStats?.projectsCountByDay],
     );
 
@@ -138,7 +149,7 @@ function ProjectContent(props: Props) {
                     )}
                     <TabPanel name="table">
                         <TableView
-                            filters={undefined}
+                            filters={projectFilters}
                         />
                     </TabPanel>
                     <TabPanel name="map">
@@ -147,15 +158,25 @@ function ProjectContent(props: Props) {
                         />
                     </TabPanel>
                 </Tabs>
-                <BrushLineChart
-                    width={1200}
-                    height={160}
-                    data={timeseriesWithoutGaps}
-                />
+                <div ref={barContainerRef}>
+                    {timeseriesWithoutGaps.length > 0 && (
+                        <BrushLineChart
+                            width={width ?? 0}
+                            height={160}
+                            data={timeseriesWithoutGaps}
+                            endDate={endDate}
+                            startDate={startDate}
+                            onEndDateChange={onEndDateChange}
+                            onStartDateChange={onStartDateChange}
+                        />
+                    )}
+                </div>
             </div>
             <EntityCreationLineChart
                 heading="Newly Created Projects"
-                timeseries={timeseries}
+                timeseries={data?.deepExploreStats?.projectsCountByDay ?? undefined}
+                startDate={startDate}
+                endDate={endDate}
             />
         </div>
     );

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useState, useCallback } from 're
 import {
     _cs,
     isDefined,
+    formatDateToString,
 } from '@togglecorp/fujs';
 import {
     Card,
@@ -47,6 +48,8 @@ import { useModalState } from '#hooks/stateManagement';
 import {
     DEEP_START_DATE,
     todaysDate,
+    lastYearStartDate,
+    convertDateToIsoDateTime,
 } from '#utils/common';
 
 import ProjectFilters, { FormType } from './ProjectFilters';
@@ -63,8 +66,8 @@ const DOWNLOAD_ALERT_NAME = 'generic-export-download';
 
 const EXPLORE_DEEP_STATS = gql`
 query ExploreDeepStats(
-    $dateFrom: Date!,
-    $dateTo: Date!,
+    $dateFrom: DateTime!,
+    $dateTo: DateTime!,
     $includeEntryLessThan: Boolean,
     $isTest: Boolean,
     $organizations: [ID!],
@@ -84,18 +87,6 @@ query ExploreDeepStats(
             },
         }
     ) {
-        entriesCountByDay {
-            date
-            count
-        }
-        leadsCountByDay {
-            date
-            count
-        }
-        projectsCountByDay {
-            date
-            count
-        }
         topTenAuthors {
             id
             title
@@ -228,6 +219,10 @@ const representationOptions: Option[] = [
     },
 ];
 
+const lastYearDateTime = new Date(`${lastYearStartDate}T00:00`).getTime();
+const todaysDateTime = new Date(`${todaysDate}T00:00`).getTime();
+const deepStartDateTime = new Date(`${DEEP_START_DATE}T00:00`).getTime();
+
 interface Props {
     className?: string;
 }
@@ -244,10 +239,48 @@ function NewExploreDeep(props: Props) {
     } = useContext(AlertContext);
 
     const [
-        startDate = DEEP_START_DATE,
+        startDate = deepStartDateTime,
         setStartDate,
-    ] = useState<string | undefined>(DEEP_START_DATE);
-    const [endDate, setEndDate] = useState<string | undefined>(todaysDate);
+    ] = useState<number | undefined>(lastYearDateTime);
+    const [
+        endDate = todaysDateTime,
+        setEndDate,
+    ] = useState<number | undefined>(todaysDateTime);
+
+    const handleEndDateChange = useCallback((newDate: number | undefined) => {
+        if (isDefined(newDate)) {
+            setEndDate(Math.min(newDate, todaysDateTime));
+        } else {
+            setEndDate(undefined);
+        }
+    }, []);
+
+    const handleFromDateChange = useCallback((newDate: string | undefined) => {
+        if (isDefined(newDate)) {
+            handleEndDateChange(new Date(newDate).getTime());
+        } else {
+            handleEndDateChange(undefined);
+        }
+    }, [handleEndDateChange]);
+
+    const handleStartDateChange = useCallback((newDate: number | undefined) => {
+        if (isDefined(newDate)) {
+            setStartDate(Math.max(newDate, deepStartDateTime));
+        } else {
+            setStartDate(undefined);
+        }
+    }, []);
+
+    const handleToDateChange = useCallback((newDate: string | undefined) => {
+        if (isDefined(newDate)) {
+            handleStartDateChange(new Date(newDate).getTime());
+        } else {
+            handleStartDateChange(undefined);
+        }
+    }, [handleStartDateChange]);
+    const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
+    const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
+
     const [filters, setFilters] = useState<FormType | undefined>(undefined);
     const [
         exportIdToDownload,
@@ -261,8 +294,8 @@ function NewExploreDeep(props: Props) {
     ] = useModalState(false);
 
     const variables: ExploreDeepStatsQueryVariables = useMemo(() => ({
-        dateFrom: startDate,
-        dateTo: endDate ?? todaysDate,
+        dateFrom: convertDateToIsoDateTime(new Date(startDate)),
+        dateTo: convertDateToIsoDateTime(new Date(endDate), { endOfDay: true }),
         search: filters?.search,
         isTest: filters?.excludeTestProject ? false : undefined,
         organizations: filters?.organizations,
@@ -404,8 +437,8 @@ function NewExploreDeep(props: Props) {
     const handleExcelExportClick = useCallback(() => {
         createExport({
             variables: {
-                dateFrom: startDate,
-                dateTo: endDate ?? todaysDate,
+                dateFrom: convertDateToIsoDateTime(new Date(startDate)),
+                dateTo: convertDateToIsoDateTime(new Date(endDate), { endOfDay: true }),
                 search: filters?.search,
                 isTest: filters?.excludeTestProject ? false : undefined,
                 organizations: filters?.organizations,
@@ -477,7 +510,7 @@ function NewExploreDeep(props: Props) {
                         className={styles.dateRangeOutput}
                         size="small"
                     >
-                        {`(${startDate} - ${endDate})`}
+                        {`(${startDateString} - ${endDateString})`}
                     </Heading>
                 )}
                 headerActions={!printPreviewMode && (
@@ -485,11 +518,11 @@ function NewExploreDeep(props: Props) {
                         <DateDualRangeInput
                             variant="general"
                             fromName="fromDate"
-                            fromOnChange={setStartDate}
-                            fromValue={startDate}
+                            fromOnChange={handleFromDateChange}
+                            fromValue={startDateString}
                             toName="toDate"
-                            toOnChange={setEndDate}
-                            toValue={endDate}
+                            toOnChange={handleToDateChange}
+                            toValue={endDateString}
                         />
                         <DropdownMenu
                             label="Download"
@@ -498,6 +531,7 @@ function NewExploreDeep(props: Props) {
                             <DropdownMenuItem
                                 name={undefined}
                                 onClick={handleImageExportClick}
+                                disabled
                             >
                                 Image
                             </DropdownMenuItem>
@@ -511,7 +545,7 @@ function NewExploreDeep(props: Props) {
                                 name={undefined}
                                 onClick={handleExcelExportClick}
                             >
-                                Excel
+                                CSV
                             </DropdownMenuItem>
                         </DropdownMenu>
                     </>
@@ -623,9 +657,13 @@ function NewExploreDeep(props: Props) {
                             spacing="none"
                         >
                             <ProjectContent
-                                timeseries={data?.deepExploreStats?.projectsCountByDay ?? undefined}
                                 projectsByRegion={projectsByRegion}
                                 readOnlyMode={printPreviewMode}
+                                endDate={endDate}
+                                startDate={startDate}
+                                onEndDateChange={setEndDate}
+                                onStartDateChange={setStartDate}
+                                projectFilters={filters}
                             />
                         </Container>
                         <Container
@@ -635,12 +673,11 @@ function NewExploreDeep(props: Props) {
                             spacing="none"
                         >
                             <EntriesContent
-                                sourcesTimeseries={
-                                    data?.deepExploreStats?.leadsCountByDay ?? undefined
-                                }
-                                entriesTimeseries={
-                                    data?.deepExploreStats?.entriesCountByDay ?? undefined
-                                }
+                                endDate={endDate}
+                                startDate={startDate}
+                                onEndDateChange={setEndDate}
+                                onStartDateChange={setStartDate}
+                                projectFilters={filters}
                             />
                         </Container>
                     </>
@@ -666,21 +703,22 @@ function NewExploreDeep(props: Props) {
                             </div>
                             <TabPanel name="projects">
                                 <ProjectContent
-                                    timeseries={
-                                        data?.deepExploreStats?.projectsCountByDay ?? undefined
-                                    }
                                     projectsByRegion={projectsByRegion}
                                     readOnlyMode={printPreviewMode}
+                                    endDate={endDate}
+                                    startDate={startDate}
+                                    onEndDateChange={setEndDate}
+                                    onStartDateChange={setStartDate}
+                                    projectFilters={filters}
                                 />
                             </TabPanel>
                             <TabPanel name="entries">
                                 <EntriesContent
-                                    sourcesTimeseries={
-                                        data?.deepExploreStats?.leadsCountByDay ?? undefined
-                                    }
-                                    entriesTimeseries={
-                                        data?.deepExploreStats?.entriesCountByDay ?? undefined
-                                    }
+                                    endDate={endDate}
+                                    startDate={startDate}
+                                    onEndDateChange={setEndDate}
+                                    onStartDateChange={setStartDate}
+                                    projectFilters={filters}
                                 />
                             </TabPanel>
                         </div>
