@@ -1,6 +1,5 @@
-import React, { useRef, useState, useMemo, useCallback } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import { scaleTime, scaleLinear } from '@visx/scale';
-import appleStock, { AppleStock } from '@visx/mock-data/lib/mocks/appleStock';
 import { Brush } from '@visx/brush';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush from '@visx/brush/lib/BaseBrush';
@@ -10,20 +9,22 @@ import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
 
 import LineChart from './LineChart';
 
-// Initialize some variables
-const stock: AppleStock[] = appleStock.slice(0, 100);
+type Count = {
+    total: number;
+    date: number;
+};
 const brushMargin = { top: 10, bottom: 15, left: 50, right: 20 };
 const chartSeparation = 30;
 const PATTERN_ID = 'brush_pattern';
-const accentColor = '#f6acc8';
+const accentColor = 'var(--dui-color-brand)';
 const selectedBrushStyle = {
     fill: `url(#${PATTERN_ID})`,
     stroke: accentColor,
 };
 
 // accessors
-const getDate = (d: AppleStock) => new Date(d.date);
-const getStockValue = (d: AppleStock) => d.close;
+const getDate = (d: Count) => new Date(d.date);
+const valueSelector = (d: Count) => d.total;
 
 // We need to manually offset the handles for them to be rendered at the right position
 function BrushHandle({ x, height, isBrushActive }: BrushHandleRenderProps) {
@@ -52,108 +53,56 @@ export type BrushProps = {
     width: number;
     height: number;
     margin?: { top: number; right: number; bottom: number; left: number };
-    compact?: boolean;
+    data: { total: number; date: number }[] | undefined;
 };
 
 function BrushLineChart(props: BrushProps) {
     const {
-        compact = false,
         width,
         height,
+        data = [],
         margin = {
-            top: 20,
-            left: 50,
-            bottom: 20,
-            right: 20,
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
         },
     } = props;
 
     const brushRef = useRef<BaseBrush | null>(null);
 
-    const [filteredStock, setFilteredStock] = useState(stock);
-
     const innerHeight = height - margin.top - margin.bottom;
-    const topChartBottomMargin = compact
-        ? chartSeparation / 2
-        : chartSeparation + 10;
-    const topChartHeight = 0.8 * innerHeight - topChartBottomMargin;
-    const bottomChartHeight = innerHeight - topChartHeight - chartSeparation;
+    const chartHeight = innerHeight - chartSeparation;
 
     // bounds
-    const xMax = Math.max(width - margin.left - margin.right, 0);
-    const yMax = Math.max(topChartHeight, 0);
     const xBrushMax = Math.max(width - brushMargin.left - brushMargin.right, 0);
-    const yBrushMax = Math.max(bottomChartHeight - brushMargin.top - brushMargin.bottom, 0);
+    const yBrushMax = Math.max(chartHeight - brushMargin.top - brushMargin.bottom, 0);
 
-    const [minFilteredDate, maxFilteredDate] = useMemo(
-        () => {
-            if (filteredStock.length <= 0) {
-                return [];
-            }
-            const dates = filteredStock
-                .map(getDate)
-                .map((item) => new Date(item).getTime());
-            const min = Math.min(...dates);
-            const max = Math.max(...dates);
-            return [new Date(min), new Date(max)];
-        },
-        [filteredStock],
-    );
     const [minDate, maxDate] = useMemo(
         () => {
-            if (stock.length <= 0) {
+            if (data.length <= 0) {
                 return [];
             }
-            const dates = stock
+            const dates = data
                 .map(getDate)
                 .map((item) => new Date(item).getTime());
             const min = Math.min(...dates);
             const max = Math.max(...dates);
             return [new Date(min), new Date(max)];
         },
-        [],
+        [data],
     );
 
-    const maxFilteredValue = useMemo(
-        () => {
-            if (filteredStock.length <= 0) {
-                return 0;
-            }
-            const values = filteredStock
-                .map(getStockValue);
-            const max = Math.max(...values);
-            return max;
-        },
-        [filteredStock],
-    );
     const maxValue = useMemo(
         () => {
-            if (stock.length <= 0) {
+            if (data.length <= 0) {
                 return 0;
             }
-            const values = stock
-                .map(getStockValue);
+            const values = data.map(valueSelector);
             const max = Math.max(...values);
             return max;
         },
-        [],
-    );
-
-    // scales
-    const dateScale = useMemo(
-        () => scaleTime<number>({
-            range: [0, xMax],
-            domain: [minFilteredDate, maxFilteredDate] as [Date, Date],
-        }),
-        [xMax, minFilteredDate, maxFilteredDate],
-    );
-    const stockScale = useMemo(
-        () => scaleLinear<number>({
-            range: [yMax, 0],
-            domain: [0, maxFilteredValue],
-            nice: true,
-        }),
-        [yMax, maxFilteredValue],
+        [data],
     );
 
     const brushDateScale = useMemo(
@@ -163,7 +112,7 @@ function BrushLineChart(props: BrushProps) {
         }),
         [xBrushMax, minDate, maxDate],
     );
-    const brushStockScale = useMemo(
+    const brushCountScale = useMemo(
         () => scaleLinear({
             range: [yBrushMax, 0],
             domain: [0, maxValue],
@@ -178,19 +127,19 @@ function BrushLineChart(props: BrushProps) {
                 return;
             }
             const { x0, x1, y0, y1 } = domain;
-            const stockCopy = stock.filter((s) => {
+            const countCopy = data.filter((s) => {
                 const x = getDate(s).getTime();
-                const y = getStockValue(s);
+                const y = valueSelector(s);
                 return x > x0 && x < x1 && y > y0 && y < y1;
             });
-            setFilteredStock(stockCopy);
+            console.warn('brush changed', domain, countCopy);
         },
-        [],
+        [data],
     );
 
     const onBrushClick = useCallback(
         () => {
-            setFilteredStock(stock);
+            console.warn('brush clicked');
         },
         [],
     );
@@ -198,8 +147,8 @@ function BrushLineChart(props: BrushProps) {
     /*
     const initialBrushPosition = useMemo(
         () => ({
-            start: { x: brushDateScale(getDate(stock[50])) },
-            end: { x: brushDateScale(getDate(stock[100])) },
+            start: { x: brushDateScale(getDate(count[50])) },
+            end: { x: brushDateScale(getDate(count[100])) },
         }),
         [brushDateScale],
     );
@@ -207,7 +156,7 @@ function BrushLineChart(props: BrushProps) {
     // event handlers
     const handleClearClick = () => {
         if (brushRef?.current) {
-            setFilteredStock(stock);
+            setFilteredCount(count);
             brushRef.current.reset();
         }
     };
@@ -240,25 +189,15 @@ function BrushLineChart(props: BrushProps) {
             height={height}
         >
             <LineChart
-                hideBottomAxis={compact}
-                hideLeftAxis
-                data={filteredStock}
-                width={width}
-                margin={{ ...margin, bottom: topChartBottomMargin }}
-                yMax={yMax}
-                xScale={dateScale}
-                yScale={stockScale}
-            />
-            <LineChart
                 hideBottomAxis
                 hideLeftAxis
-                data={stock}
+                data={data}
                 width={width}
                 yMax={yBrushMax}
                 xScale={brushDateScale}
-                yScale={brushStockScale}
+                yScale={brushCountScale}
                 margin={brushMargin}
-                top={topChartHeight + topChartBottomMargin + margin.top}
+                top={margin.top}
             >
                 <PatternLines
                     id={PATTERN_ID}
@@ -270,7 +209,7 @@ function BrushLineChart(props: BrushProps) {
                 />
                 <Brush
                     xScale={brushDateScale}
-                    yScale={brushStockScale}
+                    yScale={brushCountScale}
                     width={xBrushMax}
                     height={yBrushMax}
                     margin={brushMargin}

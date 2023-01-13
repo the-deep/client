@@ -32,15 +32,15 @@ const chartMargins = {
 
 interface TableItemProps {
     title: string;
-    projectCount: number | undefined;
-    sourceCount: number | undefined;
+    projectsCount: number | undefined;
+    leadsCount: number | undefined;
 }
 
 function TableItem(props: TableItemProps) {
     const {
         title,
-        projectCount,
-        sourceCount,
+        projectsCount,
+        leadsCount,
     } = props;
 
     return (
@@ -50,11 +50,11 @@ function TableItem(props: TableItemProps) {
             </div>
             <NumberOutput
                 className={styles.numberOutput}
-                value={projectCount ?? 0}
+                value={projectsCount ?? 0}
             />
             <NumberOutput
                 className={styles.numberOutput}
-                value={sourceCount ?? 0}
+                value={leadsCount ?? 0}
             />
         </div>
     );
@@ -67,8 +67,8 @@ export interface TopAuthor {
         title: string;
     } | undefined | null;
     title: string;
-    projectCount?: number | null | undefined;
-    sourceCount?: number | null | undefined;
+    projectsCount?: number | null | undefined;
+    leadsCount?: number | null | undefined;
 }
 
 const keySelector = (item: TopAuthor) => item.id;
@@ -90,8 +90,8 @@ function TopTenAuthors(props: Props) {
 
     const tableItemRendererParams = useCallback((_: string, datum: TopAuthor) => ({
         title: organizationLabelSelector(datum),
-        projectCount: datum.projectCount ?? undefined,
-        sourceCount: datum.sourceCount ?? undefined,
+        projectsCount: datum.projectsCount ?? undefined,
+        leadsCount: datum.leadsCount ?? undefined,
     }), []);
 
     if (!data || data.length <= 0) {
@@ -109,8 +109,8 @@ function TopTenAuthors(props: Props) {
             headerActionsContainerClassName={styles.headerActions}
             headerActions={mode === 'table' && (
                 <>
-                    <div className={styles.tableHeader}>Entries</div>
                     <div className={styles.tableHeader}>Projects</div>
+                    <div className={styles.tableHeader}>Sources</div>
                 </>
             )}
             borderBelowHeader
@@ -152,7 +152,7 @@ function TopTenAuthors(props: Props) {
                             isAnimationActive={false}
                             legendType="none"
                             name="Sources Count"
-                            dataKey="sourceCount"
+                            dataKey="leadsCount"
                             barSize={20}
                             fill="var(--dui-color-brand)"
                             opacity={0.2}
