@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
+    formatDateToString,
 } from '@togglecorp/fujs';
 import {
     ContainerCard,
@@ -35,6 +36,8 @@ interface Props {
     className?: string;
     heading: string;
     timeseries: Timeseries[] | undefined;
+    startDate: number;
+    endDate: number;
 }
 
 function EntityCreationLineChart(props: Props) {
@@ -42,9 +45,14 @@ function EntityCreationLineChart(props: Props) {
         className,
         heading,
         timeseries,
+        startDate,
+        endDate,
     } = props;
 
-    const [resolution, setResolution] = React.useState<'year' | 'month' | 'day'>('day');
+    const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
+    const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
+
+    const [resolution, setResolution] = React.useState<'year' | 'month' | 'day'>('month');
     const [chartType, setChartType] = React.useState<'step' | 'spark'>('spark');
 
     const timeFormatter = useMemo(() => {
@@ -55,8 +63,18 @@ function EntityCreationLineChart(props: Props) {
     }, [resolution]);
 
     const timeseriesWithoutGaps = useMemo(
-        () => getTimeseriesWithoutGaps(timeseries, resolution),
-        [timeseries, resolution],
+        () => getTimeseriesWithoutGaps(
+            timeseries,
+            resolution,
+            startDateString,
+            endDateString,
+        ),
+        [
+            timeseries,
+            resolution,
+            startDateString,
+            endDateString,
+        ],
     );
 
     const timeSpentLabelFormatter = useCallback((value: number) => (

@@ -140,14 +140,18 @@ export const enumLabelSelector = <T extends string | number>(d: EnumEntity<T>) =
 interface Options {
     endOfDay?: boolean;
 }
+export function convertDateToIsoDateTime(dateString: Date, opts?: Options): string
 export function convertDateToIsoDateTime(dateString: string, opts?: Options): string
 export function convertDateToIsoDateTime(dateString: null, opts?: Options): undefined
 export function convertDateToIsoDateTime(dateString: undefined, opts?: Options): undefined
 export function convertDateToIsoDateTime(
-    dateString: string | undefined | null,
+    dateString: string | undefined | null | Date,
     opts?: Options,
 ): string | undefined
-export function convertDateToIsoDateTime(dateString: string | undefined | null, opts?: Options) {
+export function convertDateToIsoDateTime(
+    dateString: Date | string | undefined | null,
+    opts?: Options,
+) {
     if (!dateString) {
         return undefined;
     }
@@ -284,3 +288,7 @@ export function mergeItems<T, K extends string>(
 
 export const DEEP_START_DATE = '2018-01-01';
 export const todaysDate = formatDateToString(new Date(), 'yyyy-MM-dd');
+
+const lastYearDate = new Date();
+lastYearDate.setDate(lastYearDate.getDate() - 365);
+export const lastYearStartDate = formatDateToString(lastYearDate, 'yyyy-MM-dd');

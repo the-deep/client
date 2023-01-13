@@ -1,8 +1,13 @@
-import React, { useRef, useMemo, useCallback } from 'react';
+import React, { useRef, useMemo, useCallback, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+
 import { scaleTime, scaleLinear } from '@visx/scale';
 import { Brush } from '@visx/brush';
 import { Bounds } from '@visx/brush/lib/types';
-import BaseBrush from '@visx/brush/lib/BaseBrush';
+import BaseBrush, {
+    BaseBrushState,
+    UpdateBrush,
+} from '@visx/brush/lib/BaseBrush';
 import { PatternLines } from '@visx/pattern';
 import { Group } from '@visx/group';
 import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
@@ -54,6 +59,10 @@ export type BrushProps = {
     height: number;
     margin?: { top: number; right: number; bottom: number; left: number };
     data: { total: number; date: number }[] | undefined;
+    endDate: number;
+    startDate: number;
+    onEndDateChange: (newDate: number | undefined) => void;
+    onStartDateChange: (newDate: number | undefined) => void;
 };
 
 function BrushLineChart(props: BrushProps) {
@@ -67,9 +76,26 @@ function BrushLineChart(props: BrushProps) {
             bottom: 0,
             right: 0,
         },
+        endDate,
+        startDate,
+        onEndDateChange,
+        onStartDateChange,
     } = props;
 
     const brushRef = useRef<BaseBrush | null>(null);
+
+    const mountedRef = useRef<boolean>(true);
+    const funcRef = useRef<number | undefined>();
+
+    useEffect(
+        () => {
+            mountedRef.current = true;
+            return () => {
+                mountedRef.current = false;
+            };
+        },
+        [],
+    );
 
     const innerHeight = height - margin.top - margin.bottom;
     const chartHeight = innerHeight - chartSeparation;
@@ -121,52 +147,70 @@ function BrushLineChart(props: BrushProps) {
         [yBrushMax, maxValue],
     );
 
+    const initialBrushPosition = useMemo(
+        () => ({
+            start: { x: brushDateScale(new Date(startDate)) },
+            end: { x: brushDateScale(new Date(endDate)) },
+        }),
+        [
+            brushDateScale,
+            startDate,
+            endDate,
+        ],
+    );
+
     const onBrushChange = useCallback(
         (domain: Bounds | null) => {
-            if (!domain) {
-                return;
+            if (funcRef.current) {
+                window.clearTimeout(funcRef.current);
             }
-            const { x0, x1, y0, y1 } = domain;
-            const countCopy = data.filter((s) => {
-                const x = getDate(s).getTime();
-                const y = valueSelector(s);
-                return x > x0 && x < x1 && y > y0 && y < y1;
-            });
-            console.warn('brush changed', domain, countCopy);
+            funcRef.current = window.setTimeout(
+                () => {
+                    // NOTE: Skipping function call if component is unmounted
+                    if (!mountedRef.current) {
+                        return;
+                    }
+                    if (!domain) {
+                        return;
+                    }
+                    const { x0, x1, y0, y1 } = domain;
+                    const countCopy = data.filter((s) => {
+                        const x = getDate(s).getTime();
+                        const y = valueSelector(s);
+                        return x > x0 && x < x1 && y > y0 && y < y1;
+                    });
+                    ReactDOM.unstable_batchedUpdates(() => {
+                        onStartDateChange(countCopy[0]?.date);
+                        onEndDateChange(countCopy?.[countCopy.length - 1]?.date);
+                    });
+                },
+                300,
+            );
         },
-        [data],
+        [
+            data,
+            onStartDateChange,
+            onEndDateChange,
+        ],
     );
 
     const onBrushClick = useCallback(
         () => {
-            console.warn('brush clicked');
+            // console.warn('brush clicked');
         },
         [],
     );
 
-    /*
-    const initialBrushPosition = useMemo(
-        () => ({
-            start: { x: brushDateScale(getDate(count[50])) },
-            end: { x: brushDateScale(getDate(count[100])) },
-        }),
-        [brushDateScale],
-    );
-
-    // event handlers
-    const handleClearClick = () => {
-        if (brushRef?.current) {
-            setFilteredCount(count);
-            brushRef.current.reset();
-        }
-    };
-
-    const handleResetClick = () => {
-        if (brushRef?.current) {
+    useEffect(() => {
+        if (brushRef?.current && startDate && endDate) {
             const updater: UpdateBrush = (prevBrush) => {
-                const newExtent = brushRef.current.getExtent(
-                    initialBrushPosition.start,
-                    initialBrushPosition.end,
+                const brushStart = { x: brushDateScale(new Date(startDate)) };
+                const brushEnd = { x: brushDateScale(new Date(endDate)) };
+
+                // eslint-disable-next-line
+                const newExtent = brushRef.current!.getExtent(
+                    brushStart,
+                    brushEnd,
                 );
 
                 const newState: BaseBrushState = {
@@ -180,8 +224,12 @@ function BrushLineChart(props: BrushProps) {
             };
             brushRef.current.updateBrush(updater);
         }
-    };
-    */
+    }, [
+        brushDateScale,
+        startDate,
+        endDate,
+        brushRef,
+    ]);
 
     return (
         <svg
@@ -214,10 +262,10 @@ function BrushLineChart(props: BrushProps) {
                     height={yBrushMax}
                     margin={brushMargin}
                     handleSize={8}
+                    initialBrushPosition={initialBrushPosition}
                     innerRef={brushRef}
                     resizeTriggerAreas={['left', 'right']}
                     brushDirection="horizontal"
-                    initialBrushPosition={undefined}
                     onChange={onBrushChange}
                     onClick={onBrushClick}
                     selectedBoxStyle={selectedBrushStyle}
