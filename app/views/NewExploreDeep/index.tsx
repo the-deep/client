@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import {
     _cs,
-    formatDateToString,
     isDefined,
 } from '@togglecorp/fujs';
 import {
@@ -45,6 +44,10 @@ import {
     GenericExportQueryVariables,
 } from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
+import {
+    DEEP_START_DATE,
+    todaysDate,
+} from '#utils/common';
 
 import ProjectFilters, { FormType } from './ProjectFilters';
 import ProjectContent from './ProjectContent';
@@ -56,7 +59,6 @@ import TopTenProjectsByEntries from './TopTenProjectsByEntries';
 
 import styles from './styles.css';
 
-const DEEP_START_DATE = '2018-01-01';
 const DOWNLOAD_ALERT_NAME = 'generic-export-download';
 
 const EXPLORE_DEEP_STATS = gql`
@@ -82,9 +84,17 @@ query ExploreDeepStats(
             },
         }
     ) {
-        projectAggregationDaily {
+        entriesCountByDay {
             date
-            projectCount
+            count
+        }
+        leadsCountByDay {
+            date
+            count
+        }
+        projectsCountByDay {
+            date
+            count
         }
         topTenAuthors {
             id
@@ -96,23 +106,36 @@ query ExploreDeepStats(
                 title
                 shortName
             }
-            projectCount
-            sourceCount
+            projectsCount
+            leadsCount
         }
-        projectByRegion {
+        topTenPublishers {
+            id
+            title
+            verified
+            shortName
+            mergedAs {
+                id
+                title
+                shortName
+            }
+            projectsCount
+            leadsCount
+        }
+        projectsByRegion {
             id
             centroid
             projectIds
         }
         topTenFrameworks {
             analysisFrameworkId
-            entryCount
-            projectCount
+            entriesCount
+            projectsCount
             analysisFrameworkTitle
         }
         topTenProjectEntries {
-            entryCount
-            sourceCount
+            entriesCount
+            leadsCount
             projectTitle
             projectId
         }
@@ -194,8 +217,6 @@ interface Option {
 const representationKeySelector = (d: Option) => d.key;
 const representationLabelSelector = (d: Option) => d.label;
 
-const todaysDate = formatDateToString(new Date(), 'yyyy-MM-dd');
-
 const representationOptions: Option[] = [
     {
         key: 'table',
@@ -262,7 +283,6 @@ function NewExploreDeep(props: Props) {
 
     const {
         data: genericExportData,
-        loading: pendingGenericExport,
         startPolling,
         stopPolling,
     } = useQuery<GenericExportQuery, GenericExportQueryVariables>(
@@ -312,7 +332,7 @@ function NewExploreDeep(props: Props) {
 
     const [
         createExport,
-        { loading },
+        { loading: exportCreatePending },
     ] = useMutation<GenericExportCreateMutation, GenericExportCreateMutationVariables>(
         GENERIC_EXPORT_CREATE,
         {
@@ -337,8 +357,11 @@ function NewExploreDeep(props: Props) {
                     });
                 }
             },
-            onError: (gqlError) => {
-                console.warn('here', gqlError);
+            onError: () => {
+                alert.show(
+                    'There was an issue creating the export.',
+                    { variant: 'error' },
+                );
                 setExportIdToDownload(undefined);
             },
         },
@@ -381,13 +404,13 @@ function NewExploreDeep(props: Props) {
     const handleExcelExportClick = useCallback(() => {
         createExport({
             variables: {
-                dateFrom: new Date(startDate),
-                dateTo: new Date(endDate ?? todaysDate),
+                dateFrom: startDate,
+                dateTo: endDate ?? todaysDate,
                 search: filters?.search,
                 isTest: filters?.excludeTestProject ? false : undefined,
                 organizations: filters?.organizations,
                 regions: filters?.regions,
-                includeEntryLessThan: !filters?.excludeProjectsLessThan,
+                // includeEntryLessThan: !filters?.excludeProjectsLessThan,
             },
         });
     }, [
@@ -398,18 +421,10 @@ function NewExploreDeep(props: Props) {
     ]);
 
     // FIXME: Remove this after fixed in server
-    const timeseriesData = useMemo(() => (
-        data?.deepExploreStats?.projectAggregationDaily?.map((item) => ({
-            date: item.date,
-            projectCount: Number(item.projectCount ?? 0),
-        }))
-    ), [data?.deepExploreStats?.projectAggregationDaily]);
-
-    // FIXME: Remove this after fixed in server
     const projectsByRegion = useMemo(() => (
-        data?.deepExploreStats?.projectByRegion
+        data?.deepExploreStats?.projectsByRegion
             ?.filter(isDefined) ?? undefined
-    ), [data?.deepExploreStats?.projectByRegion]);
+    ), [data?.deepExploreStats?.projectsByRegion]);
 
     const handlePrintClick = useCallback(() => {
         window.print();
@@ -478,7 +493,7 @@ function NewExploreDeep(props: Props) {
                         />
                         <DropdownMenu
                             label="Download"
-                            disabled={!!exportIdToDownload}
+                            disabled={!!exportIdToDownload || exportCreatePending}
                         >
                             <DropdownMenuItem
                                 name={undefined}
@@ -608,7 +623,7 @@ function NewExploreDeep(props: Props) {
                             spacing="none"
                         >
                             <ProjectContent
-                                timeseries={timeseriesData}
+                                timeseries={data?.deepExploreStats?.projectsCountByDay ?? undefined}
                                 projectsByRegion={projectsByRegion}
                                 readOnlyMode={printPreviewMode}
                             />
@@ -619,7 +634,14 @@ function NewExploreDeep(props: Props) {
                             headingSize="small"
                             spacing="none"
                         >
-                            <EntriesContent />
+                            <EntriesContent
+                                sourcesTimeseries={
+                                    data?.deepExploreStats?.leadsCountByDay ?? undefined
+                                }
+                                entriesTimeseries={
+                                    data?.deepExploreStats?.entriesCountByDay ?? undefined
+                                }
+                            />
                         </Container>
                     </>
                 ) : (
@@ -644,13 +666,22 @@ function NewExploreDeep(props: Props) {
                             </div>
                             <TabPanel name="projects">
                                 <ProjectContent
-                                    timeseries={timeseriesData}
+                                    timeseries={
+                                        data?.deepExploreStats?.projectsCountByDay ?? undefined
+                                    }
                                     projectsByRegion={projectsByRegion}
                                     readOnlyMode={printPreviewMode}
                                 />
                             </TabPanel>
                             <TabPanel name="entries">
-                                <EntriesContent />
+                                <EntriesContent
+                                    sourcesTimeseries={
+                                        data?.deepExploreStats?.leadsCountByDay ?? undefined
+                                    }
+                                    entriesTimeseries={
+                                        data?.deepExploreStats?.entriesCountByDay ?? undefined
+                                    }
+                                />
                             </TabPanel>
                         </div>
                     </Tabs>
@@ -678,7 +709,7 @@ function NewExploreDeep(props: Props) {
                     />
                     <TopTenAuthors
                         className={styles.topTenCard}
-                        data={data?.deepExploreStats?.topTenAuthors}
+                        data={data?.deepExploreStats?.topTenPublishers}
                         mode={representationType}
                         label="Top Ten Publishers"
                     />

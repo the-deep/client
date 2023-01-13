@@ -29,15 +29,15 @@ const chartMargins = {
 
 interface TableItemProps {
     analysisFrameworkTitle: string | undefined;
-    entryCount: number | undefined;
-    projectCount: number | undefined;
+    entriesCount: number;
+    projectsCount: number;
 }
 
 function TableItem(props: TableItemProps) {
     const {
         analysisFrameworkTitle,
-        entryCount,
-        projectCount,
+        entriesCount,
+        projectsCount,
     } = props;
 
     return (
@@ -47,11 +47,11 @@ function TableItem(props: TableItemProps) {
             </div>
             <NumberOutput
                 className={styles.numberOutput}
-                value={entryCount ?? 0}
+                value={entriesCount ?? 0}
             />
             <NumberOutput
                 className={styles.numberOutput}
-                value={projectCount ?? 0}
+                value={projectsCount ?? 0}
             />
         </div>
     );
@@ -60,8 +60,8 @@ function TableItem(props: TableItemProps) {
 export interface TopFrameworks {
     analysisFrameworkId: string;
     analysisFrameworkTitle?: string | null | undefined;
-    entryCount?: number | null | undefined;
-    projectCount?: number | null | undefined;
+    entriesCount: number;
+    projectsCount: number;
 }
 
 const keySelector = (item: TopFrameworks) => item.analysisFrameworkId;
@@ -83,8 +83,8 @@ function TopTenFrameworks(props: Props) {
 
     const tableItemRendererParams = useCallback((_: string, datum: TopFrameworks) => ({
         analysisFrameworkTitle: datum.analysisFrameworkTitle ?? undefined,
-        entryCount: datum.entryCount ?? undefined,
-        projectCount: datum.projectCount ?? undefined,
+        entriesCount: datum.entriesCount,
+        projectsCount: datum.projectsCount,
     }), []);
 
     if (!data || data.length <= 0) {
@@ -144,7 +144,7 @@ function TopTenFrameworks(props: Props) {
                             label={false}
                             legendType="none"
                             name="Entries Count"
-                            dataKey="entryCount"
+                            dataKey="entriesCount"
                             barSize={20}
                             fill="var(--dui-color-brand)"
                             opacity={0.2}

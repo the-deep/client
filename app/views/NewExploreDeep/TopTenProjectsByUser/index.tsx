@@ -29,7 +29,7 @@ const chartMargins = {
 
 interface TableItemProps {
     projectTitle: string | undefined;
-    userCount: number | undefined;
+    userCount: number;
 }
 
 function TableItem(props: TableItemProps) {
@@ -54,7 +54,7 @@ function TableItem(props: TableItemProps) {
 export interface TopProjectByUser {
     projectId: string;
     projectTitle?: string | null | undefined;
-    userCount?: number | null | undefined;
+    userCount: number;
 }
 
 const keySelector = (item: TopProjectByUser) => item.projectId;

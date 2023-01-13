@@ -1,3 +1,11 @@
+import {
+    isDefined,
+    listToMap,
+    compareNumber,
+} from '@togglecorp/fujs';
+
+import { mergeItems } from './common';
+
 // FIXME: Add tests
 export function getDateSafe(value: Date | number | string) {
     if (typeof value === 'string') {
@@ -80,4 +88,56 @@ export function formatYear(value: number | string) {
         navigator.language,
         { year: 'numeric' },
     ).format(date);
+}
+
+// FIXME: Write tests
+export function getTimeseriesWithoutGaps(
+    timeseries: {
+        date: string;
+        count: number;
+    }[] | undefined,
+    resolution: 'day' | 'month' | 'year',
+) {
+    const values = (timeseries ?? [])
+        .filter((item) => isDefined(item.date))
+        .map((item) => ({
+            date: resolveTime(item.date, resolution).getTime(),
+            total: item.count,
+        }))
+        .filter((item) => item.total > 0);
+
+    const timeseriesData = mergeItems(
+        values,
+        (item) => String(item.date),
+        (foo, bar) => ({
+            date: foo.date,
+            total: foo.total + bar.total,
+        }),
+    ).sort((a, b) => compareNumber(a.date, b.date));
+
+    if (!timeseriesData || timeseriesData.length <= 0) {
+        return [
+            {
+                total: 0,
+                date: resolveTime(new Date(), resolution).getTime(),
+            },
+        ];
+    }
+
+    const mapping = listToMap(
+        timeseriesData,
+        (item) => new Date(item.date).getTime(),
+        (item) => item.total,
+    );
+
+    const timestamps = getTimestamps(
+        timeseriesData[0].date,
+        timeseriesData[timeseriesData.length - 1].date,
+        resolution,
+    );
+
+    return timestamps.map((item) => ({
+        total: mapping[item] ?? 0,
+        date: item,
+    }));
 }

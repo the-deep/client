@@ -159,7 +159,6 @@ function ExploreDeepMapView(props: Props) {
             )}
             {loading && (<PendingMessage />)}
             <ProjectCountMap
-                className={styles.map}
                 clusterClicked={clusterClicked}
                 onClusterClickedChange={setClusterClicked}
                 onClickedFeaturePropertiesChange={handleClusterClick}
