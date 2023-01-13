@@ -28,15 +28,15 @@ const chartMargins = {
 
 interface TableItemProps {
     projectTitle: string | undefined;
-    entryCount: number | undefined;
-    sourceCount: number | undefined;
+    entriesCount: number;
+    leadsCount: number;
 }
 
 function TableItem(props: TableItemProps) {
     const {
         projectTitle,
-        entryCount,
-        sourceCount,
+        entriesCount,
+        leadsCount,
     } = props;
 
     return (
@@ -46,11 +46,11 @@ function TableItem(props: TableItemProps) {
             </div>
             <NumberOutput
                 className={styles.numberOutput}
-                value={entryCount ?? 0}
+                value={entriesCount ?? 0}
             />
             <NumberOutput
                 className={styles.numberOutput}
-                value={sourceCount ?? 0}
+                value={leadsCount ?? 0}
             />
         </div>
     );
@@ -59,8 +59,8 @@ function TableItem(props: TableItemProps) {
 export interface TopProjectByEntries {
     projectId: string;
     projectTitle?: string | null | undefined;
-    entryCount?: number | null | undefined;
-    sourceCount?: number | null | undefined;
+    entriesCount: number;
+    leadsCount: number;
 }
 
 const keySelector = (item: TopProjectByEntries) => item.projectId;
@@ -82,8 +82,8 @@ function TopTenProjectByEntries(props: Props) {
 
     const tableItemRendererParams = useCallback((_: string, datum: TopProjectByEntries) => ({
         projectTitle: datum.projectTitle ?? undefined,
-        entryCount: datum.entryCount ?? undefined,
-        sourceCount: datum.sourceCount ?? undefined,
+        entriesCount: datum.entriesCount,
+        leadsCount: datum.leadsCount,
     }), []);
 
     if (!data || data.length <= 0) {
@@ -143,7 +143,7 @@ function TopTenProjectByEntries(props: Props) {
                             label={false}
                             legendType="none"
                             name="Entries Count"
-                            dataKey="entryCount"
+                            dataKey="entriesCount"
                             barSize={20}
                             fill="var(--dui-color-brand)"
                             opacity={0.2}
