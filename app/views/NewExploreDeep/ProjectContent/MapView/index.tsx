@@ -85,6 +85,7 @@ function ExploreDeepMapView(props: Props) {
     } = useQuery<PublicProjectDetailsForMapViewQuery, PublicProjectDetailsForMapViewQueryVariables>(
         PROJECT_DETAILS,
         {
+            skip: !clusterClicked,
             variables: projectDetailsVariables,
         },
     );
