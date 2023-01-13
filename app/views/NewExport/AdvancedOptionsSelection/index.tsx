@@ -64,6 +64,7 @@ const exportTypeTitle: { [key in ExportFormatEnum]: string } = {
     DOCX: 'Word',
     XLSX: 'Excel',
     PDF: 'PDF',
+    CSV: 'CSV',
     JSON: 'JSON',
 };
 

@@ -239,6 +239,7 @@ const statusLabelMap: Record<ExportItem['status'], string> = {
 const exportFormatIconMap: Record<ExportItem['format'], ReactElement> = {
     DOCX: <AiFillFileWord title="Word export" className={styles.icon} />,
     PDF: <AiFillFilePdf title="PDF export" className={styles.icon} />,
+    CSV: <AiFillFileExcel title="CSV export" className={styles.icon} />,
     XLSX: <AiFillFileExcel title="Excel export" className={styles.icon} />,
     JSON: <AiFillFileText title="JSON export" className={styles.icon} />,
 };

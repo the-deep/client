@@ -1,18 +1,15 @@
 import React, { useCallback } from 'react';
 import { Group } from '@visx/group';
 import { AreaClosed, LinePath, Bar } from '@visx/shape';
-import { AxisLeft, AxisBottom, AxisScale } from '@visx/axis';
+import { AxisLeft, AxisBottom } from '@visx/axis';
 import { LinearGradient } from '@visx/gradient';
 import { curveLinear } from '@visx/curve';
-import { localPoint } from '@visx/event';
 import { ScaleTime, ScaleLinear } from 'd3-scale';
-import { max, extent, bisector } from 'd3-array';
-import { useTooltip, Tooltip, defaultStyles } from '@visx/tooltip';
 
-import { AppleStock } from '@visx/mock-data/lib/mocks/appleStock';
-
-const bisectDate = bisector<AppleStock, Date>((d) => new Date(d.date)).left;
-
+type Count = {
+    total: number;
+    date: number;
+};
 // Initialize some variables
 const axisColor = '#666';
 const axisBottomTickLabelProps = () => ({
@@ -31,15 +28,15 @@ const axisLeftTickLabelProps = () => ({
 });
 
 // accessors
-const getDate = (d: AppleStock) => new Date(d.date);
-const getStockValue = (d: AppleStock) => d.close;
+const getDate = (d: Count) => new Date(d.date);
+const getStockValue = (d: Count) => d.total;
 
 const gradientColor = 'var(--dui-color-accent)';
 
 interface Props {
-    data: AppleStock[];
-    xScale: ScaleTime<number>;
-    yScale: ScaleLinear<number>;
+    data: Count[];
+    xScale: ScaleTime<number, number, never>;
+    yScale: ScaleLinear<number, number, never>;
     width: number;
     yMax: number;
     margin: { top: number; right: number; bottom: number; left: number };
@@ -65,40 +62,14 @@ export default function LineChart(props: Props) {
         children,
     } = props;
 
-    const {
-        showTooltip,
-        hideTooltip,
-    } = useTooltip();
-
     const getX = useCallback(
-        (datum: AppleStock) => xScale(getDate(datum)) ?? 0,
+        (datum: Count) => xScale(getDate(datum)) ?? 0,
         [xScale],
     );
 
     const getY = useCallback(
-        (datum: AppleStock) => yScale(getStockValue(datum)) ?? 0,
+        (datum: Count) => yScale(getStockValue(datum)) ?? 0,
         [yScale],
-    );
-
-    const handleTooltip = useCallback(
-        (event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => {
-            const { x } = localPoint(event) || { x: 0 };
-            const x0 = xScale.invert(x);
-            const index = bisectDate(data, x0, 1);
-            const d0 = data[index - 1];
-            const d1 = data[index];
-
-            let d = d0;
-            if (d1 && getDate(d1)) {
-                d = x0.valueOf() - getDate(d0).valueOf() > getDate(d1).valueOf() - x0.valueOf() ? d1 : d0;
-            }
-            showTooltip({
-                tooltipData: d,
-                tooltipLeft: x,
-                tooltipTop: yScale(getStockValue(d)),
-            });
-        },
-        [data, xScale, yScale, showTooltip],
     );
 
     if (width < 10) {
@@ -117,7 +88,7 @@ export default function LineChart(props: Props) {
                 to={gradientColor}
                 toOpacity={0}
             />
-            <AreaClosed<AppleStock>
+            <AreaClosed<Count>
                 data={data}
                 x={getX}
                 y={getY}
@@ -125,7 +96,7 @@ export default function LineChart(props: Props) {
                 fill="url(#area-gradient)"
                 curve={curveLinear}
             />
-            <LinePath<AppleStock>
+            <LinePath<Count>
                 data={data}
                 x={getX}
                 y={getY}
@@ -140,10 +111,6 @@ export default function LineChart(props: Props) {
                 height={yMax}
                 fill="transparent"
                 rx={14}
-                onTouchStart={handleTooltip}
-                onTouchMove={handleTooltip}
-                onMouseMove={handleTooltip}
-                onMouseLeave={() => hideTooltip()}
             />
             {!hideBottomAxis && (
                 <AxisBottom

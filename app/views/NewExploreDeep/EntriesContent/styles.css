@@ -1,4 +1,6 @@
 .entries-content {
     display: flex;
+    flex-direction: column;
     padding: var(--dui-spacing-medium);
+    gap: var(--dui-spacing-large);
 }

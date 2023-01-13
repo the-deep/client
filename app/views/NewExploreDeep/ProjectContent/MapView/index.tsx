@@ -49,7 +49,7 @@ export type Projects = {
     };
     */
     centroid?: unknown;
-    projectIds: string[] | undefined | null;
+    projectIds?: string[] | undefined | null;
 };
 
 interface Props {

@@ -281,3 +281,6 @@ export function mergeItems<T, K extends string>(
 
     return Object.values(mapping).filter(isDefined);
 }
+
+export const DEEP_START_DATE = '2018-01-01';
+export const todaysDate = formatDateToString(new Date(), 'yyyy-MM-dd');
