@@ -154,6 +154,7 @@ function ProjectContent(props: Props) {
                     </TabPanel>
                     <TabPanel name="map">
                         <MapView
+                            className={styles.map}
                             projects={projectsByRegion}
                         />
                     </TabPanel>
@@ -173,6 +174,7 @@ function ProjectContent(props: Props) {
                 </div>
             </div>
             <EntityCreationLineChart
+                className={styles.lineChart}
                 heading="Newly Created Projects"
                 timeseries={data?.deepExploreStats?.projectsCountByDay ?? undefined}
                 startDate={startDate}

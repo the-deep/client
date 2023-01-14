@@ -1,6 +1,5 @@
 .entity-creation-line-chart {
     flex-shrink: 0;
-    margin: var(--dui-spacing-large);
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
     .content {
