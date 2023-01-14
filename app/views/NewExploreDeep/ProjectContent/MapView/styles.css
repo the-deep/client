@@ -2,7 +2,7 @@
     display: flex;
     position: relative;
     z-index: 0;
-    width: 100%;
+    width: calc(100% - 2 * var(--dui-spacing-large));
 
     .map {
         width: 100%;
