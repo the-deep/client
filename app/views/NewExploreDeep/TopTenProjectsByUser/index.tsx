@@ -28,36 +28,36 @@ const chartMargins = {
 };
 
 interface TableItemProps {
-    projectTitle: string | undefined;
-    userCount: number;
+    title: string | undefined;
+    usersCount: number;
 }
 
 function TableItem(props: TableItemProps) {
     const {
-        projectTitle,
-        userCount,
+        title,
+        usersCount,
     } = props;
 
     return (
         <div className={styles.tableItem}>
             <div className={styles.title}>
-                {projectTitle}
+                {title}
             </div>
             <NumberOutput
                 className={styles.numberOutput}
-                value={userCount ?? 0}
+                value={usersCount ?? 0}
             />
         </div>
     );
 }
 
 export interface TopProjectByUser {
-    projectId: string;
-    projectTitle?: string | null | undefined;
-    userCount: number;
+    id: string;
+    title?: string | null | undefined;
+    usersCount: number;
 }
 
-const keySelector = (item: TopProjectByUser) => item.projectId;
+const keySelector = (item: TopProjectByUser) => item.id;
 
 interface Props {
     className?: string;
@@ -75,8 +75,8 @@ function TopTenProjectByUsers(props: Props) {
     } = props;
 
     const tableItemRendererParams = useCallback((_: string, datum: TopProjectByUser) => ({
-        projectTitle: datum.projectTitle ?? undefined,
-        userCount: datum.userCount ?? undefined,
+        title: datum.title ?? undefined,
+        usersCount: datum.usersCount ?? undefined,
     }), []);
 
     if (!data || data.length <= 0) {
@@ -120,7 +120,7 @@ function TopTenProjectByUsers(props: Props) {
                     >
                         <XAxis type="number" />
                         <YAxis
-                            dataKey="projectTitle"
+                            dataKey="title"
                             type="category"
                             scale="band"
                             hide
@@ -133,13 +133,13 @@ function TopTenProjectByUsers(props: Props) {
                             label={false}
                             legendType="none"
                             name="Users Count"
-                            dataKey="userCount"
+                            dataKey="usersCount"
                             barSize={20}
                             fill="var(--dui-color-brand)"
                             opacity={0.2}
                         >
                             <LabelList
-                                dataKey="projectTitle"
+                                dataKey="title"
                                 position="insideLeft"
                                 content={BarLabel}
                             />
