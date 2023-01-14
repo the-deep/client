@@ -27,14 +27,14 @@ const chartMargins = {
 };
 
 interface TableItemProps {
-    projectTitle: string | undefined;
+    title: string | undefined;
     entriesCount: number;
     leadsCount: number;
 }
 
 function TableItem(props: TableItemProps) {
     const {
-        projectTitle,
+        title,
         entriesCount,
         leadsCount,
     } = props;
@@ -42,7 +42,7 @@ function TableItem(props: TableItemProps) {
     return (
         <div className={styles.tableItem}>
             <div className={styles.title}>
-                {projectTitle}
+                {title}
             </div>
             <NumberOutput
                 className={styles.numberOutput}
@@ -57,13 +57,13 @@ function TableItem(props: TableItemProps) {
 }
 
 export interface TopProjectByEntries {
-    projectId: string;
-    projectTitle?: string | null | undefined;
+    id: string;
+    title?: string | null | undefined;
     entriesCount: number;
     leadsCount: number;
 }
 
-const keySelector = (item: TopProjectByEntries) => item.projectId;
+const keySelector = (item: TopProjectByEntries) => item.id;
 
 interface Props {
     className?: string;
@@ -81,7 +81,7 @@ function TopTenProjectByEntries(props: Props) {
     } = props;
 
     const tableItemRendererParams = useCallback((_: string, datum: TopProjectByEntries) => ({
-        projectTitle: datum.projectTitle ?? undefined,
+        title: datum.title ?? undefined,
         entriesCount: datum.entriesCount,
         leadsCount: datum.leadsCount,
     }), []);
@@ -130,7 +130,7 @@ function TopTenProjectByEntries(props: Props) {
                     >
                         <XAxis type="number" />
                         <YAxis
-                            dataKey="projectTitle"
+                            dataKey="title"
                             type="category"
                             scale="band"
                             hide
@@ -149,7 +149,7 @@ function TopTenProjectByEntries(props: Props) {
                             opacity={0.2}
                         >
                             <LabelList
-                                dataKey="projectTitle"
+                                dataKey="title"
                                 position="insideLeft"
                                 content={BarLabel}
                             />

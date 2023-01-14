@@ -90,26 +90,12 @@ query ExploreDeepStats(
         topTenAuthors {
             id
             title
-            verified
-            shortName
-            mergedAs {
-                id
-                title
-                shortName
-            }
             projectsCount
             leadsCount
         }
         topTenPublishers {
             id
             title
-            verified
-            shortName
-            mergedAs {
-                id
-                title
-                shortName
-            }
             projectsCount
             leadsCount
         }
@@ -119,21 +105,21 @@ query ExploreDeepStats(
             projectIds
         }
         topTenFrameworks {
-            analysisFrameworkId
+            id
+            title
             entriesCount
             projectsCount
-            analysisFrameworkTitle
         }
-        topTenProjectEntries {
+        topTenProjectsByEntries {
+            id
+            title
             entriesCount
             leadsCount
-            projectTitle
-            projectId
         }
-        topTenProjectUsers {
-            projectId
-            projectTitle
-            userCount
+        topTenProjectsByUsers {
+            id
+            title
+            usersCount
         }
         totalActiveUsers
         totalAuthors
@@ -759,13 +745,13 @@ function NewExploreDeep(props: Props) {
                     />
                     <TopTenProjectsByUser
                         className={styles.topTenCard}
-                        data={data?.deepExploreStats?.topTenProjectUsers}
+                        data={data?.deepExploreStats?.topTenProjectsByUsers}
                         mode={representationType}
                         label="Top Ten Projects (Users)"
                     />
                     <TopTenProjectsByEntries
                         className={styles.topTenCard}
-                        data={data?.deepExploreStats?.topTenProjectEntries}
+                        data={data?.deepExploreStats?.topTenProjectsByEntries}
                         mode={representationType}
                         label="Top Ten Projects (Entries)"
                     />
