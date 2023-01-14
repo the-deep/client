@@ -170,6 +170,7 @@ function EntriesContent(props: Props) {
     return (
         <div className={_cs(className, styles.entriesContent)}>
             <EntriesHeatMap
+                className={styles.map}
                 entriesByRegion={
                     entriesMapData?.deepExploreStats?.entriesCountByRegion ?? undefined
                 }
