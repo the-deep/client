@@ -28,14 +28,14 @@ const chartMargins = {
 };
 
 interface TableItemProps {
-    analysisFrameworkTitle: string | undefined;
+    title: string | undefined;
     entriesCount: number;
     projectsCount: number;
 }
 
 function TableItem(props: TableItemProps) {
     const {
-        analysisFrameworkTitle,
+        title,
         entriesCount,
         projectsCount,
     } = props;
@@ -43,28 +43,28 @@ function TableItem(props: TableItemProps) {
     return (
         <div className={styles.tableItem}>
             <div className={styles.title}>
-                {analysisFrameworkTitle}
+                {title}
             </div>
             <NumberOutput
                 className={styles.numberOutput}
-                value={entriesCount ?? 0}
+                value={projectsCount ?? 0}
             />
             <NumberOutput
                 className={styles.numberOutput}
-                value={projectsCount ?? 0}
+                value={entriesCount ?? 0}
             />
         </div>
     );
 }
 
 export interface TopFrameworks {
-    analysisFrameworkId: string;
-    analysisFrameworkTitle?: string | null | undefined;
+    id: string;
+    title?: string | null | undefined;
     entriesCount: number;
     projectsCount: number;
 }
 
-const keySelector = (item: TopFrameworks) => item.analysisFrameworkId;
+const keySelector = (item: TopFrameworks) => item.id;
 
 interface Props {
     className?: string;
@@ -82,7 +82,7 @@ function TopTenFrameworks(props: Props) {
     } = props;
 
     const tableItemRendererParams = useCallback((_: string, datum: TopFrameworks) => ({
-        analysisFrameworkTitle: datum.analysisFrameworkTitle ?? undefined,
+        title: datum.title ?? undefined,
         entriesCount: datum.entriesCount,
         projectsCount: datum.projectsCount,
     }), []);
@@ -103,7 +103,7 @@ function TopTenFrameworks(props: Props) {
             headerActions={mode === 'table' && (
                 <>
                     <div className={styles.tableHeader}>Projects</div>
-                    <div className={styles.tableHeader}>Sources</div>
+                    <div className={styles.tableHeader}>Entries</div>
                 </>
             )}
             borderBelowHeader
@@ -131,7 +131,7 @@ function TopTenFrameworks(props: Props) {
                     >
                         <XAxis type="number" />
                         <YAxis
-                            dataKey="analysisFrameworkTitle"
+                            dataKey="title"
                             type="category"
                             scale="band"
                             hide
@@ -150,7 +150,7 @@ function TopTenFrameworks(props: Props) {
                             opacity={0.2}
                         >
                             <LabelList
-                                dataKey="analysisFrameworkTitle"
+                                dataKey="title"
                                 position="insideLeft"
                                 content={BarLabel}
                             />

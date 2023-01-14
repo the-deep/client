@@ -62,10 +62,6 @@ function TableItem(props: TableItemProps) {
 
 export interface TopAuthor {
     id: string;
-    mergedAs?: {
-        id: string;
-        title: string;
-    } | undefined | null;
     title: string;
     projectsCount?: number | null | undefined;
     leadsCount?: number | null | undefined;
