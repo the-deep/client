@@ -148,7 +148,9 @@ function EntriesHeatMap(props: Props) {
             scaleControlShown={false}
             navControlShown={false}
         >
-            <MapContainer className={_cs(className, styles.map)} />
+            <MapContainer
+                className={_cs(className, styles.map)}
+            />
             <MapSource
                 sourceKey="region"
                 sourceOptions={sourceOptions}

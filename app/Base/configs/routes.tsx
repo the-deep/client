@@ -119,7 +119,17 @@ const newExplore = wrap({
     component: lazy(() => import('#views/NewExploreDeep')),
     componentProps: {
     },
-    visibility: 'is-anything',
+    visibility: 'is-authenticated',
+});
+const newPublicExplore = wrap({
+    path: '/new-public-explore/',
+    title: 'New Explore DEEP',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/NewExploreDeep')),
+    componentProps: {
+        isPublic: true,
+    },
+    visibility: 'is-authenticated',
 });
 const analyticalFrameworkCreateRoute = wrap({
     path: '/frameworks/new/',
@@ -557,6 +567,7 @@ const routes = {
     pillarAnalysis,
     explore,
     newExplore,
+    newPublicExplore,
     project: projectRoute,
     analyticalFrameworkEdit: analyticalFrameworkEditRoute,
     analyticalFrameworkCreate: analyticalFrameworkCreateRoute,

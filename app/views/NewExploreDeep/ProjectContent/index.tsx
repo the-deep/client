@@ -28,6 +28,7 @@ import useSizeTracking from '#hooks/useSizeTracking';
 
 import EntityCreationLineChart from '../EntityCreationLineChart';
 import TableView from './TableView';
+import PublicTableView from './PublicTableView';
 import { FormType as ProjectFilterType } from '../ProjectFilters';
 import MapView, { Projects as ProjectsByRegion } from './MapView';
 import BrushLineChart from '../BrushLineChart';
@@ -38,7 +39,7 @@ const PROJECT_COUNT_TIMESERIES = gql`
     query ProjectCountTimeseries(
         $dateFrom: DateTime!,
         $dateTo: DateTime!,
-        $includeEntryLessThan: Boolean,
+        $excludeEntryLessThan: Boolean,
         $isTest: Boolean,
         $organizations: [ID!],
         $regions: [ID!],
@@ -49,7 +50,7 @@ const PROJECT_COUNT_TIMESERIES = gql`
                 dateFrom: $dateFrom,
                 dateTo: $dateTo,
                 project: {
-                    includeEntryLessThan: $includeEntryLessThan,
+                    excludeEntryLessThan: $excludeEntryLessThan,
                     isTest: $isTest,
                     organizations: $organizations,
                     regions: $regions,
@@ -72,8 +73,9 @@ interface Props {
     projectFilters: ProjectFilterType | undefined;
     endDate: number;
     startDate: number;
-    onEndDateChange: (newDate: number | undefined) => void;
-    onStartDateChange: (newDate: number | undefined) => void;
+    onEndDateChange: ((newDate: number | undefined) => void) | undefined;
+    onStartDateChange: ((newDate: number | undefined) => void) | undefined;
+    isPublic: boolean;
 }
 
 function ProjectContent(props: Props) {
@@ -86,6 +88,7 @@ function ProjectContent(props: Props) {
         startDate,
         onEndDateChange,
         onStartDateChange,
+        isPublic,
     } = props;
 
     const variables: ProjectCountTimeseriesQueryVariables = useMemo(() => ({
@@ -95,7 +98,7 @@ function ProjectContent(props: Props) {
         isTest: projectFilters?.excludeTestProject ? false : undefined,
         organizations: projectFilters?.organizations,
         regions: projectFilters?.regions,
-        includeEntryLessThan: !projectFilters?.excludeProjectsLessThan,
+        excludeEntryLessThan: projectFilters?.excludeProjectsLessThan,
     }), [projectFilters]);
 
     const { data } = useQuery<ProjectCountTimeseriesQuery, ProjectCountTimeseriesQueryVariables>(
@@ -148,9 +151,15 @@ function ProjectContent(props: Props) {
                         </TabList>
                     )}
                     <TabPanel name="table">
-                        <TableView
-                            filters={projectFilters}
-                        />
+                        {isPublic ? (
+                            <PublicTableView
+                                filters={projectFilters}
+                            />
+                        ) : (
+                            <TableView
+                                filters={projectFilters}
+                            />
+                        )}
                     </TabPanel>
                     <TabPanel name="map">
                         <MapView
