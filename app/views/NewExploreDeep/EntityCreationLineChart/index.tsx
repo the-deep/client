@@ -5,6 +5,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     ContainerCard,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 import {
     AreaChart,
@@ -38,6 +39,7 @@ interface Props {
     timeseries: Timeseries[] | undefined;
     startDate: number;
     endDate: number;
+    loading?: boolean;
 }
 
 function EntityCreationLineChart(props: Props) {
@@ -47,6 +49,7 @@ function EntityCreationLineChart(props: Props) {
         timeseries,
         startDate,
         endDate,
+        loading,
     } = props;
 
     const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
@@ -103,6 +106,7 @@ function EntityCreationLineChart(props: Props) {
             borderBelowHeaderWidth="thin"
             borderBelowHeader
         >
+            {loading && <PendingMessage />}
             <ResponsiveContainer className={styles.responsiveContainer}>
                 <AreaChart
                     data={timeseriesWithoutGaps}

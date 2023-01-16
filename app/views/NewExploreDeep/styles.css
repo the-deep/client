@@ -6,8 +6,8 @@
         padding-right: var(--dui-spacing-super-large);
         padding-left: var(--dui-spacing-super-large);
 
-        .date-range {
-            display: none;
+        .year-selection-input {
+            width: 6rem;
         }
 
         .heading-description {
@@ -18,6 +18,19 @@
             .date-range-output {
                 flex-grow: 1;
             }
+        }
+
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(359deg);
+            }
+        }
+
+        .loading {
+            animation: rotation 500ms infinite linear;
         }
     }
 

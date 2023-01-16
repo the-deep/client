@@ -61,8 +61,8 @@ export type BrushProps = {
     data: { total: number; date: number }[] | undefined;
     endDate: number;
     startDate: number;
-    onEndDateChange: (newDate: number | undefined) => void;
-    onStartDateChange: (newDate: number | undefined) => void;
+    onEndDateChange: ((newDate: number | undefined) => void) | undefined;
+    onStartDateChange: ((newDate: number | undefined) => void) | undefined;
 };
 
 function BrushLineChart(props: BrushProps) {
@@ -161,6 +161,9 @@ function BrushLineChart(props: BrushProps) {
 
     const onBrushChange = useCallback(
         (domain: Bounds | null) => {
+            if (!onStartDateChange || !onEndDateChange) {
+                return;
+            }
             if (funcRef.current) {
                 window.clearTimeout(funcRef.current);
             }
@@ -270,6 +273,7 @@ function BrushLineChart(props: BrushProps) {
                     onClick={onBrushClick}
                     selectedBoxStyle={selectedBrushStyle}
                     useWindowMoveEvents
+                    disableDraggingSelection={!onStartDateChange || !onEndDateChange}
                     renderBrushHandle={(brushProps) => <BrushHandle {...brushProps} />}
                 />
             </LineChart>

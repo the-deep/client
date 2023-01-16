@@ -4,6 +4,7 @@ import {
     isDefined,
     formatDateToString,
 } from '@togglecorp/fujs';
+import ReactDOM from 'react-dom';
 import {
     Card,
     useAlert,
@@ -12,11 +13,11 @@ import {
     Heading,
     Container,
     Button,
-    PendingMessage,
     SegmentInput,
     DateDualRangeInput,
     DropdownMenu,
     DropdownMenuItem,
+    SelectInput,
     Tab,
     TabPanel,
     Tabs,
@@ -33,6 +34,7 @@ import {
     IoDocumentOutline,
     IoPersonOutline,
 } from 'react-icons/io5';
+import { AiOutlineLoading } from 'react-icons/ai';
 import { useMutation, useQuery, gql } from '@apollo/client';
 
 import StatsInformationCard from '#components/StatsInformationCard';
@@ -68,7 +70,7 @@ const EXPLORE_DEEP_STATS = gql`
 query ExploreDeepStats(
     $dateFrom: DateTime!,
     $dateTo: DateTime!,
-    $includeEntryLessThan: Boolean,
+    $excludeEntryLessThan: Boolean,
     $isTest: Boolean,
     $organizations: [ID!],
     $regions: [ID!],
@@ -79,7 +81,7 @@ query ExploreDeepStats(
             dateFrom: $dateFrom,
             dateTo: $dateTo,
             project: {
-                includeEntryLessThan: $includeEntryLessThan,
+                excludeEntryLessThan: $excludeEntryLessThan,
                 isTest: $isTest,
                 organizations: $organizations,
                 regions: $regions,
@@ -128,6 +130,7 @@ query ExploreDeepStats(
         totalProjects
         totalPublishers
         totalRegisteredUsers
+        totalEntriesAddedLastWeek
     }
 }`;
 
@@ -148,7 +151,7 @@ const GENERIC_EXPORT_CREATE = gql`
         $dateFrom: DateTime!,
         $dateTo: DateTime!,
         # FIXME: Enable this
-        # $includeEntryLessThan: Boolean,
+        # $excludeEntryLessThan: Boolean,
         $isTest: Boolean,
         $organizations: [ID!],
         $regions: [ID!],
@@ -205,17 +208,62 @@ const representationOptions: Option[] = [
     },
 ];
 
+interface TimeOption {
+    key: string;
+    label: string;
+    startDate: number;
+    endDate: number;
+}
+
+const yearOptions: TimeOption[] = [
+    {
+        key: '2022',
+        label: '2022',
+        startDate: 1640974500000,
+        endDate: 1672424100000,
+    },
+    {
+        key: '2021',
+        label: '2021',
+        startDate: 1609438500000,
+        endDate: 1640888100000,
+    },
+    {
+        key: '2020',
+        label: '2020',
+        startDate: 1577816100000,
+        endDate: 1609352100000,
+    },
+    {
+        key: '2019',
+        label: '2019',
+        startDate: 1546280100000,
+        endDate: 1577729700000,
+    },
+    {
+        key: '2018',
+        label: '2018',
+        startDate: 1514744100000,
+        endDate: 1546193700000,
+    },
+];
+
+const yearKeySelector = (year: TimeOption) => year.key;
+const yearLabelSelector = (year: TimeOption) => year.label;
+
 const lastYearDateTime = new Date(`${lastYearStartDate}T00:00`).getTime();
 const todaysDateTime = new Date(`${todaysDate}T00:00`).getTime();
 const deepStartDateTime = new Date(`${DEEP_START_DATE}T00:00`).getTime();
 
 interface Props {
     className?: string;
+    isPublic?: boolean;
 }
 
 function NewExploreDeep(props: Props) {
     const {
         className,
+        isPublic = false,
     } = props;
 
     const {
@@ -224,14 +272,29 @@ function NewExploreDeep(props: Props) {
         updateAlertContent,
     } = useContext(AlertContext);
 
+    const [selectedYear, setSelectedYear] = useState<string | undefined>(yearOptions[0].key);
+
     const [
         startDate = deepStartDateTime,
         setStartDate,
-    ] = useState<number | undefined>(lastYearDateTime);
+    ] = useState<number | undefined>(
+        () => (!isPublic ? lastYearDateTime : yearOptions[0].startDate),
+    );
     const [
         endDate = todaysDateTime,
         setEndDate,
-    ] = useState<number | undefined>(todaysDateTime);
+    ] = useState<number | undefined>(
+        () => (!isPublic ? todaysDateTime : yearOptions[0].endDate),
+    );
+
+    const handleYearChange = useCallback((newYear: string | undefined) => {
+        setSelectedYear(newYear);
+        ReactDOM.unstable_batchedUpdates(() => {
+            const selectedYearData = yearOptions.find((year) => year.key === newYear);
+            setEndDate(selectedYearData?.endDate);
+            setStartDate(selectedYearData?.startDate);
+        });
+    }, []);
 
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
@@ -286,13 +349,14 @@ function NewExploreDeep(props: Props) {
         isTest: filters?.excludeTestProject ? false : undefined,
         organizations: filters?.organizations,
         regions: filters?.regions,
-        includeEntryLessThan: !filters?.excludeProjectsLessThan,
+        excludeEntryLessThan: !filters?.excludeProjectsLessThan,
     }), [filters, startDate, endDate]);
 
     const alert = useAlert();
     const {
-        data,
-        loading: pending,
+        previousData,
+        data = previousData,
+        loading,
     } = useQuery<ExploreDeepStatsQuery, ExploreDeepStatsQueryVariables>(
         EXPLORE_DEEP_STATS,
         {
@@ -429,7 +493,7 @@ function NewExploreDeep(props: Props) {
                 isTest: filters?.excludeTestProject ? false : undefined,
                 organizations: filters?.organizations,
                 regions: filters?.regions,
-                // includeEntryLessThan: !filters?.excludeProjectsLessThan,
+                // excludeEntryLessThan: filters?.excludeProjectsLessThan,
             },
         });
     }, [
@@ -492,24 +556,41 @@ function NewExploreDeep(props: Props) {
                 inlineHeadingDescription
                 headingDescriptionClassName={styles.headingDescription}
                 headingDescription={(
-                    <Heading
-                        className={styles.dateRangeOutput}
-                        size="small"
-                    >
-                        {`(${startDateString} - ${endDateString})`}
-                    </Heading>
+                    <>
+                        <Heading
+                            className={styles.dateRangeOutput}
+                            size="small"
+                        >
+                            {`(${startDateString} - ${endDateString})`}
+                        </Heading>
+                        {loading && <AiOutlineLoading className={styles.loading} />}
+                    </>
                 )}
                 headerActions={!printPreviewMode && (
                     <>
-                        <DateDualRangeInput
-                            variant="general"
-                            fromName="fromDate"
-                            fromOnChange={handleFromDateChange}
-                            fromValue={startDateString}
-                            toName="toDate"
-                            toOnChange={handleToDateChange}
-                            toValue={endDateString}
-                        />
+                        {isPublic ? (
+                            <SelectInput
+                                className={styles.yearSelectionInput}
+                                variant="general"
+                                name={undefined}
+                                options={yearOptions}
+                                keySelector={yearKeySelector}
+                                labelSelector={yearLabelSelector}
+                                onChange={handleYearChange}
+                                value={selectedYear}
+                                nonClearable
+                            />
+                        ) : (
+                            <DateDualRangeInput
+                                variant="general"
+                                fromName="fromDate"
+                                fromOnChange={handleFromDateChange}
+                                fromValue={startDateString}
+                                toName="toDate"
+                                toOnChange={handleToDateChange}
+                                toValue={endDateString}
+                            />
+                        )}
                         <DropdownMenu
                             label="Download"
                             disabled={!!exportIdToDownload || exportCreatePending}
@@ -618,22 +699,23 @@ function NewExploreDeep(props: Props) {
                                     )}
                                     label="Added last week"
                                     // TODO: Get entries last week
-                                    totalValue={data?.deepExploreStats?.totalEntries}
+                                    totalValue={data?.deepExploreStats?.totalEntriesAddedLastWeek}
                                     variant="accent"
                                 />
                             </Card>
                         </div>
-                        <ProjectFilters
-                            className={styles.filters}
-                            initialValue={filters}
-                            onFiltersChange={setFilters}
-                            readOnlyMode={printPreviewMode}
-                        />
+                        {!isPublic && (
+                            <ProjectFilters
+                                className={styles.filters}
+                                initialValue={filters}
+                                onFiltersChange={setFilters}
+                                readOnlyMode={printPreviewMode}
+                            />
+                        )}
                     </>
                 )}
                 headingSize="large"
             >
-                {pending && <PendingMessage />}
                 {printPreviewMode ? (
                     <>
                         <Container
@@ -647,9 +729,10 @@ function NewExploreDeep(props: Props) {
                                 readOnlyMode={printPreviewMode}
                                 endDate={endDate}
                                 startDate={startDate}
-                                onEndDateChange={setEndDate}
-                                onStartDateChange={setStartDate}
+                                onEndDateChange={!isPublic ? setEndDate : undefined}
+                                onStartDateChange={!isPublic ? setStartDate : undefined}
                                 projectFilters={filters}
+                                isPublic={isPublic}
                             />
                         </Container>
                         <Container
@@ -661,8 +744,8 @@ function NewExploreDeep(props: Props) {
                             <EntriesContent
                                 endDate={endDate}
                                 startDate={startDate}
-                                onEndDateChange={setEndDate}
-                                onStartDateChange={setStartDate}
+                                onEndDateChange={!isPublic ? setEndDate : undefined}
+                                onStartDateChange={!isPublic ? setStartDate : undefined}
                                 projectFilters={filters}
                             />
                         </Container>
@@ -693,17 +776,18 @@ function NewExploreDeep(props: Props) {
                                     readOnlyMode={printPreviewMode}
                                     endDate={endDate}
                                     startDate={startDate}
-                                    onEndDateChange={setEndDate}
-                                    onStartDateChange={setStartDate}
                                     projectFilters={filters}
+                                    onEndDateChange={!isPublic ? setEndDate : undefined}
+                                    onStartDateChange={!isPublic ? setStartDate : undefined}
+                                    isPublic={isPublic}
                                 />
                             </TabPanel>
                             <TabPanel name="entries">
                                 <EntriesContent
                                     endDate={endDate}
                                     startDate={startDate}
-                                    onEndDateChange={setEndDate}
-                                    onStartDateChange={setStartDate}
+                                    onEndDateChange={!isPublic ? setEndDate : undefined}
+                                    onStartDateChange={!isPublic ? setStartDate : undefined}
                                     projectFilters={filters}
                                 />
                             </TabPanel>
