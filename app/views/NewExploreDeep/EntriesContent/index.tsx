@@ -3,6 +3,7 @@ import {
     _cs,
 } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
+import { PendingMessage } from '@the-deep/deep-ui';
 
 import {
     DEEP_START_DATE,
@@ -29,7 +30,7 @@ const ENTRIES_COUNT_TIMESERIES = gql`
 query EntriesCountTimeseries(
     $dateFrom: DateTime!,
     $dateTo: DateTime!,
-    $includeEntryLessThan: Boolean,
+    $excludeEntryLessThan: Boolean,
     $isTest: Boolean,
     $organizations: [ID!],
     $regions: [ID!],
@@ -40,7 +41,7 @@ query EntriesCountTimeseries(
             dateFrom: $dateFrom,
             dateTo: $dateTo,
             project: {
-                includeEntryLessThan: $includeEntryLessThan,
+                excludeEntryLessThan: $excludeEntryLessThan,
                 isTest: $isTest,
                 organizations: $organizations,
                 regions: $regions,
@@ -59,7 +60,7 @@ const ENTRIES_MAP_DATA = gql`
 query EntriesMapData(
     $dateFrom: DateTime!,
     $dateTo: DateTime!,
-    $includeEntryLessThan: Boolean,
+    $excludeEntryLessThan: Boolean,
     $isTest: Boolean,
     $organizations: [ID!],
     $regions: [ID!],
@@ -70,7 +71,7 @@ query EntriesMapData(
             dateFrom: $dateFrom,
             dateTo: $dateTo,
             project: {
-                includeEntryLessThan: $includeEntryLessThan,
+                excludeEntryLessThan: $excludeEntryLessThan,
                 isTest: $isTest,
                 organizations: $organizations,
                 regions: $regions,
@@ -94,8 +95,8 @@ interface Props {
     projectFilters: ProjectFilterType | undefined;
     endDate: number;
     startDate: number;
-    onEndDateChange: (newDate: number | undefined) => void;
-    onStartDateChange: (newDate: number | undefined) => void;
+    onEndDateChange: ((newDate: number | undefined) => void) | undefined;
+    onStartDateChange: ((newDate: number | undefined) => void) | undefined;
 }
 
 function EntriesContent(props: Props) {
@@ -115,7 +116,7 @@ function EntriesContent(props: Props) {
         isTest: projectFilters?.excludeTestProject ? false : undefined,
         organizations: projectFilters?.organizations,
         regions: projectFilters?.regions,
-        includeEntryLessThan: !projectFilters?.excludeProjectsLessThan,
+        excludeEntryLessThan: !projectFilters?.excludeProjectsLessThan,
     }), [projectFilters]);
 
     const {
@@ -135,7 +136,7 @@ function EntriesContent(props: Props) {
         isTest: projectFilters?.excludeTestProject ? false : undefined,
         organizations: projectFilters?.organizations,
         regions: projectFilters?.regions,
-        includeEntryLessThan: !projectFilters?.excludeProjectsLessThan,
+        excludeEntryLessThan: projectFilters?.excludeProjectsLessThan,
     }), [
         projectFilters,
         endDate,
@@ -145,6 +146,7 @@ function EntriesContent(props: Props) {
     const {
         previousData: previousEntriesMapData,
         data: entriesMapData = previousEntriesMapData,
+        loading: loadingMapAndLeadData,
     } = useQuery<EntriesMapDataQuery, EntriesMapDataQueryVariables>(
         ENTRIES_MAP_DATA,
         {
@@ -169,12 +171,15 @@ function EntriesContent(props: Props) {
 
     return (
         <div className={_cs(className, styles.entriesContent)}>
-            <EntriesHeatMap
-                className={styles.map}
-                entriesByRegion={
-                    entriesMapData?.deepExploreStats?.entriesCountByRegion ?? undefined
-                }
-            />
+            <div>
+                {loadingMapAndLeadData && <PendingMessage />}
+                <EntriesHeatMap
+                    className={styles.map}
+                    entriesByRegion={
+                        entriesMapData?.deepExploreStats?.entriesCountByRegion ?? undefined
+                    }
+                />
+            </div>
             <div ref={barContainerRef}>
                 <BrushLineChart
                     width={width ?? 0}
@@ -197,6 +202,7 @@ function EntriesContent(props: Props) {
                 timeseries={entriesMapData?.deepExploreStats?.leadsCountByDay ?? undefined}
                 startDate={startDate}
                 endDate={endDate}
+                loading={loadingMapAndLeadData}
             />
         </div>
     );
