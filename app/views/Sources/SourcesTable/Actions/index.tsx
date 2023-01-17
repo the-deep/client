@@ -238,6 +238,18 @@ function Actions<T extends string>(props: Props<T>) {
                 >
                     Tag
                 </SmartButtonLikeLink>
+                {hasDuplicates && (
+                    <QuickActionButton
+                        className={styles.showDuplicatesButton}
+                        name={id}
+                        onClick={handleShowDuplicatesClick}
+                        disabled={disabled}
+                        title={`${duplicateLeadsCount} duplicate leads`}
+                    >
+                        {duplicateLeadsCount < MAX_DUPLICATES
+                            ? duplicateLeadsCount : <IoWarningOutline />}
+                    </QuickActionButton>
+                )}
                 {canEditSource && (
                     <QuickActionDropdownMenu
                         title="More options"
@@ -272,18 +284,6 @@ function Actions<T extends string>(props: Props<T>) {
                             </DropdownMenuItem>
                         )}
                     </QuickActionDropdownMenu>
-                )}
-                {hasDuplicates && (
-                    <QuickActionButton
-                        className={styles.showDuplicatesButton}
-                        name={id}
-                        onClick={handleShowDuplicatesClick}
-                        disabled={disabled}
-                        title={`${duplicateLeadsCount} duplicate leads`}
-                    >
-                        {duplicateLeadsCount < MAX_DUPLICATES
-                            ? duplicateLeadsCount : <IoWarningOutline />}
-                    </QuickActionButton>
                 )}
                 {isAssessmentLead && (
                     <SmartButtonLikeLink

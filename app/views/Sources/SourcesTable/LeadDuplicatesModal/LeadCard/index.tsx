@@ -1,17 +1,24 @@
 import React, { useCallback, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
+    Button,
     Container,
     DateOutput,
+    QuickActionButton,
     QuickActionConfirmButton,
     TextOutput,
     useAlert,
 } from '@the-deep/deep-ui';
-import { IoTrashBinOutline } from 'react-icons/io5';
+import {
+    IoTrashBinOutline,
+    IoChevronDown,
+    IoChevronUp,
+} from 'react-icons/io5';
 import { useMutation } from '@apollo/client';
 
 import ProjectContext from '#base/context/ProjectContext';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
+import { useModalState } from '#hooks/stateManagement';
 import {
     DeleteLeadMutation,
     DeleteLeadMutationVariables,
@@ -27,6 +34,8 @@ interface Props {
     className?: string;
     lead: Lead;
     projectId: string;
+    activeDuplicateLeadId?: string;
+    onPreviewClick?: (id: string) => void;
 }
 
 function LeadCard(props: Props) {
@@ -34,11 +43,17 @@ function LeadCard(props: Props) {
         className,
         lead,
         projectId,
+        onPreviewClick,
+        activeDuplicateLeadId,
     } = props;
 
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
     const canDeleteLead = project?.allowedPermissions.includes('DELETE_LEAD');
+    const [
+        isDetailsShown,,,,
+        toggleDetailsVisibility,
+    ] = useModalState(true);
 
     const [
         deleteLead,
@@ -83,11 +98,13 @@ function LeadCard(props: Props) {
         });
     }, [lead.id, projectId, deleteLead]);
 
+    const isActive = activeDuplicateLeadId === lead.id;
     return (
         <div
             className={_cs(
                 styles.leadCard,
                 className,
+                isActive && styles.active,
             )}
         >
             <Container
@@ -95,49 +112,75 @@ function LeadCard(props: Props) {
                 headingClassName={styles.heading}
                 heading={lead.title}
                 headingSize="small"
-                headerDescription={(
+                headerActions={(
+                    <QuickActionButton
+                        name={undefined}
+                        title={isDetailsShown ? 'Hide Details' : 'Show Details'}
+                        onClick={toggleDetailsVisibility}
+                    >
+                        {isDetailsShown ? <IoChevronUp /> : <IoChevronDown />}
+                    </QuickActionButton>
+                )}
+                headerDescription={isDetailsShown && (
                     <DateOutput
                         value={lead.publishedOn}
                     />
                 )}
-                footerQuickActions={canDeleteLead && (
-                    <QuickActionConfirmButton
-                        name={undefined}
-                        onConfirm={handleLeadDeleteConfirm}
-                        disabled={leadDeletePending}
-                        message="Are you sure you want to delete the source?"
-                    >
-                        <IoTrashBinOutline />
-                    </QuickActionConfirmButton>
+                footerQuickActions={(
+                    <>
+                        {onPreviewClick && (
+                            <Button
+                                name={lead.id}
+                                title="View"
+                                variant="secondary"
+                                onClick={onPreviewClick}
+                                disabled={isActive}
+                            >
+                                Preview
+                            </Button>
+                        )}
+                        {canDeleteLead && (
+                            <QuickActionConfirmButton
+                                name={undefined}
+                                onConfirm={handleLeadDeleteConfirm}
+                                disabled={leadDeletePending}
+                                message="Are you sure you want to delete the source?"
+                            >
+                                <IoTrashBinOutline />
+                            </QuickActionConfirmButton>
+                        )}
+                    </>
                 )}
-                contentClassName={styles.content}
+                contentClassName={isDetailsShown ? styles.content : styles.hidden}
             >
-                <div className={styles.metaSection}>
-                    <TextOutput
-                        label="Publisher"
-                        value={lead.source ? organizationTitleSelector(lead.source) : undefined}
-                    />
-                    <TextOutput
-                        label="Author"
-                        value={lead.authors?.map(organizationTitleSelector).join(',')}
-                    />
-                    <TextOutput
-                        label="Confidentiality"
-                        value={lead.confidentialityDisplay}
-                    />
-                    <TextOutput
-                        label="Priority"
-                        value={lead.priorityDisplay}
-                    />
-                    <TextOutput
-                        label="Status"
-                        value={lead.statusDisplay}
-                    />
-                    <TextOutput
-                        label="Total Entries"
-                        value={lead.filteredEntriesCount ?? 0}
-                    />
-                </div>
+                {isDetailsShown && (
+                    <div className={styles.metaSection}>
+                        <TextOutput
+                            label="Publisher"
+                            value={lead.source ? organizationTitleSelector(lead.source) : undefined}
+                        />
+                        <TextOutput
+                            label="Author"
+                            value={lead.authors?.map(organizationTitleSelector).join(',')}
+                        />
+                        <TextOutput
+                            label="Confidentiality"
+                            value={lead.confidentialityDisplay}
+                        />
+                        <TextOutput
+                            label="Priority"
+                            value={lead.priorityDisplay}
+                        />
+                        <TextOutput
+                            label="Status"
+                            value={lead.statusDisplay}
+                        />
+                        <TextOutput
+                            label="Total Entries"
+                            value={lead.filteredEntriesCount ?? 0}
+                        />
+                    </div>
+                )}
             </Container>
         </div>
     );

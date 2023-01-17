@@ -450,7 +450,7 @@ function SourcesTable(props: Props) {
                 duplicateLeadsCount: data.duplicateLeadsCount,
                 projectId,
             }),
-            columnWidth: 196,
+            columnWidth: 240,
         };
         return ([
             selectColumn,

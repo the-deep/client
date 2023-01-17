@@ -2,29 +2,36 @@
     display: flex;
     border-radius: var(--dui-border-radius-card);
     background-color: var(--dui-color-foreground);
-    max-height: 25vh;
+
+    &.active {
+        border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-accent);
+    }
 
     .heading {
         display: flex;
         align-items: center;
-        gap: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-extra-small);
     }
 
     .source-details {
         flex-grow: 1;
         background-color: transparent;
-        padding: var(--dui-spacing-large);
+        padding: var(--dui-spacing-extra-small);
 
         .content {
             display: flex;
             flex-direction: column;
-            gap: var(--dui-spacing-large);
+            gap: var(--dui-spacing-extra-small);
 
             .meta-section {
                 display: flex;
                 flex-wrap: wrap;
-                gap: var(--dui-spacing-small);
+                gap: var(--dui-spacing-extra-small);
             }
+        }
+
+        .hidden {
+            display: none;
         }
     }
 }

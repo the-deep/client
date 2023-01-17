@@ -1,7 +1,6 @@
-import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useCallback, useState } from 'react';
 import {
-    Card,
+    ContainerCard,
     Modal,
     PendingMessage,
     ListView,
@@ -16,6 +15,7 @@ import {
     LeadsQuery,
     LeadsQueryVariables,
 } from '#generated/types';
+import LeadPreview from '#components/lead/LeadPreview';
 
 import LeadCard, { Lead } from './LeadCard';
 import { LEAD_DUPLICATES, LEADS } from './queries';
@@ -35,6 +35,8 @@ function LeadDuplicatesModal(props: Props) {
         leadId,
         onClose,
     } = props;
+
+    const [activeDuplicateLeadId, setActiveDuplicateLeadId] = useState<string>();
 
     const {
         data: leadDuplicatesResponse,
@@ -59,14 +61,26 @@ function LeadDuplicatesModal(props: Props) {
                 projectId,
                 ids: ['32', '31', '30', '28'],
             },
+            onCompleted: (response) => {
+                const duplicateLeads = response?.project?.leads?.results?.filter(
+                    (lead) => lead.id !== leadId,
+                );
+                setActiveDuplicateLeadId(duplicateLeads?.[0].id);
+            },
         },
     );
+
+    const handlePreview = useCallback((id: string) => {
+        setActiveDuplicateLeadId(id);
+    }, []);
 
     const sourceRendererParams = useCallback((_: string, lead: Lead) => ({
         className: styles.lead,
         lead,
         projectId,
-    }), [projectId]);
+        onPreviewClick: handlePreview,
+        activeDuplicateLeadId,
+    }), [projectId, handlePreview, activeDuplicateLeadId]);
 
     const pending = leadsPending || leadDuplicatesPending;
     const originalLead = leadsResponse?.project?.leads?.results?.find(
@@ -75,6 +89,8 @@ function LeadDuplicatesModal(props: Props) {
     const duplicateLeads = leadsResponse?.project?.leads?.results?.filter(
         (lead) => lead.id !== leadId,
     );
+
+    const selectedDuplicateLead = duplicateLeads?.find((lead) => lead.id === activeDuplicateLeadId);
 
     return (
         <Modal
@@ -86,27 +102,48 @@ function LeadDuplicatesModal(props: Props) {
         >
             {pending && <PendingMessage />}
             {originalLead && (
-                <Card className={styles.originalLead}>
+                <ContainerCard
+                    heading="Orginal Source"
+                    headingSize="small"
+                    className={styles.originalLeadContainer}
+                    contentClassName={styles.orginalLead}
+                >
                     <LeadCard
                         lead={originalLead}
                         projectId={projectId}
                     />
-                </Card>
-
+                    <LeadPreview
+                        className={styles.preview}
+                        url={originalLead.url}
+                        attachment={originalLead.attachment}
+                    />
+                </ContainerCard>
             )}
-            <Card className={styles.duplicateLead}>
-                Duplicate Lead
-            </Card>
+            {selectedDuplicateLead && (
+                <ContainerCard
+                    heading="Duplicate Source"
+                    headingSize="small"
+                    className={styles.duplicateLeadContainer}
+                    contentClassName={styles.duplicateLead}
+                >
+                    <LeadCard
+                        lead={selectedDuplicateLead}
+                        projectId={projectId}
+                    />
+                    <LeadPreview
+                        className={styles.preview}
+                        url={selectedDuplicateLead.url}
+                        attachment={selectedDuplicateLead.attachment}
+                    />
+                </ContainerCard>
+            )}
             <ListView
-                className={_cs(
-                    styles.leads,
-                    (duplicateLeads?.length ?? 0) < 1 && styles.empty,
-                )}
+                className={styles.duplicates}
                 data={duplicateLeads}
                 renderer={LeadCard}
                 rendererParams={sourceRendererParams}
                 keySelector={sourceKeySelector}
-                pending={leadDuplicatesPending}
+                pending={false}
                 filtered={false}
                 errored={false}
                 emptyIcon={(

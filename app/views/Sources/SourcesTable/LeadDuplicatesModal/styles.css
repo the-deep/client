@@ -8,25 +8,51 @@
         padding: var(--dui-spacing-small);
         gap: var(--dui-spacing-medium);
 
-        .original-lead {
+        .original-lead-container {
             display: flex;
-            flex-basis: 30%;
-            flex-grow: 0;
-            flex-shrink: 0;
-        }
-
-        .duplicate-lead {
-            display: flex;
-            flex-basis: 30%;
-            flex-shrink: 0;
-        }
-
-        .leads {
-            display: flex;
+            flex-basis: 35%;
             flex-grow: 1;
-            flex-wrap: wrap;
+            flex-shrink: 0;
+            overflow: auto;
+
+            .original-lead {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+
+                .preview {
+                    display: flex;
+                    flex-grow: 1;
+                }
+            }
+        }
+
+        .duplicate-lead-container {
+            display: flex;
+            flex-basis: 35%;
+            flex-grow: 1;
+            flex-shrink: 0;
+            overflow: auto;
+
+            .duplicate-lead {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+
+                .preview {
+                    display: flex;
+                    flex-grow: 1;
+                }
+            }
+        }
+
+        .duplicates {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
             justify-content: flex-start;
             gap: var(--dui-spacing-extra-small);
+            overflow: auto;
 
             .lead {
                 display: flex;
