@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import {
+    Card,
     ContainerCard,
     Modal,
     PendingMessage,
@@ -105,36 +106,40 @@ function LeadDuplicatesModal(props: Props) {
                 <ContainerCard
                     heading="Orginal Source"
                     headingSize="small"
-                    className={styles.originalLeadContainer}
-                    contentClassName={styles.orginalLead}
+                    className={styles.leadContainer}
+                    contentClassName={styles.lead}
                 >
                     <LeadCard
                         lead={originalLead}
                         projectId={projectId}
                     />
-                    <LeadPreview
-                        className={styles.preview}
-                        url={originalLead.url}
-                        attachment={originalLead.attachment}
-                    />
+                    <Card className={styles.previewContainer}>
+                        <LeadPreview
+                            className={styles.preview}
+                            url={originalLead.url}
+                            attachment={originalLead.attachment}
+                        />
+                    </Card>
                 </ContainerCard>
             )}
             {selectedDuplicateLead && (
                 <ContainerCard
                     heading="Duplicate Source"
                     headingSize="small"
-                    className={styles.duplicateLeadContainer}
-                    contentClassName={styles.duplicateLead}
+                    className={styles.leadContainer}
+                    contentClassName={styles.lead}
                 >
                     <LeadCard
                         lead={selectedDuplicateLead}
                         projectId={projectId}
                     />
-                    <LeadPreview
-                        className={styles.preview}
-                        url={selectedDuplicateLead.url}
-                        attachment={selectedDuplicateLead.attachment}
-                    />
+                    <Card className={styles.previewContainer}>
+                        <LeadPreview
+                            className={styles.preview}
+                            url={selectedDuplicateLead.url}
+                            attachment={selectedDuplicateLead.attachment}
+                        />
+                    </Card>
                 </ContainerCard>
             )}
             <ListView

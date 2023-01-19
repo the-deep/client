@@ -1,5 +1,6 @@
 .lead-duplicates-modal {
     display: flex;
+    overflow: auto;
 
     .modal-body {
         display: flex;
@@ -7,47 +8,39 @@
         background-color: var(--dui-color-grey6);
         padding: var(--dui-spacing-small);
         gap: var(--dui-spacing-medium);
+        overflow: auto;
 
-        .original-lead-container {
+        .lead-container {
             display: flex;
             flex-basis: 35%;
             flex-grow: 1;
             flex-shrink: 0;
             overflow: auto;
 
-            .original-lead {
+            .lead {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
+                overflow: auto;
 
-                .preview {
+                .preview-container {
                     display: flex;
+                    flex-direction: column;
                     flex-grow: 1;
-                }
-            }
-        }
+                    flex-shrink: 0;
+                    padding: 0;
+                    overflow-y: auto;
 
-        .duplicate-lead-container {
-            display: flex;
-            flex-basis: 35%;
-            flex-grow: 1;
-            flex-shrink: 0;
-            overflow: auto;
-
-            .duplicate-lead {
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-
-                .preview {
-                    display: flex;
-                    flex-grow: 1;
+                    .preview {
+                        flex-grow: 1;
+                    }
                 }
             }
         }
 
         .duplicates {
             display: flex;
+            flex-basis: 20%;
             flex-direction: column;
             flex-grow: 1;
             justify-content: flex-start;
