@@ -10,7 +10,6 @@ import {
     Button,
 } from '@the-deep/deep-ui';
 import { ApolloProvider } from '@apollo/client';
-import ReactGA from 'react-ga';
 import { setMapboxToken } from '@togglecorp/re-map';
 
 import '@the-deep/deep-ui/build/esm/index.css';
@@ -30,7 +29,6 @@ import { sync } from '#base/hooks/useAuthSync';
 import Navbar from '#base/components/Navbar';
 import Routes from '#base/components/Routes';
 import { User } from '#base/types/user';
-import { trackingId, gaConfig } from '#base/configs/googleAnalytics';
 import {
     processDeepUrls,
     processDeepOptions,
@@ -58,11 +56,12 @@ if (sentryConfig) {
     init(sentryConfig);
 }
 
-ReactGA.initialize(trackingId, gaConfig);
 browserHistory.listen((location) => {
-    const page = location.pathname ?? window.location.pathname;
-    ReactGA.set({ page });
-    ReactGA.pageview(page);
+    window.gtag('event', 'page_view', {
+        page_path: location.pathname + location.search + location.hash,
+        page_search: location.search,
+        page_hash: location.hash,
+    });
 });
 
 function Base() {
