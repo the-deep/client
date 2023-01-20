@@ -4479,6 +4479,11 @@
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.8.tgz#30744afdb385e2945e22f3b033f897f76b1f12ca"
   integrity sha512-1rkryxURpr6aWP7R786/UQOkJ3PcpQiWkAXBmdWc7ryFWqN6a4xfK7BtjXvFBKO9LjQ+MWQSWxYeZX1OApnArA==
 
+"@types/google.accounts@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@types/google.accounts/-/google.accounts-0.0.5.tgz#847dc76fda529b0563cb4b01bdde511b394c0ced"
+  integrity sha512-5cH9OHlJSTNMwHS7d5FyxdoaotUzrruTmf/cFvDiH1g5DIlcmhgG1OCs2yWrph6dgxNUKhZDha1FYySwzQZPkA==
+
 "@types/google.picker@^0.0.39":
   version "0.0.39"
   resolved "https://registry.yarnpkg.com/@types/google.picker/-/google.picker-0.0.39.tgz#bb205ffb9736e8ec4a1af7cc87811d0fc5dc30fa"

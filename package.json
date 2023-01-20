@@ -96,6 +96,7 @@
         "@types/dropbox-chooser": "^1.0.3",
         "@types/gapi": "^0.0.41",
         "@types/gapi.auth2": "^0.0.55",
+        "@types/google.accounts": "^0.0.5",
         "@types/google.picker": "^0.0.39",
         "@types/gtag.js": "^0.0.12",
         "@types/jest": "^27.4.0",
