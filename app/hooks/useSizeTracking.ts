@@ -35,7 +35,7 @@ function useSizeTracking(
         const { current: el } = elementRef;
 
         if (!el) {
-            console.error('useSizeTrackign: Cannot reference requested element');
+            console.error('useSizeTracking: Cannot reference requested element');
             return undefined;
         }
 

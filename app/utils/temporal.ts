@@ -55,7 +55,7 @@ export function getTimestamps(
         // NOTE: We are doing this to avoid issues due to timezone
         myDate.setUTCHours(0, 0, 0, 0);
 
-        // NOTE: Moved this up, but need to consult with @tnagorra
+        // FIXME: Moved this up, but need to consult with @tnagorra
         timestamps.push(myDate.getTime());
         increment += 1;
         if (myDate > sanitizedEndDate) {
