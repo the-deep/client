@@ -235,7 +235,6 @@ const hasAssessmentOptions: BooleanOption[] = [
 const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
     DOCX: 'REPORT',
     PDF: 'REPORT',
-    // FIXME: Not sure what I am doing here
     CSV: 'EXCEL',
     JSON: 'JSON',
     XLSX: 'EXCEL',
