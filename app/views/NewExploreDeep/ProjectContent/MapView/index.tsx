@@ -42,12 +42,6 @@ const PROJECT_DETAILS = gql`
 
 export type Projects = {
     id: string;
-    /*
-    centroid?: {
-        type: 'point';
-        coordinates: [number, number];
-    };
-    */
     centroid?: unknown;
     projectIds?: string[] | undefined | null;
 };
