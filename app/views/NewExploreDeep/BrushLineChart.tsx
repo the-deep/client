@@ -197,13 +197,6 @@ function BrushLineChart(props: BrushProps) {
         ],
     );
 
-    const onBrushClick = useCallback(
-        () => {
-            // console.warn('brush clicked');
-        },
-        [],
-    );
-
     useEffect(() => {
         if (brushRef?.current && startDate && endDate) {
             const updater: UpdateBrush = (prevBrush) => {
@@ -270,7 +263,6 @@ function BrushLineChart(props: BrushProps) {
                     resizeTriggerAreas={['left', 'right']}
                     brushDirection="horizontal"
                     onChange={onBrushChange}
-                    onClick={onBrushClick}
                     selectedBoxStyle={selectedBrushStyle}
                     useWindowMoveEvents
                     disableDraggingSelection={!onStartDateChange || !onEndDateChange}

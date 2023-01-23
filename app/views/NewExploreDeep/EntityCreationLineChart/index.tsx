@@ -112,9 +112,23 @@ function EntityCreationLineChart(props: Props) {
                     data={timeseriesWithoutGaps}
                 >
                     <defs>
-                        <linearGradient id="stat" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.6} />
-                            <stop offset="95%" stopColor="var(--dui-color-accent)" stopOpacity={0} />
+                        <linearGradient
+                            id="stat"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                        >
+                            <stop
+                                offset="5%"
+                                stopColor="var(--dui-color-accent)"
+                                stopOpacity={0.6}
+                            />
+                            <stop
+                                offset="95%"
+                                stopColor="var(--dui-color-accent)"
+                                stopOpacity={0}
+                            />
                         </linearGradient>
                     </defs>
                     <XAxis

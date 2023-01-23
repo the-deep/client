@@ -86,6 +86,7 @@ function ExploreDeepTableView(props: Props) {
     const [pageSize, setPageSize] = useState<number>(25);
 
     useEffect(() => {
+        // FIXME: Move this logic outside
         // NOTE: Bring user back to page 1 if filters have changed
         setPage(1);
     }, [filters]);

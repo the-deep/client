@@ -4,7 +4,6 @@ import {
     isDefined,
     formatDateToString,
 } from '@togglecorp/fujs';
-import ReactDOM from 'react-dom';
 import {
     Card,
     useAlert,
@@ -215,6 +214,7 @@ interface TimeOption {
     endDate: number;
 }
 
+// TODO: Fetch this later from server
 const yearOptions: TimeOption[] = [
     {
         key: '2022',
@@ -289,11 +289,9 @@ function NewExploreDeep(props: Props) {
 
     const handleYearChange = useCallback((newYear: string | undefined) => {
         setSelectedYear(newYear);
-        ReactDOM.unstable_batchedUpdates(() => {
-            const selectedYearData = yearOptions.find((year) => year.key === newYear);
-            setEndDate(selectedYearData?.endDate);
-            setStartDate(selectedYearData?.startDate);
-        });
+        const selectedYearData = yearOptions.find((year) => year.key === newYear);
+        setEndDate(selectedYearData?.endDate);
+        setStartDate(selectedYearData?.startDate);
     }, []);
 
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
@@ -379,11 +377,12 @@ function NewExploreDeep(props: Props) {
                 if (!response) {
                     setExportIdToDownload(undefined);
                     removeAlert(DOWNLOAD_ALERT_NAME);
-                    setExportIdToDownload(undefined);
                     alert.show(
                         'There was an issue creating the export.',
                         { variant: 'error' },
                     );
+                    // eslint-disable-next-line no-console
+                    console.error(response);
                 }
                 if (response?.genericExport?.status === 'SUCCESS') {
                     setExportIdToDownload(undefined);
@@ -408,6 +407,8 @@ function NewExploreDeep(props: Props) {
                         'There was an issue creating the export.',
                         { variant: 'error' },
                     );
+                    // eslint-disable-next-line no-console
+                    console.error(response);
                 }
             },
         },
@@ -425,6 +426,8 @@ function NewExploreDeep(props: Props) {
                         'There was an issue creating the export.',
                         { variant: 'error' },
                     );
+                    // eslint-disable-next-line no-console
+                    console.error(response);
                     setExportIdToDownload(undefined);
                 }
                 if (
@@ -440,11 +443,13 @@ function NewExploreDeep(props: Props) {
                     });
                 }
             },
-            onError: () => {
+            onError: (gqlError) => {
                 alert.show(
                     'There was an issue creating the export.',
                     { variant: 'error' },
                 );
+                // eslint-disable-next-line no-console
+                console.error(gqlError);
                 setExportIdToDownload(undefined);
             },
         },
