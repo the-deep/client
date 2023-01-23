@@ -2,6 +2,7 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ContainerCard,
+    Tag,
     ListView,
 } from '@the-deep/deep-ui';
 
@@ -23,10 +24,16 @@ export function organizationTitleSelector(org: BasicOrganization) {
 interface StakeholderDetailProps {
     logo?: string;
     title: string;
+    verified?: boolean;
 }
 
 function StakeholderDetail(props: StakeholderDetailProps) {
-    const { logo, title } = props;
+    const {
+        logo,
+        title,
+        verified,
+    } = props;
+
     return (
         <div className={styles.stakeholderDetails}>
             <div className={styles.logoContainer}>
@@ -42,6 +49,15 @@ function StakeholderDetail(props: StakeholderDetailProps) {
             </div>
             <div className={styles.title}>
                 { title }
+                {verified && (
+                    <Tag
+                        className={styles.tag}
+                        spacing="none"
+                        variant="gradient1"
+                    >
+                        Verified
+                    </Tag>
+                )}
             </div>
         </div>
     );
@@ -51,6 +67,7 @@ const stakeholderDetailsKeySelector = (d: BasicOrganization) => d.id;
 const stakeholderDetailsRendererParams = (_: string, d: BasicOrganization) => ({
     logo: d.logoUrl,
     title: organizationTitleSelector(d),
+    verified: d.verified,
 });
 
 interface Props {
