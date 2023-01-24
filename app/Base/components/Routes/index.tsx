@@ -120,6 +120,11 @@ function Routes(props: Props) {
                     {routes.documentViewerRedirect.load({ className })}
                 </Route>
                 <Route
+                    path={routes.projectRedirect.path}
+                >
+                    {routes.projectRedirect.load({ className })}
+                </Route>
+                <Route
                     exact
                     path={routes.fourHundredFour.path}
                 >

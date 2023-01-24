@@ -534,6 +534,33 @@ const entryEditRedirect = wrap({
     },
 });
 
+const projectRedirect = wrap({
+    path: '/permalink/projects/:projectId/',
+    title: 'Project',
+    navbarVisibility: false,
+    component: lazy(() => import('#redirects/Project')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (
+            !project
+            || project.allowedPermissions.length <= 0
+        ) {
+            return false;
+        }
+        // NOTE: should also check if users can edit lead
+        // either in route or inside page
+        return (
+            project.allowedPermissions.includes('VIEW_ALL_LEAD')
+            || project.allowedPermissions.includes('VIEW_ONLY_UNPROTECTED_LEAD')
+        );
+    },
+});
+
 const routes = {
     login,
     register,
@@ -569,6 +596,7 @@ const routes = {
     groupAssessmentEdit: groupAssessmentEditRoute,
     entryEditRedirect,
     documentViewerRedirect,
+    projectRedirect,
     documentViewer,
 };
 export default routes;

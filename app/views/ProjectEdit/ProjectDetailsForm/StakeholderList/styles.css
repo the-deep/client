@@ -24,10 +24,18 @@
             }
 
             .title {
+                display: inline;
                 flex-grow: 1;
                 padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
                 color: var(--dui-color-text-label);
                 font-size: var(--dui-font-size-small);
+
+                .tag {
+                    display: inline-flex;
+                    margin: 0 var(--dui-spacing-extra-small);
+                    padding: 0 var(--dui-spacing-small);
+                    font-size: var(--dui-font-size-small);
+                }
             }
         }
     }

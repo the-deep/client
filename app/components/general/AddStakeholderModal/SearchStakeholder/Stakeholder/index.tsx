@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import {
     ElementFragments,
     DraggableContent,
+    Tag,
 } from '@the-deep/deep-ui';
 
 import Avatar from '#components/Avatar';
@@ -42,6 +43,14 @@ function Stakeholder(props: Props) {
                         src={value.logoUrl}
                         alt={value.title}
                     />
+                )}
+                actions={value.verified && (
+                    <Tag
+                        spacing="compact"
+                        variant="gradient1"
+                    >
+                        Verified
+                    </Tag>
                 )}
                 childrenContainerClassName={styles.text}
             >

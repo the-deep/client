@@ -253,6 +253,7 @@ const CURRENT_PROJECT = gql`
                 organization {
                     id
                     title
+                    verified
                     mergedAs {
                         id
                         title

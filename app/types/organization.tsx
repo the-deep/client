@@ -4,6 +4,7 @@ export interface BasicOrganization {
     id: string;
     title: string;
     logoUrl?: string;
+    verified?: boolean;
     mergedAs?: {
         // NOTE: not extending BasicElement as id can be either string or
         // number depending on where it's used

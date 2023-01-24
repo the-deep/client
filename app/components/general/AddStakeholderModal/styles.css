@@ -2,7 +2,7 @@
     .modal-body {
         display: flex;
         gap: var(--dui-spacing-large);
-        --width-left-container: 20rem;
+        --width-left-container: 30rem;
 
         .left {
             width: var(--width-left-container);
