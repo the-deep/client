@@ -96,11 +96,10 @@ function Actions<T extends string>(props: Props<T>) {
         hasAssessment,
         sourceStatus,
         projectId,
-        duplicateLeadsCount: duplicateLeadsCountFromProps,
+        duplicateLeadsCount,
         onShowDuplicatesClick,
     } = props;
 
-    const duplicateLeadsCount = 9;
     const hasDuplicates = (duplicateLeadsCount ?? 0) > 0;
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
@@ -246,7 +245,7 @@ function Actions<T extends string>(props: Props<T>) {
                         disabled={disabled}
                         title={`${duplicateLeadsCount} duplicate leads`}
                     >
-                        {duplicateLeadsCount < MAX_DUPLICATES
+                        {(duplicateLeadsCount ?? 0) < MAX_DUPLICATES
                             ? duplicateLeadsCount : <IoWarningOutline />}
                     </QuickActionButton>
                 )}

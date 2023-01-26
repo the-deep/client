@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import {
     Card,
     ContainerCard,
@@ -13,13 +13,13 @@ import { useQuery } from '@apollo/client';
 import {
     LeadDuplicatesQuery,
     LeadDuplicatesQueryVariables,
-    LeadsQuery,
-    LeadsQueryVariables,
+    LeadQuery,
+    LeadQueryVariables,
 } from '#generated/types';
 import LeadPreview from '#components/lead/LeadPreview';
 
 import LeadCard, { Lead } from './LeadCard';
-import { LEAD_DUPLICATES, LEADS } from './queries';
+import { LEAD_DUPLICATES, LEAD } from './queries';
 import styles from './styles.css';
 
 const sourceKeySelector = (source: Lead) => source.id;
@@ -49,24 +49,21 @@ function LeadDuplicatesModal(props: Props) {
                 projectId,
                 duplicatesOf: leadId,
             },
+            onCompleted: (response) => {
+                setActiveDuplicateLeadId(response?.project?.leads?.results?.[0].id);
+            },
         },
     );
 
     const {
-        data: leadsResponse,
-        loading: leadsPending,
-    } = useQuery<LeadsQuery, LeadsQueryVariables>(
-        LEADS,
+        data: originalLeadResponse,
+        loading: originalLeadPending,
+    } = useQuery<LeadQuery, LeadQueryVariables>(
+        LEAD,
         {
             variables: {
                 projectId,
-                ids: ['32', '31', '30', '28'],
-            },
-            onCompleted: (response) => {
-                const duplicateLeads = response?.project?.leads?.results?.filter(
-                    (lead) => lead.id !== leadId,
-                );
-                setActiveDuplicateLeadId(duplicateLeads?.[0].id);
+                leadId,
             },
         },
     );
@@ -83,68 +80,71 @@ function LeadDuplicatesModal(props: Props) {
         activeDuplicateLeadId,
     }), [projectId, handlePreview, activeDuplicateLeadId]);
 
-    const pending = leadsPending || leadDuplicatesPending;
-    const originalLead = leadsResponse?.project?.leads?.results?.find(
-        (lead) => lead.id === leadId,
-    );
-    const duplicateLeads = leadsResponse?.project?.leads?.results?.filter(
-        (lead) => lead.id !== leadId,
-    );
+    const pending = originalLeadPending || leadDuplicatesPending;
 
-    const selectedDuplicateLead = duplicateLeads?.find((lead) => lead.id === activeDuplicateLeadId);
+    const selectedDuplicateLead = useMemo(() => (
+        leadDuplicatesResponse
+            ?.project?.leads?.results?.find((lead) => lead.id === activeDuplicateLeadId)
+    ), [leadDuplicatesResponse, activeDuplicateLeadId]);
+
+    const originalLead = originalLeadResponse?.project?.lead;
 
     return (
         <Modal
             className={styles.leadDuplicatesModal}
             onCloseButtonClick={onClose}
-            heading="Duplicate Leads"
+            heading="Duplicate Lead"
             bodyClassName={styles.modalBody}
             size="cover"
         >
             {pending && <PendingMessage />}
-            {originalLead && (
-                <ContainerCard
-                    heading="Orginal Source"
-                    headingSize="small"
-                    className={styles.leadContainer}
-                    contentClassName={styles.lead}
-                >
-                    <LeadCard
-                        lead={originalLead}
-                        projectId={projectId}
-                    />
-                    <Card className={styles.previewContainer}>
-                        <LeadPreview
-                            className={styles.preview}
-                            url={originalLead.url}
-                            attachment={originalLead.attachment}
+            <ContainerCard
+                heading="Orginal Source"
+                headingSize="small"
+                className={styles.leadContainer}
+                contentClassName={styles.lead}
+            >
+                {originalLead && (
+                    <>
+                        <LeadCard
+                            lead={originalLead}
+                            projectId={projectId}
                         />
-                    </Card>
-                </ContainerCard>
-            )}
-            {selectedDuplicateLead && (
-                <ContainerCard
-                    heading="Duplicate Source"
-                    headingSize="small"
-                    className={styles.leadContainer}
-                    contentClassName={styles.lead}
-                >
-                    <LeadCard
-                        lead={selectedDuplicateLead}
-                        projectId={projectId}
-                    />
-                    <Card className={styles.previewContainer}>
-                        <LeadPreview
-                            className={styles.preview}
-                            url={selectedDuplicateLead.url}
-                            attachment={selectedDuplicateLead.attachment}
+                        <Card className={styles.previewContainer}>
+                            <LeadPreview
+                                className={styles.preview}
+                                url={originalLead.url}
+                                attachment={originalLead.attachment}
+                            />
+                        </Card>
+                    </>
+                )}
+            </ContainerCard>
+            <ContainerCard
+                heading="Duplicate Source"
+                headingSize="small"
+                className={styles.leadContainer}
+                contentClassName={styles.lead}
+            >
+                {selectedDuplicateLead && (
+                    <>
+                        <LeadCard
+                            lead={selectedDuplicateLead}
+                            projectId={projectId}
                         />
-                    </Card>
-                </ContainerCard>
-            )}
+                        <Card className={styles.previewContainer}>
+                            <LeadPreview
+                                className={styles.preview}
+                                url={selectedDuplicateLead.url}
+                                attachment={selectedDuplicateLead.attachment}
+                            />
+                        </Card>
+                    </>
+                )}
+            </ContainerCard>
             <ListView
                 className={styles.duplicates}
-                data={duplicateLeads}
+                data={leadDuplicatesResponse?.project?.leads?.results}
                 renderer={LeadCard}
                 rendererParams={sourceRendererParams}
                 keySelector={sourceKeySelector}

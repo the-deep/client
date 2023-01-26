@@ -22,13 +22,13 @@ import { useModalState } from '#hooks/stateManagement';
 import {
     DeleteLeadMutation,
     DeleteLeadMutationVariables,
-    LeadsQuery,
+    LeadQuery,
 } from '#generated/types';
 import { DELETE_LEAD } from '#views/Sources/queries';
 
 import styles from './styles.css';
 
-export type Lead = NonNullable<NonNullable<NonNullable<LeadsQuery['project']>['leads']>['results']>[number];
+export type Lead = NonNullable<NonNullable<LeadQuery['project']>['lead']>;
 
 interface Props {
     className?: string;
