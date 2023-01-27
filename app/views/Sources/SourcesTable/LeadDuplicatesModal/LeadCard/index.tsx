@@ -22,13 +22,13 @@ import { useModalState } from '#hooks/stateManagement';
 import {
     DeleteLeadMutation,
     DeleteLeadMutationVariables,
-    LeadQuery,
+    LeadDuplicatesQuery,
 } from '#generated/types';
 import { DELETE_LEAD } from '#views/Sources/queries';
 
 import styles from './styles.css';
 
-export type Lead = NonNullable<NonNullable<LeadQuery['project']>['lead']>;
+export type Lead = NonNullable<NonNullable<LeadDuplicatesQuery['project']>['lead']>;
 
 interface Props {
     className?: string;
@@ -36,6 +36,7 @@ interface Props {
     projectId: string;
     activeDuplicateLeadId?: string;
     onPreviewClick?: (id: string) => void;
+    onDeleteSuccess: (id: string) => void;
 }
 
 function LeadCard(props: Props) {
@@ -45,6 +46,7 @@ function LeadCard(props: Props) {
         projectId,
         onPreviewClick,
         activeDuplicateLeadId,
+        onDeleteSuccess,
     } = props;
 
     const alert = useAlert();
@@ -69,6 +71,7 @@ function LeadCard(props: Props) {
                             variant: 'success',
                         },
                     );
+                    onDeleteSuccess(lead.id);
                 } else {
                     alert.show(
                         'Failed to delete source.',

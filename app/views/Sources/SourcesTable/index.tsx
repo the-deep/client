@@ -319,6 +319,11 @@ function SourcesTable(props: Props) {
         setShowSingleSourceModalFalse();
     }, [setShowSingleSourceModalFalse]);
 
+    const handleModalClose = useCallback(() => {
+        getProjectSources();
+        hideDuplicatesModal();
+    }, [getProjectSources, hideDuplicatesModal]);
+
     const pending = projectSourcesPending || bulkDeletePending || leadDeletePending;
 
     const expandedContextValue = useMemo(
@@ -597,7 +602,7 @@ function SourcesTable(props: Props) {
                 )}
                 {isDuplicatesModalVisible && leadIdToViewDuplicates && (
                     <LeadDuplicatesModal
-                        onClose={hideDuplicatesModal}
+                        onClose={handleModalClose}
                         leadId={leadIdToViewDuplicates}
                         projectId={projectId}
                     />

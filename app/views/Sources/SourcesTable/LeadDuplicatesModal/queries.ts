@@ -2,6 +2,7 @@ import { gql } from '@apollo/client';
 
 import { ORGANIZATION_FRAGMENT } from '#gqlFragments';
 
+// eslint-disable-next-line import/prefer-default-export
 export const LEAD_DUPLICATES = gql`
     ${ORGANIZATION_FRAGMENT}
     query LeadDuplicates($projectId: ID!, $duplicatesOf: ID!, $page: Int = 1, $pageSize: Int = 50) {
@@ -53,16 +54,7 @@ export const LEAD_DUPLICATES = gql`
                     url
                 }
             }
-        }
-    }
-`;
-
-export const LEAD = gql`
-    ${ORGANIZATION_FRAGMENT}
-    query Lead($projectId: ID!, $leadId: ID!) {
-        project(id: $projectId) {
-            id
-            lead(id: $leadId) {
+            lead(id: $duplicatesOf) {
                 assignee {
                     id
                     displayName

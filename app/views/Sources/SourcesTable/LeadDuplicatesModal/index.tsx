@@ -13,13 +13,11 @@ import { useQuery } from '@apollo/client';
 import {
     LeadDuplicatesQuery,
     LeadDuplicatesQueryVariables,
-    LeadQuery,
-    LeadQueryVariables,
 } from '#generated/types';
 import LeadPreview from '#components/lead/LeadPreview';
 
 import LeadCard, { Lead } from './LeadCard';
-import { LEAD_DUPLICATES, LEAD } from './queries';
+import { LEAD_DUPLICATES } from './queries';
 import styles from './styles.css';
 
 const sourceKeySelector = (source: Lead) => source.id;
@@ -42,6 +40,7 @@ function LeadDuplicatesModal(props: Props) {
     const {
         data: leadDuplicatesResponse,
         loading: leadDuplicatesPending,
+        refetch: getLeadDuplicates,
     } = useQuery<LeadDuplicatesQuery, LeadDuplicatesQueryVariables>(
         LEAD_DUPLICATES,
         {
@@ -50,20 +49,11 @@ function LeadDuplicatesModal(props: Props) {
                 duplicatesOf: leadId,
             },
             onCompleted: (response) => {
-                setActiveDuplicateLeadId(response?.project?.leads?.results?.[0].id);
-            },
-        },
-    );
-
-    const {
-        data: originalLeadResponse,
-        loading: originalLeadPending,
-    } = useQuery<LeadQuery, LeadQueryVariables>(
-        LEAD,
-        {
-            variables: {
-                projectId,
-                leadId,
+                if ((response?.project?.leads?.results?.length ?? 0) > 0) {
+                    setActiveDuplicateLeadId(response?.project?.leads?.results?.[0].id);
+                } else {
+                    onClose();
+                }
             },
         },
     );
@@ -72,22 +62,29 @@ function LeadDuplicatesModal(props: Props) {
         setActiveDuplicateLeadId(id);
     }, []);
 
+    const handleDeleteSuccess = useCallback((id: string) => {
+        if (id === leadId) {
+            onClose();
+        } else {
+            getLeadDuplicates();
+        }
+    }, [leadId, getLeadDuplicates, onClose]);
+
     const sourceRendererParams = useCallback((_: string, lead: Lead) => ({
         className: styles.lead,
         lead,
         projectId,
         onPreviewClick: handlePreview,
+        onDeleteSuccess: handleDeleteSuccess,
         activeDuplicateLeadId,
-    }), [projectId, handlePreview, activeDuplicateLeadId]);
-
-    const pending = originalLeadPending || leadDuplicatesPending;
+    }), [projectId, handlePreview, activeDuplicateLeadId, handleDeleteSuccess]);
 
     const selectedDuplicateLead = useMemo(() => (
         leadDuplicatesResponse
             ?.project?.leads?.results?.find((lead) => lead.id === activeDuplicateLeadId)
     ), [leadDuplicatesResponse, activeDuplicateLeadId]);
 
-    const originalLead = originalLeadResponse?.project?.lead;
+    const originalLead = leadDuplicatesResponse?.project?.lead;
 
     return (
         <Modal
@@ -97,7 +94,7 @@ function LeadDuplicatesModal(props: Props) {
             bodyClassName={styles.modalBody}
             size="cover"
         >
-            {pending && <PendingMessage />}
+            {leadDuplicatesPending && <PendingMessage />}
             <ContainerCard
                 heading="Orginal Source"
                 headingSize="small"
@@ -109,6 +106,7 @@ function LeadDuplicatesModal(props: Props) {
                         <LeadCard
                             lead={originalLead}
                             projectId={projectId}
+                            onDeleteSuccess={handleDeleteSuccess}
                         />
                         <Card className={styles.previewContainer}>
                             <LeadPreview
@@ -131,6 +129,7 @@ function LeadDuplicatesModal(props: Props) {
                         <LeadCard
                             lead={selectedDuplicateLead}
                             projectId={projectId}
+                            onDeleteSuccess={handleDeleteSuccess}
                         />
                         <Card className={styles.previewContainer}>
                             <LeadPreview
