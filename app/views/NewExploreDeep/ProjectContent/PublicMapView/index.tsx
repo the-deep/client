@@ -3,22 +3,21 @@ import { _cs } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 
 import {
-    ProjectDetailsForMapViewQuery,
-    ProjectDetailsForMapViewQueryVariables,
+    PublicProjectDetailsForMapViewQuery,
+    PublicProjectDetailsForMapViewQueryVariables,
 } from '#generated/types';
 
 import ProjectCountMap from '../ProjectCountMap';
 import ProjectList from './ProjectList';
-
 import styles from './styles.css';
 
 const PROJECT_DETAILS = gql`
-    query ProjectDetailsForMapView(
+    query PublicProjectDetailsForMapView(
         $projectIdList: [ID!]
         $page: Int
         $pageSize: Int
     ) {
-        projects(
+        publicProjects(
             ids: $projectIdList,
             page: $page,
             pageSize: $pageSize,
@@ -31,18 +30,11 @@ const PROJECT_DETAILS = gql`
                 title
                 description
                 createdAt
-                membershipPending
-                currentUserRole
-                isRejected
-                stats {
-                    numberOfUsers
-                    numberOfLeads
-                    numberOfEntries
-                }
-                analysisFramework {
-                    id
-                    title
-                }
+                numberOfUsers
+                numberOfLeads
+                numberOfEntries
+                analysisFrameworkTitle
+                analysisFrameworkPreviewImage
             }
         }
     }
@@ -84,8 +76,7 @@ function ExploreDeepMapView(props: Props) {
         previousData,
         data: projectDetails = previousData,
         loading: projectDetailsPending,
-        refetch: refetchProjectDetails,
-    } = useQuery<ProjectDetailsForMapViewQuery, ProjectDetailsForMapViewQueryVariables>(
+    } = useQuery<PublicProjectDetailsForMapViewQuery, PublicProjectDetailsForMapViewQueryVariables>(
         PROJECT_DETAILS,
         {
             skip: !clusterClicked,
@@ -106,15 +97,14 @@ function ExploreDeepMapView(props: Props) {
         <div className={_cs(className, styles.mapView)}>
             {clusterClicked && (
                 <ProjectList
-                    projectDetails={projectDetails?.projects?.results ?? undefined}
+                    projectDetails={projectDetails?.publicProjects?.results ?? undefined}
                     onListCloseButtonClick={handleListClose}
                     page={page}
                     pageSize={pageSize}
                     setPage={setPage}
                     setPageSize={setPageSize}
                     projectDetailsPending={projectDetailsPending}
-                    totalCount={projectDetails?.projects?.totalCount ?? 0}
-                    refetchProjectDetails={refetchProjectDetails}
+                    totalCount={projectDetails?.publicProjects?.totalCount ?? 0}
                 />
             )}
             <ProjectCountMap

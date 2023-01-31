@@ -36,25 +36,6 @@
                 flex-direction: column;
                 gap: var(--dui-spacing-medium);
             }
-
-            .join-button {
-                display: flex;
-                justify-content: flex-end;
-            }
-        }
-    }
-
-    .footer {
-        display: flex;
-        align-items: flex-end;
-        flex-direction: column;
-        flex-wrap: wrap;
-        gap: unset;
-
-        .pager {
-            display: flex;
-            justify-content: center;
-            overflow: auto;
         }
     }
 

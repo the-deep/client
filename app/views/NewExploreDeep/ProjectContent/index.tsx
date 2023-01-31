@@ -31,6 +31,7 @@ import TableView from './TableView';
 import PublicTableView from './PublicTableView';
 import { FormType as ProjectFilterType } from '../ProjectFilters';
 import MapView, { Projects as ProjectsByRegion } from './MapView';
+import PublicMapView from './PublicMapView';
 import BrushLineChart from '../BrushLineChart';
 
 import styles from './styles.css';
@@ -162,10 +163,17 @@ function ProjectContent(props: Props) {
                         )}
                     </TabPanel>
                     <TabPanel name="map">
-                        <MapView
-                            className={styles.map}
-                            projects={projectsByRegion}
-                        />
+                        {isPublic ? (
+                            <PublicMapView
+                                className={styles.map}
+                                projects={projectsByRegion}
+                            />
+                        ) : (
+                            <MapView
+                                className={styles.map}
+                                projects={projectsByRegion}
+                            />
+                        )}
                     </TabPanel>
                 </Tabs>
                 <div ref={barContainerRef}>
