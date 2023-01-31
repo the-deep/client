@@ -374,7 +374,7 @@ function NewExploreDeep(props: Props) {
                 id: exportIdToDownload,
             } : undefined,
             onCompleted: (response) => {
-                if (!response) {
+                if (!response?.genericExport) {
                     setExportIdToDownload(undefined);
                     removeAlert(DOWNLOAD_ALERT_NAME);
                     alert.show(
@@ -384,7 +384,7 @@ function NewExploreDeep(props: Props) {
                     // eslint-disable-next-line no-console
                     console.error(response);
                 }
-                if (response?.genericExport?.status === 'SUCCESS') {
+                if (response.genericExport.status === 'SUCCESS') {
                     setExportIdToDownload(undefined);
                     updateAlertContent(DOWNLOAD_ALERT_NAME, (
                         <div className={styles.exportNotificationBody}>
@@ -400,7 +400,7 @@ function NewExploreDeep(props: Props) {
                             </ButtonLikeLink>
                         </div>
                     ));
-                } else if (response?.genericExport?.status === 'FAILURE') {
+                } else if (response.genericExport.status === 'FAILURE') {
                     removeAlert(DOWNLOAD_ALERT_NAME);
                     setExportIdToDownload(undefined);
                     alert.show(
