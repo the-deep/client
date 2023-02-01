@@ -2,9 +2,10 @@
     background-color: transparent;
 
     .cell-group-content {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--dui-spacing-small);
-        overflow: visible;
+        &:not(.vertical) {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--dui-spacing-small);
+        }
     }
 }

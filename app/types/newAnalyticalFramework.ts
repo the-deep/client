@@ -11,6 +11,7 @@ import {
 import {
     // NOTE: Taking WidgetType instead of WidgetInputType
     WidgetType as WidgetRaw,
+    AssistedPredictionTagsQuery,
     AnalysisFrameworkPredictionMappingType as MappingsItemRaw,
     WidgetWidgetTypeEnum as WidgetTypes,
     AnalysisFrameworkFilterType as AnalysisFrameworkFilterTypeRaw,
@@ -1310,6 +1311,8 @@ export interface AssistedTag {
 
 // NOTE: id should not be nullable for Query and nullable for Mutation
 type MappingsItemBase = Omit<MappingsItemRaw, 'association' | 'widgetType'>;
+
+export type PredictionTag = NonNullable<NonNullable<NonNullable<AssistedPredictionTagsQuery>['assistedTagging']>['predictionTags']>[number];
 
 export interface Matrix1dMappingsItem extends MappingsItemBase {
     tag: string;

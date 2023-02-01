@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
     listToMap,
@@ -45,6 +45,7 @@ import {
     getOrganigramPossibleMappings,
 } from './utils';
 import { WidgetsType } from '../schema';
+import TagWithBadge from './TagWithBadge';
 import CheckButton from './CheckButton';
 import WidgetTagList from './WidgetTagList';
 import CellGroup from './CellGroup';
@@ -92,8 +93,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
     } = props;
     const alert = useAlert();
 
-    const [selectedTag, setSelectedTag] = useState<string | undefined>();
-
     const errored = analyzeErrors(error);
 
     const predictionTags = useMemo(() => (
@@ -101,6 +100,14 @@ function AssistedTagging<K extends string>(props: Props<K>) {
             !tag.isCategory && !tag.hideInAnalysisFrameworkMapping
         ))
     ), [assistedPredictionTags]);
+
+    const predictionTagsById = useMemo(() => (
+        listToMap(
+            predictionTags,
+            (tag) => tag.id,
+            (tag) => tag,
+        )
+    ), [predictionTags]);
 
     type SetMappingsFn = React.Dispatch<React.SetStateAction<MappingsItem[] | undefined>>;
     const setMappings = useCallback<SetMappingsFn>((newMappings) => {
@@ -163,10 +170,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         }).flat()
     ), [widgets]);
 
-    const handleTagClick = useCallback((newTag: string) => {
-        setSelectedTag((oldTag) => (oldTag === newTag ? undefined : newTag));
-    }, []);
-
     const handleGeoWidgetClick = useCallback((widgetPk: string) => {
         setMappings((oldMappings = []) => {
             const selectedWidgetIndex = oldMappings.findIndex(
@@ -208,21 +211,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         title: groupKey,
     }), []);
 
-    const nlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
-        children: tag.name,
-        name: itemKey,
-        value: selectedTag === itemKey,
-        badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
-        onClick: handleTagClick,
-        disabled: disabled || !assistedTaggingEnabled,
-    }), [
-        disabled,
-        assistedTaggingEnabled,
-        handleTagClick,
-        selectedTag,
-        mappingsByTagId,
-    ]);
-
     const geoWidgetsRendererParams = useCallback((itemKey: string, widget: Widget) => ({
         children: widget.title,
         name: itemKey,
@@ -240,13 +228,13 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         widget,
         mappings: categoricalMappings,
         onMappingsChange: handleWidgetMappingsChange,
-        selectedTag,
+        predictionTagsById,
         disabled: disabled || !assistedTaggingEnabled,
     }), [
+        predictionTagsById,
         disabled,
         assistedTaggingEnabled,
         categoricalMappings,
-        selectedTag,
         handleWidgetMappingsChange,
     ]);
 
@@ -307,6 +295,13 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         possibleTagsInFramework,
         setMappings,
         predictionTags,
+    ]);
+
+    const viewOnlyNlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
+        children: tag.name,
+        badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
+    }), [
+        mappingsByTagId,
     ]);
 
     return (
@@ -377,30 +372,9 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                 )}
             >
                 <Card className={styles.card}>
-                    <Container
-                        className={styles.nlpFramework}
-                        headingSize="small"
-                        heading="NLP Framework"
-                        spacing="compact"
-                    >
-                        <ListView
-                            className={styles.nlpFrameworkList}
-                            data={predictionTags}
-                            renderer={CheckButton}
-                            rendererParams={nlpRendererParams}
-                            keySelector={nlpLabelKeySelector}
-                            filtered={false}
-                            pending={false}
-                            errored={false}
-                            groupRendererParams={nlpLabelGroupRendererParams}
-                            groupKeySelector={nlpLabelGroupKeySelector}
-                            groupRenderer={CellGroup}
-                            grouped
-                        />
-                    </Container>
                     <ContainerCard
                         className={styles.currentFramework}
-                        heading="Selected Framework"
+                        heading="My Framework"
                         headingSize="small"
                         spacing="compact"
                     >
@@ -415,6 +389,27 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                             errored={false}
                         />
                     </ContainerCard>
+                    <Container
+                        className={styles.nlpFramework}
+                        headingSize="small"
+                        heading="Available DEEP NLP models"
+                        spacing="compact"
+                    >
+                        <ListView
+                            className={styles.nlpFrameworkList}
+                            data={predictionTags}
+                            renderer={TagWithBadge}
+                            rendererParams={viewOnlyNlpRendererParams}
+                            keySelector={nlpLabelKeySelector}
+                            filtered={false}
+                            pending={false}
+                            errored={false}
+                            groupRendererParams={nlpLabelGroupRendererParams}
+                            groupKeySelector={nlpLabelGroupKeySelector}
+                            groupRenderer={CellGroup}
+                            grouped
+                        />
+                    </Container>
                 </Card>
                 {(geoWidgets?.length ?? 0) > 0 && (
                     <Card

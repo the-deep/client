@@ -1,0 +1,29 @@
+.check-button {
+    position: relative;
+    background-color: var(--dui-color-background-negative);
+    overflow: visible;
+    text-transform: initial;
+
+    .actions {
+        display: flex;
+        position: absolute;
+        top: -0.5em;
+        right: -0.5em;
+        align-items: center;
+        justify-content: center;
+        border: var(--dui-width-separator-thin) solid var(--color-nlp-tag);
+        /* NOTE: Want to move this a bit up */
+        border-radius: 1em;
+        background-color: var(--dui-color-foreground);
+        padding: 2px;
+        min-width: 1.4em;
+        min-height: 1.4em;
+        color: var(--dui-color-nlp);
+        font-size: var(--dui-font-size-extra-small);
+    }
+
+    &.nlp {
+        background-color: var(--dui-color-nlp);
+        color: var(--dui-color-text-on-accent);
+    }
+}

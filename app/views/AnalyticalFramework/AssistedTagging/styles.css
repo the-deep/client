@@ -60,16 +60,16 @@
             flex-shrink: 0;
         }
 
-        .nlp-framework {
+        .current-framework {
             display: flex;
-            flex-basis: calc(50% - var(--dui-spacing-medium) / 2);
+            flex-basis: calc(70% - var(--dui-spacing-medium) / 2);
             flex-shrink: 0;
             background-color: var(--dui-color-foreground);
         }
 
-        .current-framework {
+        .nlp-framework {
             display: flex;
-            flex-basis: calc(50% - var(--dui-spacing-medium) / 2);
+            flex-basis: calc(30% - var(--dui-spacing-medium) / 2);
             flex-shrink: 0;
             background-color: var(--dui-color-background-information);
         }
