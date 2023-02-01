@@ -10,46 +10,62 @@
         gap: var(--dui-spacing-medium);
         overflow: auto;
 
-        .lead-container {
+        .lead {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: auto;
+
+            .preview-container {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                flex-shrink: 0;
+                padding: 0;
+                overflow-y: auto;
+
+                .preview {
+                    flex-grow: 1;
+                }
+            }
+        }
+
+        .duplicate-container {
+            flex-basis: calc(65% - var(--dui-spacing-medium));
+            flex-grow: 1;
+            flex-shrink: 0;
+
+            .content {
+                display: flex;
+                gap: var(--dui-spacing-medium);
+
+                .duplicates {
+                    display: flex;
+                    flex-basis: 24rem;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    min-width: 20rem;
+                    overflow: auto;
+                    gap: var(--dui-spacing-extra-small);
+
+                    .lead-item {
+                        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                    }
+                }
+
+                .vertical-separator {
+                    background-color: var(--dui-color-separator);
+                    width: var(--dui-width-separator-thin);
+                }
+            }
+        }
+
+        .original {
             display: flex;
             flex-basis: 35%;
             flex-grow: 1;
             flex-shrink: 0;
             overflow: auto;
-
-            .lead {
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-                overflow: auto;
-
-                .preview-container {
-                    display: flex;
-                    flex-direction: column;
-                    flex-grow: 1;
-                    flex-shrink: 0;
-                    padding: 0;
-                    overflow-y: auto;
-
-                    .preview {
-                        flex-grow: 1;
-                    }
-                }
-            }
-        }
-
-        .duplicates {
-            display: flex;
-            flex-basis: 20%;
-            flex-direction: column;
-            flex-grow: 1;
-            justify-content: flex-start;
-            gap: var(--dui-spacing-extra-small);
-            overflow: auto;
-
-            .lead {
-                display: flex;
-            }
         }
     }
 

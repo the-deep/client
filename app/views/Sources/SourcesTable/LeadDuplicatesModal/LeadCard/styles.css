@@ -2,9 +2,10 @@
     display: flex;
     border-radius: var(--dui-border-radius-card);
     background-color: var(--dui-color-foreground);
+    padding: var(--dui-spacing-small);
 
     &.active {
-        border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-accent);
+        border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-accent)!important;
     }
 
     .heading {

@@ -37,6 +37,7 @@ interface Props {
     activeDuplicateLeadId?: string;
     onPreviewClick?: (id: string) => void;
     onDeleteSuccess: (id: string) => void;
+    defaultHidden?: boolean;
 }
 
 function LeadCard(props: Props) {
@@ -47,6 +48,7 @@ function LeadCard(props: Props) {
         onPreviewClick,
         activeDuplicateLeadId,
         onDeleteSuccess,
+        defaultHidden = false,
     } = props;
 
     const alert = useAlert();
@@ -55,7 +57,7 @@ function LeadCard(props: Props) {
     const [
         isDetailsShown,,,,
         toggleDetailsVisibility,
-    ] = useModalState(true);
+    ] = useModalState(!defaultHidden);
 
     const [
         deleteLead,
@@ -114,7 +116,7 @@ function LeadCard(props: Props) {
                 className={styles.sourceDetails}
                 headingClassName={styles.heading}
                 heading={lead.title}
-                headingSize="small"
+                headingSize="extraSmall"
                 headerActions={(
                     <QuickActionButton
                         name={undefined}
@@ -129,7 +131,7 @@ function LeadCard(props: Props) {
                         value={lead.publishedOn}
                     />
                 )}
-                footerQuickActions={(
+                footerActions={(
                     <>
                         {onPreviewClick && (
                             <Button

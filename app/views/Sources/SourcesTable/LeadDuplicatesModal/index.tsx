@@ -71,9 +71,10 @@ function LeadDuplicatesModal(props: Props) {
     }, [leadId, getLeadDuplicates, onClose]);
 
     const sourceRendererParams = useCallback((_: string, lead: Lead) => ({
-        className: styles.lead,
+        className: styles.leadItem,
         lead,
         projectId,
+        defaultHidden: true,
         onPreviewClick: handlePreview,
         onDeleteSuccess: handleDeleteSuccess,
         activeDuplicateLeadId,
@@ -90,15 +91,58 @@ function LeadDuplicatesModal(props: Props) {
         <Modal
             className={styles.leadDuplicatesModal}
             onCloseButtonClick={onClose}
-            heading="Duplicate Lead"
+            heading="Duplicate Sources"
             bodyClassName={styles.modalBody}
             size="cover"
         >
             {leadDuplicatesPending && <PendingMessage />}
             <ContainerCard
-                heading="Orginal Source"
+                heading="Duplicate Sources"
                 headingSize="small"
-                className={styles.leadContainer}
+                className={styles.duplicateContainer}
+                contentClassName={styles.content}
+            >
+                <ListView
+                    className={styles.duplicates}
+                    data={leadDuplicatesResponse?.project?.leads?.results}
+                    renderer={LeadCard}
+                    rendererParams={sourceRendererParams}
+                    keySelector={sourceKeySelector}
+                    pending={false}
+                    filtered={false}
+                    errored={false}
+                    emptyIcon={(
+                        <Kraken
+                            size="large"
+                            variant="work"
+                        />
+                    )}
+                    emptyMessage="No sources found."
+                    messageIconShown
+                    messageShown
+                />
+                <div className={styles.verticalSeparator} />
+                {selectedDuplicateLead && (
+                    <div className={styles.lead}>
+                        <LeadCard
+                            lead={selectedDuplicateLead}
+                            projectId={projectId}
+                            onDeleteSuccess={handleDeleteSuccess}
+                        />
+                        <Card className={styles.previewContainer}>
+                            <LeadPreview
+                                className={styles.preview}
+                                url={selectedDuplicateLead.url}
+                                attachment={selectedDuplicateLead.attachment}
+                            />
+                        </Card>
+                    </div>
+                )}
+            </ContainerCard>
+            <ContainerCard
+                heading="Original Source"
+                headingSize="small"
+                className={styles.original}
                 contentClassName={styles.lead}
             >
                 {originalLead && (
@@ -118,48 +162,6 @@ function LeadDuplicatesModal(props: Props) {
                     </>
                 )}
             </ContainerCard>
-            <ContainerCard
-                heading="Duplicate Source"
-                headingSize="small"
-                className={styles.leadContainer}
-                contentClassName={styles.lead}
-            >
-                {selectedDuplicateLead && (
-                    <>
-                        <LeadCard
-                            lead={selectedDuplicateLead}
-                            projectId={projectId}
-                            onDeleteSuccess={handleDeleteSuccess}
-                        />
-                        <Card className={styles.previewContainer}>
-                            <LeadPreview
-                                className={styles.preview}
-                                url={selectedDuplicateLead.url}
-                                attachment={selectedDuplicateLead.attachment}
-                            />
-                        </Card>
-                    </>
-                )}
-            </ContainerCard>
-            <ListView
-                className={styles.duplicates}
-                data={leadDuplicatesResponse?.project?.leads?.results}
-                renderer={LeadCard}
-                rendererParams={sourceRendererParams}
-                keySelector={sourceKeySelector}
-                pending={false}
-                filtered={false}
-                errored={false}
-                emptyIcon={(
-                    <Kraken
-                        size="large"
-                        variant="work"
-                    />
-                )}
-                emptyMessage="No sources found."
-                messageIconShown
-                messageShown
-            />
         </Modal>
     );
 }

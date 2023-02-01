@@ -36,8 +36,6 @@ import LeadCopyModal from '../LeadCopyModal';
 
 import styles from './styles.css';
 
-const MAX_DUPLICATES = 10;
-
 const LEAD_STATUS_UPDATE = gql`
     mutation LeadStatusUpdate(
         $projectId: ID!,
@@ -212,18 +210,6 @@ function Actions<T extends string>(props: Props<T>) {
     return (
         <div className={_cs(styles.actions, className)}>
             <div className={styles.row}>
-                {hasDuplicates && (
-                    <QuickActionButton
-                        className={styles.showDuplicatesButton}
-                        name={id}
-                        onClick={handleShowDuplicatesClick}
-                        disabled={disabled}
-                        title={`${duplicateLeadsCount} duplicate ${duplicateLeadsCount === 1 ? 'lead' : 'leads'}`}
-                    >
-                        {(duplicateLeadsCount ?? 0) < MAX_DUPLICATES
-                            ? duplicateLeadsCount : <IoWarningOutline />}
-                    </QuickActionButton>
-                )}
                 {canEditSource && (
                     <QuickActionButton
                         className={styles.button}
@@ -301,6 +287,19 @@ function Actions<T extends string>(props: Props<T>) {
                 )}
             </div>
             <div className={styles.row}>
+                {hasDuplicates && (
+                    <QuickActionButton
+                        className={styles.showDuplicatesButton}
+                        name={id}
+                        onClick={handleShowDuplicatesClick}
+                        disabled={disabled}
+                        variant="transparent"
+                        spacing="none"
+                        title={`${duplicateLeadsCount} duplicate ${duplicateLeadsCount === 1 ? 'lead' : 'leads'}`}
+                    >
+                        <IoWarningOutline />
+                    </QuickActionButton>
+                )}
                 <Button
                     name={undefined}
                     onClick={handleClick}

@@ -17,7 +17,7 @@
         }
 
         .show-duplicates-button {
-            border: var(--dui-width-separator-thin) solid var(--dui-color-complement3);
+            color: var(--dui-color-complement3);
         }
     }
 }
