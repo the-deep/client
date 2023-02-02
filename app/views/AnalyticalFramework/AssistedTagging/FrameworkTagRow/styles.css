@@ -19,5 +19,13 @@
         padding: var(--dui-spacing-small);
         width: 60%;
         gap: var(--dui-spacing-extra-small);
+
+        .tag {
+            background-color: var(--dui-color-nlp);
+
+            .remove-button {
+                padding: 0;
+            }
+        }
     }
 }

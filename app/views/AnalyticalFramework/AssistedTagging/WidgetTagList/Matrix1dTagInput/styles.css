@@ -1,12 +1,4 @@
 .matrix-tag-input {
     display: flex;
     flex-direction: column;
-
-    .tag {
-        background-color: var(--dui-color-nlp);
-
-        .remove-button {
-            padding: 0;
-        }
-    }
 }

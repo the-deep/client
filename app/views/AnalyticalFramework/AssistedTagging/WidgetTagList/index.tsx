@@ -24,7 +24,7 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     widget: Widget;
-    predictionTagsById: Record<string, PredictionTag> | undefined;
+    predictionTags: PredictionTag[] | undefined;
     mappings: CategoricalMappingsItem[] | undefined;
     onMappingsChange: (newMappings: CategoricalMappingsItem[], widgetPk: string) => void;
     disabled?: boolean;
@@ -37,7 +37,7 @@ function WidgetTagList(props: Props) {
         mappings,
         onMappingsChange,
         disabled,
-        predictionTagsById,
+        predictionTags,
     } = props;
 
     const filteredMappings = useMemo(
@@ -63,7 +63,7 @@ function WidgetTagList(props: Props) {
                     // NOTE: We know its safe
                     mappings={filteredMappings as Matrix1dMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
-                    predictionTagsById={predictionTagsById}
+                    predictionTags={predictionTags}
                     disabled={disabled}
                 />
             </Container>

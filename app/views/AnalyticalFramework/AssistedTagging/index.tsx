@@ -101,14 +101,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         ))
     ), [assistedPredictionTags]);
 
-    const predictionTagsById = useMemo(() => (
-        listToMap(
-            predictionTags,
-            (tag) => tag.id,
-            (tag) => tag,
-        )
-    ), [predictionTags]);
-
     type SetMappingsFn = React.Dispatch<React.SetStateAction<MappingsItem[] | undefined>>;
     const setMappings = useCallback<SetMappingsFn>((newMappings) => {
         onChange(newMappings, name);
@@ -228,10 +220,10 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         widget,
         mappings: categoricalMappings,
         onMappingsChange: handleWidgetMappingsChange,
-        predictionTagsById,
+        predictionTags,
         disabled: disabled || !assistedTaggingEnabled,
     }), [
-        predictionTagsById,
+        predictionTags,
         disabled,
         assistedTaggingEnabled,
         categoricalMappings,
