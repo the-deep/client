@@ -7,7 +7,7 @@
         align-items: center;
         flex-shrink: 0;
         border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-        padding: var(--dui-spacing-small);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-small);
         width: 40%;
     }
 
@@ -16,7 +16,7 @@
         align-items: center;
         flex-shrink: 0;
         flex-wrap: wrap;
-        padding: var(--dui-spacing-small);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-small);
         width: 60%;
         gap: var(--dui-spacing-extra-small);
 

@@ -1,27 +1,46 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
-    listToGroupList,
     listToMap,
     unique,
     isDefined,
     randomString,
 } from '@togglecorp/fujs';
 import {
+    List,
     ListView,
 } from '@the-deep/deep-ui';
 
 import {
     Matrix2dWidget,
     Matrix2dMappingsItem,
+    PredictionTag,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
 import { getType } from '#utils/types';
 
-import CheckButton from '../../CheckButton';
+import FrameworkTagRow from '../../FrameworkTagRow';
 import CellGroup from '../../CellGroup';
 
 import styles from './styles.css';
+
+type ColMappingItem = Omit<Matrix2dMappingsItem, 'association'> & {
+    association: getType<Matrix2dMappingsItem['association'], { type: 'COLUMN' }>;
+};
+
+type SubRowMappingItem = Omit<Matrix2dMappingsItem, 'association'> & {
+    association: getType<Matrix2dMappingsItem['association'], { type: 'SUB_ROW' }>;
+};
+
+type SubColumnMappingItem = Omit<Matrix2dMappingsItem, 'association'> & {
+    association: getType<Matrix2dMappingsItem['association'], { type: 'SUB_COLUMN' }>;
+};
+
+const columnAssociationKeySelector = (item: ColMappingItem) => item.association.columnKey;
+const subRowAssociationKeySelector = (item: SubRowMappingItem) => item.association.subRowKey;
+const subColumnAssociationKeySelector = (
+    item: SubColumnMappingItem,
+) => item.association.subColumnKey;
 
 interface ColItem {
     columnKey: string;
@@ -59,8 +78,8 @@ interface Props {
     widget: Matrix2dWidget;
     mappings: Matrix2dMappingsItem[] | undefined;
     onMappingsChange: (newMappings: Matrix2dMappingsItem[], widgetPk: string) => void;
-    selectedTag: string | undefined;
     disabled?: boolean;
+    predictionTags: PredictionTag[] | undefined;
 }
 
 function Matrix2dTagInput(props: Props) {
@@ -69,8 +88,8 @@ function Matrix2dTagInput(props: Props) {
         widget,
         mappings,
         onMappingsChange,
-        selectedTag,
         disabled,
+        predictionTags,
     } = props;
 
     const sortedColumns = useMemo(() => (
@@ -78,7 +97,7 @@ function Matrix2dTagInput(props: Props) {
             columnKey: column.key,
             label: column.label,
         }))
-    ), [widget?.properties?.columns]);
+    ), [widget.properties?.columns]);
 
     const sortedSubRows = useMemo(() => (
         sortByOrder(widget?.properties?.rows)
@@ -93,7 +112,7 @@ function Matrix2dTagInput(props: Props) {
                 }))
             ))
             .flat()
-    ), [widget?.properties?.rows]);
+    ), [widget.properties?.rows]);
 
     const sortedSubColumns = useMemo(() => (
         sortByOrder(widget?.properties?.columns)
@@ -108,94 +127,31 @@ function Matrix2dTagInput(props: Props) {
                 }))
             ))
             .flat()
-    ), [widget?.properties?.columns]);
+    ), [widget.properties?.columns]);
 
-    type ColMappingItem = Omit<Matrix2dMappingsItem, 'association'> & {
-        association: getType<Matrix2dMappingsItem['association'], { type: 'COLUMN' }>;
-    };
-
-    const columnKeysInMappings = useMemo(() => {
-        const list = mappings?.filter((mappingItem): mappingItem is ColMappingItem => (
-            mappingItem.tag === selectedTag
-            && mappingItem.association.type === 'COLUMN'
-        ));
-        return listToMap(
-            list,
-            (mappingItem) => mappingItem.association.columnKey,
-            () => true,
-        );
-    }, [
-        mappings,
-        selectedTag,
-    ]);
-
-    const mappingsGroupedByColumn = useMemo(() => {
-        const list = mappings?.filter((mappingItem): mappingItem is ColMappingItem => (
-            mappingItem.association.type === 'COLUMN'
-        ));
-        return listToGroupList(
-            list,
-            (mappingItem) => mappingItem.association.columnKey,
-        );
-    }, [mappings]);
-
-    type SubRowMappingItem = Omit<Matrix2dMappingsItem, 'association'> & {
-        association: getType<Matrix2dMappingsItem['association'], { type: 'SUB_ROW' }>;
-    };
-
-    const subRowKeysInMappings = useMemo(() => {
-        const list = mappings?.filter((mappingItem): mappingItem is SubRowMappingItem => (
-            mappingItem.tag === selectedTag
-            && mappingItem.association.type === 'SUB_ROW'
-        ));
-        return listToMap(
-            list,
-            (mappingItem) => mappingItem.association.subRowKey,
-            () => true,
-        );
-    }, [
-        mappings,
-        selectedTag,
-    ]);
-
-    const mappingsGroupedBySubRow = useMemo(() => {
-        const list = mappings?.filter((mappingItem): mappingItem is SubRowMappingItem => (
+    const subRowMappings = useMemo(() => (
+        mappings?.filter((mappingItem): mappingItem is SubRowMappingItem => (
             mappingItem.association.type === 'SUB_ROW'
-        ));
-        return listToGroupList(
-            list,
-            (mappingItem) => mappingItem.association.subRowKey,
-        );
-    }, [mappings]);
-
-    type SubColumnMappingItem = Omit<Matrix2dMappingsItem, 'association'> & {
-        association: getType<Matrix2dMappingsItem['association'], { type: 'SUB_COLUMN' }>;
-    };
-
-    const subColumnKeysInMappings = useMemo(() => {
-        const list = mappings?.filter((mappingItem): mappingItem is SubColumnMappingItem => (
-            mappingItem.tag === selectedTag
-            && mappingItem.association.type === 'SUB_COLUMN'
-        ));
-        return listToMap(
-            list,
-            (mappingItem) => mappingItem.association.subColumnKey,
-            () => true,
-        );
-    }, [
+        ))
+    ), [
         mappings,
-        selectedTag,
     ]);
 
-    const mappingsGroupedBySubColumn = useMemo(() => {
-        const list = mappings?.filter((mappingItem): mappingItem is SubColumnMappingItem => (
-            mappingItem.association.type === 'SUB_COLUMN'
-        ));
-        return listToGroupList(
-            list,
-            (mappingItem) => mappingItem.association.subColumnKey,
-        );
-    }, [mappings]);
+    const subColumnMappings = useMemo(() => (
+        mappings?.filter((mappingItem): mappingItem is SubColumnMappingItem => (
+            mappingItem.association.type === 'SUB_ROW'
+        ))
+    ), [
+        mappings,
+    ]);
+
+    const columnMappings = useMemo(() => (
+        mappings?.filter((mappingItem): mappingItem is ColMappingItem => (
+            mappingItem.association.type === 'COLUMN'
+        ))
+    ), [
+        mappings,
+    ]);
 
     const subColumnGroupLabelMap = useMemo(() => (
         listToMap(
@@ -213,223 +169,272 @@ function Matrix2dTagInput(props: Props) {
         )
     ), [sortedSubRows]);
 
-    const handleColumnClick = useCallback((columnKey: string) => {
-        if (!selectedTag) {
+    const handleColumnRemove = useCallback((columnKey: string, tagKey: string) => {
+        if (!mappings) {
             return;
         }
+        const selectedMappingsIndex = mappings.findIndex((mapping) => (
+            tagKey === mapping.tag
+            && mapping.association.type === 'COLUMN'
+            && mapping.association.columnKey === columnKey
+        ));
+
+        if (selectedMappingsIndex !== -1) {
+            const newMappings = [...mappings];
+            newMappings.splice(selectedMappingsIndex, 1);
+
+            onMappingsChange(newMappings, widget.id);
+        }
+    }, [
+        onMappingsChange,
+        widget.id,
+        mappings,
+    ]);
+
+    const handleColumnAdd = useCallback((columnKey: string, tagKey: string) => {
         const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tag
+            tagKey === mapping.tag
             && mapping.association.type === 'COLUMN'
             && mapping.association.columnKey === columnKey
         ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
-            const newMappings = [...(mappings ?? [])];
-            newMappings.splice(selectedMappingsIndex, 1);
-
-            onMappingsChange(newMappings, widget.id);
-        } else {
-            onMappingsChange([
-                ...(mappings ?? []),
-                {
-                    tag: selectedTag,
-                    widget: widget.id,
-                    widgetType: widget.widgetId,
-                    association: {
-                        type: 'COLUMN',
-                        columnKey,
-                    },
-                    clientId: randomString(),
-                // FIXME: need to cast here because we cannot set id
-                // and a proper fix would require more time
-                } as Matrix2dMappingsItem,
-            ], widget.id);
+            return;
         }
+        onMappingsChange([
+            ...(mappings ?? []),
+            {
+                tag: tagKey,
+                widget: widget.id,
+                widgetType: widget.widgetId,
+                association: {
+                    type: 'COLUMN',
+                    columnKey,
+                },
+                clientId: randomString(),
+            // FIXME: need to cast here because we cannot set id
+            // and a proper fix would require more time
+            } as Matrix2dMappingsItem,
+        ], widget.id);
     }, [
         onMappingsChange,
         widget,
         mappings,
-        selectedTag,
     ]);
 
-    const handleSubRowClick = useCallback((subRowKey: string) => {
-        if (!selectedTag) {
+    const handleSubRowRemove = useCallback((subRowKey: string, tagKey: string) => {
+        if (!mappings) {
             return;
         }
 
+        const selectedMappingsIndex = mappings.findIndex((mapping) => (
+            tagKey === mapping.tag
+            && mapping.association.type === 'SUB_ROW'
+            && mapping.association.subRowKey === subRowKey
+        ));
+
+        if (selectedMappingsIndex !== -1) {
+            const newMappings = [...mappings];
+            newMappings.splice(selectedMappingsIndex, 1);
+
+            onMappingsChange(newMappings, widget.id);
+        }
+    }, [
+        onMappingsChange,
+        widget.id,
+        mappings,
+    ]);
+
+    const handleSubRowAdd = useCallback((subRowKey: string, tagKey: string) => {
         const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tag
+            tagKey === mapping.tag
             && mapping.association.type === 'SUB_ROW'
             && mapping.association.subRowKey === subRowKey
         ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
-            const newMappings = [...(mappings ?? [])];
-            newMappings.splice(selectedMappingsIndex, 1);
-
-            onMappingsChange(newMappings, widget.id);
-        } else {
-            const rowKey = sortedSubRows
-                ?.find((subRow) => subRow.subRowKey === subRowKey)?.rowKey;
-
-            if (!rowKey) {
-                // eslint-disable-next-line no-console
-                console.error('Sub-row without row is found');
-                return;
-            }
-
-            const newMappings = [
-                ...(mappings ?? []),
-                {
-                    tag: selectedTag,
-                    widget: widget.id,
-                    widgetType: 'MATRIX2D',
-                    association: {
-                        type: 'SUB_ROW',
-                        subRowKey,
-                        rowKey,
-                    },
-                    clientId: randomString(),
-                // FIXME: need to cast here because we cannot set id
-                // and a proper fix would require more time
-                } as Matrix2dMappingsItem,
-            ];
-            onMappingsChange(newMappings, widget.id);
+            return;
         }
+        const rowKey = sortedSubRows
+            ?.find((subRow) => subRow.subRowKey === subRowKey)?.rowKey;
+
+        if (!rowKey) {
+            // eslint-disable-next-line no-console
+            console.error('Sub-row without row is found');
+            return;
+        }
+
+        const newMappings = [
+            ...(mappings ?? []),
+            {
+                tag: tagKey,
+                widget: widget.id,
+                widgetType: 'MATRIX2D',
+                association: {
+                    type: 'SUB_ROW',
+                    subRowKey,
+                    rowKey,
+                },
+                clientId: randomString(),
+            // FIXME: need to cast here because we cannot set id
+            // and a proper fix would require more time
+            } as Matrix2dMappingsItem,
+        ];
+        onMappingsChange(newMappings, widget.id);
     }, [
         sortedSubRows,
         onMappingsChange,
         mappings,
-        selectedTag,
         widget,
     ]);
 
-    const handleSubColumnClick = useCallback((subColumnKey: string) => {
-        if (!selectedTag) {
+    const handleSubColumnRemove = useCallback((subColumnKey: string, tagKey: string) => {
+        if (!mappings) {
             return;
         }
+        const selectedMappingsIndex = mappings.findIndex((mapping) => (
+            tagKey === mapping.tag
+            && mapping.association.type === 'SUB_COLUMN'
+            && mapping.association.subColumnKey === subColumnKey
+        ));
 
+        if (selectedMappingsIndex !== -1) {
+            const newMappings = [...mappings];
+            newMappings.splice(selectedMappingsIndex, 1);
+
+            onMappingsChange(newMappings, widget.id);
+        }
+    }, [
+        onMappingsChange,
+        widget.id,
+        mappings,
+    ]);
+
+    const handleSubColumnAdd = useCallback((subColumnKey: string, tagKey: string) => {
         const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tag
+            tagKey === mapping.tag
             && mapping.association.type === 'SUB_COLUMN'
             && mapping.association.subColumnKey === subColumnKey
         ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
-            const newMappings = [...(mappings ?? [])];
-            newMappings.splice(selectedMappingsIndex, 1);
-
-            onMappingsChange(newMappings, widget.id);
-        } else {
-            const columnKey = sortedSubColumns?.find(
-                (subColumn) => subColumn.subColumnKey === subColumnKey,
-            )?.columnKey;
-
-            if (!columnKey) {
-                // eslint-disable-next-line no-console
-                console.error('Sub-column without column is found');
-                return;
-            }
-
-            const newMappings = [
-                ...(mappings ?? []),
-                {
-                    tag: selectedTag,
-                    widget: widget.id,
-                    widgetType: 'MATRIX2D',
-                    association: {
-                        type: 'SUB_COLUMN',
-                        subColumnKey,
-                        columnKey,
-                    },
-                    clientId: randomString(),
-                // FIXME: need to cast here because we cannot set id
-                // and a proper fix would require more time
-                } as Matrix2dMappingsItem,
-            ];
-
-            onMappingsChange(newMappings, widget.id);
+            return;
         }
+
+        const columnKey = sortedSubColumns?.find(
+            (subColumn) => subColumn.subColumnKey === subColumnKey,
+        )?.columnKey;
+
+        if (!columnKey) {
+            // eslint-disable-next-line no-console
+            console.error('Sub-column without column is found');
+            return;
+        }
+
+        const newMappings = [
+            ...(mappings ?? []),
+            {
+                tag: tagKey,
+                widget: widget.id,
+                widgetType: 'MATRIX2D',
+                association: {
+                    type: 'SUB_COLUMN',
+                    subColumnKey,
+                    columnKey,
+                },
+                clientId: randomString(),
+            // FIXME: need to cast here because we cannot set id
+            // and a proper fix would require more time
+            } as Matrix2dMappingsItem,
+        ];
+
+        onMappingsChange(newMappings, widget.id);
     }, [
         sortedSubColumns,
         onMappingsChange,
         mappings,
-        selectedTag,
         widget,
     ]);
 
     const colRendererParams = useCallback((_: string, column: ColItem) => ({
-        children: column.label,
-        name: column.columnKey,
-        value: !!columnKeysInMappings?.[column.columnKey],
-        badgeCount: mappingsGroupedByColumn?.[column.columnKey]?.length ?? 0,
-        onClick: handleColumnClick,
-        disabled: !selectedTag || disabled,
+        title: column.label,
+        itemKey: column.columnKey,
+        onMappingRemoveClick: handleColumnRemove,
+        onMappingAddClick: handleColumnAdd,
+        mappings: columnMappings,
+        associationKeySelector: columnAssociationKeySelector,
+        predictionTags,
+        disabled,
     }), [
         disabled,
-        handleColumnClick,
-        selectedTag,
-        columnKeysInMappings,
-        mappingsGroupedByColumn,
+        handleColumnAdd,
+        handleColumnRemove,
+        columnMappings,
+        predictionTags,
     ]);
 
     const subRowRendererParams = useCallback((_: string, subRow: SubRowItem) => ({
-        children: subRow.subRowLabel,
-        name: subRow.subRowKey,
-        onClick: handleSubRowClick,
-        value: !!subRowKeysInMappings?.[subRow.subRowKey],
-        badgeCount: mappingsGroupedBySubRow?.[subRow.subRowKey]?.length ?? 0,
-        disabled: !selectedTag || disabled,
+        title: subRow.subRowLabel,
+        itemKey: subRow.subRowKey,
+        onMappingRemoveClick: handleSubRowRemove,
+        onMappingAddClick: handleSubRowAdd,
+        mappings: subRowMappings,
+        associationKeySelector: subRowAssociationKeySelector,
+        predictionTags,
+        disabled,
     }), [
         disabled,
-        handleSubRowClick,
-        selectedTag,
-        subRowKeysInMappings,
-        mappingsGroupedBySubRow,
+        handleSubRowRemove,
+        handleSubRowAdd,
+        subRowMappings,
+        predictionTags,
     ]);
 
     const subColumnRendererParams = useCallback((_: string, subColumn: SubColumnItem) => ({
-        children: subColumn.subColumnLabel,
-        name: subColumn.subColumnKey,
-        value: !!subColumnKeysInMappings?.[subColumn.subColumnKey],
-        badgeCount: mappingsGroupedBySubColumn?.[subColumn.subColumnKey]?.length ?? 0,
-        onClick: handleSubColumnClick,
-        disabled: !selectedTag || disabled,
+        title: subColumn.subColumnLabel,
+        itemKey: subColumn.subColumnKey,
+        onMappingRemoveClick: handleSubColumnRemove,
+        onMappingAddClick: handleSubColumnAdd,
+        mappings: subColumnMappings,
+        associationKeySelector: subColumnAssociationKeySelector,
+        predictionTags,
+        disabled,
     }), [
         disabled,
-        handleSubColumnClick,
-        selectedTag,
-        subColumnKeysInMappings,
-        mappingsGroupedBySubColumn,
+        handleSubColumnRemove,
+        handleSubColumnAdd,
+        subColumnMappings,
+        predictionTags,
     ]);
 
     const subColumnGroupRendererParams = useCallback((groupKey: string) => ({
         title: subColumnGroupLabelMap[groupKey] ?? groupKey,
+        direction: 'vertical' as const,
     }), [subColumnGroupLabelMap]);
 
     const subRowGroupRendererParams = useCallback((groupKey: string) => ({
         title: subRowGroupLabelMap[groupKey] ?? groupKey,
+        direction: 'vertical' as const,
     }), [subRowGroupLabelMap]);
 
     return (
-        <div className={styles.matrixTagInput}>
-            <CellGroup title="Columns">
-                <ListView
-                    className={_cs(className, styles.cols)}
+        <div className={_cs(className, styles.matrixTagInput)}>
+            <CellGroup
+                title="Columns"
+                direction="vertical"
+            >
+                <List
                     data={sortedColumns}
                     keySelector={colKeySelector}
-                    renderer={CheckButton}
+                    renderer={FrameworkTagRow}
                     rendererParams={colRendererParams}
-                    filtered={false}
-                    pending={false}
-                    errored={false}
                 />
             </CellGroup>
             <ListView
-                className={_cs(className, styles.subRows)}
+                className={styles.subRows}
                 data={sortedSubRows}
                 keySelector={subRowKeySelector}
-                renderer={CheckButton}
+                renderer={FrameworkTagRow}
                 rendererParams={subRowRendererParams}
                 filtered={false}
                 pending={false}
@@ -440,10 +445,10 @@ function Matrix2dTagInput(props: Props) {
                 grouped
             />
             <ListView
-                className={_cs(className, styles.subColumns)}
+                className={styles.subColumns}
                 data={sortedSubColumns}
                 keySelector={subColumnKeySelector}
-                renderer={CheckButton}
+                renderer={FrameworkTagRow}
                 rendererParams={subColumnRendererParams}
                 filtered={false}
                 pending={false}

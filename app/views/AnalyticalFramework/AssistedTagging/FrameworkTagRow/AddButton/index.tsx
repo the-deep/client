@@ -28,7 +28,7 @@ interface Props {
     onTagSelect: (tag: string | undefined) => void;
 }
 
-function AddButton(props: Props) {
+function AddFrameworkTagButton(props: Props) {
     const {
         disabled,
         existingMappings,
@@ -39,8 +39,8 @@ function AddButton(props: Props) {
     const [addInputShown, showAddInput, hideAddInput] = useBooleanState(false);
 
     const handleTagSelect = useCallback((newTag: string | undefined) => {
-        hideAddInput();
         onTagSelect(newTag);
+        hideAddInput();
     }, [
         hideAddInput,
         onTagSelect,
@@ -102,4 +102,4 @@ function AddButton(props: Props) {
     );
 }
 
-export default AddButton;
+export default AddFrameworkTagButton;

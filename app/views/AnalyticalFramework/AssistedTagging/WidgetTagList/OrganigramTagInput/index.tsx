@@ -46,15 +46,18 @@ function OrganigramTagInput(props: Props) {
 
     const sortedCells = useMemo(() => (
         sortByOrder(getOrganigramFlatOptions(widget?.properties?.options)) ?? []
-    ), [widget?.properties?.options]);
+    ), [widget.properties?.options]);
 
     const handleCellRemove = useCallback((cellKey: string, tagKey: string) => {
-        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
+        if (!mappings) {
+            return;
+        }
+        const selectedMappingsIndex = mappings.findIndex((mapping) => (
             tagKey === mapping.tag && mapping.association.optionKey === cellKey
         ));
 
-        if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
-            const newMappings = [...(mappings ?? [])];
+        if (selectedMappingsIndex !== -1) {
+            const newMappings = [...mappings];
             newMappings.splice(selectedMappingsIndex, 1);
 
             onMappingsChange(newMappings, widget.id);

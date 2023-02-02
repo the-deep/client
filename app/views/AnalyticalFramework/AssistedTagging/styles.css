@@ -50,6 +50,24 @@
             overflow-y: auto;
             gap: var(--dui-spacing-medium);
 
+            .heading-container {
+                width: 100%;
+
+                .heading {
+                    display: flex;
+
+                    .left-container {
+                        padding: var(--dui-spacing-small);
+                        width: 40%;
+                    }
+
+                    .right-container {
+                        padding: var(--dui-spacing-small);
+                        width: 60%;
+                    }
+                }
+            }
+
             .nlp-framework-list,
             .selected-framework-list {
                 overflow-y: auto;

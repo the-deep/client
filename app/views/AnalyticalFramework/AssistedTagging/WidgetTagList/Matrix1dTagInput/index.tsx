@@ -70,7 +70,7 @@ function Matrix1dTagInput(props: Props) {
                 }))
             ))
             .flat()
-    ), [widget?.properties?.rows]);
+    ), [widget.properties?.rows]);
 
     const groupLabelMap = useMemo(() => (
         listToMap(
@@ -81,12 +81,15 @@ function Matrix1dTagInput(props: Props) {
     ), [sortedCells]);
 
     const handleCellRemove = useCallback((cellKey: string, tagKey: string) => {
-        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
+        if (!mappings) {
+            return;
+        }
+        const selectedMappingsIndex = mappings.findIndex((mapping) => (
             tagKey === mapping.tag && mapping.association.subRowKey === cellKey
         ));
 
-        if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
-            const newMappings = [...(mappings ?? [])];
+        if (selectedMappingsIndex !== -1) {
+            const newMappings = [...mappings];
             newMappings.splice(selectedMappingsIndex, 1);
 
             onMappingsChange(newMappings, widget.id);

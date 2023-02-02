@@ -5,6 +5,7 @@
         &:not(.vertical) {
             display: flex;
             flex-wrap: wrap;
+            overflow: visible;
             gap: var(--dui-spacing-small);
         }
     }

@@ -337,15 +337,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                             disabled={pending}
                             label="Active"
                         />
-                        <ConfirmButton
-                            name={undefined}
-                            onConfirm={handleAutoMatchClick}
-                            message="Auto-matching will remove all the current mappings and replace them with the recommended ones. Are you sure you want to auto-match?"
-                            disabled={pending || disabled || !assistedTaggingEnabled}
-                            variant="tertiary"
-                        >
-                            Auto Match
-                        </ConfirmButton>
                         <ProgressLine
                             className={styles.progressLine}
                             progress={uniqueMappedPercent}
@@ -366,9 +357,36 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                 <Card className={styles.card}>
                     <ContainerCard
                         className={styles.currentFramework}
-                        heading="My Framework"
+                        headingClassName={styles.headingContainer}
                         headingSize="small"
-                        spacing="compact"
+                        heading={(
+                            <div className={styles.heading}>
+                                <div
+                                    className={styles.leftContainer}
+                                >
+                                    My Framework
+                                </div>
+                                <Header
+                                    className={styles.rightContainer}
+                                    heading="Selected NLP Models"
+                                    actions={(
+                                        <ConfirmButton
+                                            name={undefined}
+                                            onConfirm={handleAutoMatchClick}
+                                            message="Auto-matching will remove all the current mappings and replace them with the recommended ones. Are you sure you want to auto-match?"
+                                            disabled={
+                                                pending
+                                                || disabled
+                                                || !assistedTaggingEnabled
+                                            }
+                                            variant="tertiary"
+                                        >
+                                            Auto Match
+                                        </ConfirmButton>
+                                    )}
+                                />
+                            </div>
+                        )}
                     >
                         <ListView
                             className={styles.selectedFrameworkList}
