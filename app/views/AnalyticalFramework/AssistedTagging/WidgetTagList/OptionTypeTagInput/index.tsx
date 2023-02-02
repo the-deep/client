@@ -1,8 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
 import {
-    _cs,
-    listToMap,
-    listToGroupList,
     isDefined,
     randomString,
 } from '@togglecorp/fujs';
@@ -18,14 +15,16 @@ import {
     SelectMappingsItem,
     MultiSelectMappingsItem,
     KeyLabelEntity,
+    PredictionTag,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
 
-import CheckButton from '../../CheckButton';
-
-import styles from './styles.css';
+import FrameworkTagRow from '../../FrameworkTagRow';
 
 const cellKeySelector = (cell: KeyLabelEntity) => cell.key;
+const optionTypeKeySelector = (
+    mapping: ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem,
+) => mapping.association.optionKey;
 
 interface Props {
     className?: string;
@@ -35,7 +34,7 @@ interface Props {
         newMappings: (ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem)[],
         widgetPk: string,
     ) => void;
-    selectedTag: string | undefined;
+    predictionTags: PredictionTag[] | undefined;
     disabled?: boolean;
 }
 
@@ -45,7 +44,7 @@ function OptionTypeTagInput(props: Props) {
         widget,
         mappings,
         onMappingsChange,
-        selectedTag,
+        predictionTags,
         disabled,
     } = props;
 
@@ -53,34 +52,9 @@ function OptionTypeTagInput(props: Props) {
         sortByOrder(widget?.properties?.options) ?? []
     ), [widget?.properties?.options]);
 
-    const optionKeysInMappings = useMemo(() => (
-        listToMap(
-            mappings?.filter((mappingItem) => mappingItem.tag === selectedTag),
-            (mappingItem) => mappingItem.association.optionKey,
-            () => true,
-        )
-    ), [
-        mappings,
-        selectedTag,
-    ]);
-
-    const mappingsGroupedByOptionKey = useMemo(() => (
-        listToGroupList(
-            mappings,
-            (mappingItem) => mappingItem.association.optionKey,
-        )
-    ), [
-        mappings,
-    ]);
-
-    const handleCellClick = useCallback((cellKey: string) => {
-        if (!selectedTag) {
-            return;
-        }
-
+    const handleCellRemove = useCallback((cellKey: string, tagKey: string) => {
         const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tag
-            && mapping.association.optionKey === cellKey
+            tagKey === mapping.tag && mapping.association.optionKey === cellKey
         ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
@@ -88,50 +62,65 @@ function OptionTypeTagInput(props: Props) {
             newMappings.splice(selectedMappingsIndex, 1);
 
             onMappingsChange(newMappings, widget.id);
-        } else {
-            onMappingsChange([
-                ...(mappings ?? []),
-                {
-                    tag: selectedTag,
-                    widget: widget.id,
-                    widgetType: widget.widgetId,
-                    association: {
-                        optionKey: cellKey,
-                    },
-                    clientId: randomString(),
-                // FIXME: need to cast here because we cannot set id
-                // and a proper fix would require more time
-                } as ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem,
-            ], widget.id);
         }
     }, [
         onMappingsChange,
+        widget.id,
         mappings,
-        selectedTag,
+    ]);
+    const handleCellAdd = useCallback((cellKey: string, tagKey: string) => {
+        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
+            tagKey === mapping.tag
+            && mapping.association.optionKey === cellKey
+        ));
+
+        if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
+            return;
+        }
+
+        onMappingsChange([
+            ...(mappings ?? []),
+            {
+                tag: tagKey,
+                widget: widget.id,
+                widgetType: widget.widgetId,
+                association: {
+                    optionKey: cellKey,
+                },
+                clientId: randomString(),
+            // FIXME: need to cast here because we cannot set id
+            // and a proper fix would require more time
+            } as ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem,
+        ], widget.id);
+    }, [
+        onMappingsChange,
+        mappings,
         widget,
     ]);
 
     const cellRendererParams = useCallback((_: string, cell: KeyLabelEntity) => ({
-        children: cell.label,
-        name: cell.key,
-        value: !!optionKeysInMappings?.[cell.key],
-        badgeCount: mappingsGroupedByOptionKey?.[cell.key]?.length ?? 0,
-        onClick: handleCellClick,
-        disabled: !selectedTag || disabled,
+        title: cell.label,
+        itemKey: cell.key,
+        onMappingRemoveClick: handleCellRemove,
+        onMappingAddClick: handleCellAdd,
+        associationKeySelector: optionTypeKeySelector,
+        mappings,
+        predictionTags,
+        disabled,
     }), [
         disabled,
-        handleCellClick,
-        selectedTag,
-        optionKeysInMappings,
-        mappingsGroupedByOptionKey,
+        mappings,
+        handleCellRemove,
+        handleCellAdd,
+        predictionTags,
     ]);
 
     return (
         <ListView
-            className={_cs(className, styles.optionTypeTagInput)}
+            className={className}
             data={sortedCells}
             keySelector={cellKeySelector}
-            renderer={CheckButton}
+            renderer={FrameworkTagRow}
             rendererParams={cellRendererParams}
             filtered={false}
             pending={false}

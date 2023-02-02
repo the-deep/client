@@ -83,6 +83,7 @@ function WidgetTagList(props: Props) {
                     mappings={filteredMappings as Matrix2dMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
                     disabled={disabled}
+                    predictionTags={predictionTags}
                 />
             </Container>
         );
@@ -108,6 +109,7 @@ function WidgetTagList(props: Props) {
                         | MultiSelectMappingsItem
                     )[] | undefined}
                     onMappingsChange={onMappingsChange}
+                    predictionTags={predictionTags}
                     disabled={disabled}
                 />
             </Container>
@@ -127,6 +129,7 @@ function WidgetTagList(props: Props) {
                     // NOTE: We know its safe
                     mappings={filteredMappings as OrganigramMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
+                    predictionTags={predictionTags}
                     disabled={disabled}
                 />
             </Container>
