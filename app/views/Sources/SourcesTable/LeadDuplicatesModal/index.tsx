@@ -14,9 +14,9 @@ import {
     LeadDuplicatesQuery,
     LeadDuplicatesQueryVariables,
 } from '#generated/types';
-import LeadPreview from '#components/lead/LeadPreview';
 
 import LeadCard, { Lead } from './LeadCard';
+import LeadView from './LeadView';
 import { LEAD_DUPLICATES } from './queries';
 import styles from './styles.css';
 
@@ -130,9 +130,12 @@ function LeadDuplicatesModal(props: Props) {
                             onDeleteSuccess={handleDeleteSuccess}
                         />
                         <Card className={styles.previewContainer}>
-                            <LeadPreview
+                            <LeadView
                                 className={styles.preview}
+                                projectId={projectId}
+                                leadId={selectedDuplicateLead.id}
                                 url={selectedDuplicateLead.url}
+                                textExtract={selectedDuplicateLead.leadPreview?.textExtract}
                                 attachment={selectedDuplicateLead.attachment}
                             />
                         </Card>
@@ -153,9 +156,12 @@ function LeadDuplicatesModal(props: Props) {
                             onDeleteSuccess={handleDeleteSuccess}
                         />
                         <Card className={styles.previewContainer}>
-                            <LeadPreview
+                            <LeadView
                                 className={styles.preview}
                                 url={originalLead.url}
+                                projectId={projectId}
+                                leadId={originalLead.id}
+                                textExtract={originalLead.leadPreview?.textExtract}
                                 attachment={originalLead.attachment}
                             />
                         </Card>

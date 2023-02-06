@@ -1,0 +1,18 @@
+.lead-view {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .tab-list {
+        flex-shrink: 0;
+    }
+
+    .content {
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .lead-preview {
+            height: 100%;
+        }
+    }
+}
