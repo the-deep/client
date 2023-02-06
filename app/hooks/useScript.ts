@@ -1,3 +1,4 @@
+// hook copied from https://usehooks-ts.com/react-hook/use-script
 import { useEffect, useState } from 'react';
 
 export type UseScriptStatus = 'idle' | 'loading' | 'ready' | 'error';
