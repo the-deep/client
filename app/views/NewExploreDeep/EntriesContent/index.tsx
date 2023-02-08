@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -169,6 +169,18 @@ function EntriesContent(props: Props) {
         [timeseriesData?.deepExploreStats?.entriesCountByDay],
     );
 
+    const handleDateRangeChange = useCallback(
+        (foo: number | undefined, bar: number | undefined) => {
+            if (onStartDateChange) {
+                onStartDateChange(foo);
+            }
+            if (onEndDateChange) {
+                onEndDateChange(bar);
+            }
+        },
+        [onStartDateChange, onEndDateChange],
+    );
+
     return (
         <div className={_cs(className, styles.entriesContent)}>
             <div>
@@ -187,8 +199,7 @@ function EntriesContent(props: Props) {
                     data={timeseriesWithoutGaps}
                     endDate={endDate}
                     startDate={startDate}
-                    onEndDateChange={onEndDateChange}
-                    onStartDateChange={onStartDateChange}
+                    onChange={handleDateRangeChange}
                 />
             </div>
             <EntityCreationLineChart

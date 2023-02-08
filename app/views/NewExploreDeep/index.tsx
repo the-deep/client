@@ -52,6 +52,7 @@ import {
     lastYearStartDate,
     convertDateToIsoDateTime,
 } from '#utils/common';
+import { resolveTime } from '#utils/temporal';
 
 import ProjectFilters, { FormType } from './ProjectFilters';
 import ProjectContent from './ProjectContent';
@@ -251,9 +252,9 @@ const yearOptions: TimeOption[] = [
 const yearKeySelector = (year: TimeOption) => year.key;
 const yearLabelSelector = (year: TimeOption) => year.label;
 
-const lastYearDateTime = new Date(`${lastYearStartDate}T00:00`).getTime();
-const todaysDateTime = new Date(`${todaysDate}T00:00`).getTime();
-const deepStartDateTime = new Date(`${DEEP_START_DATE}T00:00`).getTime();
+const lastYearDateTime = resolveTime(lastYearStartDate, 'day');
+const todaysDateTime = resolveTime(todaysDate, 'day');
+const deepStartDateTime = resolveTime(DEEP_START_DATE, 'day');
 
 interface Props {
     className?: string;
