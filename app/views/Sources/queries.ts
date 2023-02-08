@@ -65,6 +65,7 @@ export const PROJECT_SOURCES = gql`
                 results {
                     id
                     confidentiality
+                    duplicateLeadsCount
                     clientId
                     status
                     statusDisplay
@@ -114,6 +115,21 @@ export const PROJECT_SOURCES = gql`
                     }
                     isAssessmentLead
                 }
+            }
+        }
+    }
+`;
+
+export const DELETE_LEAD = gql`
+    mutation DeleteLead(
+        $projectId: ID!,
+        $leadId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            leadDelete(id: $leadId) {
+                ok
+                errors
             }
         }
     }

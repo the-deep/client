@@ -1,0 +1,38 @@
+.lead-card {
+    display: flex;
+    border-radius: var(--dui-border-radius-card);
+    background-color: var(--dui-color-foreground);
+    padding: var(--dui-spacing-small);
+
+    &.active {
+        border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-accent)!important;
+    }
+
+    .heading {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-extra-small);
+    }
+
+    .source-details {
+        flex-grow: 1;
+        background-color: transparent;
+        padding: var(--dui-spacing-extra-small);
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-extra-small);
+
+            .meta-section {
+                display: flex;
+                flex-wrap: wrap;
+                gap: var(--dui-spacing-extra-small);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    }
+}

@@ -27,7 +27,6 @@ import {
 import {
     useMutation,
     useQuery,
-    gql,
 } from '@apollo/client';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
@@ -41,6 +40,7 @@ import {
 import _ts from '#ts';
 import { createDateColumn } from '#components/tableHelpers';
 import { useLazyRequest } from '#base/utils/restRequest';
+import { useModalState } from '#hooks/stateManagement';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import OrganizationLink, { Props as OrganizationLinkProps } from '#components/OrganizationLink';
 import LeadPreviewButton, { Props as LeadPreviewProps } from '#components/lead/LeadPreviewButton';
@@ -61,24 +61,10 @@ import { Lead } from './types';
 import Actions, { Props as ActionsProps } from './Actions';
 import BulkActions from './BulkActions';
 import EntryList from './EntryList';
+import LeadDuplicatesModal from './LeadDuplicatesModal';
 
-import { PROJECT_SOURCES } from '../queries';
+import { PROJECT_SOURCES, DELETE_LEAD } from '../queries';
 import styles from './styles.css';
-
-const DELETE_LEAD = gql`
-    mutation DeleteLead(
-        $projectId: ID!,
-        $leadId: ID!,
-    ) {
-        project(id: $projectId) {
-            id
-            leadDelete(id: $leadId) {
-                ok
-                errors
-            }
-        }
-    }
-`;
 
 // FIXME: use another util
 function sourcesKeySelector(d: Lead) {
@@ -147,6 +133,13 @@ function SourcesTable(props: Props) {
     const [maxItemsPerPage, setMaxItemsPerPage] = useState(defaultMaxItemsPerPage);
 
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
+    const [leadIdToViewDuplicates, setLeadIdToViewDuplicates] = useState<string | undefined>();
+
+    const [
+        isDuplicatesModalVisible,
+        showDuplicatesModal,
+        hideDuplicatesModal,
+    ] = useModalState(false);
 
     const [
         showSingleSourceModal,
@@ -317,9 +310,19 @@ function SourcesTable(props: Props) {
         setShowSingleSourceModalTrue();
     }, [setShowSingleSourceModalTrue]);
 
+    const handleShowDuplicates = useCallback((leadId: string) => {
+        setLeadIdToViewDuplicates(leadId);
+        showDuplicatesModal();
+    }, [showDuplicatesModal]);
+
     const handleSourceSaveSuccess = useCallback(() => {
         setShowSingleSourceModalFalse();
     }, [setShowSingleSourceModalFalse]);
+
+    const handleModalClose = useCallback(() => {
+        getProjectSources();
+        hideDuplicatesModal();
+    }, [getProjectSources, hideDuplicatesModal]);
 
     const pending = projectSourcesPending || bulkDeletePending || leadDeletePending;
 
@@ -443,14 +446,16 @@ function SourcesTable(props: Props) {
                 title: data.title,
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
+                onShowDuplicatesClick: handleShowDuplicates,
                 entriesCount: data.entriesCount?.total ?? 0,
                 filteredEntriesCount: data.filteredEntriesCount,
                 hasAssessment: !!data.assessmentId,
                 isAssessmentLead: data.isAssessmentLead,
                 sourceStatus: data.status,
+                duplicateLeadsCount: data.duplicateLeadsCount,
                 projectId,
             }),
-            columnWidth: 196,
+            columnWidth: 200,
         };
         return ([
             selectColumn,
@@ -536,6 +541,7 @@ function SourcesTable(props: Props) {
         handleEdit,
         handleDelete,
         projectId,
+        handleShowDuplicates,
     ]);
 
     return (
@@ -592,6 +598,13 @@ function SourcesTable(props: Props) {
                         projectId={String(projectId)}
                         onClose={setShowSingleSourceModalFalse}
                         onLeadSaveSuccess={handleSourceSaveSuccess}
+                    />
+                )}
+                {isDuplicatesModalVisible && leadIdToViewDuplicates && (
+                    <LeadDuplicatesModal
+                        onClose={handleModalClose}
+                        leadId={leadIdToViewDuplicates}
+                        projectId={projectId}
                     />
                 )}
             </Container>

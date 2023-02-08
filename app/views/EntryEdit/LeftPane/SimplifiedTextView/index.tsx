@@ -46,7 +46,7 @@ interface Props {
     className?: string;
     text?: string;
     leadId: string;
-    entries: EntryInput[] | undefined | null;
+    entries?: EntryInput[] | undefined | null;
     onAddButtonClick?: (selectedText: string) => void;
     onAssistedEntryAdd?: (newEntry: EntryInput, geoAreaOptions?: GeoArea[]) => void;
     onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;

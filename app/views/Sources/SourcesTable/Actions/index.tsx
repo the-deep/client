@@ -4,6 +4,7 @@ import {
     IoEllipsisVerticalSharp,
     IoChevronUpOutline,
     IoChevronDownOutline,
+    IoWarningOutline,
 } from 'react-icons/io5';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import { MdModeEdit } from 'react-icons/md';
@@ -68,6 +69,7 @@ export interface Props<T extends string> {
     title: string;
     onEditClick: (key: T) => void;
     onDeleteClick: (key: T) => void;
+    onShowDuplicatesClick: (key: T) => void;
     disabled?: boolean;
     isAssessmentLead?: boolean;
     entriesCount: number;
@@ -75,6 +77,7 @@ export interface Props<T extends string> {
     hasAssessment: boolean;
     sourceStatus: LeadStatusEnum;
     projectId: string;
+    duplicateLeadsCount: number | null | undefined;
 }
 
 function Actions<T extends string>(props: Props<T>) {
@@ -82,17 +85,20 @@ function Actions<T extends string>(props: Props<T>) {
         className,
         id,
         title,
-        onEditClick,
         disabled,
         isAssessmentLead,
+        onEditClick,
         onDeleteClick,
         entriesCount,
         filteredEntriesCount,
         hasAssessment,
         sourceStatus,
         projectId,
+        duplicateLeadsCount,
+        onShowDuplicatesClick,
     } = props;
 
+    const hasDuplicates = (duplicateLeadsCount ?? 0) > 0;
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
 
@@ -106,7 +112,11 @@ function Actions<T extends string>(props: Props<T>) {
 
     const handleDeleteConfirm = useCallback(() => {
         onDeleteClick(id);
-    }, [onDeleteClick, id]);
+    }, [id, onDeleteClick]);
+
+    const handleShowDuplicatesClick = useCallback(() => {
+        onShowDuplicatesClick(id);
+    }, [id, onShowDuplicatesClick]);
 
     const {
         expandedRowKey,
@@ -277,6 +287,19 @@ function Actions<T extends string>(props: Props<T>) {
                 )}
             </div>
             <div className={styles.row}>
+                {hasDuplicates && (
+                    <QuickActionButton
+                        className={styles.showDuplicatesButton}
+                        name={id}
+                        onClick={handleShowDuplicatesClick}
+                        disabled={disabled}
+                        variant="transparent"
+                        spacing="none"
+                        title={`${duplicateLeadsCount} duplicate ${duplicateLeadsCount === 1 ? 'lead' : 'leads'}`}
+                    >
+                        <IoWarningOutline />
+                    </QuickActionButton>
+                )}
                 <Button
                     name={undefined}
                     onClick={handleClick}
