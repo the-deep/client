@@ -43,6 +43,7 @@ export function getTimestamps(
     ];
 
     let increment = 1;
+    // eslint-disable-next-line no-constant-condition
     while (true) {
         const myDate = new Date(sanitizedStartDate);
         if (resolution === 'year') {
@@ -55,12 +56,11 @@ export function getTimestamps(
         // NOTE: We are doing this to avoid issues due to timezone
         myDate.setUTCHours(0, 0, 0, 0);
 
-        // FIXME: Moved this up, but need to consult with @tnagorra
-        timestamps.push(myDate.getTime());
-        increment += 1;
         if (myDate > sanitizedEndDate) {
             break;
         }
+        timestamps.push(myDate.getTime());
+        increment += 1;
     }
 
     return timestamps;
