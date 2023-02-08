@@ -1,7 +1,7 @@
 {
     "entry": ["./app/index.tsx"],
     "ignorePatterns": ["**/node_modules/**", "build/**"],
-    "ignoreUnimported": ["**/*.d.ts"],
+    "ignoreUnimported": ["**/*.d.ts", "**/*.test.ts", "**/*.test.js"],
     "ignoreUnused": ["core-js"],
     "extensions": [".ts", ".js", ".tsx", ".jsx"],
     "aliases": {

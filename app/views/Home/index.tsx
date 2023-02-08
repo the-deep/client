@@ -1,7 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
     Container,
