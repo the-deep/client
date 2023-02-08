@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useCallback } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -125,6 +125,18 @@ function ProjectContent(props: Props) {
         [data?.deepExploreStats?.projectsCountByDay],
     );
 
+    const handleDateRangeChange = useCallback(
+        (foo: number | undefined, bar: number | undefined) => {
+            if (onStartDateChange) {
+                onStartDateChange(foo);
+            }
+            if (onEndDateChange) {
+                onEndDateChange(bar);
+            }
+        },
+        [onStartDateChange, onEndDateChange],
+    );
+
     return (
         <div className={_cs(className, styles.projectContent)}>
             <div>
@@ -184,8 +196,7 @@ function ProjectContent(props: Props) {
                             data={timeseriesWithoutGaps}
                             endDate={endDate}
                             startDate={startDate}
-                            onEndDateChange={onEndDateChange}
-                            onStartDateChange={onStartDateChange}
+                            onChange={handleDateRangeChange}
                         />
                     )}
                 </div>
