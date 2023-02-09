@@ -183,7 +183,7 @@ function EntriesContent(props: Props) {
 
     return (
         <div className={_cs(className, styles.entriesContent)}>
-            <div>
+            <div className={styles.mapContainer}>
                 {loadingMapAndLeadData && <PendingMessage />}
                 <EntriesHeatMap
                     className={styles.map}
