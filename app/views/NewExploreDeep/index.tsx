@@ -252,9 +252,9 @@ const yearOptions: TimeOption[] = [
 const yearKeySelector = (year: TimeOption) => year.key;
 const yearLabelSelector = (year: TimeOption) => year.label;
 
-const lastYearDateTime = resolveTime(lastYearStartDate, 'day');
-const todaysDateTime = resolveTime(todaysDate, 'day');
-const deepStartDateTime = resolveTime(DEEP_START_DATE, 'day');
+const lastYearDateTime = resolveTime(lastYearStartDate, 'day').getTime();
+const todaysDateTime = resolveTime(todaysDate, 'day').getTime();
+const deepStartDateTime = resolveTime(DEEP_START_DATE, 'day').getTime();
 
 interface Props {
     className?: string;
@@ -348,7 +348,7 @@ function NewExploreDeep(props: Props) {
         isTest: filters?.excludeTestProject ? false : undefined,
         organizations: filters?.organizations,
         regions: filters?.regions,
-        excludeEntryLessThan: !filters?.excludeProjectsLessThan,
+        excludeEntryLessThan: filters?.excludeProjectsLessThan,
     }), [filters, startDate, endDate]);
 
     const alert = useAlert();
@@ -385,7 +385,7 @@ function NewExploreDeep(props: Props) {
                     // eslint-disable-next-line no-console
                     console.error(response);
                 }
-                if (response.genericExport.status === 'SUCCESS') {
+                if (response.genericExport?.status === 'SUCCESS') {
                     setExportIdToDownload(undefined);
                     updateAlertContent(DOWNLOAD_ALERT_NAME, (
                         <div className={styles.exportNotificationBody}>
@@ -401,7 +401,7 @@ function NewExploreDeep(props: Props) {
                             </ButtonLikeLink>
                         </div>
                     ));
-                } else if (response.genericExport.status === 'FAILURE') {
+                } else if (response.genericExport?.status === 'FAILURE') {
                     removeAlert(DOWNLOAD_ALERT_NAME);
                     setExportIdToDownload(undefined);
                     alert.show(
