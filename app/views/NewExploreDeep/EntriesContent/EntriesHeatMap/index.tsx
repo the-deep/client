@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     _cs,
     isDefined,
@@ -11,12 +11,13 @@ import Map, {
 import {
     MapboxOptions,
 } from 'mapbox-gl';
+import SliderInput from '#components/input/SliderInput';
 
 import { mapboxStyle } from '#base/configs/env';
 
 import styles from './styles.css';
 
-const heatMapPaint: mapboxgl.HeatmapPaint = {
+const staticHeatMapPaint: mapboxgl.HeatmapPaint = {
     'heatmap-weight': [
         'interpolate',
         ['linear'],
@@ -78,6 +79,18 @@ function EntriesHeatMap(props: Props) {
         entriesByRegion,
     } = props;
 
+    const [intensityValue, setIntesityValue] = useState(0.75);
+    const [radiusValue, setRadiusValue] = useState(20);
+
+    const heatMapPaint = useMemo(() => ({
+        ...staticHeatMapPaint,
+        'heatmap-intensity': intensityValue,
+        'heatmap-radius': radiusValue,
+    }), [
+        intensityValue,
+        radiusValue,
+    ]);
+
     const geoJson: GeoJSON.FeatureCollection<GeoJSON.Point> | undefined = useMemo(() => {
         if (!entriesByRegion) {
             return undefined;
@@ -120,6 +133,30 @@ function EntriesHeatMap(props: Props) {
                     }}
                 />
             </MapSource>
+            <div className={styles.controls}>
+                <SliderInput
+                    className={styles.sliderInput}
+                    label="Intensity"
+                    min={0.5}
+                    max={2}
+                    step={0.05}
+                    minDistance={0.05}
+                    value={intensityValue}
+                    onChange={setIntesityValue}
+                    hideMarks
+                />
+                <SliderInput
+                    className={styles.sliderInput}
+                    label="Radius"
+                    min={5}
+                    max={40}
+                    step={1}
+                    minDistance={1}
+                    value={radiusValue}
+                    onChange={setRadiusValue}
+                    hideMarks
+                />
+            </div>
         </Map>
     );
 }
