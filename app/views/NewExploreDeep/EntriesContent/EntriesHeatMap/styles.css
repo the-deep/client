@@ -2,3 +2,16 @@
     width: auto;
     height: 50em;
 }
+
+.controls {
+    position: absolute;
+    right: 0;
+    bottom: var(--dui-spacing-large);
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: var(--dui-spacing-small);
+    width: 12rem;
+
+    .slider-input {
+        width: 10rem;
+    }
+}
