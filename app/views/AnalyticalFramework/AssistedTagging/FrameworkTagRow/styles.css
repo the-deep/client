@@ -1,0 +1,31 @@
+.framework-tag-row {
+    display: flex;
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .left-container {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-small);
+        width: 40%;
+    }
+
+    .right-container {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        padding: var(--dui-spacing-medium) var(--dui-spacing-small);
+        width: 60%;
+        gap: var(--dui-spacing-extra-small);
+
+        .tag {
+            background-color: var(--dui-color-nlp);
+
+            .remove-button {
+                padding: 0;
+            }
+        }
+    }
+}

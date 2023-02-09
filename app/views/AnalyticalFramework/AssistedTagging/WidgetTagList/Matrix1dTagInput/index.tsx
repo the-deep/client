@@ -2,7 +2,6 @@ import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
     unique,
-    listToGroupList,
     listToMap,
     isDefined,
     randomString,
@@ -14,13 +13,18 @@ import {
 import {
     Matrix1dWidget,
     Matrix1dMappingsItem,
+    PredictionTag,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
 
-import CheckButton from '../../CheckButton';
 import CellGroup from '../../CellGroup';
+import FrameworkTagRow from '../../FrameworkTagRow';
 
 import styles from './styles.css';
+
+const matrix1dAssociationKeySelector = (
+    mapping: Matrix1dMappingsItem,
+) => mapping.association.subRowKey;
 
 interface CellItem {
     subRowKey: string;
@@ -39,8 +43,8 @@ interface Props {
     widget: Matrix1dWidget;
     mappings: Matrix1dMappingsItem[] | undefined;
     onMappingsChange: (newMappings: Matrix1dMappingsItem[], widgetPk: string) => void;
-    selectedTag: string | undefined;
     disabled?: boolean;
+    predictionTags: PredictionTag[] | undefined;
 }
 
 function Matrix1dTagInput(props: Props) {
@@ -49,8 +53,8 @@ function Matrix1dTagInput(props: Props) {
         widget,
         mappings,
         onMappingsChange,
-        selectedTag,
         disabled,
+        predictionTags,
     } = props;
 
     const sortedCells = useMemo(() => (
@@ -66,27 +70,7 @@ function Matrix1dTagInput(props: Props) {
                 }))
             ))
             .flat()
-    ), [widget?.properties?.rows]);
-
-    const subRowKeysInMappings = useMemo(() => (
-        listToMap(
-            mappings?.filter((mappingItem) => mappingItem.tag === selectedTag),
-            (mappingItem) => mappingItem.association.subRowKey,
-            () => true,
-        )
-    ), [
-        mappings,
-        selectedTag,
-    ]);
-
-    const mappingsGroupedByCell = useMemo(() => (
-        listToGroupList(
-            mappings,
-            (mappingItem) => mappingItem.association.subRowKey,
-        )
-    ), [
-        mappings,
-    ]);
+    ), [widget.properties?.rows]);
 
     const groupLabelMap = useMemo(() => (
         listToMap(
@@ -96,71 +80,86 @@ function Matrix1dTagInput(props: Props) {
         )
     ), [sortedCells]);
 
-    const handleCellClick = useCallback((cellKey: string) => {
-        if (!selectedTag) {
+    const handleCellRemove = useCallback((cellKey: string, tagKey: string) => {
+        if (!mappings) {
             return;
         }
-
-        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tag && mapping.association.subRowKey === cellKey
+        const selectedMappingsIndex = mappings.findIndex((mapping) => (
+            tagKey === mapping.tag && mapping.association.subRowKey === cellKey
         ));
 
-        if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
-            const newMappings = [...(mappings ?? [])];
+        if (selectedMappingsIndex !== -1) {
+            const newMappings = [...mappings];
             newMappings.splice(selectedMappingsIndex, 1);
 
             onMappingsChange(newMappings, widget.id);
-        } else {
-            const rowKey = sortedCells
-                ?.find((cell) => cell.subRowKey === cellKey)?.rowKey;
-
-            if (!rowKey) {
-                // eslint-disable-next-line no-console
-                console.error('Sub-row without row is found');
-                return;
-            }
-
-            onMappingsChange([
-                ...(mappings ?? []),
-                {
-                    tag: selectedTag,
-                    widget: widget.id,
-                    widgetType: 'MATRIX1D',
-                    association: {
-                        subRowKey: cellKey,
-                        rowKey,
-                    },
-                    clientId: randomString(),
-                // FIXME: need to cast here because we cannot set id
-                // and a proper fix would require more time
-                } as Matrix1dMappingsItem,
-            ], widget.id);
         }
+    }, [
+        onMappingsChange,
+        widget.id,
+        mappings,
+    ]);
+
+    const handleCellAdd = useCallback((cellKey: string, tagKey: string) => {
+        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
+            tagKey === mapping.tag && mapping.association.subRowKey === cellKey
+        ));
+
+        if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
+            return;
+        }
+
+        const rowKey = sortedCells
+            ?.find((cell) => cell.subRowKey === cellKey)?.rowKey;
+
+        if (!rowKey) {
+            // eslint-disable-next-line no-console
+            console.error('Sub-row without row is found');
+            return;
+        }
+
+        onMappingsChange([
+            ...(mappings ?? []),
+            {
+                tag: tagKey,
+                widget: widget.id,
+                widgetType: 'MATRIX1D',
+                association: {
+                    subRowKey: cellKey,
+                    rowKey,
+                },
+                clientId: randomString(),
+            // FIXME: need to cast here because we cannot set id
+            // and a proper fix would require more time
+            } as Matrix1dMappingsItem,
+        ], widget.id);
     }, [
         sortedCells,
         onMappingsChange,
         mappings,
-        selectedTag,
         widget,
     ]);
 
-    const cellRendererParams = useCallback((_: string, cell: CellItem) => ({
-        children: cell.subRowLabel,
-        name: cell.subRowKey,
-        value: !!subRowKeysInMappings?.[cell.subRowKey],
-        badgeCount: mappingsGroupedByCell?.[cell.subRowKey]?.length ?? 0,
-        onClick: handleCellClick,
-        disabled: !selectedTag || disabled,
+    const tagRowRendererParams = useCallback((_: string, cell: CellItem) => ({
+        title: cell.subRowLabel,
+        itemKey: cell.subRowKey,
+        onMappingRemoveClick: handleCellRemove,
+        onMappingAddClick: handleCellAdd,
+        associationKeySelector: matrix1dAssociationKeySelector,
+        mappings,
+        predictionTags,
+        disabled,
     }), [
         disabled,
-        mappingsGroupedByCell,
-        subRowKeysInMappings,
-        handleCellClick,
-        selectedTag,
+        handleCellRemove,
+        handleCellAdd,
+        mappings,
+        predictionTags,
     ]);
 
     const subRowGroupRendererParams = useCallback((groupKey: string) => ({
         title: groupLabelMap[groupKey] ?? groupKey,
+        direction: 'vertical' as const,
     }), [groupLabelMap]);
 
     return (
@@ -168,8 +167,8 @@ function Matrix1dTagInput(props: Props) {
             className={_cs(className, styles.matrixTagInput)}
             data={sortedCells}
             keySelector={cellKeySelector}
-            renderer={CheckButton}
-            rendererParams={cellRendererParams}
+            renderer={FrameworkTagRow}
+            rendererParams={tagRowRendererParams}
             filtered={false}
             pending={false}
             errored={false}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
     listToMap,
@@ -45,6 +45,7 @@ import {
     getOrganigramPossibleMappings,
 } from './utils';
 import { WidgetsType } from '../schema';
+import TagWithBadge from './TagWithBadge';
 import CheckButton from './CheckButton';
 import WidgetTagList from './WidgetTagList';
 import CellGroup from './CellGroup';
@@ -91,8 +92,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         disabled,
     } = props;
     const alert = useAlert();
-
-    const [selectedTag, setSelectedTag] = useState<string | undefined>();
 
     const errored = analyzeErrors(error);
 
@@ -163,10 +162,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         }).flat()
     ), [widgets]);
 
-    const handleTagClick = useCallback((newTag: string) => {
-        setSelectedTag((oldTag) => (oldTag === newTag ? undefined : newTag));
-    }, []);
-
     const handleGeoWidgetClick = useCallback((widgetPk: string) => {
         setMappings((oldMappings = []) => {
             const selectedWidgetIndex = oldMappings.findIndex(
@@ -208,21 +203,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         title: groupKey,
     }), []);
 
-    const nlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
-        children: tag.name,
-        name: itemKey,
-        value: selectedTag === itemKey,
-        badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
-        onClick: handleTagClick,
-        disabled: disabled || !assistedTaggingEnabled,
-    }), [
-        disabled,
-        assistedTaggingEnabled,
-        handleTagClick,
-        selectedTag,
-        mappingsByTagId,
-    ]);
-
     const geoWidgetsRendererParams = useCallback((itemKey: string, widget: Widget) => ({
         children: widget.title,
         name: itemKey,
@@ -240,13 +220,13 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         widget,
         mappings: categoricalMappings,
         onMappingsChange: handleWidgetMappingsChange,
-        selectedTag,
+        predictionTags,
         disabled: disabled || !assistedTaggingEnabled,
     }), [
+        predictionTags,
         disabled,
         assistedTaggingEnabled,
         categoricalMappings,
-        selectedTag,
         handleWidgetMappingsChange,
     ]);
 
@@ -309,6 +289,13 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         predictionTags,
     ]);
 
+    const viewOnlyNlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
+        children: tag.name,
+        badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
+    }), [
+        mappingsByTagId,
+    ]);
+
     return (
         <div className={_cs(className, styles.assistedTagging)}>
             <Header
@@ -350,15 +337,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                             disabled={pending}
                             label="Active"
                         />
-                        <ConfirmButton
-                            name={undefined}
-                            onConfirm={handleAutoMatchClick}
-                            message="Auto-matching will remove all the current mappings and replace them with the recommended ones. Are you sure you want to auto-match?"
-                            disabled={pending || disabled || !assistedTaggingEnabled}
-                            variant="tertiary"
-                        >
-                            Auto Match
-                        </ConfirmButton>
                         <ProgressLine
                             className={styles.progressLine}
                             progress={uniqueMappedPercent}
@@ -377,32 +355,38 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                 )}
             >
                 <Card className={styles.card}>
-                    <Container
-                        className={styles.nlpFramework}
-                        headingSize="small"
-                        heading="NLP Framework"
-                        spacing="compact"
-                    >
-                        <ListView
-                            className={styles.nlpFrameworkList}
-                            data={predictionTags}
-                            renderer={CheckButton}
-                            rendererParams={nlpRendererParams}
-                            keySelector={nlpLabelKeySelector}
-                            filtered={false}
-                            pending={false}
-                            errored={false}
-                            groupRendererParams={nlpLabelGroupRendererParams}
-                            groupKeySelector={nlpLabelGroupKeySelector}
-                            groupRenderer={CellGroup}
-                            grouped
-                        />
-                    </Container>
                     <ContainerCard
                         className={styles.currentFramework}
-                        heading="Selected Framework"
+                        headingClassName={styles.headingContainer}
                         headingSize="small"
-                        spacing="compact"
+                        heading={(
+                            <div className={styles.heading}>
+                                <div
+                                    className={styles.leftContainer}
+                                >
+                                    My Framework
+                                </div>
+                                <Header
+                                    className={styles.rightContainer}
+                                    heading="Selected NLP Models"
+                                    actions={(
+                                        <ConfirmButton
+                                            name={undefined}
+                                            onConfirm={handleAutoMatchClick}
+                                            message="Auto-matching will remove all the current mappings and replace them with the recommended ones. Are you sure you want to auto-match?"
+                                            disabled={
+                                                pending
+                                                || disabled
+                                                || !assistedTaggingEnabled
+                                            }
+                                            variant="tertiary"
+                                        >
+                                            Auto Match
+                                        </ConfirmButton>
+                                    )}
+                                />
+                            </div>
+                        )}
                     >
                         <ListView
                             className={styles.selectedFrameworkList}
@@ -415,6 +399,27 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                             errored={false}
                         />
                     </ContainerCard>
+                    <Container
+                        className={styles.nlpFramework}
+                        headingSize="small"
+                        heading="Available DEEP NLP models"
+                        spacing="compact"
+                    >
+                        <ListView
+                            className={styles.nlpFrameworkList}
+                            data={predictionTags}
+                            renderer={TagWithBadge}
+                            rendererParams={viewOnlyNlpRendererParams}
+                            keySelector={nlpLabelKeySelector}
+                            filtered={false}
+                            pending={false}
+                            errored={false}
+                            groupRendererParams={nlpLabelGroupRendererParams}
+                            groupKeySelector={nlpLabelGroupKeySelector}
+                            groupRenderer={CellGroup}
+                            grouped
+                        />
+                    </Container>
                 </Card>
                 {(geoWidgets?.length ?? 0) > 0 && (
                     <Card

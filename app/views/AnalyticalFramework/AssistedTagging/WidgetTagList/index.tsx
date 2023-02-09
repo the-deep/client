@@ -4,6 +4,7 @@ import { Container } from '@the-deep/deep-ui';
 
 import {
     Widget,
+    PredictionTag,
     CategoricalMappingsItem,
     Matrix1dMappingsItem,
     Matrix2dMappingsItem,
@@ -23,9 +24,9 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     widget: Widget;
+    predictionTags: PredictionTag[] | undefined;
     mappings: CategoricalMappingsItem[] | undefined;
     onMappingsChange: (newMappings: CategoricalMappingsItem[], widgetPk: string) => void;
-    selectedTag: string | undefined;
     disabled?: boolean;
 }
 
@@ -35,8 +36,8 @@ function WidgetTagList(props: Props) {
         widget,
         mappings,
         onMappingsChange,
-        selectedTag,
         disabled,
+        predictionTags,
     } = props;
 
     const filteredMappings = useMemo(
@@ -62,7 +63,7 @@ function WidgetTagList(props: Props) {
                     // NOTE: We know its safe
                     mappings={filteredMappings as Matrix1dMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
-                    selectedTag={selectedTag}
+                    predictionTags={predictionTags}
                     disabled={disabled}
                 />
             </Container>
@@ -81,8 +82,8 @@ function WidgetTagList(props: Props) {
                     // NOTE: We know its safe
                     mappings={filteredMappings as Matrix2dMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
-                    selectedTag={selectedTag}
                     disabled={disabled}
+                    predictionTags={predictionTags}
                 />
             </Container>
         );
@@ -108,8 +109,8 @@ function WidgetTagList(props: Props) {
                         | MultiSelectMappingsItem
                     )[] | undefined}
                     onMappingsChange={onMappingsChange}
+                    predictionTags={predictionTags}
                     disabled={disabled}
-                    selectedTag={selectedTag}
                 />
             </Container>
         );
@@ -128,8 +129,8 @@ function WidgetTagList(props: Props) {
                     // NOTE: We know its safe
                     mappings={filteredMappings as OrganigramMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
+                    predictionTags={predictionTags}
                     disabled={disabled}
-                    selectedTag={selectedTag}
                 />
             </Container>
         );
