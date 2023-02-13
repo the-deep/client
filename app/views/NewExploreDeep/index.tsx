@@ -6,6 +6,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     Card,
+    useHash,
     useAlert,
     AlertContext,
     Element,
@@ -44,6 +45,12 @@ import {
     GenericExportCreateMutationVariables,
     GenericExportQuery,
     GenericExportQueryVariables,
+    EntriesCountTimeseriesQuery,
+    EntriesCountTimeseriesQueryVariables,
+    EntriesMapDataQuery,
+    EntriesMapDataQueryVariables,
+    ProjectCountTimeseriesQuery,
+    ProjectCountTimeseriesQueryVariables,
 } from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
 import {
@@ -133,6 +140,101 @@ query ExploreDeepStats(
         totalEntriesAddedLastWeek
     }
 }`;
+
+const ENTRIES_COUNT_TIMESERIES = gql`
+query EntriesCountTimeseries(
+    $dateFrom: DateTime!,
+    $dateTo: DateTime!,
+    $excludeEntryLessThan: Boolean,
+    $isTest: Boolean,
+    $organizations: [ID!],
+    $regions: [ID!],
+    $search: String,
+) {
+    deepExploreStats(
+        filter: {
+            dateFrom: $dateFrom,
+            dateTo: $dateTo,
+            project: {
+                excludeEntryLessThan: $excludeEntryLessThan,
+                isTest: $isTest,
+                organizations: $organizations,
+                regions: $regions,
+                search: $search,
+            },
+        }
+    ) {
+        entriesCountByDay {
+            date
+            count
+        }
+    }
+}`;
+
+const ENTRIES_MAP_DATA = gql`
+query EntriesMapData(
+    $dateFrom: DateTime!,
+    $dateTo: DateTime!,
+    $excludeEntryLessThan: Boolean,
+    $isTest: Boolean,
+    $organizations: [ID!],
+    $regions: [ID!],
+    $search: String,
+) {
+    deepExploreStats(
+        filter: {
+            dateFrom: $dateFrom,
+            dateTo: $dateTo,
+            project: {
+                excludeEntryLessThan: $excludeEntryLessThan,
+                isTest: $isTest,
+                organizations: $organizations,
+                regions: $regions,
+                search: $search,
+            },
+        }
+    ) {
+        leadsCountByDay {
+            date
+            count
+        }
+        entriesCountByRegion {
+            centroid
+            count
+        }
+    }
+}`;
+
+const PROJECT_COUNT_TIMESERIES = gql`
+    query ProjectCountTimeseries(
+        $dateFrom: DateTime!,
+        $dateTo: DateTime!,
+        $excludeEntryLessThan: Boolean,
+        $isTest: Boolean,
+        $organizations: [ID!],
+        $regions: [ID!],
+        $search: String,
+    ) {
+        deepExploreStats(
+            filter: {
+                dateFrom: $dateFrom,
+                dateTo: $dateTo,
+                project: {
+                    excludeEntryLessThan: $excludeEntryLessThan,
+                    isTest: $isTest,
+                    organizations: $organizations,
+                    regions: $regions,
+                    search: $search,
+                },
+            }
+        ) {
+            projectsCountByDay {
+                date
+                count
+            }
+        }
+    }
+`;
 
 const GENERIC_EXPORT = gql`
     query GenericExport(
@@ -274,6 +376,7 @@ function NewExploreDeep(props: Props) {
     } = useContext(AlertContext);
 
     const [selectedYear, setSelectedYear] = useState<string | undefined>(yearOptions[0].key);
+    const activeView = useHash();
 
     const [
         startDate = deepStartDateTime,
@@ -350,6 +453,50 @@ function NewExploreDeep(props: Props) {
         regions: filters?.regions,
         excludeEntryLessThan: filters?.excludeProjectsLessThan,
     }), [filters, startDate, endDate]);
+
+    const completeTimeseriesVariables: EntriesCountTimeseriesQueryVariables = useMemo(() => ({
+        dateFrom: convertDateToIsoDateTime(DEEP_START_DATE),
+        dateTo: convertDateToIsoDateTime(todaysDate, { endOfDay: true }),
+        search: filters?.search,
+        isTest: filters?.excludeTestProject ? false : undefined,
+        organizations: filters?.organizations,
+        regions: filters?.regions,
+        excludeEntryLessThan: filters?.excludeProjectsLessThan,
+    }), [filters]);
+
+    const {
+        previousData: previousEntriesTimeseriesData,
+        data: entriesTimeseriesData = previousEntriesTimeseriesData,
+    } = useQuery<EntriesCountTimeseriesQuery, EntriesCountTimeseriesQueryVariables>(
+        ENTRIES_COUNT_TIMESERIES,
+        {
+            skip: !printPreviewMode && activeView !== 'entries',
+            variables: completeTimeseriesVariables,
+        },
+    );
+
+    const {
+        previousData: previousProjectsTimeseriesData,
+        data: projectsTimeseriesData = previousProjectsTimeseriesData,
+    } = useQuery<ProjectCountTimeseriesQuery, ProjectCountTimeseriesQueryVariables>(
+        PROJECT_COUNT_TIMESERIES,
+        {
+            skip: !printPreviewMode && activeView !== 'projects',
+            variables: completeTimeseriesVariables,
+        },
+    );
+
+    const {
+        previousData: previousEntriesMapData,
+        data: entriesMapData = previousEntriesMapData,
+        loading: loadingMapAndLeadData,
+    } = useQuery<EntriesMapDataQuery, EntriesMapDataQueryVariables>(
+        ENTRIES_MAP_DATA,
+        {
+            skip: !printPreviewMode && activeView !== 'entries',
+            variables,
+        },
+    );
 
     const alert = useAlert();
     const {
@@ -739,6 +886,12 @@ function NewExploreDeep(props: Props) {
                                 onStartDateChange={!isPublic ? setStartDate : undefined}
                                 projectFilters={filters}
                                 isPublic={isPublic}
+                                completeTimeseries={
+                                    projectsTimeseriesData
+                                        ?.deepExploreStats
+                                        ?.projectsCountByDay
+                                    ?? undefined
+                                }
                             />
                         </Container>
                         <Container
@@ -752,7 +905,22 @@ function NewExploreDeep(props: Props) {
                                 startDate={startDate}
                                 onEndDateChange={!isPublic ? setEndDate : undefined}
                                 onStartDateChange={!isPublic ? setStartDate : undefined}
-                                projectFilters={filters}
+                                completeTimeseries={
+                                    entriesTimeseriesData
+                                        ?.deepExploreStats
+                                        ?.entriesCountByDay
+                                    ?? undefined
+                                }
+                                leadsCountByDay={
+                                    entriesMapData?.deepExploreStats?.leadsCountByDay ?? undefined
+                                }
+                                entriesCountByRegion={
+                                    entriesMapData
+                                        ?.deepExploreStats
+                                        ?.entriesCountByRegion
+                                    ?? undefined
+                                }
+                                loading={loadingMapAndLeadData}
                             />
                         </Container>
                     </>
@@ -786,6 +954,12 @@ function NewExploreDeep(props: Props) {
                                     onEndDateChange={!isPublic ? setEndDate : undefined}
                                     onStartDateChange={!isPublic ? setStartDate : undefined}
                                     isPublic={isPublic}
+                                    completeTimeseries={
+                                        projectsTimeseriesData
+                                            ?.deepExploreStats
+                                            ?.projectsCountByDay
+                                        ?? undefined
+                                    }
                                 />
                             </TabPanel>
                             <TabPanel name="entries">
@@ -794,7 +968,25 @@ function NewExploreDeep(props: Props) {
                                     startDate={startDate}
                                     onEndDateChange={!isPublic ? setEndDate : undefined}
                                     onStartDateChange={!isPublic ? setStartDate : undefined}
-                                    projectFilters={filters}
+                                    completeTimeseries={
+                                        entriesTimeseriesData
+                                            ?.deepExploreStats
+                                            ?.entriesCountByDay
+                                        ?? undefined
+                                    }
+                                    leadsCountByDay={
+                                        entriesMapData
+                                            ?.deepExploreStats
+                                            ?.leadsCountByDay
+                                        ?? undefined
+                                    }
+                                    entriesCountByRegion={
+                                        entriesMapData
+                                            ?.deepExploreStats
+                                            ?.entriesCountByRegion
+                                        ?? undefined
+                                    }
+                                    loading={loadingMapAndLeadData}
                                 />
                             </TabPanel>
                         </div>
