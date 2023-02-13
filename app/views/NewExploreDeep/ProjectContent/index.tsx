@@ -12,17 +12,11 @@ import {
     IoMapOutline,
     IoList,
 } from 'react-icons/io5';
-import { useQuery, gql } from '@apollo/client';
 
 import {
     DEEP_START_DATE,
-    convertDateToIsoDateTime,
     todaysDate,
 } from '#utils/common';
-import {
-    ProjectCountTimeseriesQuery,
-    ProjectCountTimeseriesQueryVariables,
-} from '#generated/types';
 import { getTimeseriesWithoutGaps } from '#utils/temporal';
 import useSizeTracking from '#hooks/useSizeTracking';
 
@@ -36,37 +30,6 @@ import BrushLineChart from '../BrushLineChart';
 
 import styles from './styles.css';
 
-const PROJECT_COUNT_TIMESERIES = gql`
-    query ProjectCountTimeseries(
-        $dateFrom: DateTime!,
-        $dateTo: DateTime!,
-        $excludeEntryLessThan: Boolean,
-        $isTest: Boolean,
-        $organizations: [ID!],
-        $regions: [ID!],
-        $search: String,
-    ) {
-        deepExploreStats(
-            filter: {
-                dateFrom: $dateFrom,
-                dateTo: $dateTo,
-                project: {
-                    excludeEntryLessThan: $excludeEntryLessThan,
-                    isTest: $isTest,
-                    organizations: $organizations,
-                    regions: $regions,
-                    search: $search,
-                },
-            }
-        ) {
-            projectsCountByDay {
-                date
-                count
-            }
-        }
-    }
-`;
-
 interface Props {
     className?: string;
     projectsByRegion: ProjectsByRegion[] | undefined;
@@ -76,6 +39,7 @@ interface Props {
     startDate: number;
     onEndDateChange: ((newDate: number | undefined) => void) | undefined;
     onStartDateChange: ((newDate: number | undefined) => void) | undefined;
+    completeTimeseries: { date: string; count: number }[] | undefined;
     isPublic: boolean;
 }
 
@@ -89,25 +53,10 @@ function ProjectContent(props: Props) {
         startDate,
         onEndDateChange,
         onStartDateChange,
+        completeTimeseries,
         isPublic,
     } = props;
 
-    const variables: ProjectCountTimeseriesQueryVariables = useMemo(() => ({
-        dateFrom: convertDateToIsoDateTime(DEEP_START_DATE),
-        dateTo: convertDateToIsoDateTime(todaysDate, { endOfDay: true }),
-        search: projectFilters?.search,
-        isTest: projectFilters?.excludeTestProject ? false : undefined,
-        organizations: projectFilters?.organizations,
-        regions: projectFilters?.regions,
-        excludeEntryLessThan: projectFilters?.excludeProjectsLessThan,
-    }), [projectFilters]);
-
-    const { data } = useQuery<ProjectCountTimeseriesQuery, ProjectCountTimeseriesQueryVariables>(
-        PROJECT_COUNT_TIMESERIES,
-        {
-            variables,
-        },
-    );
     const [activeView, setActiveView] = useState<'map' | 'table' | undefined>('map');
 
     const barContainerRef = useRef<HTMLDivElement>(null);
@@ -117,12 +66,12 @@ function ProjectContent(props: Props) {
 
     const timeseriesWithoutGaps = useMemo(
         () => getTimeseriesWithoutGaps(
-            data?.deepExploreStats?.projectsCountByDay ?? undefined,
+            completeTimeseries,
             'month',
             DEEP_START_DATE,
             todaysDate,
         ),
-        [data?.deepExploreStats?.projectsCountByDay],
+        [completeTimeseries],
     );
 
     const handleDateRangeChange = useCallback(
@@ -204,7 +153,7 @@ function ProjectContent(props: Props) {
             <EntityCreationLineChart
                 className={styles.lineChart}
                 heading="Newly Created Projects"
-                timeseries={data?.deepExploreStats?.projectsCountByDay ?? undefined}
+                timeseries={completeTimeseries}
                 startDate={startDate}
                 endDate={endDate}
             />
