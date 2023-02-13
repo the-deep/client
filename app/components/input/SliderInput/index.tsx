@@ -1,5 +1,5 @@
-import React, { RefCallback, HTMLProps } from 'react';
-import ReactSlider from 'react-slider';
+import React, { useMemo } from 'react';
+import ReactSlider, { ReactSliderProps } from 'react-slider';
 import {
     Element,
     Heading,
@@ -9,52 +9,34 @@ import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.css';
 
-interface HTMLPropsWithRefCallback<T> extends HTMLProps<T> {
-    ref: RefCallback<T>;
-}
+type RenderMarkFn = NonNullable<ReactSliderProps<number | readonly number[]>['renderMark']>;
+type RenderThumbFn = NonNullable<ReactSliderProps<number | readonly number[]>['renderThumb']>;
+type RenderTrackFn = NonNullable<ReactSliderProps<number | readonly number[]>['renderTrack']>;
 
-function Mark(
-    props: HTMLPropsWithRefCallback<HTMLSpanElement>,
-) {
-    return (
-        <span
-            {...props}
-            className={styles.mark}
-        />
-    );
-}
+// eslint-disable-next-line react/function-component-definition
+const Mark: RenderMarkFn = (props) => (
+    <span
+        {...props}
+        className={styles.mark}
+    />
+);
 
-interface HTMLPropsWithRefCallback<T> extends HTMLProps<T> {
-    ref: RefCallback<T>;
-}
+// eslint-disable-next-line react/function-component-definition
+const Thumb: RenderThumbFn = (props) => (
+    <div
+        {...props}
+        className={styles.thumb}
+    />
+);
 
-function Thumb(
-    props: HTMLPropsWithRefCallback<HTMLSpanElement>,
-) {
-    return (
-        <div
-            {...props}
-            className={styles.thumb}
-        />
-    );
-}
-
-function Track<T extends number | number[]>(
-    props: HTMLPropsWithRefCallback<HTMLSpanElement>,
-    state: { index: number; value: T },
-) {
-    const { index } = state;
-    return (
-        <div
-            {...props}
-            // index={index}
-            className={_cs(
-                styles.track,
-                index === 1 && styles.center,
-            )}
-        />
-    );
-}
+// eslint-disable-next-line react/function-component-definition
+const Track: RenderTrackFn = (props) => (
+    <div
+        {...props}
+        // index={index}
+        className={styles.track}
+    />
+);
 
 interface Props<T extends number | number[]> {
     className?: string;
@@ -83,10 +65,10 @@ function Slider<T extends number | number[]>(props: Props<T>) {
         hideMarks,
     } = props;
 
-    const marks = Array.from(
+    const marks = useMemo(() => (Array.from(
         { length: max - min + 1 },
         (_, i) => i + min,
-    );
+    )), [max, min]);
 
     return (
         <Element
@@ -108,9 +90,9 @@ function Slider<T extends number | number[]>(props: Props<T>) {
                 pearling
                 value={value}
                 onChange={onChange}
+                renderMark={Mark}
                 renderThumb={Thumb}
                 renderTrack={Track}
-                renderMark={Mark}
             />
             {typeof value !== 'number' && !hideValues && (
                 <div>
