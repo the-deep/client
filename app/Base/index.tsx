@@ -66,6 +66,7 @@ if (trackingId) {
     browserHistory.listen((location) => {
         const page = location.pathname + location.search + location.hash;
         ReactGA.set({ page });
+        ReactGA.send({ hitType: 'pageview', page });
     });
 }
 
