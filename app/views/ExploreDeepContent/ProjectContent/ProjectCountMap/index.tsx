@@ -169,7 +169,7 @@ function ExploreDeepMapView(props: Props) {
 
         const uniqueProjectsCount = Math.max(uniqueProjects.length, 1);
 
-        const width = Math.min(8 * Math.log10(uniqueProjectsCount) + 20, 100);
+        const width = Math.min(20 * Math.log10(uniqueProjectsCount) + 20, 200);
 
         const mainDiv = document.createElement('div');
         ReactDOM.render(

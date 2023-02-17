@@ -1,43 +1,15 @@
 import React, { useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import {
-    _cs,
     isDefined,
-    formatDateToString,
 } from '@togglecorp/fujs';
 import {
-    Card,
     useHash,
     useAlert,
     AlertContext,
-    Element,
-    Heading,
-    Container,
-    Button,
-    SegmentInput,
-    DateDualRangeInput,
-    DropdownMenu,
-    DropdownMenuItem,
-    SelectInput,
-    Tab,
-    TabPanel,
-    Tabs,
     ButtonLikeLink,
 } from '@the-deep/deep-ui';
-import {
-    IoPrint,
-    IoClose,
-    IoLayersOutline,
-    IoTimeOutline,
-    IoListOutline,
-    IoBarChartOutline,
-    IoGlobeOutline,
-    IoDocumentOutline,
-    IoPersonOutline,
-} from 'react-icons/io5';
-import { AiOutlineLoading } from 'react-icons/ai';
 import { useMutation, useQuery, gql } from '@apollo/client';
 
-import StatsInformationCard from '#components/StatsInformationCard';
 import {
     ExploreDeepStatsQuery,
     ExploreDeepStatsQueryVariables,
@@ -61,13 +33,8 @@ import {
 } from '#utils/common';
 import { resolveTime } from '#utils/temporal';
 
-import ProjectFilters, { FormType } from './ProjectFilters';
-import ProjectContent from './ProjectContent';
-import EntriesContent from './EntriesContent';
-import TopTenAuthors from './TopTenAuthors';
-import TopTenFrameworks from './TopTenFrameworks';
-import TopTenProjectsByUser from './TopTenProjectsByUser';
-import TopTenProjectsByEntries from './TopTenProjectsByEntries';
+import { FormType } from '../ExploreDeepContent/ProjectFilters';
+import ExploreDeepContent from '../ExploreDeepContent';
 
 import styles from './styles.css';
 
@@ -291,25 +258,6 @@ const GENERIC_EXPORT_CREATE = gql`
     }
 `;
 
-interface Option {
-    key: 'table' | 'chart';
-    label: React.ReactNode;
-}
-
-const representationKeySelector = (d: Option) => d.key;
-const representationLabelSelector = (d: Option) => d.label;
-
-const representationOptions: Option[] = [
-    {
-        key: 'table',
-        label: <IoListOutline />,
-    },
-    {
-        key: 'chart',
-        label: <IoBarChartOutline />,
-    },
-];
-
 interface TimeOption {
     key: string;
     label: string;
@@ -350,9 +298,6 @@ const yearOptions: TimeOption[] = [
         endDate: 1546193700000,
     },
 ];
-
-const yearKeySelector = (year: TimeOption) => year.key;
-const yearLabelSelector = (year: TimeOption) => year.label;
 
 const lastYearDateTime = resolveTime(lastYearStartDate, 'day').getTime();
 const todaysDateTime = resolveTime(todaysDate, 'day').getTime();
@@ -429,15 +374,11 @@ function NewExploreDeep(props: Props) {
             handleStartDateChange(undefined);
         }
     }, [handleStartDateChange]);
-    const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
-    const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
-
     const [filters, setFilters] = useState<FormType | undefined>(undefined);
     const [
         exportIdToDownload,
         setExportIdToDownload,
     ] = useState<string | undefined>();
-    const [representationType, setRepresentationType] = useState<Option['key']>('table');
     const [
         printPreviewMode,
         showPrintPreview,
@@ -656,390 +597,53 @@ function NewExploreDeep(props: Props) {
         createExport,
     ]);
 
-    // FIXME: Remove this after fixed in server
-    const projectsByRegion = useMemo(() => (
-        data?.deepExploreStats?.projectsByRegion
-            ?.filter(isDefined) ?? undefined
-    ), [data?.deepExploreStats?.projectsByRegion]);
-
     const handlePrintClick = useCallback(() => {
         window.print();
     }, []);
 
     return (
-        <>
-            {printPreviewMode && (
-                <Element
-                    icons={<Heading size="small">Print Preview</Heading>}
-                    className={styles.printPreviewBar}
-                    actions={(
-                        <>
-                            <Button
-                                name={undefined}
-                                variant="secondary"
-                                icons={<IoClose />}
-                                onClick={hidePrintPreview}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                name={undefined}
-                                variant="primary"
-                                icons={<IoPrint />}
-                                onClick={handlePrintClick}
-                            >
-                                Print
-                            </Button>
-                        </>
-                    )}
-                >
-                    Please update scale of printing to fit your needs.
-                </Element>
-            )}
-            <Container
-                className={_cs(
-                    styles.exploreDeep,
-                    className,
-                    printPreviewMode && styles.printPreviewMode,
-                )}
-                contentClassName={styles.content}
-                headerClassName={styles.header}
-                heading="Explore DEEP"
-                spacing="loose"
-                inlineHeadingDescription
-                headingDescriptionClassName={styles.headingDescription}
-                headingDescription={(
-                    <>
-                        <Heading
-                            className={styles.dateRangeOutput}
-                            size="small"
-                        >
-                            {`(${startDateString} - ${endDateString})`}
-                        </Heading>
-                        {loading && <AiOutlineLoading className={styles.loading} />}
-                    </>
-                )}
-                headerActions={!printPreviewMode && (
-                    <>
-                        {isPublic ? (
-                            <SelectInput
-                                className={styles.yearSelectionInput}
-                                variant="general"
-                                name={undefined}
-                                options={yearOptions}
-                                keySelector={yearKeySelector}
-                                labelSelector={yearLabelSelector}
-                                onChange={handleYearChange}
-                                value={selectedYear}
-                                nonClearable
-                            />
-                        ) : (
-                            <DateDualRangeInput
-                                variant="general"
-                                fromName="fromDate"
-                                fromOnChange={handleFromDateChange}
-                                fromValue={startDateString}
-                                toName="toDate"
-                                toOnChange={handleToDateChange}
-                                toValue={endDateString}
-                            />
-                        )}
-                        <DropdownMenu
-                            label="Download"
-                            disabled={!!exportIdToDownload || exportCreatePending}
-                        >
-                            <DropdownMenuItem
-                                name={undefined}
-                                onClick={handleImageExportClick}
-                                disabled
-                            >
-                                Image
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                name={undefined}
-                                onClick={handlePdfExportClick}
-                            >
-                                PDF
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                name={undefined}
-                                onClick={handleExcelExportClick}
-                            >
-                                CSV
-                            </DropdownMenuItem>
-                        </DropdownMenu>
-                    </>
-                )}
-                headerDescriptionClassName={styles.headerDescription}
-                headerDescription={(
-                    <>
-                        <div className={styles.statsContainer}>
-                            <Card className={_cs(styles.statCard, styles.projectStatsCard)}>
-                                <StatsInformationCard
-                                    className={styles.infoCard}
-                                    icon={(
-                                        <IoDocumentOutline />
-                                    )}
-                                    label="Projects"
-                                    totalValue={data?.deepExploreStats?.totalProjects}
-                                    variant="accent"
-                                />
-                                <div className={styles.separator} />
-                                <StatsInformationCard
-                                    className={styles.infoCard}
-                                    icon={(
-                                        <IoPersonOutline />
-                                    )}
-                                    label="Users"
-                                    totalValue={data?.deepExploreStats?.totalRegisteredUsers}
-                                    variant="accent"
-                                />
-                                <StatsInformationCard
-                                    className={styles.infoCard}
-                                    icon={(
-                                        <IoPersonOutline />
-                                    )}
-                                    label="Active Users"
-                                    totalValue={data?.deepExploreStats?.totalActiveUsers}
-                                    variant="accent"
-                                />
-                            </Card>
-                            <Card className={_cs(styles.statCard, styles.sourceStatsCard)}>
-                                <StatsInformationCard
-                                    className={styles.infoCard}
-                                    icon={(
-                                        <IoDocumentOutline />
-                                    )}
-                                    label="Sources"
-                                    totalValue={data?.deepExploreStats?.totalLeads}
-                                    variant="accent"
-                                />
-                                <div className={styles.separator} />
-                                <StatsInformationCard
-                                    className={styles.infoCard}
-                                    icon={(
-                                        <IoGlobeOutline />
-                                    )}
-                                    label="Authors"
-                                    totalValue={data?.deepExploreStats?.totalAuthors}
-                                    variant="accent"
-                                />
-                                <StatsInformationCard
-                                    className={styles.infoCard}
-                                    icon={(
-                                        <IoGlobeOutline />
-                                    )}
-                                    label="Publishers"
-                                    totalValue={data?.deepExploreStats?.totalPublishers}
-                                    variant="accent"
-                                />
-                            </Card>
-                            <Card className={_cs(styles.statCard, styles.entryStatsCard)}>
-                                <StatsInformationCard
-                                    className={styles.infoCard}
-                                    icon={(
-                                        <IoLayersOutline />
-                                    )}
-                                    label="Entries"
-                                    totalValue={data?.deepExploreStats?.totalEntries}
-                                    variant="accent"
-                                />
-                                <div className={styles.separator} />
-                                <StatsInformationCard
-                                    className={styles.infoCard}
-                                    icon={(
-                                        <IoTimeOutline />
-                                    )}
-                                    label="Added last week"
-                                    // TODO: Get entries last week
-                                    totalValue={data?.deepExploreStats?.totalEntriesAddedLastWeek}
-                                    variant="accent"
-                                />
-                            </Card>
-                        </div>
-                        {!isPublic && (
-                            <ProjectFilters
-                                className={styles.filters}
-                                initialValue={filters}
-                                onFiltersChange={setFilters}
-                                readOnlyMode={printPreviewMode}
-                            />
-                        )}
-                    </>
-                )}
-                headingSize="large"
-            >
-                {printPreviewMode ? (
-                    <>
-                        <Container
-                            heading="Projects"
-                            headingSize="small"
-                            headerClassName={styles.sectionHeader}
-                            spacing="none"
-                        >
-                            <ProjectContent
-                                projectsByRegion={projectsByRegion}
-                                readOnlyMode={printPreviewMode}
-                                endDate={endDate}
-                                startDate={startDate}
-                                onEndDateChange={!isPublic ? setEndDate : undefined}
-                                onStartDateChange={!isPublic ? setStartDate : undefined}
-                                projectFilters={filters}
-                                isPublic={isPublic}
-                                completeTimeseries={
-                                    projectsTimeseriesData
-                                        ?.deepExploreStats
-                                        ?.projectsCountByDay
-                                    ?? undefined
-                                }
-                            />
-                        </Container>
-                        <Container
-                            heading="Entries / Sources"
-                            headerClassName={styles.sectionHeader}
-                            headingSize="small"
-                            spacing="none"
-                        >
-                            <EntriesContent
-                                endDate={endDate}
-                                startDate={startDate}
-                                onEndDateChange={!isPublic ? setEndDate : undefined}
-                                onStartDateChange={!isPublic ? setStartDate : undefined}
-                                completeTimeseries={
-                                    entriesTimeseriesData
-                                        ?.deepExploreStats
-                                        ?.entriesCountByDay
-                                    ?? undefined
-                                }
-                                leadsCountByDay={
-                                    entriesMapData?.deepExploreStats?.leadsCountByDay ?? undefined
-                                }
-                                entriesCountByRegion={
-                                    entriesMapData
-                                        ?.deepExploreStats
-                                        ?.entriesCountByRegion
-                                    ?? undefined
-                                }
-                                loading={loadingMapAndLeadData}
-                            />
-                        </Container>
-                    </>
-                ) : (
-                    <Tabs
-                        defaultHash="projects"
-                        useHash
-                    >
-                        <div className={styles.topContainer}>
-                            <div className={styles.contentHeader}>
-                                <Tab
-                                    name="projects"
-                                    transparentBorder
-                                >
-                                    Projects
-                                </Tab>
-                                <Tab
-                                    name="entries"
-                                    transparentBorder
-                                >
-                                    Entries / Sources
-                                </Tab>
-                            </div>
-                            <TabPanel name="projects">
-                                <ProjectContent
-                                    projectsByRegion={projectsByRegion}
-                                    readOnlyMode={printPreviewMode}
-                                    endDate={endDate}
-                                    startDate={startDate}
-                                    projectFilters={filters}
-                                    onEndDateChange={!isPublic ? setEndDate : undefined}
-                                    onStartDateChange={!isPublic ? setStartDate : undefined}
-                                    isPublic={isPublic}
-                                    completeTimeseries={
-                                        projectsTimeseriesData
-                                            ?.deepExploreStats
-                                            ?.projectsCountByDay
-                                        ?? undefined
-                                    }
-                                />
-                            </TabPanel>
-                            <TabPanel name="entries">
-                                <EntriesContent
-                                    endDate={endDate}
-                                    startDate={startDate}
-                                    onEndDateChange={!isPublic ? setEndDate : undefined}
-                                    onStartDateChange={!isPublic ? setStartDate : undefined}
-                                    completeTimeseries={
-                                        entriesTimeseriesData
-                                            ?.deepExploreStats
-                                            ?.entriesCountByDay
-                                        ?? undefined
-                                    }
-                                    leadsCountByDay={
-                                        entriesMapData
-                                            ?.deepExploreStats
-                                            ?.leadsCountByDay
-                                        ?? undefined
-                                    }
-                                    entriesCountByRegion={
-                                        entriesMapData
-                                            ?.deepExploreStats
-                                            ?.entriesCountByRegion
-                                        ?? undefined
-                                    }
-                                    loading={loadingMapAndLeadData}
-                                />
-                            </TabPanel>
-                        </div>
-                    </Tabs>
-                )}
-                <Container
-                    className={styles.bottomContainer}
-                    headerActions={!printPreviewMode && (
-                        <SegmentInput
-                            className={className}
-                            name={undefined}
-                            onChange={setRepresentationType}
-                            options={representationOptions}
-                            keySelector={representationKeySelector}
-                            labelSelector={representationLabelSelector}
-                            value={representationType}
-                        />
-                    )}
-                    contentClassName={styles.bottomContainerContent}
-                >
-                    <TopTenAuthors
-                        className={styles.topTenCard}
-                        data={data?.deepExploreStats?.topTenAuthors}
-                        mode={representationType}
-                        label="Top Ten Authors"
-                    />
-                    <TopTenAuthors
-                        className={styles.topTenCard}
-                        data={data?.deepExploreStats?.topTenPublishers}
-                        mode={representationType}
-                        label="Top Ten Publishers"
-                    />
-                    <TopTenFrameworks
-                        className={styles.topTenCard}
-                        data={data?.deepExploreStats?.topTenFrameworks}
-                        mode={representationType}
-                        label="Top Ten Frameworks"
-                    />
-                    <TopTenProjectsByUser
-                        className={styles.topTenCard}
-                        data={data?.deepExploreStats?.topTenProjectsByUsers}
-                        mode={representationType}
-                        label="Top Ten Projects (Users)"
-                    />
-                    <TopTenProjectsByEntries
-                        className={styles.topTenCard}
-                        data={data?.deepExploreStats?.topTenProjectsByEntries}
-                        mode={representationType}
-                        label="Top Ten Projects (Entries)"
-                    />
-                </Container>
-            </Container>
-        </>
+        <ExploreDeepContent
+            className={className}
+            isPublic={isPublic}
+            printPreviewMode={printPreviewMode}
+            onHidePrintPreviewClick={hidePrintPreview}
+            onPrintClick={handlePrintClick}
+            onYearChange={handleYearChange}
+            onFromDateChange={handleFromDateChange}
+            onToDateChange={handleToDateChange}
+            endDate={endDate}
+            startDate={startDate}
+            selectedYear={selectedYear}
+            onEndDateChange={setEndDate}
+            onStartDateChange={setStartDate}
+            onImageExportClick={handleImageExportClick}
+            onPdfExportClick={handlePdfExportClick}
+            onExcelExportClick={handleExcelExportClick}
+            filters={filters}
+            exportIdToDownload={exportIdToDownload}
+            onFiltersChange={setFilters}
+            totalProjects={data?.deepExploreStats?.totalProjects}
+            totalRegisteredUsers={data?.deepExploreStats?.totalRegisteredUsers}
+            totalActiveUsers={data?.deepExploreStats?.totalActiveUsers}
+            totalLeads={data?.deepExploreStats?.totalLeads}
+            totalAuthors={data?.deepExploreStats?.totalAuthors}
+            totalPublishers={data?.deepExploreStats?.totalPublishers}
+            totalEntries={data?.deepExploreStats?.totalEntries}
+            totalEntriesAddedLastWeek={data?.deepExploreStats?.totalEntriesAddedLastWeek}
+            projectsByRegion={data?.deepExploreStats?.projectsByRegion}
+            projectCompleteTimeseries={projectsTimeseriesData?.deepExploreStats?.projectsCountByDay}
+            entriesCompleteTimeseries={entriesTimeseriesData?.deepExploreStats?.entriesCountByDay}
+            leadsCountByDay={entriesMapData?.deepExploreStats?.leadsCountByDay}
+            entriesCountByRegion={entriesMapData?.deepExploreStats?.entriesCountByRegion}
+            topTenAuthors={data?.deepExploreStats?.topTenAuthors}
+            topTenPublishers={data?.deepExploreStats?.topTenPublishers}
+            topTenFrameworks={data?.deepExploreStats?.topTenFrameworks}
+            topTenProjectsByUsers={data?.deepExploreStats?.topTenProjectsByUsers}
+            topTenProjectsByEntries={data?.deepExploreStats?.topTenProjectsByEntries}
+            loadingMapAndLeadData={loadingMapAndLeadData}
+            exportCreatePending={exportCreatePending}
+            loading={loading}
+        />
     );
 }
 
