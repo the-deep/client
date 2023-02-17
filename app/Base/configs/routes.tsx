@@ -122,14 +122,12 @@ const newExplore = wrap({
     visibility: 'is-authenticated',
 });
 const newPublicExplore = wrap({
-    path: '/new-public-explore/',
-    title: 'New Explore DEEP',
+    path: '/public-explore/',
+    title: 'Explore DEEP',
     navbarVisibility: true,
-    component: lazy(() => import('#views/NewExploreDeep')),
-    componentProps: {
-        isPublic: true,
-    },
-    visibility: 'is-authenticated',
+    component: lazy(() => import('#views/PublicExploreDeep')),
+    componentProps: {},
+    visibility: 'is-anything',
 });
 const analyticalFrameworkCreateRoute = wrap({
     path: '/frameworks/new/',
