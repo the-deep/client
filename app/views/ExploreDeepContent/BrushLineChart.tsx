@@ -2,6 +2,7 @@ import {
     VictoryGroup,
     VictoryBrushContainer,
     VictoryLine,
+    VictoryAxis,
     VictoryArea,
 } from 'victory';
 import React, { useMemo, useCallback } from 'react';
@@ -100,7 +101,7 @@ function BrushLineChart(props: Props) {
                     sortKey="date"
                     data={data}
                 />
-
+                <VictoryAxis />
                 <VictoryLine
                     style={{ data: { stroke: 'var(--dui-color-accent)' } }}
                     x="date"
