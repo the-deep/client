@@ -7,11 +7,27 @@ import {
     HttpLink,
 } from '@apollo/client';
 import { ApolloLink } from 'apollo-link';
+import { RestLink } from 'apollo-link-rest';
 import { RetryLink } from 'apollo-link-retry';
 import { createUploadLink } from 'apollo-upload-client';
 import { isDefined } from '@togglecorp/fujs';
 
-import { graphqlEndpoint } from './env';
+import {
+    staticEndpoint,
+    graphqlEndpoint,
+} from './env';
+
+const restLink = new RestLink({
+    endpoints: {
+        static: staticEndpoint,
+    },
+    credentials: 'omit',
+});
+
+const graphqlLink = new HttpLink({
+    uri: graphqlEndpoint,
+    credentials: 'include',
+});
 
 const link: ApolloLinkFromClient = ApolloLink.from([
     new RetryLink({
@@ -28,10 +44,10 @@ const link: ApolloLinkFromClient = ApolloLink.from([
             uri: graphqlEndpoint,
             credentials: 'include',
         }) as unknown as ApolloLink,
-        new HttpLink({
-            uri: graphqlEndpoint,
-            credentials: 'include',
-        }) as unknown as ApolloLink,
+        ApolloLink.from([
+            restLink as unknown as ApolloLink,
+            graphqlLink as unknown as ApolloLink,
+        ]),
     ),
 
 ]) as unknown as ApolloLinkFromClient;

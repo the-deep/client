@@ -6,10 +6,6 @@
         padding-right: var(--dui-spacing-super-large);
         padding-left: var(--dui-spacing-super-large);
 
-        .year-selection-input {
-            width: 6rem;
-        }
-
         .heading-description {
             display: flex;
             align-items: center;

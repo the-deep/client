@@ -1,0 +1,100 @@
+type CountByDay {
+  count: Int!
+  date: String!
+}
+
+type CountByCentroid {
+  count: Int!
+  centroid: PointScalar
+}
+
+type DeepExploreStatsStatic {
+  projectsCountByDay: [CountByDay!]!
+  entriesCountByDay: [CountByDay!]!
+  leadsCountByDay: [CountByDay!]!
+  entriesCountByRegion: [CountByCentroid!]!
+}
+type CompleteTimeseries {
+  deepExploreStats: DeepExploreStatsStatic!
+}
+
+type TopOrganization {
+  id: String!
+  title: String!
+  leadsCount: Int!
+  projectsCount: Int!
+}
+
+type TopOrganization {
+  id: String!
+  title: String!
+  leadsCount: Int!
+  projectsCount: Int!
+}
+
+type TopProjectByUsers {
+  id: String!
+  title: String!
+  usersCount: Int!
+}
+
+type TopProjectByEntries {
+  id: String!
+  title: String!
+  entriesCount: Int!
+  leadsCount: Int!
+}
+
+type TopProjectByLeads {
+  id: String!
+  title: String!
+  entriesCount: Int!
+  leadsCount: Int!
+}
+
+type TopFramework {
+  id: String!
+  title: String!
+  entriesCount: Int!
+  projectsCount: Int!
+}
+
+type ProjectsByRegion {
+  id: String!
+  projectIds: [String!]
+  centroid: PointScalar
+}
+
+type YearlySnapshotData {
+  totalActiveUsers: Int!
+  totalAuthors: Int!
+  totalEntries: Int!
+  totalEntriesAddedLastWeek: Int!
+  totalLeads: Int!
+  totalProjects: Int!
+  totalPublishers: Int!
+  totalRegisteredUsers: Int!
+  topTenPublishers: [TopOrganization!]!
+  topTenAuthors: [TopOrganization!]!
+  topTenProjectsByUsers: [TopProjectByUsers!]!
+  topTenProjectsByEntries: [TopProjectByEntries!]!
+  topTenProjectsByLeads: [TopProjectByLeads!]!
+  topTenFrameworks: [TopFramework!]!
+  projectsByRegion: [ProjectsByRegion!]!
+}
+
+type YearlySnapshot {
+  deepExploreStats: YearlySnapshotData!
+}
+
+type Query {
+  completeTimeseries(pathName: String!): CompleteTimeseries!
+  yearlySnapshot(pathName: String!): YearlySnapshot!
+}
+
+directive @rest(
+  type: String!
+  path: String!
+  endpoint: String!
+  method: String
+) on FIELD

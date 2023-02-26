@@ -20,6 +20,7 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     endDate: number;
+    readOnly: boolean;
     startDate: number;
     onEndDateChange: ((newDate: number | undefined) => void) | undefined;
     onStartDateChange: ((newDate: number | undefined) => void) | undefined;
@@ -40,6 +41,7 @@ function EntriesContent(props: Props) {
         leadsCountByDay,
         entriesCountByRegion,
         loading,
+        readOnly,
     } = props;
 
     const barContainerRef = useRef<HTMLDivElement>(null);
@@ -86,6 +88,7 @@ function EntriesContent(props: Props) {
                     endDate={endDate}
                     startDate={startDate}
                     onChange={handleDateRangeChange}
+                    readOnly={readOnly}
                 />
             </div>
             <EntityCreationLineChart
