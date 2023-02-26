@@ -35,6 +35,7 @@ function useSizeTracking(
         const { current: el } = elementRef;
 
         if (!el) {
+            // eslint-disable-next-line no-console
             console.error('useSizeTracking: Cannot reference requested element');
             return undefined;
         }

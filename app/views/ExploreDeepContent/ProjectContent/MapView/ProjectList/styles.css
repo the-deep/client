@@ -44,20 +44,6 @@
         }
     }
 
-    .footer {
-        display: flex;
-        align-items: flex-end;
-        flex-direction: column;
-        flex-wrap: wrap;
-        gap: unset;
-
-        .pager {
-            display: flex;
-            justify-content: center;
-            overflow: auto;
-        }
-    }
-
     .inline {
         display: flex;
         justify-content: space-between;

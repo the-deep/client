@@ -10,6 +10,7 @@ export const isDebugMode = process.env.REACT_APP_DEBUG_MODE?.toLowerCase() === '
 export const apiHttps = process.env.REACT_APP_API_HTTPS || 'http';
 export const apiEndpoint = process.env.REACT_APP_API_END as string; // localhost:8000
 export const graphqlEndpoint = process.env.REACT_APP_GRAPHQL_ENDPOINT as string; // http://localhost:8000/graphql
+export const staticEndpoint = process.env.REACT_APP_STATIC_ENDPOINT as string; // http://localhost:8000/graphql
 export const serverlessEndpoint = process.env.REACT_APP_SERVERLESS_DOMAIN || 'https://services-local.thedeep.io';
 // eslint-disable-next-line max-len
 export const pdfCacheEndpoint = process.env.REACT_APP_PDF_CACHE_ENDPOINT as string; // localhost:8081

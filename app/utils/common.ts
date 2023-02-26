@@ -217,7 +217,7 @@ export function isFiltered(value: unknown) {
 export function getMaximum<T>(
     list: T[] | undefined,
     comparator: (item1: T, item2: T) => number,
-) {
+): T | undefined {
     if (!list || list.length < 1) {
         return undefined;
     }

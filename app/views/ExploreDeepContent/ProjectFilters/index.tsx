@@ -61,7 +61,7 @@ interface Props {
     className?: string;
     initialValue: FormType | undefined;
     onFiltersChange: (filters: FormType | undefined) => void;
-    readOnlyMode: boolean;
+    readOnly: boolean;
 }
 
 function ProjectFilters(props: Props) {
@@ -69,7 +69,7 @@ function ProjectFilters(props: Props) {
         className,
         onFiltersChange,
         initialValue,
-        readOnlyMode,
+        readOnly,
     } = props;
 
     const {
@@ -122,7 +122,7 @@ function ProjectFilters(props: Props) {
 
     return (
         <div className={_cs(styles.projectFilters, className)}>
-            {readOnlyMode ? (
+            {readOnly ? (
                 <DismissableTextOutput
                     name="search"
                     label="Search"
@@ -139,7 +139,7 @@ function ProjectFilters(props: Props) {
                     placeholder="any"
                 />
             )}
-            {readOnlyMode ? (
+            {readOnly ? (
                 <DismissableListOutput
                     name="organizations"
                     label="Organizations"
@@ -161,7 +161,7 @@ function ProjectFilters(props: Props) {
                     placeholder="any"
                 />
             )}
-            {readOnlyMode ? (
+            {readOnly ? (
                 <DismissableListOutput
                     name="analysisFrameworks"
                     label="Organizations"
@@ -183,7 +183,7 @@ function ProjectFilters(props: Props) {
                     onOptionsChange={setAnalysisFrameworkOptions}
                 />
             )}
-            {readOnlyMode ? (
+            {readOnly ? (
                 <DismissableListOutput
                     name="regions"
                     label="Regions"
@@ -206,7 +206,7 @@ function ProjectFilters(props: Props) {
                     publicRegions
                 />
             )}
-            {readOnlyMode ? (
+            {readOnly ? (
                 <>
                     <DismissableBooleanOutput
                         label=""
@@ -249,7 +249,7 @@ function ProjectFilters(props: Props) {
                     />
                 </Container>
             )}
-            {!readOnlyMode && (
+            {!readOnly && (
                 <>
                     <Button
                         name={undefined}
