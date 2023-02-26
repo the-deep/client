@@ -33,7 +33,7 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     projectsByRegion: ProjectsByRegion[] | undefined;
-    readOnlyMode: boolean;
+    readOnly: boolean;
     projectFilters: ProjectFilterType | undefined;
     endDate: number;
     startDate: number;
@@ -47,7 +47,7 @@ function ProjectContent(props: Props) {
     const {
         className,
         projectsByRegion,
-        readOnlyMode,
+        readOnly,
         projectFilters,
         endDate,
         startDate,
@@ -91,10 +91,10 @@ function ProjectContent(props: Props) {
             <div>
                 <Tabs
                     // NOTE: Only showing map in readonly mode
-                    value={readOnlyMode ? 'map' : activeView}
+                    value={readOnly ? 'map' : activeView}
                     onChange={setActiveView}
                 >
-                    {!readOnlyMode && (
+                    {!readOnly && (
                         <TabList className={styles.tabs}>
                             <Tab
                                 name="table"
@@ -146,6 +146,7 @@ function ProjectContent(props: Props) {
                             endDate={endDate}
                             startDate={startDate}
                             onChange={handleDateRangeChange}
+                            readOnly={readOnly}
                         />
                     )}
                 </div>

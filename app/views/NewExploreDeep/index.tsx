@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import {
     isDefined,
+    formatDateToString,
 } from '@togglecorp/fujs';
 import {
     useHash,
     useAlert,
     AlertContext,
+    DateDualRangeInput,
     ButtonLikeLink,
 } from '@the-deep/deep-ui';
 import { useMutation, useQuery, gql } from '@apollo/client';
@@ -87,6 +89,12 @@ query ExploreDeepStats(
             projectsCount
         }
         topTenProjectsByEntries {
+            id
+            title
+            entriesCount
+            leadsCount
+        }
+        topTenProjectsByLeads {
             id
             title
             entriesCount
@@ -320,7 +328,6 @@ function NewExploreDeep(props: Props) {
         updateAlertContent,
     } = useContext(AlertContext);
 
-    const [selectedYear, setSelectedYear] = useState<string | undefined>(yearOptions[0].key);
     const activeView = useHash();
 
     const [
@@ -336,13 +343,6 @@ function NewExploreDeep(props: Props) {
         () => (!isPublic ? todaysDateTime : yearOptions[0].endDate),
     );
 
-    const handleYearChange = useCallback((newYear: string | undefined) => {
-        setSelectedYear(newYear);
-        const selectedYearData = yearOptions.find((year) => year.key === newYear);
-        setEndDate(selectedYearData?.endDate);
-        setStartDate(selectedYearData?.startDate);
-    }, []);
-
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
             setEndDate(Math.min(newDate, todaysDateTime));
@@ -350,14 +350,6 @@ function NewExploreDeep(props: Props) {
             setEndDate(undefined);
         }
     }, []);
-
-    const handleFromDateChange = useCallback((newDate: string | undefined) => {
-        if (isDefined(newDate)) {
-            handleEndDateChange(new Date(newDate).getTime());
-        } else {
-            handleEndDateChange(undefined);
-        }
-    }, [handleEndDateChange]);
 
     const handleStartDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
@@ -367,13 +359,22 @@ function NewExploreDeep(props: Props) {
         }
     }, []);
 
-    const handleToDateChange = useCallback((newDate: string | undefined) => {
+    const handleFromDateChange = useCallback((newDate: string | undefined) => {
         if (isDefined(newDate)) {
             handleStartDateChange(new Date(newDate).getTime());
         } else {
             handleStartDateChange(undefined);
         }
     }, [handleStartDateChange]);
+
+    const handleToDateChange = useCallback((newDate: string | undefined) => {
+        if (isDefined(newDate)) {
+            handleEndDateChange(new Date(newDate).getTime());
+        } else {
+            handleEndDateChange(undefined);
+        }
+    }, [handleEndDateChange]);
+
     const [filters, setFilters] = useState<FormType | undefined>(undefined);
     const [
         exportIdToDownload,
@@ -601,19 +602,29 @@ function NewExploreDeep(props: Props) {
         window.print();
     }, []);
 
+    const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
+    const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
+
     return (
         <ExploreDeepContent
             className={className}
             isPublic={isPublic}
+            headerActions={(
+                <DateDualRangeInput
+                    variant="general"
+                    fromName="fromDate"
+                    fromOnChange={handleFromDateChange}
+                    fromValue={startDateString}
+                    toName="toDate"
+                    toOnChange={handleToDateChange}
+                    toValue={endDateString}
+                />
+            )}
             printPreviewMode={printPreviewMode}
             onHidePrintPreviewClick={hidePrintPreview}
             onPrintClick={handlePrintClick}
-            onYearChange={handleYearChange}
-            onFromDateChange={handleFromDateChange}
-            onToDateChange={handleToDateChange}
             endDate={endDate}
             startDate={startDate}
-            selectedYear={selectedYear}
             onEndDateChange={setEndDate}
             onStartDateChange={setStartDate}
             onImageExportClick={handleImageExportClick}
@@ -640,6 +651,7 @@ function NewExploreDeep(props: Props) {
             topTenFrameworks={data?.deepExploreStats?.topTenFrameworks}
             topTenProjectsByUsers={data?.deepExploreStats?.topTenProjectsByUsers}
             topTenProjectsByEntries={data?.deepExploreStats?.topTenProjectsByEntries}
+            topTenProjectsByLeads={data?.deepExploreStats?.topTenProjectsByLeads}
             loadingMapAndLeadData={loadingMapAndLeadData}
             exportCreatePending={exportCreatePending}
             loading={loading}

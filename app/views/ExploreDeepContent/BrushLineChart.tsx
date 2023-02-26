@@ -14,6 +14,7 @@ interface Props {
     endDate: number | undefined;
     onChange: (startDate: number | undefined, endDate: number | undefined) => void;
     data: { total: number, date: number }[];
+    readOnly?: boolean;
 }
 
 function BrushLineChart(props: Props) {
@@ -24,6 +25,7 @@ function BrushLineChart(props: Props) {
         startDate,
         endDate,
         onChange,
+        readOnly = false,
     } = props;
 
     const maxCount = useMemo(() => Math.max(...data.map((datum) => datum.total)), [data]);
@@ -83,6 +85,9 @@ function BrushLineChart(props: Props) {
                         brushDimension="x"
                         brushDomain={selectedDomain}
                         onBrushDomainChangeEnd={handleBrush} // changeEnd?
+                        allowDrag={!readOnly}
+                        allowResize={!readOnly}
+                        allowDraw={false}
                         brushStyle={{
                             stroke: 'var(--dui-color-brand)',
                             fill: 'var(--dui-color-accent)',

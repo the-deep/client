@@ -11,10 +11,8 @@ import {
     Container,
     Button,
     SegmentInput,
-    DateDualRangeInput,
     DropdownMenu,
     DropdownMenuItem,
-    SelectInput,
     Tab,
     TabPanel,
     Tabs,
@@ -63,50 +61,6 @@ const representationOptions: Option[] = [
     },
 ];
 
-interface TimeOption {
-    key: string;
-    label: string;
-    startDate: number;
-    endDate: number;
-}
-
-// TODO: Fetch this later from server
-const yearOptions: TimeOption[] = [
-    {
-        key: '2022',
-        label: '2022',
-        startDate: 1640974500000,
-        endDate: 1672424100000,
-    },
-    {
-        key: '2021',
-        label: '2021',
-        startDate: 1609438500000,
-        endDate: 1640888100000,
-    },
-    {
-        key: '2020',
-        label: '2020',
-        startDate: 1577816100000,
-        endDate: 1609352100000,
-    },
-    {
-        key: '2019',
-        label: '2019',
-        startDate: 1546280100000,
-        endDate: 1577729700000,
-    },
-    {
-        key: '2018',
-        label: '2018',
-        startDate: 1514744100000,
-        endDate: 1546193700000,
-    },
-];
-
-const yearKeySelector = (year: TimeOption) => year.key;
-const yearLabelSelector = (year: TimeOption) => year.label;
-
 type ProjectByRegion = {
     id: string;
     centroid?: unknown;
@@ -119,19 +73,16 @@ interface Props {
     printPreviewMode: boolean;
     onHidePrintPreviewClick: () => void;
     onPrintClick: () => void;
-    onYearChange: (newDate: string | undefined) => void;
-    onFromDateChange: (newDate: string | undefined) => void;
-    onToDateChange: (newDate: string | undefined) => void;
     endDate: number;
     startDate: number;
-    selectedYear: string | undefined;
+    headerActions: React.ReactNode;
     onEndDateChange: (newDate: number | undefined) => void;
     onStartDateChange: (newDate: number | undefined) => void;
     onImageExportClick: () => void;
     onPdfExportClick: () => void;
     onExcelExportClick: () => void;
     filters: FormType | undefined;
-    onFiltersChange: (newFilters: FormType | undefined) => void;
+    onFiltersChange: ((newFilters: FormType | undefined) => void) | undefined;
     totalProjects: number | undefined;
     totalRegisteredUsers: number | undefined;
     totalActiveUsers: number | undefined;
@@ -150,6 +101,7 @@ interface Props {
     topTenFrameworks: TopFrameworks[] | undefined | null;
     topTenProjectsByUsers: TopProjectByUser[] | undefined | null;
     topTenProjectsByEntries: TopProjectByEntries[] | undefined | null;
+    topTenProjectsByLeads: TopProjectByEntries[] | undefined | null;
     loadingMapAndLeadData: boolean;
     exportCreatePending: boolean;
     loading: boolean;
@@ -163,12 +115,9 @@ function ExploreDeepContent(props: Props) {
         printPreviewMode,
         onHidePrintPreviewClick,
         onPrintClick,
-        onYearChange,
-        onFromDateChange,
-        onToDateChange,
+        headerActions,
         endDate,
         startDate,
-        selectedYear,
         onEndDateChange,
         onStartDateChange,
         onImageExportClick,
@@ -194,6 +143,7 @@ function ExploreDeepContent(props: Props) {
         topTenFrameworks,
         topTenProjectsByUsers,
         topTenProjectsByEntries,
+        topTenProjectsByLeads,
         loadingMapAndLeadData,
         exportCreatePending,
         filters,
@@ -265,29 +215,7 @@ function ExploreDeepContent(props: Props) {
                 )}
                 headerActions={!printPreviewMode && (
                     <>
-                        {isPublic ? (
-                            <SelectInput
-                                className={styles.yearSelectionInput}
-                                variant="general"
-                                name={undefined}
-                                options={yearOptions}
-                                keySelector={yearKeySelector}
-                                labelSelector={yearLabelSelector}
-                                onChange={onYearChange}
-                                value={selectedYear}
-                                nonClearable
-                            />
-                        ) : (
-                            <DateDualRangeInput
-                                variant="general"
-                                fromName="fromDate"
-                                fromOnChange={onFromDateChange}
-                                fromValue={startDateString}
-                                toName="toDate"
-                                toOnChange={onToDateChange}
-                                toValue={endDateString}
-                            />
-                        )}
+                        {headerActions}
                         <DropdownMenu
                             label="Download"
                             disabled={!!exportIdToDownload || exportCreatePending}
@@ -401,12 +329,12 @@ function ExploreDeepContent(props: Props) {
                                 />
                             </Card>
                         </div>
-                        {!isPublic && (
+                        {!isPublic && onFiltersChange && (
                             <ProjectFilters
                                 className={styles.filters}
                                 initialValue={filters}
                                 onFiltersChange={onFiltersChange}
-                                readOnlyMode={printPreviewMode}
+                                readOnly={printPreviewMode}
                             />
                         )}
                     </>
@@ -423,7 +351,7 @@ function ExploreDeepContent(props: Props) {
                         >
                             <ProjectContent
                                 projectsByRegion={projectsByRegion ?? undefined}
-                                readOnlyMode={printPreviewMode}
+                                readOnly={printPreviewMode || isPublic}
                                 endDate={endDate}
                                 startDate={startDate}
                                 onEndDateChange={!isPublic ? onEndDateChange : undefined}
@@ -442,6 +370,7 @@ function ExploreDeepContent(props: Props) {
                             <EntriesContent
                                 endDate={endDate}
                                 startDate={startDate}
+                                readOnly={printPreviewMode || isPublic}
                                 onEndDateChange={!isPublic ? onEndDateChange : undefined}
                                 onStartDateChange={!isPublic ? onStartDateChange : undefined}
                                 completeTimeseries={entriesCompleteTimeseries ?? undefined}
@@ -474,7 +403,7 @@ function ExploreDeepContent(props: Props) {
                             <TabPanel name="projects">
                                 <ProjectContent
                                     projectsByRegion={projectsByRegion}
-                                    readOnlyMode={printPreviewMode}
+                                    readOnly={printPreviewMode || isPublic}
                                     endDate={endDate}
                                     startDate={startDate}
                                     projectFilters={filters}
@@ -493,6 +422,7 @@ function ExploreDeepContent(props: Props) {
                                     completeTimeseries={entriesCompleteTimeseries ?? undefined}
                                     leadsCountByDay={leadsCountByDay ?? undefined}
                                     entriesCountByRegion={entriesCountByRegion ?? undefined}
+                                    readOnly={printPreviewMode || isPublic}
                                     loading={loadingMapAndLeadData}
                                 />
                             </TabPanel>
@@ -543,6 +473,12 @@ function ExploreDeepContent(props: Props) {
                         data={topTenProjectsByEntries}
                         mode={representationType}
                         label="Top Ten Projects (Entries)"
+                    />
+                    <TopTenProjectsByEntries
+                        className={styles.topTenCard}
+                        data={topTenProjectsByLeads}
+                        mode={representationType}
+                        label="Top Ten Projects (Sources)"
                     />
                 </Container>
             </Container>
