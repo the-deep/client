@@ -157,7 +157,7 @@ function EntityCreationLineChart(props: Props) {
                         formatter={timeSpentLabelFormatter}
                     />
                     <Area
-                        type={chartType === 'step' ? 'step' : 'monotoneX'}
+                        type={chartType === 'step' ? 'step' : 'linear'}
                         dataKey="total"
                         stroke="var(--dui-color-accent)"
                         fillOpacity={1}
