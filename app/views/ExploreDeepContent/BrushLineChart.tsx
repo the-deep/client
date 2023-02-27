@@ -1,11 +1,13 @@
 import {
-    VictoryGroup,
+    VictoryChart,
     VictoryBrushContainer,
     VictoryLine,
     VictoryAxis,
     VictoryArea,
 } from 'victory';
 import React, { useMemo, useCallback } from 'react';
+
+const today = new Date().getTime();
 
 interface Props {
     height: number;
@@ -44,6 +46,8 @@ function BrushLineChart(props: Props) {
         [startDate, endDate, maxCount],
     );
 
+    console.warn(selectedDomain);
+
     const handleBrush = useCallback(
         (value: { x: [Date | number, Date | number] } | undefined) => {
             if (!value) {
@@ -71,15 +75,17 @@ function BrushLineChart(props: Props) {
                     </linearGradient>
                 </defs>
             </svg>
-            <VictoryGroup
+            <VictoryChart
                 // Need to dismount chart when width changes
                 // https://github.com/FormidableLabs/victory/issues/1173
                 key={width}
                 width={width}
                 height={height}
                 scale={{ x: 'time', y: 'linear' }}
+                // FIXME: this should be unset on public dashboard
+                maxDomain={{ x: today }}
                 minDomain={{ y: 0 }}
-                padding={{ top: 10, left: 10, right: 10, bottom: 10 }}
+                padding={{ top: 10, left: 10, right: 10, bottom: 36 }}
                 containerComponent={(
                     <VictoryBrushContainer
                         brushDimension="x"
@@ -106,7 +112,6 @@ function BrushLineChart(props: Props) {
                     sortKey="date"
                     data={data}
                 />
-                <VictoryAxis />
                 <VictoryLine
                     style={{ data: { stroke: 'var(--dui-color-accent)' } }}
                     x="date"
@@ -114,7 +119,16 @@ function BrushLineChart(props: Props) {
                     sortKey="date"
                     data={data}
                 />
-            </VictoryGroup>
+                <VictoryAxis
+                    style={{
+                        axis: { stroke: 'var(--dui-color-separator)' },
+                        axisLabel: { color: 'var(--dui-color-text)' },
+                        ticks: { stroke: 'var(--dui-color-separator)', size: 5 },
+                        tickLabels: { color: 'var(--dui-color-text)' },
+                    }}
+                    // offsetY={40}
+                />
+            </VictoryChart>
         </div>
     );
 }
