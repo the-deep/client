@@ -1,7 +1,10 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { SelectInput } from '@the-deep/deep-ui';
-import { compareNumber } from '@togglecorp/fujs';
+import {
+    compareNumber,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import {
     CompleteTimeseriesQuery,
@@ -41,10 +44,6 @@ query CompleteTimeseries($pathName: String!) {
             leadsCountByDay {
                 count
                 date
-            }
-            entriesCountByRegion {
-                centroid
-                count
             }
         }
     }
@@ -108,6 +107,10 @@ query YearlySnapshot($pathName: String!) {
             totalPublishers
             totalRegisteredUsers
             totalEntriesAddedLastWeek
+            entriesCountByRegion {
+                centroid
+                count
+            }
         }
     }
 }
@@ -124,13 +127,38 @@ query YearlySnapshots {
             name
             url
         }
+        startDate
+        endDate
+        type
+        globalType
+        id
+        year
+    }
+    publicDeepExploreGlobalSnapshots {
+        downloadFile {
+            name
+            url
+        }
+        file {
+            name
+            url
+        }
+        type
+        startDate
+        endDate
+        globalType
         id
         year
     }
 }`;
 
 const snapshotKeySelector = (snapshot: { id: string }) => snapshot.id;
-const snapshotLabelSelector = (snapshot: { year: number }) => `${snapshot.year}`;
+const snapshotLabelSelector = (snapshot: {
+    year?: number | null | undefined,
+    type: 'YEARLY_SNAPSHOT' | 'GLOBAL',
+}) => (
+    snapshot?.type === 'YEARLY_SNAPSHOT' ? `${snapshot.year}` : 'Global'
+);
 
 const lastYearDateTime = resolveTime(lastYearStartDate, 'day').getTime();
 const todaysDateTime = resolveTime(todaysDate, 'day').getTime();
@@ -151,13 +179,13 @@ function PublicExploreDeep(props: Props) {
         startDate = deepStartDateTime,
         setStartDate,
     ] = useState<number | undefined>(
-        () => lastYearDateTime,
+        lastYearDateTime,
     );
     const [
         endDate = todaysDateTime,
         setEndDate,
     ] = useState<number | undefined>(
-        () => todaysDateTime,
+        todaysDateTime,
     );
 
     const {
@@ -176,27 +204,32 @@ function PublicExploreDeep(props: Props) {
                 );
                 if (latestYear) {
                     setSelectedYear(latestYear.id);
-                    const yearStartDate = new Date(latestYear.year, 0, 1).getTime();
-                    const yearEndDate = new Date(latestYear.year, 11, 31).getTime();
+                    const yearStartDate = new Date(latestYear.startDate).getTime();
+                    const yearEndDate = new Date(latestYear.endDate).getTime();
                     setStartDate(yearStartDate);
-                    if (yearEndDate < endDate) {
-                        setEndDate(yearEndDate);
-                    }
+                    setEndDate(Math.min(yearEndDate, todaysDateTime));
                 }
             },
         },
     );
 
+    const snapshotOptions = useMemo(() => (
+        [
+            ...(data?.publicDeepExploreYearlySnapshots ?? []),
+            data?.publicDeepExploreGlobalSnapshots?.find((snapshot) => snapshot.globalType === 'FULL'),
+        ].filter(isDefined)
+    ), [data]);
+
     const completeTimeseriesDataEndpoint = useMemo(() => {
-        const completeDataNode = data
-            ?.publicDeepExploreYearlySnapshots
-            ?.find((node) => node.year === 0);
+        const completeDataNode = data?.publicDeepExploreGlobalSnapshots?.find((node) => node.globalType === 'TIME_SERIES');
         if (!completeDataNode || !completeDataNode.file?.url) {
             return undefined;
         }
         const pathName = new URL(completeDataNode.file.url).pathname;
         return { pathName };
-    }, [data?.publicDeepExploreYearlySnapshots]);
+    }, [
+        data?.publicDeepExploreGlobalSnapshots,
+    ]);
 
     const {
         data: completeData,
@@ -214,8 +247,7 @@ function PublicExploreDeep(props: Props) {
         csvDownloadLink,
         csvDownloadName,
     } = useMemo(() => {
-        const selectedSnapshotNode = data
-            ?.publicDeepExploreYearlySnapshots
+        const selectedSnapshotNode = snapshotOptions
             ?.find((node) => node.id === selectedSnapshot);
         if (!selectedSnapshotNode || !selectedSnapshotNode.file?.url) {
             return {
@@ -231,7 +263,7 @@ function PublicExploreDeep(props: Props) {
             csvDownloadName: selectedSnapshotNode.downloadFile?.name,
         });
     }, [
-        data?.publicDeepExploreYearlySnapshots,
+        snapshotOptions,
         selectedSnapshot,
     ]);
 
@@ -281,25 +313,18 @@ function PublicExploreDeep(props: Props) {
         csvDownloadName,
     ]);
 
-    const snapshotOptions = useMemo(() => (
-        data?.publicDeepExploreYearlySnapshots?.filter((snapshot) => snapshot.year !== 0)
-    ), [data?.publicDeepExploreYearlySnapshots]);
-
-    const onSnapshotChange = useCallback((newSnapshotId: string) => {
+    const handleSnapshotChange = useCallback((newSnapshotId: string) => {
         setSelectedYear(newSnapshotId);
-        const selectedSnapshotNode = data
-            ?.publicDeepExploreYearlySnapshots
+        const selectedSnapshotNode = snapshotOptions
             ?.find((node) => node.id === newSnapshotId);
         if (!selectedSnapshotNode) {
             return;
         }
-        const yearStartDate = new Date(selectedSnapshotNode.year, 0, 1).getTime();
-        const yearEndDate = new Date(selectedSnapshotNode.year, 11, 31).getTime();
+        const yearStartDate = new Date(selectedSnapshotNode.startDate).getTime();
+        const yearEndDate = new Date(selectedSnapshotNode.endDate).getTime();
         setStartDate(yearStartDate);
-        setEndDate(yearEndDate);
-    }, [
-        data?.publicDeepExploreYearlySnapshots,
-    ]);
+        setEndDate(Math.min(yearEndDate, todaysDateTime));
+    }, [snapshotOptions]);
 
     return (
         <ExploreDeepContent
@@ -312,7 +337,7 @@ function PublicExploreDeep(props: Props) {
                     options={snapshotOptions}
                     keySelector={snapshotKeySelector}
                     labelSelector={snapshotLabelSelector}
-                    onChange={onSnapshotChange}
+                    onChange={handleSnapshotChange}
                     value={selectedSnapshot}
                     nonClearable
                 />
@@ -340,7 +365,7 @@ function PublicExploreDeep(props: Props) {
                 completeData?.completeTimeseries?.deepExploreStats?.leadsCountByDay
             }
             entriesCountByRegion={
-                completeData?.completeTimeseries?.deepExploreStats?.entriesCountByRegion
+                yearlyData?.entriesCountByRegion
             }
             totalProjects={yearlyData?.totalProjects}
             totalRegisteredUsers={yearlyData?.totalRegisteredUsers}

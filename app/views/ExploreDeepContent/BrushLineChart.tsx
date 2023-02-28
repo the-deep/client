@@ -46,8 +46,6 @@ function BrushLineChart(props: Props) {
         [startDate, endDate, maxCount],
     );
 
-    console.warn(selectedDomain);
-
     const handleBrush = useCallback(
         (value: { x: [Date | number, Date | number] } | undefined) => {
             if (!value) {
@@ -82,7 +80,6 @@ function BrushLineChart(props: Props) {
                 width={width}
                 height={height}
                 scale={{ x: 'time', y: 'linear' }}
-                // FIXME: this should be unset on public dashboard
                 maxDomain={{ x: today }}
                 minDomain={{ y: 0 }}
                 padding={{ top: 10, left: 10, right: 10, bottom: 36 }}
