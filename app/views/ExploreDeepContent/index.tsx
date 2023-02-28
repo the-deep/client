@@ -39,6 +39,7 @@ import TopTenAuthors, { TopAuthor } from './TopTenAuthors';
 import TopTenFrameworks, { TopFrameworks } from './TopTenFrameworks';
 import TopTenProjectsByUser, { TopProjectByUser } from './TopTenProjectsByUser';
 import TopTenProjectsByEntries, { TopProjectByEntries } from './TopTenProjectsByEntries';
+import TopTenProjectsBySources, { TopProjectBySources } from './TopTenProjectsBySources';
 
 import styles from './styles.css';
 
@@ -101,7 +102,7 @@ interface Props {
     topTenFrameworks: TopFrameworks[] | undefined | null;
     topTenProjectsByUsers: TopProjectByUser[] | undefined | null;
     topTenProjectsByEntries: TopProjectByEntries[] | undefined | null;
-    topTenProjectsByLeads: TopProjectByEntries[] | undefined | null;
+    topTenProjectsByLeads: TopProjectBySources[] | undefined | null;
     loadingMapAndLeadData: boolean;
     exportCreatePending: boolean;
     loading: boolean;
@@ -154,11 +155,39 @@ function ExploreDeepContent(props: Props) {
     const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
 
     const [representationType, setRepresentationType] = useState<Option['key']>('table');
-    //
+
     // FIXME: Remove this after fixed in server
     const projectsByRegion = useMemo(() => (
         projectsByRegionFromProps?.filter(isDefined) ?? undefined
     ), [projectsByRegionFromProps]);
+
+    const projectContentComponent = (
+        <ProjectContent
+            projectsByRegion={projectsByRegion ?? undefined}
+            readOnly={printPreviewMode || isPublic}
+            endDate={endDate}
+            startDate={startDate}
+            onEndDateChange={!isPublic ? onEndDateChange : undefined}
+            onStartDateChange={!isPublic ? onStartDateChange : undefined}
+            projectFilters={filters}
+            isPublic={isPublic}
+            completeTimeseries={projectCompleteTimeseries ?? undefined}
+        />
+    );
+
+    const entriesContentComponent = (
+        <EntriesContent
+            endDate={endDate}
+            startDate={startDate}
+            readOnly={printPreviewMode || isPublic}
+            onEndDateChange={!isPublic ? onEndDateChange : undefined}
+            onStartDateChange={!isPublic ? onStartDateChange : undefined}
+            completeTimeseries={entriesCompleteTimeseries ?? undefined}
+            leadsCountByDay={leadsCountByDay ?? undefined}
+            entriesCountByRegion={entriesCountByRegion ?? undefined}
+            loading={loadingMapAndLeadData}
+        />
+    );
 
     return (
         <>
@@ -349,17 +378,7 @@ function ExploreDeepContent(props: Props) {
                             headerClassName={styles.sectionHeader}
                             spacing="none"
                         >
-                            <ProjectContent
-                                projectsByRegion={projectsByRegion ?? undefined}
-                                readOnly={printPreviewMode || isPublic}
-                                endDate={endDate}
-                                startDate={startDate}
-                                onEndDateChange={!isPublic ? onEndDateChange : undefined}
-                                onStartDateChange={!isPublic ? onStartDateChange : undefined}
-                                projectFilters={filters}
-                                isPublic={isPublic}
-                                completeTimeseries={projectCompleteTimeseries ?? undefined}
-                            />
+                            {projectContentComponent}
                         </Container>
                         <Container
                             heading="Entries / Sources"
@@ -367,17 +386,7 @@ function ExploreDeepContent(props: Props) {
                             headingSize="small"
                             spacing="none"
                         >
-                            <EntriesContent
-                                endDate={endDate}
-                                startDate={startDate}
-                                readOnly={printPreviewMode || isPublic}
-                                onEndDateChange={!isPublic ? onEndDateChange : undefined}
-                                onStartDateChange={!isPublic ? onStartDateChange : undefined}
-                                completeTimeseries={entriesCompleteTimeseries ?? undefined}
-                                leadsCountByDay={leadsCountByDay ?? undefined}
-                                entriesCountByRegion={entriesCountByRegion ?? undefined}
-                                loading={loadingMapAndLeadData}
-                            />
+                            {entriesContentComponent}
                         </Container>
                     </>
                 ) : (
@@ -401,30 +410,10 @@ function ExploreDeepContent(props: Props) {
                                 </Tab>
                             </div>
                             <TabPanel name="projects">
-                                <ProjectContent
-                                    projectsByRegion={projectsByRegion}
-                                    readOnly={printPreviewMode || isPublic}
-                                    endDate={endDate}
-                                    startDate={startDate}
-                                    projectFilters={filters}
-                                    onEndDateChange={!isPublic ? onEndDateChange : undefined}
-                                    onStartDateChange={!isPublic ? onStartDateChange : undefined}
-                                    isPublic={isPublic}
-                                    completeTimeseries={projectCompleteTimeseries ?? undefined}
-                                />
+                                {projectContentComponent}
                             </TabPanel>
                             <TabPanel name="entries">
-                                <EntriesContent
-                                    endDate={endDate}
-                                    startDate={startDate}
-                                    onEndDateChange={!isPublic ? onEndDateChange : undefined}
-                                    onStartDateChange={!isPublic ? onStartDateChange : undefined}
-                                    completeTimeseries={entriesCompleteTimeseries ?? undefined}
-                                    leadsCountByDay={leadsCountByDay ?? undefined}
-                                    entriesCountByRegion={entriesCountByRegion ?? undefined}
-                                    readOnly={printPreviewMode || isPublic}
-                                    loading={loadingMapAndLeadData}
-                                />
+                                {entriesContentComponent}
                             </TabPanel>
                         </div>
                     </Tabs>
@@ -474,7 +463,7 @@ function ExploreDeepContent(props: Props) {
                         mode={representationType}
                         label="Top Ten Projects (Entries)"
                     />
-                    <TopTenProjectsByEntries
+                    <TopTenProjectsBySources
                         className={styles.topTenCard}
                         data={topTenProjectsByLeads}
                         mode={representationType}
