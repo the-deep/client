@@ -12,7 +12,6 @@ type DeepExploreStatsStatic {
   projectsCountByDay: [CountByDay!]!
   entriesCountByDay: [CountByDay!]!
   leadsCountByDay: [CountByDay!]!
-  entriesCountByRegion: [CountByCentroid!]!
 }
 type CompleteTimeseries {
   deepExploreStats: DeepExploreStatsStatic!
@@ -81,6 +80,7 @@ type YearlySnapshotData {
   topTenProjectsByLeads: [TopProjectByLeads!]!
   topTenFrameworks: [TopFramework!]!
   projectsByRegion: [ProjectsByRegion!]!
+  entriesCountByRegion: [CountByCentroid!]!
 }
 
 type YearlySnapshot {
