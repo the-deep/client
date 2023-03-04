@@ -9,6 +9,7 @@ import { useQuery, gql } from '@apollo/client';
 import {
     _cs,
     unique,
+    doesObjectHaveNoData,
     isDefined,
     mapToList,
     isNotDefined,
@@ -18,8 +19,17 @@ import {
     Obj,
     checkVersion,
 } from '@togglecorp/fujs';
-import { IoAdd } from 'react-icons/io5';
 import {
+    IoAdd,
+    IoCheckmark,
+    IoClose,
+    IoFunnel,
+    IoChevronUp,
+    IoChevronDown,
+    IoChevronBackOutline,
+} from 'react-icons/io5';
+import {
+    useBooleanState,
     PendingMessage,
     Heading,
     useAlert,
@@ -38,6 +48,7 @@ import {
 import {
     useForm,
     useFormArray,
+    EntriesAsList,
     removeNull,
     getErrorObject,
     createSubmitHandler,
@@ -50,13 +61,26 @@ import {
 } from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import SubNavbar from '#components/SubNavbar';
+import { FrameworkFilterType } from '#types/newAnalyticalFramework';
 import BackLink from '#components/BackLink';
 import NonFieldError from '#components/NonFieldError';
 import { transformSourcesFilterToEntriesFilter } from '#components/leadFilters/SourcesFilter/utils';
+import SourcesAppliedFilters from '#components/leadFilters/SourcesAppliedFilters';
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import { GeoArea } from '#components/GeoMultiSelectInput';
+import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
+import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
 import SortableList from '#components/SortableList';
+import SourcesFilterContext from '#components/leadFilters/SourcesFilterContext';
+import SourcesFilter, {
+    useFilterState,
+    getProjectSourcesQueryVariables,
+} from '#components/leadFilters/SourcesFilter';
 import { transformErrorToToggleFormError } from '#utils/rest';
+import { PartialFormType, FormType as FilterFormType } from '#components/leadFilters/SourcesFilter/schema';
 import {
+    ProjectFilterDetailsQuery,
+    ProjectFilterDetailsQueryVariables,
     ProjectEntriesForAnalysisQuery,
     ProjectEntriesForAnalysisQueryVariables,
 } from '#generated/types';
@@ -91,15 +115,88 @@ import {
     defaultFormValues,
     PartialAnalyticalStatementType,
 } from './schema';
-import FilterForm, { getProjectSourcesQueryVariables } from './SourcesFilter';
-import {
-    FormType as FilterFormType,
-    PartialFormType as PartialFilterFormType,
-} from './SourcesFilter/schema';
 
 import EntryContext, { EntryMin } from './context';
 
 import styles from './styles.css';
+
+interface BooleanOption {
+    key: 'true' | 'false';
+    value: string;
+}
+
+const hasEntryOptions: BooleanOption[] = [
+    { key: 'true', value: 'Has entry' },
+    { key: 'false', value: 'No entries' },
+];
+
+const hasAssessmentOptions: BooleanOption[] = [
+    { key: 'true', value: 'Assessment completed' },
+    { key: 'false', value: 'Assessment not completed' },
+];
+
+const PROJECT_FILTER_DETAILS = gql`
+    query ProjectFilterDetails($projectId: ID!) {
+        project(id: $projectId) {
+            id
+            analysisFramework {
+                id
+                filters {
+                    id
+                    key
+                    properties
+                    title
+                    widgetKey
+                    widgetType
+                    widgetTypeDisplay
+                    filterType
+                    filterTypeDisplay
+                }
+            }
+        }
+        sourceStatusOptions: __type(name: "LeadStatusEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourcePriorityOptions: __type(name: "LeadPriorityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourceConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        organizationTypes {
+            results {
+                id
+                title
+            }
+        }
+        entryTypeOptions: __type(name: "EntryTagTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        staticColumnOptions: __type(name: "ExportExcelSelectedStaticColumnEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+    }
+`;
 
 export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
     query ProjectEntriesForAnalysis(
@@ -282,20 +379,146 @@ function PillarAnalysis() {
 
     const [activeTab, setActiveTab] = useState<TabNames | undefined>('entries');
 
-    // FIXME: please use new form
-    const [filtersValue, setFiltersValue] = useState<PartialFilterFormType>({});
+    const {
+        loading: frameworkGetPending,
+        data: frameworkResponse,
+    } = useQuery<ProjectFilterDetailsQuery, ProjectFilterDetailsQueryVariables>(
+        PROJECT_FILTER_DETAILS,
+        {
+            variables: {
+                projectId,
+            },
+        },
+    );
+
+    const [
+        filtersShown,
+        showFilter,
+        , ,
+        toggleShowFilter,
+    ] = useBooleanState(false);
+
+    const [
+        inputsShown,
+        , , ,
+        toggleShowInputs,
+    ] = useBooleanState(false);
+
+    // NOTE: data actually used to send to server
+    const [
+        sourcesFilters,
+        setSourcesFilters,
+    ] = useState<PartialFormType>({});
+
+    const {
+        value: sourcesFilterValue,
+        setFieldValue: setSourcesFilterFieldValue,
+        setValue: setSourcesFilterValue,
+        resetValue: clearSourcesFilterValue,
+        setError: setFilterError,
+        validate: validateFilter,
+        pristine: filterPristine,
+        setPristine: setFilterPristine,
+    } = useFilterState();
+
+    const handleSourcesFiltersValueChange = useCallback(
+        (...filterValue: EntriesAsList<PartialFormType>) => {
+            // FIXME: let's use a different handler here
+            if (!filtersShown) {
+                showFilter();
+            }
+            setSourcesFilterFieldValue(...filterValue);
+        },
+        [setSourcesFilterFieldValue, showFilter, filtersShown],
+    );
+
     const [activePage, setActivePage] = useState(1);
 
     const location = useLocation();
+    const [
+        createdByOptions,
+        setCreatedByOptions,
+    ] = useState<ProjectMember[] | undefined | null>();
+    const [
+        assigneeOptions,
+        setAssigneeOptions,
+    ] = useState<ProjectMember[] | undefined | null>();
+    const [
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+    const [
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+    const [
+        entryCreatedByOptions,
+        setEntryCreatedByOptions,
+    ] = useState<ProjectMember[] | undefined | null>();
+    const [
+        geoAreaOptions,
+        setGeoAreaOptions,
+    ] = useState<GeoArea[] | undefined | null>(undefined);
+
+    const statusOptions = frameworkResponse
+        ?.sourceStatusOptions?.enumValues;
+    const priorityOptions = frameworkResponse
+        ?.sourcePriorityOptions?.enumValues;
+    const confidentialityOptions = frameworkResponse
+        ?.sourceConfidentialityOptions?.enumValues;
+    // FIXME: this may be problematic in the future
+    const organizationTypeOptions = frameworkResponse
+        ?.organizationTypes?.results;
+    const entryTypeOptions = frameworkResponse
+        ?.entryTypeOptions?.enumValues;
+    const frameworkFilters = (frameworkResponse
+        ?.project?.analysisFramework?.filters) as (FrameworkFilterType[] | null | undefined);
+
+    const sourcesFilterContextValue = useMemo(() => ({
+        createdByOptions,
+        setCreatedByOptions,
+        assigneeOptions,
+        setAssigneeOptions,
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+        entryCreatedByOptions,
+        setEntryCreatedByOptions,
+        geoAreaOptions,
+        setGeoAreaOptions,
+
+        statusOptions,
+        priorityOptions,
+        confidentialityOptions,
+        organizationTypeOptions,
+        hasAssessmentOptions,
+        hasEntryOptions,
+        entryTypeOptions,
+        frameworkFilters,
+    }), [
+        createdByOptions,
+        assigneeOptions,
+        authorOrganizationOptions,
+        sourceOrganizationOptions,
+        entryCreatedByOptions,
+        geoAreaOptions,
+        statusOptions,
+        priorityOptions,
+        confidentialityOptions,
+        organizationTypeOptions,
+        entryTypeOptions,
+        frameworkFilters,
+    ]);
 
     const entriesFilter = useMemo(
         () => {
             const transformedFilters = getProjectSourcesQueryVariables(
-                filtersValue as Omit<FilterFormType, 'projectId'>,
+                sourcesFilters as Omit<FilterFormType, 'projectId'>,
             );
             return transformSourcesFilterToEntriesFilter(transformedFilters);
         },
-        [filtersValue],
+        [sourcesFilters],
     );
 
     const variables = useMemo(
@@ -395,7 +618,7 @@ function PillarAnalysis() {
                 }),
             );
             setPillarAnalysis(response);
-            setFiltersValue({
+            setSourcesFilterValue({
                 entriesFilterData: {
                     filterableData: filtersList,
                 },
@@ -585,6 +808,33 @@ function PillarAnalysis() {
         [setFieldValue],
     );
 
+    const handleFilterApply = useCallback(() => {
+        const submit = createSubmitHandler(
+            validateFilter,
+            setFilterError,
+            () => {
+                setSourcesFilters(sourcesFilterValue);
+                setFilterPristine(true);
+            },
+        );
+        submit();
+    }, [
+        sourcesFilterValue,
+        validateFilter,
+        setFilterError,
+        setSourcesFilters,
+        setFilterPristine,
+    ]);
+
+    const handleFilterClear = useCallback(() => {
+        clearSourcesFilterValue();
+        setSourcesFilters({});
+        setFilterPristine(true);
+    }, [
+        clearSourcesFilterValue,
+        setFilterPristine,
+    ]);
+
     const handleSubmit = useCallback(
         () => {
             const submit = createSubmitHandler(
@@ -623,11 +873,11 @@ function PillarAnalysis() {
         || pendingDiscardedTags;
 
     const handleNgramChange = useCallback((val: string | undefined) => {
-        setFiltersValue((filterVal) => ({
+        setSourcesFilterValue((filterVal) => ({
             ...filterVal,
             search: val,
         }));
-    }, []);
+    }, [setSourcesFilterValue]);
 
     const analyticalStatementRendererParams = useCallback((
         _: string,
@@ -669,6 +919,9 @@ function PillarAnalysis() {
         [entriesMapping, setEntriesMapping],
     );
 
+    const isCurrentFilterEmpty = doesObjectHaveNoData(sourcesFilters, ['', null]);
+    const isFilterEmpty = doesObjectHaveNoData(sourcesFilterValue, ['', null]);
+
     return (
         <div className={styles.pillarAnalysis}>
             <SubNavbar
@@ -701,182 +954,260 @@ function PillarAnalysis() {
                     pillarAnalysisFromState?.title ?? '',
                 ])}
             </SubNavbar>
-            <div className={styles.content}>
-                {pending && <PendingMessage />}
-                <NonFieldError error={error} />
-                <div className={styles.inputsContainer}>
-                    <div className={styles.inputContainer}>
-                        <Heading
-                            className={styles.inputHeader}
-                        >
-                            {_ts('pillarAnalysis', 'mainStatementLabel')}
-                        </Heading>
-                        <TextArea
-                            name="mainStatement"
-                            onChange={setFieldValue}
-                            value={value.mainStatement}
-                            error={error?.mainStatement}
-                            rows={4}
-                            disabled={pending}
-                        />
-                    </div>
-                    <div className={styles.inputContainer}>
-                        <Heading
-                            className={styles.inputHeader}
-                        >
-                            {_ts('pillarAnalysis', 'infoGapLabel')}
-                        </Heading>
-                        <TextArea
-                            name="informationGap"
-                            value={value.informationGap}
-                            onChange={setFieldValue}
-                            error={error?.informationGap}
-                            rows={4}
-                            disabled={pending}
-                        />
-                    </div>
-                </div>
-                {projectId && (
-                    <FilterForm
-                        className={styles.entriesFilter}
-                        value={filtersValue}
-                        onFilterApply={setFiltersValue}
-                        projectId={projectId}
-                    />
-                )}
-                <div className={styles.workspace}>
-                    <Tabs
-                        value={activeTab}
-                        onChange={setActiveTab}
-                        variant="secondary"
+            <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
+                <div className={styles.content}>
+                    {(frameworkGetPending || pending) && <PendingMessage />}
+                    <NonFieldError error={error} />
+                    <div
+                        className={_cs(
+                            styles.inputsContainer,
+                            inputsShown && styles.inputsShown,
+                        )}
                     >
-                        <CollapsibleContainer
-                            className={styles.entryListSection}
-                            expandButtonClassName={styles.expandEntryListButton}
-                            collapseButtonClassName={styles.collapseEntryListButton}
-                            headerClassName={styles.entryListHeader}
-                            headingClassName={styles.tabListHeading}
-                            headingSize="small"
-                            contentClassName={styles.content}
-                            heading={(
-                                <TabList className={styles.tabList}>
-                                    <Tab name="entries">
-                                        {_ts(
-                                            'pillarAnalysis',
-                                            'entriesTabLabel',
-                                            { entriesCount: entriesResponse?.totalCount },
-                                        )}
-                                    </Tab>
-                                    <Tab name="discarded">
-                                        {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
-                                    </Tab>
-                                </TabList>
-                            )}
+                        {inputsShown && (
+                            <>
+                                <div className={styles.inputContainer}>
+                                    <Heading
+                                        className={styles.inputHeader}
+                                    >
+                                        {_ts('pillarAnalysis', 'mainStatementLabel')}
+                                    </Heading>
+                                    <TextArea
+                                        name="mainStatement"
+                                        onChange={setFieldValue}
+                                        value={value.mainStatement}
+                                        error={error?.mainStatement}
+                                        rows={4}
+                                        disabled={pending}
+                                    />
+                                </div>
+                                <div className={styles.inputContainer}>
+                                    <Heading
+                                        className={styles.inputHeader}
+                                    >
+                                        {_ts('pillarAnalysis', 'infoGapLabel')}
+                                    </Heading>
+                                    <TextArea
+                                        name="informationGap"
+                                        value={value.informationGap}
+                                        onChange={setFieldValue}
+                                        error={error?.informationGap}
+                                        rows={4}
+                                        disabled={pending}
+                                    />
+                                </div>
+                            </>
+                        )}
+                        <Button
+                            className={styles.showInputsButton}
+                            name={undefined}
+                            onClick={toggleShowInputs}
+                            icons={inputsShown ? <IoChevronUp /> : <IoChevronDown />}
+                            variant="transparent"
                         >
-                            <TabPanel
-                                name="entries"
-                                activeClassName={styles.tabPanel}
-                            >
-                                <ListView
-                                    className={styles.entriesList}
-                                    data={entriesResponse?.results}
-                                    keySelector={entryKeySelector}
-                                    renderer={SourceEntryItem}
-                                    rendererParams={entryCardRendererParams}
-                                    pending={pendingEntries}
-                                    errored={false}
-                                    filtered={isFiltered(filtersValue)}
-                                    emptyIcon={(
-                                        <Kraken
-                                            variant="experiment"
-                                        />
+                            {inputsShown ? 'Hide' : 'Show Main Statement and Information Gaps'}
+                        </Button>
+                    </div>
+                    <div className={styles.filterContainer}>
+                        <Button
+                            name={undefined}
+                            onClick={toggleShowFilter}
+                            spacing="compact"
+                            icons={<IoFunnel />}
+                        >
+                            Filter
+                        </Button>
+                        {!(isCurrentFilterEmpty && isFilterEmpty) && (
+                            <div className={styles.buttons}>
+                                <Button
+                                    disabled={filterPristine}
+                                    name="sourcesFilterSubmit"
+                                    spacing="compact"
+                                    icons={(
+                                        <IoCheckmark />
                                     )}
-                                    emptyMessage="Entries not found."
-                                    filteredEmptyMessage="No matching entries were found."
-                                    messageIconShown
-                                    messageShown
-                                />
-                                <Pager
-                                    className={styles.pager}
-                                    activePage={activePage}
-                                    itemsCount={entriesResponse?.totalCount ?? 0}
-                                    maxItemsPerPage={maxItemsPerPage}
-                                    onActivePageChange={setActivePage}
-                                    itemsPerPageControlHidden
-                                />
-                            </TabPanel>
-                            <TabPanel
-                                name="discarded"
-                                activeClassName={styles.tabPanel}
-                            >
-                                <DiscardedEntries
-                                    className={styles.discardedEntriesContainer}
-                                    pillarId={+pillarId}
-                                    discardedTags={discardedTags}
-                                    onUndiscardSuccess={getEntries}
-                                />
-                            </TabPanel>
-                        </CollapsibleContainer>
-                    </Tabs>
-                    <EntryContext.Provider
-                        value={entryContextValue}
-                    >
-                        <div className={styles.rightContainer}>
-                            <SortableList
-                                className={_cs(
-                                    styles.list,
-                                    statementsCount < 1 && styles.empty,
+                                    variant="tertiary"
+                                    onClick={handleFilterApply}
+                                >
+                                    Apply
+                                </Button>
+                                <Button
+                                    disabled={isFilterEmpty}
+                                    name="clearFilter"
+                                    icons={(
+                                        <IoClose />
+                                    )}
+                                    variant="tertiary"
+                                    spacing="compact"
+                                    onClick={handleFilterClear}
+                                >
+                                    Clear All
+                                </Button>
+                            </div>
+                        )}
+                        <SourcesAppliedFilters
+                            className={styles.appliedFilters}
+                            value={sourcesFilterValue}
+                            onChange={handleSourcesFiltersValueChange}
+                        />
+                    </div>
+                    <div className={styles.workspace}>
+                        {filtersShown && (
+                            <SourcesFilter
+                                className={styles.entriesFilter}
+                                value={sourcesFilterValue}
+                                projectId={projectId}
+                                onChange={handleSourcesFiltersValueChange}
+                                isEntriesOnlyFilter
+                                optionsLoading={false}
+                                optionsErrored={false}
+                            />
+                        )}
+                        <Tabs
+                            value={activeTab}
+                            onChange={setActiveTab}
+                            variant="secondary"
+                        >
+                            <CollapsibleContainer
+                                className={styles.entryListSection}
+                                expandButtonClassName={styles.expandEntryListButton}
+                                collapseButtonClassName={styles.collapseEntryListButton}
+                                expandButtonContent={(
+                                    <div className={styles.buttonText}>
+                                        Show Entries
+                                        <IoChevronBackOutline />
+                                    </div>
                                 )}
-                                name="analyticalStatements"
-                                onChange={onOrderChange}
-                                data={value.analyticalStatements}
-                                keySelector={statementKeySelector}
-                                renderer={AnalyticalStatementInput}
-                                direction="horizontal"
-                                rendererParams={analyticalStatementRendererParams}
-                                messageShown
-                                messageIconShown
-                                emptyMessage="Looks like there aren't any analytical statements in this analysis."
-                                messageActions={(
-                                    <Button
+                                headerClassName={styles.entryListHeader}
+                                headingClassName={styles.tabListHeading}
+                                headingSize="small"
+                                contentClassName={styles.content}
+                                heading={(
+                                    <TabList className={styles.tabList}>
+                                        <Tab
+                                            name="entries"
+                                            className={styles.tab}
+                                        >
+                                            {_ts(
+                                                'pillarAnalysis',
+                                                'entriesTabLabel',
+                                                { entriesCount: entriesResponse?.totalCount },
+                                            )}
+                                        </Tab>
+                                        <Tab
+                                            name="discarded"
+                                            className={styles.tab}
+                                        >
+                                            {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
+                                        </Tab>
+                                    </TabList>
+                                )}
+                            >
+                                <TabPanel
+                                    name="entries"
+                                    activeClassName={styles.tabPanel}
+                                >
+                                    <ListView
+                                        className={styles.entriesList}
+                                        data={entriesResponse?.results}
+                                        keySelector={entryKeySelector}
+                                        renderer={SourceEntryItem}
+                                        rendererParams={entryCardRendererParams}
+                                        pending={pendingEntries}
+                                        errored={false}
+                                        filtered={isFiltered(sourcesFilterValue)}
+                                        emptyIcon={(
+                                            <Kraken
+                                                variant="experiment"
+                                            />
+                                        )}
+                                        emptyMessage="Entries not found."
+                                        filteredEmptyMessage="No matching entries were found."
+                                        messageIconShown
+                                        messageShown
+                                    />
+                                    <Pager
+                                        className={styles.pager}
+                                        activePage={activePage}
+                                        itemsCount={entriesResponse?.totalCount ?? 0}
+                                        maxItemsPerPage={maxItemsPerPage}
+                                        onActivePageChange={setActivePage}
+                                        itemsPerPageControlHidden
+                                    />
+                                </TabPanel>
+                                <TabPanel
+                                    name="discarded"
+                                    activeClassName={styles.tabPanel}
+                                >
+                                    <DiscardedEntries
+                                        className={styles.discardedEntriesContainer}
+                                        pillarId={+pillarId}
+                                        discardedTags={discardedTags}
+                                        onUndiscardSuccess={getEntries}
+                                    />
+                                </TabPanel>
+                            </CollapsibleContainer>
+                        </Tabs>
+                        <EntryContext.Provider
+                            value={entryContextValue}
+                        >
+                            <div className={styles.rightContainer}>
+                                <SortableList
+                                    className={_cs(
+                                        styles.list,
+                                        statementsCount < 1 && styles.empty,
+                                    )}
+                                    name="analyticalStatements"
+                                    onChange={onOrderChange}
+                                    data={value.analyticalStatements}
+                                    keySelector={statementKeySelector}
+                                    renderer={AnalyticalStatementInput}
+                                    direction="horizontal"
+                                    rendererParams={analyticalStatementRendererParams}
+                                    messageShown
+                                    messageIconShown
+                                    emptyMessage="Looks like there aren't any analytical statements in this analysis."
+                                    messageActions={(
+                                        <Button
+                                            className={styles.addStatementButton}
+                                            name={undefined}
+                                            onClick={handleAnalyticalStatementAdd}
+                                            title={_ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')}
+                                            variant="primary"
+                                            icons={(<IoAdd />)}
+                                        >
+                                            Add Analytical Statement
+                                        </Button>
+                                    )}
+                                />
+                                {statementsCount > 0 && (
+                                    <QuickActionButton
                                         className={styles.addStatementButton}
                                         name={undefined}
                                         onClick={handleAnalyticalStatementAdd}
-                                        title={_ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')}
+                                        title={(statementsCount < STATEMENTS_LIMIT
+                                            ? _ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')
+                                            : `You cannot add more than ${STATEMENTS_LIMIT} statements.`
+                                        )}
                                         variant="primary"
-                                        icons={(<IoAdd />)}
+                                        disabled={statementsCount >= STATEMENTS_LIMIT}
                                     >
-                                        Add Analytical Statement
-                                    </Button>
+                                        <IoAdd />
+                                    </QuickActionButton>
                                 )}
+                            </div>
+                            <Prompt
+                                message={(newLocation) => {
+                                    if (newLocation.pathname !== location.pathname && !pristine) {
+                                        return _ts('common', 'youHaveUnsavedChanges');
+                                    }
+                                    return true;
+                                }}
                             />
-                            {statementsCount > 0 && (
-                                <QuickActionButton
-                                    className={styles.addStatementButton}
-                                    name={undefined}
-                                    onClick={handleAnalyticalStatementAdd}
-                                    title={(statementsCount < STATEMENTS_LIMIT
-                                        ? _ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')
-                                        : `You cannot add more than ${STATEMENTS_LIMIT} statements.`
-                                    )}
-                                    variant="primary"
-                                    disabled={statementsCount >= STATEMENTS_LIMIT}
-                                >
-                                    <IoAdd />
-                                </QuickActionButton>
-                            )}
-                        </div>
-                        <Prompt
-                            message={(newLocation) => {
-                                if (newLocation.pathname !== location.pathname && !pristine) {
-                                    return _ts('common', 'youHaveUnsavedChanges');
-                                }
-                                return true;
-                            }}
-                        />
-                    </EntryContext.Provider>
+                        </EntryContext.Provider>
+                    </div>
                 </div>
-            </div>
+            </SourcesFilterContext.Provider>
         </div>
     );
 }

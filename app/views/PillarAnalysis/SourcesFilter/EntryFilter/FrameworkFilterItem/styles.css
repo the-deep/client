@@ -1,7 +1,0 @@
-.input {
-    width: 22rem;
-
-    &.hidden {
-        display: none;
-    }
-}
