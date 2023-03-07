@@ -165,6 +165,7 @@
 
                         .discarded-entries-container {
                             flex-grow: 1;
+                            padding: var(--dui-spacing-medium);
                         }
 
                         .pager {
