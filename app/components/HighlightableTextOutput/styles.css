@@ -1,4 +1,6 @@
 .highlightable-text-output {
+    --color-highlight: #FFFF00;
+    --color-text-on-highlight: #000;
     .start {
         display: inline;
     }

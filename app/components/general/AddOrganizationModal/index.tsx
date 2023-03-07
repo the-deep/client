@@ -27,6 +27,7 @@ import {
     Organization,
     OrganizationType,
 } from '#types';
+import { OrganizationItemType } from '#components/general/AddStakeholderModal/SearchStakeholder/Stakeholder';
 
 import styles from './styles.css';
 
@@ -50,7 +51,7 @@ const defaultFormValue: FormType = {};
 
 export interface Props {
     onModalClose: () => void;
-    onOrganizationAdd?: (organization: Organization) => void;
+    onOrganizationAdd?: (organization: OrganizationItemType) => void;
 }
 
 function AddOrganizationModal(props: Props) {
@@ -63,7 +64,7 @@ function AddOrganizationModal(props: Props) {
 
     const {
         pending: organizationTypesPending,
-        response: organizatonTypesResponse,
+        response: organizationTypesResponse,
     } = useRequest<MultiResponse<OrganizationType>>({
         url: 'server://organization-types/',
         method: 'GET',
@@ -72,7 +73,7 @@ function AddOrganizationModal(props: Props) {
     const {
         pending: organizationPostPending,
         trigger: createOrganization,
-    } = useLazyRequest<Organization, FormType>({
+    } = useLazyRequest<OrganizationItemType, FormType>({
         url: 'server://organizations/',
         method: 'POST',
         body: (ctx) => ctx,
@@ -80,7 +81,7 @@ function AddOrganizationModal(props: Props) {
             if (onOrganizationAdd) {
                 onOrganizationAdd({
                     ...response,
-                    id: String(response.id),
+                    id: response.id,
                 });
             }
             alert.show(
@@ -169,7 +170,7 @@ function AddOrganizationModal(props: Props) {
             <SelectInput
                 name="organizationType"
                 onChange={setFieldValue}
-                options={organizatonTypesResponse?.results}
+                options={organizationTypesResponse?.results}
                 value={value?.organizationType}
                 error={error?.organizationType}
                 keySelector={organizationTypeKeySelector}
