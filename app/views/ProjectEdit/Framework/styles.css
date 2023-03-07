@@ -45,9 +45,9 @@
                     border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                     background-color: var(--dui-color-background-information);
                     padding: var(--dui-spacing-small) var(--dui-spacing-medium);
-                    gap: var(--dui-spacing-small);
                     width: 100%;
                     text-align: left;
+                    gap: var(--dui-spacing-small);
 
                     .title {
                         font-weight: var(--dui-font-weight-bold);
