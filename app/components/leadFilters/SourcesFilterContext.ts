@@ -19,12 +19,6 @@ interface KeyLabel {
     title: string;
 }
 
-// FIXME: import from utils
-interface BooleanOption {
-    key: 'true' | 'false';
-    value: string;
-}
-
 interface ContextProps {
     createdByOptions: ProjectMember[] | undefined | null;
     setCreatedByOptions: React.Dispatch<
@@ -57,9 +51,6 @@ interface ContextProps {
     organizationTypeOptions: KeyLabel[] | undefined | null,
     entryTypeOptions: EnumValue[] | undefined | null,
     frameworkFilters: FrameworkFilterType[] | undefined | null,
-
-    hasEntryOptions: BooleanOption[] | undefined | null;
-    hasAssessmentOptions: BooleanOption[] | undefined | null;
 }
 
 const SourcesFilterContext = React.createContext<ContextProps>({
@@ -100,8 +91,6 @@ const SourcesFilterContext = React.createContext<ContextProps>({
     organizationTypeOptions: [],
     entryTypeOptions: [],
     frameworkFilters: [],
-    hasEntryOptions: [],
-    hasAssessmentOptions: [],
 });
 
 export default SourcesFilterContext;

@@ -208,11 +208,6 @@ const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
         }
     }
 `;
-// FIXME: use from utils
-interface BooleanOption {
-    key: 'true' | 'false';
-    value: string;
-}
 
 export interface ExcelColumnNode {
     selected: boolean;
@@ -221,16 +216,6 @@ export interface ExcelColumnNode {
     isWidget: boolean;
     widgetKey?: string;
 }
-
-const hasEntryOptions: BooleanOption[] = [
-    { key: 'true', value: 'Has entry' },
-    { key: 'false', value: 'No entries' },
-];
-
-const hasAssessmentOptions: BooleanOption[] = [
-    { key: 'true', value: 'Assessment completed' },
-    { key: 'false', value: 'Assessment not completed' },
-];
 
 const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
     DOCX: 'REPORT',
@@ -769,8 +754,6 @@ function NewExport(props: Props) {
         priorityOptions,
         confidentialityOptions,
         organizationTypeOptions,
-        hasAssessmentOptions,
-        hasEntryOptions,
         entryTypeOptions,
         frameworkFilters,
     }), [
@@ -969,7 +952,7 @@ function NewExport(props: Props) {
                         onSelectAllChange={setSelectAll}
                         filterValues={sourcesFilters}
                         sourcesFilterValue={sourcesFilterValue}
-                        totalLeadsCount={stats?.numberOfLeads ?? 0}
+                        totalLeadsCount={stats?.filteredNumberOfLeads ?? stats?.numberOfLeads ?? 0}
                         onFilterChange={setSourcesFilterFieldValue}
                     />
                 </SourcesFilterContext.Provider>

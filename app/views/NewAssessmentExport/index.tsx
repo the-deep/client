@@ -104,22 +104,6 @@ const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
 
 type ExportStateData = Pick<ExportItem, 'filters' | 'filtersData'>
 
-// FIXME: use from utils
-interface BooleanOption {
-    key: 'true' | 'false';
-    value: string;
-}
-
-const hasEntryOptions: BooleanOption[] = [
-    { key: 'true', value: 'Has entry' },
-    { key: 'false', value: 'No entries' },
-];
-
-const hasAssessmentOptions: BooleanOption[] = [
-    { key: 'true', value: 'Assessment completed' },
-    { key: 'false', value: 'Assessment not completed' },
-];
-
 export const PROJECT_FRAMEWORK_DETAILS = gql`
     ${FRAMEWORK_FRAGMENT}
     query AssessmentExportFrameworkDetails($projectId: ID!) {
@@ -369,8 +353,6 @@ function NewAssessmentExport(props: Props) {
         priorityOptions,
         confidentialityOptions,
         organizationTypeOptions,
-        hasAssessmentOptions,
-        hasEntryOptions,
         entryTypeOptions,
         frameworkFilters,
     }), [
@@ -593,7 +575,7 @@ function NewAssessmentExport(props: Props) {
                         onSelectAllChange={setSelectAll}
                         filterValues={sourcesFilters}
                         sourcesFilterValue={sourcesFilterValue}
-                        totalLeadsCount={stats?.numberOfLeads ?? 0}
+                        totalLeadsCount={stats?.filteredNumberOfLeads ?? stats?.numberOfLeads ?? 0}
                         onFilterChange={setSourcesFilterFieldValue}
                     />
                 </SourcesFilterContext.Provider>

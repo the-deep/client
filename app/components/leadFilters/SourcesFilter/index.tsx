@@ -47,6 +47,27 @@ import styles from './styles.css';
 
 const initialValue: PartialFormType = {};
 
+// FIXME: use from utils
+interface BooleanOption {
+    key: 'true' | 'false';
+    value: string;
+}
+
+const isAssessmentOptions: BooleanOption[] = [
+    { key: 'true', value: 'Marked as assessment' },
+    { key: 'false', value: 'Not marked as assessment' },
+];
+
+const hasEntryOptions: BooleanOption[] = [
+    { key: 'true', value: 'Has entry' },
+    { key: 'false', value: 'No entries' },
+];
+
+const hasAssessmentOptions: BooleanOption[] = [
+    { key: 'true', value: 'Assessment completed' },
+    { key: 'false', value: 'Assessment not completed' },
+];
+
 // FIXME: use utils
 function organizationTypeKeySelector(value: Pick<OrganizationType, 'id' | 'title'>) {
     return value.id;
@@ -179,8 +200,6 @@ function SourcesFilter(props: Props) {
         priorityOptions,
         confidentialityOptions,
         organizationTypeOptions,
-        hasEntryOptions,
-        hasAssessmentOptions,
         entryTypeOptions,
         frameworkFilters,
     } = useContext(SourcesFilterContext);
@@ -282,6 +301,16 @@ function SourcesFilter(props: Props) {
                                 label="Assessment Status"
                                 error={error?.hasAssessment}
                                 disabled={disabled || optionsLoading}
+                            />
+                            <BooleanInput
+                                variant="general"
+                                options={isAssessmentOptions}
+                                name="isAssessment"
+                                value={value.isAssessment}
+                                onChange={setFieldValue}
+                                label="Is Assessment"
+                                error={error?.isAssessment}
+                                disabled={disabled}
                             />
                         </>
                     )}
