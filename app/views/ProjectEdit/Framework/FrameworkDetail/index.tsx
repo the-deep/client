@@ -2,14 +2,18 @@ import React, { useMemo, useState, useCallback, useContext } from 'react';
 import {
     _cs,
     isNotDefined,
+    isDefined,
 } from '@togglecorp/fujs';
 import { generatePath } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import {
     IoCopyOutline,
     IoCheckmark,
+    IoDownloadOutline,
 } from 'react-icons/io5';
-import { FiEdit2 } from 'react-icons/fi';
+import {
+    FiEdit2,
+} from 'react-icons/fi';
 import {
     Card,
     Tabs,
@@ -73,6 +77,10 @@ const FRAMEWORK_DETAILS = gql`
             allowedPermissions
             createdBy {
                 displayName
+            }
+            export {
+                name
+                url
             }
             # NOTE: Does not need predictionTagsMapping from FrameworkResponse
             ...FrameworkResponse
@@ -138,6 +146,8 @@ function FrameworkDetail(props: Props) {
         [frameworkDetailsResponse],
     );
     const sections = frameworkDetails?.primaryTagging;
+
+    const exportLink = frameworkDetails?.export?.url;
 
     const {
         pending: projectPatchPending,
@@ -276,6 +286,15 @@ function FrameworkDetail(props: Props) {
                                     >
                                         {_ts('projectEdit', 'selectedFrameworkTagLabel')}
                                     </Tag>
+                                )}
+                                {isDefined(exportLink) && (
+                                    <QuickActionLink
+                                        to={exportLink}
+                                        variant="secondary"
+                                        title="Export framework"
+                                    >
+                                        <IoDownloadOutline />
+                                    </QuickActionLink>
                                 )}
                                 {canEditFramework && (
                                     <QuickActionLink
