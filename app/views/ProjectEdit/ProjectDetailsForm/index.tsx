@@ -443,6 +443,7 @@ function ProjectDetailsForm(props: Props) {
                     );
                 } else if (ok) {
                     if (result?.id) {
+                        setPristine(true);
                         onCreate(result.id);
                     }
                     alert.show(

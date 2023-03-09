@@ -190,6 +190,7 @@ export const SOURCE_FILTER_FRAGMENT = gql`
         extractionStatus
         hasAssessment
         hasEntries
+        isAssessment
         ids
         modifiedAt
         modifiedAtGte

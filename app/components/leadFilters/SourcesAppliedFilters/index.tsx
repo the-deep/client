@@ -117,6 +117,14 @@ function SourcesAppliedFilters(props: Props) {
                 falseLabel="Assessment not completed"
                 value={value.hasAssessment}
             />
+            <DismissableBooleanOutput
+                label="Is Assessment"
+                name="isAssessment"
+                onDismiss={onChange}
+                trueLabel="Marked as assessment"
+                falseLabel="Not marked as assessment"
+                value={value.isAssessment}
+            />
             <DismissableListOutput
                 label="Source Created By"
                 name="createdBy"

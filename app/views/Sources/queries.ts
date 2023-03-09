@@ -32,6 +32,7 @@ export const PROJECT_SOURCES = gql`
         $entriesFilterData: EntriesFilterDataInputType,
         $hasEntries: Boolean,
         $hasAssessment: Boolean,
+        $isAssessment: Boolean,
     ) {
         project(id: $projectId) {
             id
@@ -58,6 +59,7 @@ export const PROJECT_SOURCES = gql`
                 entriesFilterData: $entriesFilterData,
                 hasEntries: $hasEntries,
                 hasAssessment: $hasAssessment,
+                isAssessment: $isAssessment,
             ) {
                 totalCount
                 page

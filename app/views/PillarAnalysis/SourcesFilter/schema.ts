@@ -74,6 +74,7 @@ const schema: FormSchema = {
         entriesFilterData: entriesFilterDataSchema,
         hasEntries: [],
         hasAssessment: [],
+        isAssessment: [],
     }),
 };
 export default schema;

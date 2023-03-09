@@ -58,22 +58,6 @@ import { SAVE_LEAD_FILTER, PROJECT_SAVED_LEAD_FILTER } from './queries';
 
 import styles from './styles.css';
 
-// FIXME: use from utils
-interface BooleanOption {
-    key: 'true' | 'false';
-    value: string;
-}
-
-const hasEntryOptions: BooleanOption[] = [
-    { key: 'true', value: 'Has entry' },
-    { key: 'false', value: 'No entries' },
-];
-
-const hasAssessmentOptions: BooleanOption[] = [
-    { key: 'true', value: 'Assessment completed' },
-    { key: 'false', value: 'Assessment not completed' },
-];
-
 const defaultSorting: {
     name: string,
     direction: SortDirection,
@@ -247,8 +231,6 @@ function Sources(props: Props) {
         priorityOptions,
         confidentialityOptions,
         organizationTypeOptions,
-        hasAssessmentOptions,
-        hasEntryOptions,
         entryTypeOptions,
         frameworkFilters,
     }), [
