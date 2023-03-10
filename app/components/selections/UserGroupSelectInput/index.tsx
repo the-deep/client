@@ -29,9 +29,10 @@ const USERGROUPS = gql`
 
 export type Usergroup = NonNullable<NonNullable<NonNullable<UsergroupsQuery['userGroups']>['results']>[number]>;
 type Def = { containerClassName?: string };
-type UserGroupSelectInputProps<K extends string> = SearchSelectInputProps<
+type UserGroupSelectInputProps<K extends string, GK extends string> = SearchSelectInputProps<
 string,
     K,
+    GK,
     Usergroup,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
@@ -46,7 +47,9 @@ function labelSelector(d: Usergroup) {
     return d.title;
 }
 
-function UserGroupSelectInput<K extends string>(props: UserGroupSelectInputProps<K>) {
+function UserGroupSelectInput<K extends string, GK extends string>(
+    props: UserGroupSelectInputProps<K, GK>,
+) {
     const {
         className,
         membersExcludeProject,

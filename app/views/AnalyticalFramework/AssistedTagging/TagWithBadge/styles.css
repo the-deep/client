@@ -4,6 +4,30 @@
     overflow: visible;
     text-transform: initial;
 
+    .drag-container {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        border: unset;
+        background: transparent;
+        padding: var(--dui-spacing-small) var(--dui-spacing-large);
+        text-align: left;
+        gap: 0;
+
+        .header {
+            display: flex;
+            padding: 0;
+
+            .heading {
+                padding: 0;
+                min-width: 0;
+            }
+            >* {
+                gap: 0;
+            }
+        }
+    }
+
     .actions {
         display: flex;
         position: absolute;

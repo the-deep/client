@@ -54,15 +54,18 @@ export const keySelector = (d: ProjectMember) => d.id;
 export const labelSelector = (d: ProjectMember) => d.displayName ?? '';
 
 type Def = { containerClassName?: string };
-type ProjectUserSelectInputProps<K extends string> = SearchMultiSelectInputProps<
+type ProjectUserSelectInputProps<K extends string, GK extends string> = SearchMultiSelectInputProps<
     string,
     K,
+    GK,
     ProjectMember,
     Def,
     'keySelector' | 'labelSelector' | 'searchOptions' | 'onSearchValueChange' | 'optionsPending' | 'totalOptionsCount' | 'onShowDropdownChange'
 > & { projectId: string };
 
-function ProjectUserMultiSelectInput<K extends string>(props: ProjectUserSelectInputProps<K>) {
+function ProjectUserMultiSelectInput<K extends string, GK extends string>(
+    props: ProjectUserSelectInputProps<K, GK>,
+) {
     const {
         className,
         projectId,

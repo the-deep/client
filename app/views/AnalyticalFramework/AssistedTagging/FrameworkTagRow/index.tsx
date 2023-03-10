@@ -7,6 +7,7 @@ import {
     Tag,
     List,
     QuickActionButton,
+    DropContainer,
 } from '@the-deep/deep-ui';
 import {
     IoCloseOutline,
@@ -90,6 +91,17 @@ function FrameworkTagRow<N extends CategoricalMappingsItem>(props: Props<N>) {
         associationKeySelector,
     ]);
 
+    const handleDrop = useCallback((valFromArgument: Record<string, unknown> | undefined) => {
+        const val = valFromArgument as { badgeKey: string | undefined };
+        if (!val || !val.badgeKey || typeof val.badgeKey !== 'string') {
+            return;
+        }
+        onMappingAddClick(itemKey, val.badgeKey);
+    }, [
+        itemKey,
+        onMappingAddClick,
+    ]);
+
     const handleTagSelect = useCallback((newTag: string | undefined) => {
         if (newTag) {
             onMappingAddClick(itemKey, newTag);
@@ -106,7 +118,14 @@ function FrameworkTagRow<N extends CategoricalMappingsItem>(props: Props<N>) {
                     {title}
                 </Tag>
             </div>
-            <div className={styles.rightContainer}>
+            <DropContainer
+                name="tags"
+                className={styles.dropContainer}
+                contentClassName={styles.rightContainer}
+                dropOverlayContainerClassName={styles.dropOverlay}
+                onDrop={handleDrop}
+                spacing="none"
+            >
                 <List
                     data={filteredMappings}
                     renderer={Tag}
@@ -119,7 +138,7 @@ function FrameworkTagRow<N extends CategoricalMappingsItem>(props: Props<N>) {
                     existingMappings={filteredMappings}
                     disabled={disabled}
                 />
-            </div>
+            </DropContainer>
         </div>
     );
 }

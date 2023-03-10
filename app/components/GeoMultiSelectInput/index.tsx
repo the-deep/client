@@ -41,9 +41,10 @@ export type GeoArea = NonNullable<NonNullable<NonNullable<NonNullable<GeoAreaOpt
 export const keySelector = (d: GeoArea) => d.id;
 export const labelSelector = (d: GeoArea) => breadcrumb([d.adminLevelTitle, d.title]);
 type Def = { containerClassName?: string };
-type GeoSelectInputProps<K extends string> = SearchMultiSelectInputProps<
+type GeoSelectInputProps<K extends string, GK extends string> = SearchMultiSelectInputProps<
     string,
     K,
+    GK,
     GeoArea,
     Def,
     'onSearchValueChange'
@@ -57,7 +58,9 @@ type GeoSelectInputProps<K extends string> = SearchMultiSelectInputProps<
     projectId: string;
 };
 
-function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
+function GeoMultiSelectInput<K extends string, GK extends string>(
+    props: GeoSelectInputProps<K, GK>,
+) {
     const {
         className,
         projectId,

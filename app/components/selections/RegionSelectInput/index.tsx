@@ -16,15 +16,18 @@ const keySelector = (d: Region) => d.id;
 const labelSelector = (d: Region) => d.title;
 
 type Def = { containerClassName?: string;}
-type RegionSelectInputProps<K extends string> = SearchSelectInputProps<
+type RegionSelectInputProps<K extends string, GK extends string> = SearchSelectInputProps<
     number,
     K,
+    GK,
     Region,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
 > & { projectId: number };
 
-function RegionSelectInput<K extends string>(props: RegionSelectInputProps<K>) {
+function RegionSelectInput<K extends string, GK extends string>(
+    props: RegionSelectInputProps<K, GK>,
+) {
     const {
         className,
         projectId,

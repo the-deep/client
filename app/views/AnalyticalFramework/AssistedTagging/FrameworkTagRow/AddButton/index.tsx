@@ -1,7 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import {
-    listToMap,
-} from '@togglecorp/fujs';
+import { listToMap } from '@togglecorp/fujs';
 import {
     QuickActionButton,
     useBooleanState,

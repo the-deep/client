@@ -292,6 +292,7 @@ function AssistedTagging<K extends string>(props: Props<K>) {
     const viewOnlyNlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
         children: tag.name,
         badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
+        badgeKey: tag.id,
     }), [
         mappingsByTagId,
     ]);

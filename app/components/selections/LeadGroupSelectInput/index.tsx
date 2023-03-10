@@ -31,15 +31,18 @@ const keySelector = (d: BasicLeadGroup) => d.id;
 const labelSelector = (d: BasicLeadGroup) => d.title;
 
 type Def = { containerClassName?: string };
-type LeadGroupSelectInputProps<K extends string> = SearchSelectInputProps<
+type LeadGroupSelectInputProps<K extends string, GK extends string> = SearchSelectInputProps<
     string,
     K,
+    GK,
     BasicLeadGroup,
     Def,
     'keySelector' | 'labelSelector' | 'searchOptions' | 'onSearchValueChange' | 'optionsPending' | 'totalOptionsCount' | 'onShowDropdownChange'
 > & { projectId: string };
 
-function LeadGroupSelectInput<K extends string>(props: LeadGroupSelectInputProps<K>) {
+function LeadGroupSelectInput<K extends string, GK extends string>(
+    props: LeadGroupSelectInputProps<K, GK>,
+) {
     const {
         className,
         projectId,

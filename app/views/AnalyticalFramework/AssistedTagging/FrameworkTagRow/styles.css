@@ -11,20 +11,33 @@
         width: 40%;
     }
 
-    .right-container {
+    .drop-container {
         display: flex;
-        align-items: center;
+        position: relative;
         flex-shrink: 0;
         flex-wrap: wrap;
-        padding: var(--dui-spacing-medium) var(--dui-spacing-small);
+        background: unset;
         width: 60%;
         gap: var(--dui-spacing-extra-small);
 
-        .tag {
-            background-color: var(--dui-color-nlp);
+        .right-container {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            z-index: 1;
+            padding: var(--dui-spacing-medium) var(--dui-spacing-small);
+            gap: var(--dui-spacing-extra-small);
 
-            .remove-button {
-                padding: 0;
+            .tag {
+                background-color: var(--dui-color-nlp);
+
+                .remove-button {
+                    padding: 0;
+                }
+            }
+
+            .drop-overlay {
+                z-index: 11;
             }
         }
     }
