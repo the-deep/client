@@ -28,10 +28,10 @@ import {
 } from '#base/utils/restRequest';
 
 import {
-    BasicRegion,
     MultiResponse,
     AdminLevelGeoArea,
 } from '#types';
+import { RegionsForGeoAreasQuery } from '#generated/types';
 
 import AddAdminLevelPane from './AddAdminLevelPane';
 
@@ -43,10 +43,12 @@ type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetai
 // NOTE: clientId is only used to show active tab
 const tabKeySelector = (d: AdminLevel) => d.clientId;
 
+type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
+
 interface Props {
-    region: BasicRegion;
+    region: Region;
     className?: string;
-    regions?: BasicRegion[];
+    regions?: Region[];
     activeProject: string;
     isExpanded: boolean;
     handleExpansion: (_: boolean, name: string) => void;
@@ -188,7 +190,7 @@ function RegionCard(props: Props) {
                 clientId,
                 title: `Admin Level ${adminLevelsLength}`,
                 level: adminLevelsLength,
-                region: region.id,
+                region: +region.id,
             };
             onTempAdminLevelChange(newAdminLevel);
         },

@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { PartialForm } from '@togglecorp/toggle-form';
+import { useQuery, gql } from '@apollo/client';
 import {
     Button,
     List,
@@ -11,12 +12,13 @@ import {
 } from 'react-icons/io5';
 
 import {
-    Region,
-    BasicRegion,
     AdminLevelGeoArea,
 } from '#types';
-import { useRequest } from '#base/utils/restRequest';
 import { useModalState } from '#hooks/stateManagement';
+import {
+    RegionsForGeoAreasQuery,
+    RegionsForGeoAreasQueryVariables,
+} from '#generated/types';
 import _ts from '#ts';
 
 import RegionsMap from './RegionsMap';
@@ -25,7 +27,30 @@ import CustomGeoAddModal from './CustomGeoAddModal';
 
 import styles from './styles.css';
 
-const regionKeySelector = (d: Region) => d.id;
+const REGIONS_FOR_GEO_AREAS = gql`
+query RegionsForGeoAreas ($id: ID!) {
+    project (id: $id) {
+        regions {
+            id
+            isPublished
+            adminLevels {
+                id
+                title
+                level
+                nameProp
+                codeProp
+                parentNameProp
+                parentCodeProp
+            }
+            title
+            public
+        }
+    }
+}
+`;
+type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
+
+const regionKeySelectorForRegionCard = (d: Region) => +d.id;
 
 type AdminLevel = AdminLevelGeoArea & { clientId: string };
 type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetails'>;
@@ -67,14 +92,17 @@ function GeoAreas(props: Props) {
     ] = useState<string | undefined>();
 
     const {
-        response: regionResponse,
-        retrigger: regionsGetTrigger,
-        pending: regionsPending,
-    } = useRequest<{ regions: Region[] }>({
-        url: `server://projects/${activeProject}/regions/`,
-        method: 'GET',
-        preserveResponse: true,
-    });
+        data: regions,
+        loading: regionsLoading,
+        refetch: regionsRefetch,
+    } = useQuery<RegionsForGeoAreasQuery, RegionsForGeoAreasQueryVariables>(
+        REGIONS_FOR_GEO_AREAS,
+        {
+            variables: {
+                id: activeProject,
+            },
+        },
+    );
 
     const handleRegionSet = useCallback(
         (value: string | undefined) => {
@@ -93,10 +121,10 @@ function GeoAreas(props: Props) {
 
     const handleGeoAreaAddSuccess = useCallback(
         (value: Region) => {
-            handleRegionSet(value.id.toString());
-            regionsGetTrigger();
+            handleRegionSet(value.id);
+            regionsRefetch();
         },
-        [handleRegionSet, regionsGetTrigger],
+        [handleRegionSet, regionsRefetch],
     );
 
     const updateMapTriggerId = useCallback(
@@ -107,8 +135,8 @@ function GeoAreas(props: Props) {
     );
 
     const regionRendererParams = useCallback(
-        (_: number, data: BasicRegion) => {
-            const isExpanded = data.id.toString() === activeRegion;
+        (_: number, data: Region) => {
+            const isExpanded = data.id === activeRegion;
             return {
                 region: data,
                 activeProject,
@@ -120,16 +148,16 @@ function GeoAreas(props: Props) {
                 tempAdminLevel: isExpanded ? tempAdminLevel : undefined,
                 onTempAdminLevelChange: isExpanded ? setTempAdminLevel : undefined,
                 onAdminLevelUpdate: isExpanded ? updateMapTriggerId : undefined,
-                onRegionPublishSuccess: regionsGetTrigger,
-                onRegionRemoveSuccess: regionsGetTrigger,
-                regions: regionResponse?.regions,
+                onRegionPublishSuccess: regionsRefetch,
+                onRegionRemoveSuccess: regionsRefetch,
+                regions: regions?.project?.regions ?? [],
                 navigationDisabled,
             };
         },
         [
             activeProject, activeRegion, activeAdminLevel,
             handleExpansion, tempAdminLevel, navigationDisabled,
-            updateMapTriggerId, regionsGetTrigger, regionResponse?.regions,
+            updateMapTriggerId, regionsRefetch, regions?.project?.regions,
         ],
     );
 
@@ -139,15 +167,15 @@ function GeoAreas(props: Props) {
                 <RegionsMap
                     className={styles.map}
                     projectId={activeProject}
-                    regions={regionResponse?.regions}
-                    onRegionAdd={regionsGetTrigger}
+                    regions={regions?.project?.regions ?? []}
+                    onRegionAdd={regionsRefetch}
                     activeAdminLevel={tempAdminLevel ? undefined : activeAdminLevel}
                     activeRegion={activeRegion}
                     onActiveAdminLevelChange={setActiveAdminLevel}
                     onActiveRegionChange={handleRegionSet}
                     navigationDisabled={navigationDisabled}
                     triggerId={mapTriggerId}
-                    regionsPending={regionsPending}
+                    regionsPending={regionsLoading}
                 />
             </div>
             <Container
@@ -169,11 +197,11 @@ function GeoAreas(props: Props) {
                 headingSize="small"
             >
                 <List
-                    data={regionResponse?.regions}
+                    data={regions?.project?.regions}
                     rendererParams={regionRendererParams}
                     renderer={RegionCard}
                     rendererClassName={styles.region}
-                    keySelector={regionKeySelector}
+                    keySelector={regionKeySelectorForRegionCard}
                 />
             </Container>
             {geoAddModalVisible && (

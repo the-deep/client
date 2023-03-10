@@ -16,11 +16,11 @@ import {
 
 import NonFieldError from '#components/NonFieldError';
 import { useLazyRequest } from '#base/utils/restRequest';
-import {
-    Region,
-} from '#types';
+import { RegionsForGeoAreasQuery } from '#generated/types';
 
 import styles from './styles.css';
+
+type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
 
 type FormType = {
     title: string;

@@ -19,8 +19,18 @@ import styles from './styles.css';
 
 const ORGANIZATIONS = gql`
     ${ORGANIZATION_FRAGMENT}
-    query OrganizationOptions($search: String) {
-        organizations(search: $search) {
+    query OrganizationOptions(
+        $search: String,
+        $page: Int,
+        $pageSize: Int,
+    ) {
+        organizations(
+            search: $search,
+            page: $page,
+            pageSize: $pageSize,
+        ) {
+            page
+            pageSize
             results {
                 ...OrganizationGeneralResponse
             }
@@ -73,9 +83,15 @@ function NewOrganizationSelectInput<K extends string, GK extends string>(
 
     const variables = useMemo(() => ({
         search: debouncedSearchText,
+        page: 1,
+        pageSize: 10,
     }), [debouncedSearchText]);
 
-    const { data, loading } = useQuery<OrganizationOptionsQuery, OrganizationOptionsQueryVariables>(
+    const {
+        data,
+        loading,
+        fetchMore,
+    } = useQuery<OrganizationOptionsQuery, OrganizationOptionsQueryVariables>(
         ORGANIZATIONS,
         {
             variables,
@@ -121,6 +137,42 @@ function NewOrganizationSelectInput<K extends string, GK extends string>(
         );
     }, [searchTerms]);
 
+    const handleShowMoreClick = useCallback(() => {
+        fetchMore({
+            variables: {
+                ...variables,
+                page: (data?.organizations?.page ?? 1) + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult.organizations) {
+                    return previousResult;
+                }
+
+                const oldOrganizations = previousResult.organizations;
+                const newOrganizations = fetchMoreResult?.organizations;
+
+                if (!newOrganizations) {
+                    return previousResult;
+                }
+
+                return ({
+                    ...previousResult,
+                    organizations: {
+                        ...previousResult.organizations,
+                        results: [
+                            ...(oldOrganizations.results ?? []),
+                            ...(newOrganizations.results ?? []),
+                        ],
+                    },
+                });
+            },
+        });
+    }, [
+        data?.organizations?.page,
+        fetchMore,
+        variables,
+    ]);
+
     return (
         <SearchSelectInput
             {...otherProps}
@@ -133,6 +185,7 @@ function NewOrganizationSelectInput<K extends string, GK extends string>(
             optionsPending={loading}
             totalOptionsCount={data?.organizations?.totalCount ?? undefined}
             onShowDropdownChange={setOpened}
+            handleShowMoreClick={handleShowMoreClick}
         />
     );
 }

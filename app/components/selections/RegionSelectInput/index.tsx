@@ -1,18 +1,46 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 
 import {
     SearchSelectInput,
     SearchSelectInputProps,
 } from '@the-deep/deep-ui';
+import { useQuery, gql } from '@apollo/client';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
-import {
-    Region,
-    MultiResponse,
-} from '#types';
-import { useRequest } from '#base/utils/restRequest';
 
-const keySelector = (d: Region) => d.id;
+import {
+    RegionListQuery,
+    RegionListQueryVariables,
+} from '#generated/types';
+
+const REGION_LIST = gql`
+    query RegionList(
+        $excludeProject: [ID!],
+        $search: String,
+        $pageSize: Int,
+        $page: Int,
+    ) {
+        regions(
+            excludeProject: $excludeProject,
+            search: $search,
+            pageSize: $pageSize,
+            page: $page,
+        ) {
+            page
+            results {
+                id
+                title
+                isPublished
+                public
+            }
+            totalCount
+        }
+    }
+`;
+
+export type Region = NonNullable<NonNullable<RegionListQuery['regions']>['results']>[number];
+
+const keySelector = (d: Region) => +d.id;
 const labelSelector = (d: Region) => d.title;
 
 type Def = { containerClassName?: string;}
@@ -23,7 +51,7 @@ type RegionSelectInputProps<K extends string, GK extends string> = SearchSelectI
     Region,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
-> & { projectId: number };
+> & { projectId: string};
 
 function RegionSelectInput<K extends string, GK extends string>(
     props: RegionSelectInputProps<K, GK>,
@@ -38,23 +66,63 @@ function RegionSelectInput<K extends string, GK extends string>(
     const [searchText, setSearchText] = useState<string>('');
     const debouncedSearchText = useDebouncedValue(searchText);
 
-    const searchQueryParams = useMemo(() => ({
+    const variables = useMemo(() => ({
+        excludeProject: [projectId],
         search: debouncedSearchText,
-        exclude_project: projectId,
-        limit: 20,
-    }), [debouncedSearchText, projectId]);
+        page: 1,
+        pageSize: 10,
+    }), [
+        projectId,
+        debouncedSearchText,
+    ]);
 
     const {
-        pending: regionSearchPending,
-        response: regions,
-    } = useRequest<MultiResponse<Region>>(
+        data,
+        loading,
+        fetchMore,
+    } = useQuery<RegionListQuery, RegionListQueryVariables>(
+        REGION_LIST,
         {
-            url: 'server://regions/',
-            method: 'GET',
             skip: !opened,
-            query: searchQueryParams,
+            variables,
         },
     );
+
+    const handleShowMoreClick = useCallback(() => {
+        fetchMore({
+            variables: {
+                ...variables,
+                page: (data?.regions?.page ?? 1) + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult.regions) {
+                    return previousResult;
+                }
+
+                const oldRegions = previousResult.regions;
+                const newRegions = fetchMoreResult?.regions;
+
+                if (!newRegions) {
+                    return previousResult;
+                }
+
+                return ({
+                    ...previousResult,
+                    regions: {
+                        ...previousResult.regions,
+                        results: [
+                            ...(oldRegions.results ?? []),
+                            ...(newRegions.results ?? []),
+                        ],
+                    },
+                });
+            },
+        });
+    }, [
+        fetchMore,
+        variables,
+        data?.regions?.page,
+    ]);
 
     return (
         <SearchSelectInput
@@ -63,10 +131,11 @@ function RegionSelectInput<K extends string, GK extends string>(
             keySelector={keySelector}
             labelSelector={labelSelector}
             onSearchValueChange={setSearchText}
-            searchOptions={regions?.results}
-            optionsPending={regionSearchPending}
-            totalOptionsCount={regions?.count}
+            searchOptions={data?.regions?.results}
+            optionsPending={loading}
+            totalOptionsCount={data?.regions?.totalCount ?? 0}
             onShowDropdownChange={setOpened}
+            handleShowMoreClick={handleShowMoreClick}
         />
     );
 }
