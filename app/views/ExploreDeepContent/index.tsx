@@ -79,7 +79,6 @@ interface Props {
     headerActions: React.ReactNode;
     onEndDateChange: (newDate: number | undefined) => void;
     onStartDateChange: (newDate: number | undefined) => void;
-    onImageExportClick: () => void;
     onPdfExportClick: () => void;
     onExcelExportClick: () => void;
     filters: FormType | undefined;
@@ -121,7 +120,6 @@ function ExploreDeepContent(props: Props) {
         startDate,
         onEndDateChange,
         onStartDateChange,
-        onImageExportClick,
         exportIdToDownload,
         onPdfExportClick,
         onExcelExportClick,
@@ -249,13 +247,6 @@ function ExploreDeepContent(props: Props) {
                             label="Download"
                             disabled={!!exportIdToDownload || exportCreatePending}
                         >
-                            <DropdownMenuItem
-                                name={undefined}
-                                onClick={onImageExportClick}
-                                disabled
-                            >
-                                Image
-                            </DropdownMenuItem>
                             <DropdownMenuItem
                                 name={undefined}
                                 onClick={onPdfExportClick}

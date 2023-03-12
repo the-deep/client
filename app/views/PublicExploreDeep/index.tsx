@@ -288,13 +288,6 @@ function PublicExploreDeep(props: Props) {
         window.print();
     }, []);
 
-    const handleImageExportClick = useCallback(() => {
-        // FIXME: Implement JPEG Export
-        showPrintPreview();
-    }, [
-        showPrintPreview,
-    ]);
-
     const handlePdfExportClick = useCallback(() => {
         showPrintPreview();
     }, [
@@ -349,7 +342,6 @@ function PublicExploreDeep(props: Props) {
             startDate={startDate}
             onEndDateChange={setEndDate}
             onStartDateChange={setStartDate}
-            onImageExportClick={handleImageExportClick}
             onPdfExportClick={handlePdfExportClick}
             onExcelExportClick={handleExcelExportClick}
             filters={undefined}

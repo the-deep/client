@@ -1,7 +1,0 @@
-.content {
-    display: flex;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    padding: var(--dui-spacing-medium);
-    gap: var(--dui-spacing-medium);
-}

@@ -57,7 +57,7 @@ function WelcomeContent(props: Props) {
                     Back to DEEP
                 </SmartButtonLikeLink>
                 <SmartButtonLikeLink
-                    route={routes.explore}
+                    route={routes.publicExplore}
                     variant="tertiary"
                     icons={(
                         <IoCompassOutline />
