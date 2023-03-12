@@ -90,7 +90,10 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
             // TODO: disable this when entries count is greater than certain count
         >
             <DraggableContent
-                className={styles.entry}
+                className={_cs(
+                    styles.entry,
+                    entryDraggedStatus && styles.isBeingDragged,
+                )}
                 name="entry"
                 dropEffect="move"
                 value={dragValue}
@@ -111,6 +114,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 <NonFieldError error={error?.entry} />
                 {entry && (
                     <ExcerptInput
+                        className={styles.excerpt}
                         value={entry.excerpt}
                         image={entry.image}
                         entryType={entry.entryType}
