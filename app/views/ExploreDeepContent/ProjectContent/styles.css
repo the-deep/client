@@ -1,0 +1,30 @@
+.project-content {
+    display: flex;
+    flex-direction: column;
+
+    .tabs {
+        display: flex;
+        flex-shrink: 0;
+        justify-content: flex-end;
+        padding: 0 var(--dui-spacing-medium);
+
+        .tab {
+            display: flex;
+            align-items: center;
+            border-top: var(--dui-width-separator-medium) solid transparent;
+            padding: var(--dui-spacing-medium);
+            line-height: 0.6;
+            font-size: var(--dui-font-size-extra-large);
+        }
+    }
+
+    .map {
+        margin: 0 var(--dui-spacing-large);
+        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        border-radius: var(--dui-border-radius-card);
+    }
+
+    .line-chart {
+        margin: 0 var(--dui-spacing-large) var(--dui-spacing-large);
+    }
+}

@@ -1,6 +1,7 @@
 overwrite: true
 schema:
   - ${GRAPHQL_CODEGEN_ENDPOINT}
+  - './schema.graphql'
 documents:
   - "app/**/*.tsx"
   - "app/**/*.ts"

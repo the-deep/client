@@ -1,325 +1,653 @@
-import React, { useContext, useMemo, useCallback, useState } from 'react';
-import { _cs } from '@togglecorp/fujs';
-import { useQuery, gql } from '@apollo/client';
-import { removeNull } from '@togglecorp/toggle-form';
+import React, { useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import {
-    IoMapOutline,
-    IoBookmarks,
-    IoDocuments,
-    IoList,
-    IoDocumentText,
-    IoPersonSharp,
-} from 'react-icons/io5';
+    isDefined,
+    formatDateToString,
+} from '@togglecorp/fujs';
 import {
-    PendingMessage,
+    useHash,
+    useAlert,
+    AlertContext,
+    DateDualRangeInput,
     ButtonLikeLink,
-    Heading,
-    ListView,
-    Tabs,
-    Tab,
-    TabList,
-    TabPanel,
-    Card,
-    Kraken,
-    Container,
-    InformationCard,
-    CompactInformationCard,
-    ContainerCard,
 } from '@the-deep/deep-ui';
+import { useMutation, useQuery, gql } from '@apollo/client';
 
 import {
-    ProjectListQueryVariables,
-    ProjectExploreStatsQuery,
+    ExploreDeepStatsQuery,
+    ExploreDeepStatsQueryVariables,
+    GenericExportCreateMutation,
+    GenericExportCreateMutationVariables,
+    GenericExportQuery,
+    GenericExportQueryVariables,
+    EntriesCountTimeseriesQuery,
+    EntriesCountTimeseriesQueryVariables,
+    EntriesMapDataQuery,
+    EntriesMapDataQueryVariables,
+    ProjectCountTimeseriesQuery,
+    ProjectCountTimeseriesQueryVariables,
 } from '#generated/types';
-import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
-import routes from '#base/configs/routes';
-import _ts from '#ts';
-import UserContext from '#base/context/UserContext';
-import { zendeskSupportUrl } from '#base/configs/env';
+import { useModalState } from '#hooks/stateManagement';
+import {
+    DEEP_START_DATE,
+    todaysDate,
+    lastYearStartDate,
+    convertDateToIsoDateTime,
+} from '#utils/common';
+import { resolveTime } from '#utils/temporal';
 
-import ProjectFilterForm from './ProjectFilterForm';
-import ActiveProjectItem, { Props as ActiveProjectItemProps } from './ActiveProject';
-import ActiveFrameworkItem, { Props as ActiveFrameworkItemProps } from './ActiveFramework';
-import TableView from './TableView';
-import MapView from './MapView';
-import PublicTableView from './PublicTableView';
-import PublicMapView from './PublicMapView';
+import { FormType } from '../ExploreDeepContent/ProjectFilters';
+import ExploreDeepContent from '../ExploreDeepContent';
 
 import styles from './styles.css';
 
-const PROJECT_EXPLORE_STATS = gql`
-    query ProjectExploreStats {
-        projectExploreStats {
-            calculatedAt
-            generatedExportsMonthly
-            leadsAddedWeekly
-            totalUsers
-            totalProjects
-            topActiveProjects {
-                analysisFrameworkId
-                analysisFrameworkTitle
-                projectId
-                projectTitle
+const DOWNLOAD_ALERT_NAME = 'generic-export-download';
+
+const EXPLORE_DEEP_STATS = gql`
+query ExploreDeepStats(
+    $dateFrom: DateTime!,
+    $dateTo: DateTime!,
+    $excludeEntryLessThan: Boolean,
+    $isTest: Boolean,
+    $organizations: [ID!],
+    $regions: [ID!],
+    $search: String,
+) {
+    deepExploreStats(
+        filter: {
+            dateFrom: $dateFrom,
+            dateTo: $dateTo,
+            project: {
+                excludeEntryLessThan: $excludeEntryLessThan,
+                isTest: $isTest,
+                organizations: $organizations,
+                regions: $regions,
+                search: $search,
+            },
+        }
+    ) {
+        topTenAuthors {
+            id
+            title
+            projectsCount
+            leadsCount
+        }
+        topTenPublishers {
+            id
+            title
+            projectsCount
+            leadsCount
+        }
+        projectsByRegion {
+            id
+            centroid
+            projectIds
+        }
+        topTenFrameworks {
+            id
+            title
+            entriesCount
+            projectsCount
+        }
+        topTenProjectsByEntries {
+            id
+            title
+            entriesCount
+            leadsCount
+        }
+        topTenProjectsByLeads {
+            id
+            title
+            entriesCount
+            leadsCount
+        }
+        topTenProjectsByUsers {
+            id
+            title
+            usersCount
+        }
+        totalActiveUsers
+        totalAuthors
+        totalEntries
+        totalLeads
+        totalProjects
+        totalPublishers
+        totalRegisteredUsers
+        totalEntriesAddedLastWeek
+    }
+}`;
+
+const ENTRIES_COUNT_TIMESERIES = gql`
+query EntriesCountTimeseries(
+    $dateFrom: DateTime!,
+    $dateTo: DateTime!,
+    $excludeEntryLessThan: Boolean,
+    $isTest: Boolean,
+    $organizations: [ID!],
+    $regions: [ID!],
+    $search: String,
+) {
+    deepExploreStats(
+        filter: {
+            dateFrom: $dateFrom,
+            dateTo: $dateTo,
+            project: {
+                excludeEntryLessThan: $excludeEntryLessThan,
+                isTest: $isTest,
+                organizations: $organizations,
+                regions: $regions,
+                search: $search,
+            },
+        }
+    ) {
+        entriesCountByDay {
+            date
+            count
+        }
+    }
+}`;
+
+const ENTRIES_MAP_DATA = gql`
+query EntriesMapData(
+    $dateFrom: DateTime!,
+    $dateTo: DateTime!,
+    $excludeEntryLessThan: Boolean,
+    $isTest: Boolean,
+    $organizations: [ID!],
+    $regions: [ID!],
+    $search: String,
+) {
+    deepExploreStats(
+        filter: {
+            dateFrom: $dateFrom,
+            dateTo: $dateTo,
+            project: {
+                excludeEntryLessThan: $excludeEntryLessThan,
+                isTest: $isTest,
+                organizations: $organizations,
+                regions: $regions,
+                search: $search,
+            },
+        }
+    ) {
+        leadsCountByDay {
+            date
+            count
+        }
+        entriesCountByRegion {
+            centroid
+            count
+        }
+    }
+}`;
+
+const PROJECT_COUNT_TIMESERIES = gql`
+    query ProjectCountTimeseries(
+        $dateFrom: DateTime!,
+        $dateTo: DateTime!,
+        $excludeEntryLessThan: Boolean,
+        $isTest: Boolean,
+        $organizations: [ID!],
+        $regions: [ID!],
+        $search: String,
+    ) {
+        deepExploreStats(
+            filter: {
+                dateFrom: $dateFrom,
+                dateTo: $dateTo,
+                project: {
+                    excludeEntryLessThan: $excludeEntryLessThan,
+                    isTest: $isTest,
+                    organizations: $organizations,
+                    regions: $regions,
+                    search: $search,
+                },
             }
-            topActiveFrameworks {
-                analysisFrameworkId
-                analysisFrameworkTitle
-                projectCount
-                sourceCount
+        ) {
+            projectsCountByDay {
+                date
+                count
             }
         }
     }
 `;
 
-type ActiveProject = NonNullable<NonNullable<ProjectExploreStatsQuery['projectExploreStats']>['topActiveProjects']>[number];
-type ActiveFramework = NonNullable<NonNullable<ProjectExploreStatsQuery['projectExploreStats']>['topActiveFrameworks']>[number];
+const GENERIC_EXPORT = gql`
+    query GenericExport(
+        $id: ID!,
+    ) {
+        genericExport(id: $id) {
+            id
+            status
+            fileDownloadUrl
+        }
+    }
+`;
 
-const activeProjectKeySelector = (project: ActiveProject) => project.projectId;
-const activeFrameworkKeySelector = (framework: ActiveFramework) => framework.analysisFrameworkId;
+const GENERIC_EXPORT_CREATE = gql`
+    mutation GenericExportCreate(
+        $dateFrom: DateTime!,
+        $dateTo: DateTime!,
+        # FIXME: Enable this
+        # $excludeEntryLessThan: Boolean,
+        $isTest: Boolean,
+        $organizations: [ID!],
+        $regions: [ID!],
+        $search: String,
+    ) {
+        genericExportCreate(data: {
+            filters: {
+                entry: {
+                    createdAtGte: $dateFrom,
+                    createdAtLte: $dateTo,
+                },
+                lead: {
+                    createdAtGte: $dateFrom,
+                    createdAtLte: $dateTo,
+                },
+                project: {
+                    createdAtGte: $dateFrom,
+                    createdAtLte: $dateTo,
+                    organizations: $organizations,
+                    regions: $regions,
+                    search: $search,
+                    isTest: $isTest,
+                },
+            },
+            format: CSV,
+            type: PROJECTS_STATS,
+        }) {
+            ok
+            errors
+            result {
+                id
+                status
+            }
+        }
+    }
+`;
+
+interface TimeOption {
+    key: string;
+    label: string;
+    startDate: number;
+    endDate: number;
+}
+
+// TODO: Fetch this later from server
+const yearOptions: TimeOption[] = [
+    {
+        key: '2022',
+        label: '2022',
+        startDate: 1640974500000,
+        endDate: 1672424100000,
+    },
+    {
+        key: '2021',
+        label: '2021',
+        startDate: 1609438500000,
+        endDate: 1640888100000,
+    },
+    {
+        key: '2020',
+        label: '2020',
+        startDate: 1577816100000,
+        endDate: 1609352100000,
+    },
+    {
+        key: '2019',
+        label: '2019',
+        startDate: 1546280100000,
+        endDate: 1577729700000,
+    },
+    {
+        key: '2018',
+        label: '2018',
+        startDate: 1514744100000,
+        endDate: 1546193700000,
+    },
+];
+
+const lastYearDateTime = resolveTime(lastYearStartDate, 'day').getTime();
+const todaysDateTime = resolveTime(todaysDate, 'day').getTime();
+const deepStartDateTime = resolveTime(DEEP_START_DATE, 'day').getTime();
 
 interface Props {
     className?: string;
+    isPublic?: boolean;
 }
 
 function ExploreDeep(props: Props) {
     const {
         className,
+        isPublic = false,
     } = props;
 
     const {
-        data,
+        addAlert,
+        removeAlert,
+        updateAlertContent,
+    } = useContext(AlertContext);
+
+    const activeView = useHash();
+
+    const [
+        startDate = deepStartDateTime,
+        setStartDate,
+    ] = useState<number | undefined>(
+        () => (!isPublic ? lastYearDateTime : yearOptions[0].startDate),
+    );
+    const [
+        endDate = todaysDateTime,
+        setEndDate,
+    ] = useState<number | undefined>(
+        () => (!isPublic ? todaysDateTime : yearOptions[0].endDate),
+    );
+
+    const handleEndDateChange = useCallback((newDate: number | undefined) => {
+        if (isDefined(newDate)) {
+            setEndDate(Math.min(newDate, todaysDateTime));
+        } else {
+            setEndDate(undefined);
+        }
+    }, []);
+
+    const handleStartDateChange = useCallback((newDate: number | undefined) => {
+        if (isDefined(newDate)) {
+            setStartDate(Math.max(newDate, deepStartDateTime));
+        } else {
+            setStartDate(undefined);
+        }
+    }, []);
+
+    const handleFromDateChange = useCallback((newDate: string | undefined) => {
+        if (isDefined(newDate)) {
+            handleStartDateChange(new Date(newDate).getTime());
+        } else {
+            handleStartDateChange(undefined);
+        }
+    }, [handleStartDateChange]);
+
+    const handleToDateChange = useCallback((newDate: string | undefined) => {
+        if (isDefined(newDate)) {
+            handleEndDateChange(new Date(newDate).getTime());
+        } else {
+            handleEndDateChange(undefined);
+        }
+    }, [handleEndDateChange]);
+
+    const [filters, setFilters] = useState<FormType | undefined>(undefined);
+    const [
+        exportIdToDownload,
+        setExportIdToDownload,
+    ] = useState<string | undefined>();
+    const [
+        printPreviewMode,
+        showPrintPreview,
+        hidePrintPreview,
+    ] = useModalState(false);
+
+    const variables: ExploreDeepStatsQueryVariables = useMemo(() => ({
+        dateFrom: convertDateToIsoDateTime(new Date(startDate)),
+        dateTo: convertDateToIsoDateTime(new Date(endDate), { endOfDay: true }),
+        search: filters?.search,
+        isTest: filters?.excludeTestProject ? false : undefined,
+        organizations: filters?.organizations,
+        regions: filters?.regions,
+        excludeEntryLessThan: filters?.excludeProjectsLessThan,
+    }), [filters, startDate, endDate]);
+
+    const completeTimeseriesVariables: EntriesCountTimeseriesQueryVariables = useMemo(() => ({
+        dateFrom: convertDateToIsoDateTime(DEEP_START_DATE),
+        dateTo: convertDateToIsoDateTime(todaysDate, { endOfDay: true }),
+        search: filters?.search,
+        isTest: filters?.excludeTestProject ? false : undefined,
+        organizations: filters?.organizations,
+        regions: filters?.regions,
+        excludeEntryLessThan: filters?.excludeProjectsLessThan,
+    }), [filters]);
+
+    const {
+        previousData: previousEntriesTimeseriesData,
+        data: entriesTimeseriesData = previousEntriesTimeseriesData,
+    } = useQuery<EntriesCountTimeseriesQuery, EntriesCountTimeseriesQueryVariables>(
+        ENTRIES_COUNT_TIMESERIES,
+        {
+            skip: !printPreviewMode && activeView !== 'entries',
+            variables: completeTimeseriesVariables,
+        },
+    );
+
+    const {
+        previousData: previousProjectsTimeseriesData,
+        data: projectsTimeseriesData = previousProjectsTimeseriesData,
+    } = useQuery<ProjectCountTimeseriesQuery, ProjectCountTimeseriesQueryVariables>(
+        PROJECT_COUNT_TIMESERIES,
+        {
+            skip: !printPreviewMode && activeView !== 'projects',
+            variables: completeTimeseriesVariables,
+        },
+    );
+
+    const {
+        previousData: previousEntriesMapData,
+        data: entriesMapData = previousEntriesMapData,
+        loading: loadingMapAndLeadData,
+    } = useQuery<EntriesMapDataQuery, EntriesMapDataQueryVariables>(
+        ENTRIES_MAP_DATA,
+        {
+            skip: !printPreviewMode && activeView !== 'entries',
+            variables,
+        },
+    );
+
+    const alert = useAlert();
+    const {
+        previousData,
+        data = previousData,
         loading,
-    } = useQuery<ProjectExploreStatsQuery>(
-        PROJECT_EXPLORE_STATS,
-    );
-    const { authenticated } = useContext(UserContext);
-
-    const [filters, setFilters] = useState<ProjectListQueryVariables | undefined>(undefined);
-
-    const activeProjectsRendererParams = useCallback(
-        (_:string, datum: ActiveProject): ActiveProjectItemProps => ({
-            projectTitle: datum.projectTitle ?? undefined,
-            frameworkTitle: datum.analysisFrameworkTitle ?? undefined,
-        }),
-        [],
+    } = useQuery<ExploreDeepStatsQuery, ExploreDeepStatsQueryVariables>(
+        EXPLORE_DEEP_STATS,
+        {
+            variables,
+        },
     );
 
-    const activeFrameworkRendererParams = useCallback(
-        (_: string, datum: ActiveFramework): ActiveFrameworkItemProps => ({
-            frameworkTitle: datum.analysisFrameworkTitle ?? undefined,
-            projectCount: datum.projectCount ?? undefined,
-            sourceCount: datum.sourceCount ?? undefined,
-        }),
-        [],
+    const {
+        data: genericExportData,
+        startPolling,
+        stopPolling,
+    } = useQuery<GenericExportQuery, GenericExportQueryVariables>(
+        GENERIC_EXPORT,
+        {
+            skip: !exportIdToDownload,
+            variables: exportIdToDownload ? {
+                id: exportIdToDownload,
+            } : undefined,
+            onCompleted: (response) => {
+                if (!response?.genericExport) {
+                    setExportIdToDownload(undefined);
+                    removeAlert(DOWNLOAD_ALERT_NAME);
+                    alert.show(
+                        'There was an issue creating the export.',
+                        { variant: 'error' },
+                    );
+                    // eslint-disable-next-line no-console
+                    console.error(response);
+                }
+                if (response.genericExport?.status === 'SUCCESS') {
+                    setExportIdToDownload(undefined);
+                    updateAlertContent(DOWNLOAD_ALERT_NAME, (
+                        <div className={styles.exportNotificationBody}>
+                            Export successfully created
+                            <ButtonLikeLink
+                                to={response?.genericExport?.fileDownloadUrl ?? ''}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                variant="secondary"
+                                spacing="compact"
+                            >
+                                Download
+                            </ButtonLikeLink>
+                        </div>
+                    ));
+                } else if (response.genericExport?.status === 'FAILURE') {
+                    removeAlert(DOWNLOAD_ALERT_NAME);
+                    setExportIdToDownload(undefined);
+                    alert.show(
+                        'There was an issue creating the export.',
+                        { variant: 'error' },
+                    );
+                    // eslint-disable-next-line no-console
+                    console.error(response);
+                }
+            },
+        },
     );
 
-    const projectList = useMemo(() => (
-        removeNull(data?.projectExploreStats?.topActiveProjects)
-    ), [data?.projectExploreStats?.topActiveProjects]);
+    const [
+        createExport,
+        { loading: exportCreatePending },
+    ] = useMutation<GenericExportCreateMutation, GenericExportCreateMutationVariables>(
+        GENERIC_EXPORT_CREATE,
+        {
+            onCompleted: (response) => {
+                if (!response?.genericExportCreate || !response?.genericExportCreate?.ok) {
+                    alert.show(
+                        'There was an issue creating the export.',
+                        { variant: 'error' },
+                    );
+                    // eslint-disable-next-line no-console
+                    console.error(response);
+                    setExportIdToDownload(undefined);
+                }
+                if (
+                    response?.genericExportCreate?.ok
+                    && response?.genericExportCreate?.result?.id
+                ) {
+                    setExportIdToDownload(response.genericExportCreate.result.id);
+                    addAlert({
+                        variant: 'info',
+                        duration: Infinity,
+                        name: DOWNLOAD_ALERT_NAME,
+                        children: 'Please wait while the export is being prepared.',
+                    });
+                }
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    'There was an issue creating the export.',
+                    { variant: 'error' },
+                );
+                // eslint-disable-next-line no-console
+                console.error(gqlError);
+                setExportIdToDownload(undefined);
+            },
+        },
+    );
+
+    useEffect(
+        () => {
+            const shouldPoll = exportIdToDownload
+                && genericExportData?.genericExport?.status !== 'SUCCESS'
+                && genericExportData?.genericExport?.status !== 'FAILURE';
+
+            if (shouldPoll) {
+                startPolling(5000);
+            } else {
+                stopPolling();
+            }
+        },
+        [
+            removeAlert,
+            exportIdToDownload,
+            genericExportData,
+            startPolling,
+            stopPolling,
+        ],
+    );
+
+    const handlePdfExportClick = useCallback(() => {
+        showPrintPreview();
+    }, [
+        showPrintPreview,
+    ]);
+
+    const handleExcelExportClick = useCallback(() => {
+        createExport({
+            variables: {
+                dateFrom: convertDateToIsoDateTime(new Date(startDate)),
+                dateTo: convertDateToIsoDateTime(new Date(endDate), { endOfDay: true }),
+                search: filters?.search,
+                isTest: filters?.excludeTestProject ? false : undefined,
+                organizations: filters?.organizations,
+                regions: filters?.regions,
+                // excludeEntryLessThan: filters?.excludeProjectsLessThan,
+            },
+        });
+    }, [
+        startDate,
+        endDate,
+        filters,
+        createExport,
+    ]);
+
+    const handlePrintClick = useCallback(() => {
+        window.print();
+    }, []);
+
+    const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
+    const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
 
     return (
-        <Container
-            className={_cs(styles.exploreDeep, className)}
-            contentClassName={styles.content}
-            headerClassName={styles.header}
+        <ExploreDeepContent
+            className={className}
+            isPublic={isPublic}
             headerActions={(
-                <SmartButtonLikeLink
-                    variant="primary"
-                    route={routes.projectCreate}
-                >
-                    {_ts('home', 'setupNewProjectButtonLabel')}
-                </SmartButtonLikeLink>
+                <DateDualRangeInput
+                    variant="general"
+                    fromName="fromDate"
+                    fromOnChange={handleFromDateChange}
+                    fromValue={startDateString}
+                    toName="toDate"
+                    toOnChange={handleToDateChange}
+                    toValue={endDateString}
+                />
             )}
-            headingSize="large"
-            heading="Explore DEEP"
-        >
-            {loading && <PendingMessage />}
-            <div className={styles.statsContainer}>
-                <div className={styles.leftContainer}>
-                    <div className={styles.infoItemsContainer}>
-                        <InformationCard
-                            className={styles.infoItem}
-                            icon={<IoDocumentText />}
-                            label="Projects"
-                            value={data?.projectExploreStats?.totalProjects ?? 0}
-                            variant="complement1"
-                            coloredBackground
-                        />
-                        <InformationCard
-                            className={styles.infoItem}
-                            icon={<IoPersonSharp />}
-                            label="Active Users"
-                            value={data?.projectExploreStats?.totalUsers ?? 0}
-                            variant="accent"
-                            coloredBackground
-                        />
-                        <Card className={styles.statsByTimeContainer}>
-                            <CompactInformationCard
-                                className={styles.infoItem}
-                                icon={<IoBookmarks />}
-                                label="Sources added weekly"
-                                valuePrecision={0}
-                                value={data?.projectExploreStats?.leadsAddedWeekly ?? 0}
-                            />
-                            <CompactInformationCard
-                                className={styles.infoItem}
-                                icon={<IoDocuments />}
-                                label="Generated reports monthly"
-                                valuePrecision={0}
-                                value={data?.projectExploreStats?.generatedExportsMonthly ?? 0}
-                            />
-                        </Card>
-                    </div>
-                    <div className={styles.playbackFrameworkContainer}>
-                        <Card className={styles.playbackCard}>
-                            <Kraken
-                                variant="read"
-                                size="large"
-                            />
-                            <div className={styles.helpMessage}>
-                                <Heading size="small">Getting Started</Heading>
-                                <p>
-                                    Everything you need to know to get started
-                                    and get to work in DEEP.
-                                </p>
-                                <ButtonLikeLink
-                                    target="_blank"
-                                    rel="noreferrer noopener"
-                                    to={zendeskSupportUrl}
-                                    variant="secondary"
-                                >
-                                    Visit Zendesk
-                                </ButtonLikeLink>
-                            </div>
-                        </Card>
-                        <ContainerCard
-                            className={styles.frameworkContainer}
-                            heading="Top 5 most used frameworks"
-                            headingDescription="Last 3 months"
-                            spacing="none"
-                            headingSize="small"
-                            borderBelowHeader
-                            borderBelowHeaderWidth="thin"
-                            inlineHeadingDescription
-                            headerClassName={styles.header}
-                            headingContainerClassName={styles.heading}
-                            contentClassName={styles.frameworkListContainer}
-                        >
-                            <ListView
-                                className={styles.list}
-                                data={data?.projectExploreStats?.topActiveFrameworks ?? undefined}
-                                keySelector={activeFrameworkKeySelector}
-                                renderer={ActiveFrameworkItem}
-                                rendererParams={activeFrameworkRendererParams}
-                                spacing="none"
-                                errored={false}
-                                filtered={false}
-                                pending={loading}
-                                emptyMessage="We couldn&apos;t find what you&apos;re looking for."
-                                emptyIcon={(
-                                    <Kraken
-                                        variant="work"
-                                    />
-                                )}
-                                messageIconShown
-                                messageShown
-                            />
-                        </ContainerCard>
-                    </div>
-                </div>
-                <ContainerCard
-                    className={styles.rightContainer}
-                    headerClassName={styles.header}
-                    headingContainerClassName={styles.heading}
-                    contentClassName={styles.projectListContainer}
-                    spacing="none"
-                    heading="Top 5 most active projects"
-                    headingDescription="Last 3 months"
-                    headingSize="small"
-                    borderBelowHeader
-                    borderBelowHeaderWidth="thin"
-                    inlineHeadingDescription
-                >
-                    <ListView
-                        className={styles.list}
-                        data={projectList ?? undefined}
-                        keySelector={activeProjectKeySelector}
-                        renderer={ActiveProjectItem}
-                        rendererParams={activeProjectsRendererParams}
-                        errored={false}
-                        spacing="none"
-                        pending={loading}
-                        // NOTE: Nothing to filter here
-                        filtered={false}
-                        emptyMessage="We couldn&apos;t find what you&apos;re looking for."
-                        emptyIcon={(
-                            <Kraken
-                                variant="work"
-                            />
-                        )}
-                        messageIconShown
-                        messageShown
-                    />
-                </ContainerCard>
-            </div>
-            <Tabs
-                useHash
-                defaultHash="table"
-            >
-                <div className={styles.tabsContainer}>
-                    <div className={styles.filtersContainer}>
-                        <ProjectFilterForm
-                            className={styles.filters}
-                            filters={filters}
-                            onFiltersChange={setFilters}
-                            publicRegions={!authenticated}
-                        />
-                        <TabList className={styles.tabs}>
-                            <Tab
-                                name="table"
-                                className={styles.tab}
-                                transparentBorder
-                            >
-                                <IoList />
-                            </Tab>
-                            <Tab
-                                name="map"
-                                className={styles.tab}
-                                transparentBorder
-                            >
-                                <IoMapOutline />
-                            </Tab>
-                        </TabList>
-                    </div>
-                    <TabPanel
-                        name="table"
-                    >
-                        {authenticated ? (
-                            <TableView
-                                filters={filters}
-                            />
-                        ) : (
-                            <PublicTableView
-                                filters={filters}
-                            />
-                        )}
-                    </TabPanel>
-                    <TabPanel
-                        name="map"
-                    >
-                        {authenticated ? (
-                            <MapView
-                                filters={filters}
-                            />
-                        ) : (
-                            <PublicMapView
-                                filters={filters}
-                            />
-                        )}
-                    </TabPanel>
-                </div>
-            </Tabs>
-        </Container>
+            printPreviewMode={printPreviewMode}
+            onHidePrintPreviewClick={hidePrintPreview}
+            onPrintClick={handlePrintClick}
+            endDate={endDate}
+            startDate={startDate}
+            onEndDateChange={setEndDate}
+            onStartDateChange={setStartDate}
+            onPdfExportClick={handlePdfExportClick}
+            onExcelExportClick={handleExcelExportClick}
+            filters={filters}
+            exportIdToDownload={exportIdToDownload}
+            onFiltersChange={setFilters}
+            totalProjects={data?.deepExploreStats?.totalProjects}
+            totalRegisteredUsers={data?.deepExploreStats?.totalRegisteredUsers}
+            totalActiveUsers={data?.deepExploreStats?.totalActiveUsers}
+            totalLeads={data?.deepExploreStats?.totalLeads}
+            totalAuthors={data?.deepExploreStats?.totalAuthors}
+            totalPublishers={data?.deepExploreStats?.totalPublishers}
+            totalEntries={data?.deepExploreStats?.totalEntries}
+            totalEntriesAddedLastWeek={data?.deepExploreStats?.totalEntriesAddedLastWeek}
+            projectsByRegion={data?.deepExploreStats?.projectsByRegion}
+            projectCompleteTimeseries={projectsTimeseriesData?.deepExploreStats?.projectsCountByDay}
+            entriesCompleteTimeseries={entriesTimeseriesData?.deepExploreStats?.entriesCountByDay}
+            leadsCountByDay={entriesMapData?.deepExploreStats?.leadsCountByDay}
+            entriesCountByRegion={entriesMapData?.deepExploreStats?.entriesCountByRegion}
+            topTenAuthors={data?.deepExploreStats?.topTenAuthors}
+            topTenPublishers={data?.deepExploreStats?.topTenPublishers}
+            topTenFrameworks={data?.deepExploreStats?.topTenFrameworks}
+            topTenProjectsByUsers={data?.deepExploreStats?.topTenProjectsByUsers}
+            topTenProjectsByEntries={data?.deepExploreStats?.topTenProjectsByEntries}
+            topTenProjectsByLeads={data?.deepExploreStats?.topTenProjectsByLeads}
+            loadingMapAndLeadData={loadingMapAndLeadData}
+            exportCreatePending={exportCreatePending}
+            loading={loading}
+        />
     );
 }
 

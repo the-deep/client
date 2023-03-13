@@ -1,0 +1,49 @@
+.top-ten-project-by-users {
+    --width-column: 4rem;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .header {
+        padding: var(--dui-spacing-medium) var(--dui-spacing-large);
+    }
+
+    .header-actions {
+        .table-header {
+            width: var(--width-column);
+            text-align: right;
+            font-weight: var(--dui-font-weight-bold);
+        }
+    }
+
+    .table {
+        padding: var(--dui-spacing-small) 0;
+        width: 100%;
+
+        .table-item {
+            display: flex;
+            align-items: center;
+            padding: var(--dui-spacing-small) var(--dui-spacing-large);
+
+            .title {
+                flex-grow: 1;
+            }
+
+            .number-output {
+                flex-shrink: 0;
+                justify-content: flex-end;
+                width: var(--width-column);
+                text-align: right;
+                font-size: var(--dui-font-size-large);
+                font-weight: var(--dui-font-weight-bold);
+            }
+
+            &:hover {
+                background-color: var(--dui-color-background-hover);
+            }
+        }
+    }
+
+    .chart {
+        min-height: 20rem;
+        overflow-y: hidden;
+    }
+}

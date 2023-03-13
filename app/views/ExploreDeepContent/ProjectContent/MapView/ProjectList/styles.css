@@ -1,0 +1,52 @@
+.project-list {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    background-color: var(--dui-color-foreground);
+    width: 100%;
+    max-width: 450px;
+    height: 100%;
+
+    .message {
+        padding: 0;
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        gap: var(--dui-spacing-small);
+
+        .project-container {
+            .heading {
+                color: var(--dui-color-brand);
+            }
+
+            .date {
+                line-height: 2;
+                color: var(--dui-color-text-description);
+                font-weight: var(--dui-font-weight-regular);
+            }
+
+            .content {
+                display: flex;
+                flex-direction: column;
+                gap: var(--dui-spacing-medium);
+            }
+
+            .join-button {
+                display: flex;
+                justify-content: flex-end;
+            }
+        }
+    }
+
+    .inline {
+        display: flex;
+        justify-content: space-between;
+        margin: var(--dui-spacing-small) 0;
+    }
+}

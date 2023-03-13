@@ -220,6 +220,7 @@ export interface ExcelColumnNode {
 const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
     DOCX: 'REPORT',
     PDF: 'REPORT',
+    CSV: 'EXCEL',
     JSON: 'JSON',
     XLSX: 'EXCEL',
 };

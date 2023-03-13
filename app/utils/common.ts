@@ -140,14 +140,18 @@ export const enumLabelSelector = <T extends string | number>(d: EnumEntity<T>) =
 interface Options {
     endOfDay?: boolean;
 }
+export function convertDateToIsoDateTime(dateString: Date, opts?: Options): string
 export function convertDateToIsoDateTime(dateString: string, opts?: Options): string
 export function convertDateToIsoDateTime(dateString: null, opts?: Options): undefined
 export function convertDateToIsoDateTime(dateString: undefined, opts?: Options): undefined
 export function convertDateToIsoDateTime(
-    dateString: string | undefined | null,
+    dateString: string | undefined | null | Date,
     opts?: Options,
 ): string | undefined
-export function convertDateToIsoDateTime(dateString: string | undefined | null, opts?: Options) {
+export function convertDateToIsoDateTime(
+    dateString: Date | string | undefined | null,
+    opts?: Options,
+) {
     if (!dateString) {
         return undefined;
     }
@@ -182,6 +186,7 @@ export function flatten<A, K>(
         ...flatten(itemsByChildren, valueSelector, childSelector),
     ];
 }
+
 export function generateFilename(title: string) {
     return `${formatDateToString(new Date(), 'yyyyMMdd')} DEEP ${title}`;
 }
@@ -212,7 +217,7 @@ export function isFiltered(value: unknown) {
 export function getMaximum<T>(
     list: T[] | undefined,
     comparator: (item1: T, item2: T) => number,
-) {
+): T | undefined {
     if (!list || list.length < 1) {
         return undefined;
     }
@@ -258,3 +263,32 @@ export function mergeLists<T>(
 
     return finalList;
 }
+
+// FIXME: Add tests
+export function mergeItems<T, K extends string>(
+    list: T[],
+    keySelector: (item: T) => K,
+    merge: (prev: T, item: T, key: K) => T,
+): T[] {
+    const mapping: {
+        [key: string]: T | undefined;
+    } = {};
+    list.forEach((item) => {
+        const key = keySelector(item);
+        const prev = mapping[key];
+        if (!prev) {
+            mapping[key] = item;
+        } else {
+            mapping[key] = merge(prev, item, key);
+        }
+    });
+
+    return Object.values(mapping).filter(isDefined);
+}
+
+export const DEEP_START_DATE = '2018-01-01';
+export const todaysDate = formatDateToString(new Date(), 'yyyy-MM-dd');
+
+const lastYearDate = new Date();
+lastYearDate.setDate(lastYearDate.getDate() - 365);
+export const lastYearStartDate = formatDateToString(lastYearDate, 'yyyy-MM-dd');

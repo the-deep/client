@@ -1,0 +1,16 @@
+.project-filters {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: var(--dui-spacing-large);
+
+    .exclude-container {
+        background-color: transparent;
+
+        .exclude-content {
+            display: flex;
+            align-items: center;
+            gap: var(--dui-spacing-medium);
+        }
+    }
+}

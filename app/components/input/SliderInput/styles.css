@@ -1,0 +1,37 @@
+.slider {
+    display: flex;
+    position: relative;
+    z-index: 0;
+    margin: auto 0;
+
+    .react-slider {
+        width: 100%;
+        height: 2ch;
+
+        .thumb {
+            border: 2px solid var(--dui-color-brand);
+            border-radius: 50%;
+            background-color: var(--color-foreground);
+            cursor: grab;
+            width: 2ch;
+            height: 2ch;
+            text-align: center;
+        }
+
+        .track {
+            top: 1ch;
+            background-color: var(--dui-color-separator);
+            height: 2px;
+        }
+
+        .mark {
+            transform: translate(calc(1ch + 0.5px), -0.5ch);
+            transition: opacity .2s ease-in-out;
+            opacity: 0.3;
+            border-radius: 50%;
+            background-color: var(--dui-color-brand);
+            width: var(--dui-width-separator-thin);
+            height: 1.5ch;
+        }
+    }
+}
