@@ -42,9 +42,10 @@ export type BasicOrganization = {
 };
 
 type Def = { containerClassName?: string };
-type NewOrganizationSelectInputProps<K extends string> = SearchSelectInputProps<
+type NewOrganizationSelectInputProps<K extends string, GK extends string> = SearchSelectInputProps<
     string,
     K,
+    GK,
     BasicOrganization,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
@@ -58,7 +59,9 @@ export function organizationTitleSelector(org: BasicOrganization) {
     return org.title;
 }
 
-function NewOrganizationSelectInput<K extends string>(props: NewOrganizationSelectInputProps<K>) {
+function NewOrganizationSelectInput<K extends string, GK extends string>(
+    props: NewOrganizationSelectInputProps<K, GK>,
+) {
     const {
         className,
         ...otherProps

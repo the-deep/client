@@ -27,9 +27,13 @@ const PUBLIC_ANALYSIS_FRAMEWORKS = gql`
 export type AnalysisFramework = NonNullable<NonNullable<NonNullable<PublicAnalysisFrameworkOptionsQuery['publicAnalysisFrameworks']>['results']>[number]>;
 
 type Def = { containerClassName?: string };
-type PublicAnalysisFrameworkMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps<
+type PublicAnalysisFrameworkMultiSelectInputProps<
+    K extends string,
+    GK extends string
+> = SearchMultiSelectInputProps<
     string,
     K,
+    GK,
     AnalysisFramework,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
@@ -38,8 +42,8 @@ type PublicAnalysisFrameworkMultiSelectInputProps<K extends string> = SearchMult
 const keySelector = (d: AnalysisFramework) => d.id;
 const labelSelector = (d: AnalysisFramework) => d.title;
 
-function PublicAnalysisFrameworkSearchMultiSelectInput<K extends string>(
-    props: PublicAnalysisFrameworkMultiSelectInputProps<K>,
+function PublicAnalysisFrameworkSearchMultiSelectInput<K extends string, GK extends string>(
+    props: PublicAnalysisFrameworkMultiSelectInputProps<K, GK>,
 ) {
     const {
         className,

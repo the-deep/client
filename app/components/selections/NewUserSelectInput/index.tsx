@@ -53,9 +53,10 @@ export type User = {
     lastName?: string | null | undefined;
 };
 type Def = { containerClassName?: string };
-type NewUserSelectInputProps<K extends string> = SearchSelectInputProps<
-string,
+type NewUserSelectInputProps<K extends string, GK extends string> = SearchSelectInputProps<
+    string,
     K,
+    GK,
     User,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
@@ -73,7 +74,9 @@ function labelSelector(d: User) {
     return displayName;
 }
 
-function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>) {
+function NewUserSelectInput<K extends string, GK extends string>(
+    props: NewUserSelectInputProps<K, GK>,
+) {
     const {
         className,
         membersExcludeProject,

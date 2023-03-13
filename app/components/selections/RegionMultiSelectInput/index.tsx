@@ -36,9 +36,10 @@ const keySelector = (d: BasicRegion) => d.id;
 const labelSelector = (d: BasicRegion) => d.title;
 
 type Def = { containerClassName?: string;}
-type RegionMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps<
+type RegionMultiSelectInputProps<K extends string, GK extends string> = SearchMultiSelectInputProps<
     string,
     K,
+    GK,
     BasicRegion,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
@@ -46,7 +47,9 @@ type RegionMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps
     publicRegions: boolean;
 };
 
-function RegionSelectInput<K extends string>(props: RegionMultiSelectInputProps<K>) {
+function RegionSelectInput<K extends string, GK extends string>(
+    props: RegionMultiSelectInputProps<K, GK>,
+) {
     const {
         className,
         publicRegions,

@@ -23,9 +23,13 @@ const PUBLIC_ORGANIZATIONS = gql`
 export type BasicOrganization = NonNullable<NonNullable<NonNullable<PublicOrganizationOptionsQuery['publicOrganizations']>['results']>[number]>;
 
 type Def = { containerClassName?: string };
-type PublicOrganizationMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps<
+type PublicOrganizationMultiSelectInputProps<
+    K extends string,
+    GK extends string
+> = SearchMultiSelectInputProps<
     string,
     K,
+    GK,
     BasicOrganization,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
@@ -34,8 +38,8 @@ type PublicOrganizationMultiSelectInputProps<K extends string> = SearchMultiSele
 const keySelector = (d: BasicOrganization) => d.id;
 const labelSelector = (d: BasicOrganization) => d.title;
 
-function PublicOrganizationMultiSelectInput<K extends string>(
-    props: PublicOrganizationMultiSelectInputProps<K>,
+function PublicOrganizationMultiSelectInput<K extends string, GK extends string>(
+    props: PublicOrganizationMultiSelectInputProps<K, GK>,
 ) {
     const {
         className,

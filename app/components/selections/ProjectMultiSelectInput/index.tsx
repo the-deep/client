@@ -37,9 +37,13 @@ const PROJECTS_LIST = gql`
 export type BasicProject = NonNullable<NonNullable<NonNullable<ProjectsListQuery['projects']>['results']>[number]>;
 
 type Def = { containerClassName?: string };
-type ProjectMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps<
+type ProjectMultiSelectInputProps<
+    K extends string,
+    GK extends string
+> = SearchMultiSelectInputProps<
     string,
     K,
+    GK,
     BasicProject,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
@@ -51,7 +55,9 @@ type ProjectMultiSelectInputProps<K extends string> = SearchMultiSelectInputProp
 
 const keySelector = (d: BasicProject) => d.id;
 const labelSelector = (d: BasicProject) => d.title;
-function ProjectMultiSelectInput<K extends string>(props: ProjectMultiSelectInputProps<K>) {
+function ProjectMultiSelectInput<K extends string, GK extends string>(
+    props: ProjectMultiSelectInputProps<K, GK>,
+) {
     const {
         className,
         excludedProjects,
