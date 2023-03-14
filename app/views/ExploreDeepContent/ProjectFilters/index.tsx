@@ -23,11 +23,6 @@ import PublicOrganizationMultiSelectInput, {
     keySelector as organizationKeySelector,
     organizationTitleSelector as organizationLabelSelector,
 } from '#components/selections/NewOrganizationMultiSelectInput';
-import PublicFrameworkMultiSelectInput, {
-    AnalysisFramework,
-    keySelector as frameworkKeySelector,
-    labelSelector as frameworkLabelSelector,
-} from '#components/selections/PublicFrameworkMultiSelectInput';
 import RegionMultiSelectInput, {
     BasicRegion,
     keySelector as regionKeySelector,
@@ -39,7 +34,6 @@ import styles from './styles.css';
 export type FormType = {
     search?: string;
     organizations?: string[];
-    analysisFrameworks?: string[];
     regions?: string[];
     excludeTestProject?: boolean;
     excludeProjectsLessThan?: boolean;
@@ -52,7 +46,6 @@ const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         search: [],
         organizations: [],
-        analysisFrameworks: [],
         regions: [],
     }),
 };
@@ -100,11 +93,6 @@ function ProjectFilters(props: Props) {
         organizationOptions,
         setOrganizationOptions,
     ] = useState<BasicOrganization[] | undefined | null>();
-
-    const [
-        analysisFrameworkOptions,
-        setAnalysisFrameworkOptions,
-    ] = useState<AnalysisFramework[] | undefined | null>();
 
     const [
         regionOptions,
@@ -159,28 +147,6 @@ function ProjectFilters(props: Props) {
                     options={organizationOptions}
                     onOptionsChange={setOrganizationOptions}
                     placeholder="any"
-                />
-            )}
-            {readOnly ? (
-                <DismissableListOutput
-                    name="analysisFrameworks"
-                    label="Organizations"
-                    value={value?.analysisFrameworks}
-                    onDismiss={setFieldValue}
-                    options={analysisFrameworkOptions}
-                    keySelector={frameworkKeySelector}
-                    labelSelector={frameworkLabelSelector}
-                    readOnly
-                />
-            ) : (
-                <PublicFrameworkMultiSelectInput
-                    name="analysisFrameworks"
-                    label="Analysis Frameworks"
-                    placeholder="any"
-                    value={value?.analysisFrameworks}
-                    onChange={setFieldValue}
-                    options={analysisFrameworkOptions}
-                    onOptionsChange={setAnalysisFrameworkOptions}
                 />
             )}
             {readOnly ? (

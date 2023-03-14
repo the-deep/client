@@ -17,6 +17,7 @@ import {
     DEEP_START_DATE,
     todaysDate,
     lastYearStartDate,
+    removeDomain,
     getMaximum,
 } from '#utils/common';
 import { resolveTime } from '#utils/temporal';
@@ -225,8 +226,7 @@ function PublicExploreDeep(props: Props) {
         if (!completeDataNode || !completeDataNode.file?.url) {
             return undefined;
         }
-        const pathName = new URL(completeDataNode.file.url).pathname;
-        return { pathName };
+        return { pathName: removeDomain(completeDataNode.file.url) };
     }, [
         data?.publicDeepExploreGlobalSnapshots,
     ]);
@@ -256,7 +256,7 @@ function PublicExploreDeep(props: Props) {
                 csvDownloadName: undefined,
             };
         }
-        const pathName = new URL(selectedSnapshotNode.file.url).pathname;
+        const pathName = removeDomain(selectedSnapshotNode.file.url);
         return ({
             selectedSnapshotVariables: { pathName },
             csvDownloadLink: selectedSnapshotNode.downloadFile?.url,
