@@ -131,6 +131,11 @@ function Routes(props: Props) {
                     {routes.projectRedirect.load({ className })}
                 </Route>
                 <Route
+                    path={routes.wordTree.path}
+                >
+                    {routes.wordTree.load({ className })}
+                </Route>
+                <Route
                     exact
                     path={routes.fourHundredFour.path}
                 >

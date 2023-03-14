@@ -1,0 +1,23 @@
+.word-tree-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .inputs {
+        display: flex;
+        align-items: flex-end;
+        gap: var(--dui-spacing-medium);
+
+        .text-area {
+            display: flex;
+            flex-basis: 70%;
+        }
+
+        .text-input {
+            display: flex;
+            flex-grow: 1;
+        }
+    }
+}
+
+.google-visualization-tooltip { display:none }

@@ -503,6 +503,16 @@ const documentViewer = wrap({
     visibility: 'is-anything',
 });
 
+const wordTree = wrap({
+    path: '/word-tree',
+    title: 'Word Tree',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/WordTree')),
+    componentProps: {
+    },
+    visibility: 'is-anything',
+});
+
 const documentViewerRedirect = wrap({
     path: '/permalink/leads-uuid/:leadHash/',
     title: 'Document Viewer',
@@ -607,5 +617,6 @@ const routes = {
     documentViewerRedirect,
     projectRedirect,
     documentViewer,
+    wordTree,
 };
 export default routes;
