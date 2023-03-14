@@ -292,3 +292,7 @@ export const todaysDate = formatDateToString(new Date(), 'yyyy-MM-dd');
 const lastYearDate = new Date();
 lastYearDate.setDate(lastYearDate.getDate() - 365);
 export const lastYearStartDate = formatDateToString(lastYearDate, 'yyyy-MM-dd');
+
+export function removeDomain(url: string) {
+    return url.replace(/^.*\/\/[^/]+/, '');
+}

@@ -8,6 +8,7 @@ import {
     getMaximum,
     breadcrumb,
     mergeLists,
+    removeDomain,
 } from './common';
 
 test('sort by order', () => {
@@ -211,3 +212,9 @@ test('getMaximum', () => {
     expect(getMaximum(dates, (d1, d2) => compareDate(d1.date, d2.date))?.date).toBe('2021-01-05');
 });
 
+test('removeDomain', () => {
+    expect(removeDomain('https://staging.thedeep.io/')).toStrictEqual('/');
+    expect(removeDomain('https://staging.thedeep.io')).toStrictEqual('');
+    expect(removeDomain('http://staging.thedeep.io/random/a')).toStrictEqual('/random/a');
+    expect(removeDomain('http://staging.thedeep.io/random/a?x=123')).toStrictEqual('/random/a?x=123');
+});

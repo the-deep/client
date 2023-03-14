@@ -227,8 +227,7 @@ const GENERIC_EXPORT_CREATE = gql`
     mutation GenericExportCreate(
         $dateFrom: DateTime!,
         $dateTo: DateTime!,
-        # FIXME: Enable this
-        # $excludeEntryLessThan: Boolean,
+        $excludeEntryLessThan: Boolean,
         $isTest: Boolean,
         $organizations: [ID!],
         $regions: [ID!],
@@ -236,21 +235,18 @@ const GENERIC_EXPORT_CREATE = gql`
     ) {
         genericExportCreate(data: {
             filters: {
-                entry: {
-                    createdAtGte: $dateFrom,
-                    createdAtLte: $dateTo,
-                },
-                lead: {
-                    createdAtGte: $dateFrom,
-                    createdAtLte: $dateTo,
-                },
-                project: {
-                    createdAtGte: $dateFrom,
-                    createdAtLte: $dateTo,
-                    organizations: $organizations,
-                    regions: $regions,
-                    search: $search,
-                    isTest: $isTest,
+                deepExplore: {
+                    dateFrom: $dateFrom,
+                    dateTo: $dateTo,
+                    project: {
+                        createdAtGte: $dateFrom,
+                        createdAtLte: $dateTo,
+                        organizations: $organizations,
+                        excludeEntryLessThan: $excludeEntryLessThan,
+                        regions: $regions,
+                        search: $search,
+                        isTest: $isTest,
+                    },
                 },
             },
             format: CSV,
