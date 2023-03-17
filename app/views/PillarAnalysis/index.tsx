@@ -348,6 +348,7 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                         excerpt
                         lead {
                             id
+                            url
                             authors {
                                 id
                                 title
@@ -358,7 +359,6 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                                     shortName
                                 }
                             }
-                            url
                         }
                         image {
                             id
@@ -959,6 +959,7 @@ function PillarAnalysis() {
             createdAt: data.createdAt,
             // tabularFieldData: data.tabularFieldData,
             entryType: data.entryType,
+            // authoringOrganization: data.lead.authors[0].shortName,
             pillarId,
             pillarModifiedDate: projectDetailsResponse?.project?.analysisPillar?.modifiedAt,
             discardedTags,
