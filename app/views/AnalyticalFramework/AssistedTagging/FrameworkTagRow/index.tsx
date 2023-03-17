@@ -122,7 +122,6 @@ function FrameworkTagRow<N extends CategoricalMappingsItem>(props: Props<N>) {
                 name="tags"
                 className={styles.dropContainer}
                 contentClassName={styles.rightContainer}
-                dropOverlayContainerClassName={styles.dropOverlay}
                 onDrop={handleDrop}
                 spacing="none"
             >
