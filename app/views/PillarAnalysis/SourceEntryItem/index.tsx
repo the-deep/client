@@ -34,6 +34,7 @@ export interface Props {
     discardedTags?: DiscardedTags[];
     createdAt?: string;
     pillarModifiedDate?: string;
+    authoringOrganization?: string;
 
     excerpt: EntryMin['excerpt'];
     image: EntryMin['image'];
@@ -50,6 +51,7 @@ function SourceEntryItem(props: Props) {
         pillarId,
         onEntryDiscard,
         discardedTags,
+        authoringOrganization,
         entryType,
         image,
         excerpt,
