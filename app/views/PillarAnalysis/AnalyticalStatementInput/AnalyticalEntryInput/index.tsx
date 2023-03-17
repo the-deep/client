@@ -1,9 +1,16 @@
-import React, { memo, useMemo, useCallback, useContext } from 'react';
-import { IoClose } from 'react-icons/io5';
+import React, { memo, useState, useMemo, useCallback, useContext } from 'react';
+import {
+    IoTrash,
+    IoPeopleCircleOutline,
+    IoPencilOutline,
+    IoRepeat,
+} from 'react-icons/io5';
 import {
     DropContainer,
     DraggableContent,
     QuickActionButton,
+    DateOutput,
+    // useBooleanState,
 } from '@the-deep/deep-ui';
 import {
     Error,
@@ -56,6 +63,11 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
         setDragEnd,
     ] = useModalState(false);
 
+    const [
+        entryCardFlipped,
+        setEntryCardFlipped,
+    ] = useState<boolean>(false);
+
     const handleAnalyticalEntryAdd = useCallback(
         (val: Record<string, unknown> | undefined) => {
             if (!val) {
@@ -75,7 +87,13 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
     const { entries } = useContext(EntryContext);
     const entry = value.entry ? entries[value.entry] : undefined;
 
+    const authorName = entry?.lead.authors?.[0]?.shortName ?? '';
+    const entryDate = entry?.createdAt;
+
     // const onFieldChange = useFormObject(index, value, onChange);
+    const handleEntryCardFlip = useCallback(() => {
+        setEntryCardFlipped((oldVal) => !oldVal);
+    }, []);
 
     return (
         <DropContainer
@@ -103,19 +121,52 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 onDragStart={setDragStart}
                 onDragStop={setDragEnd}
                 contentClassName={styles.content}
+                headerIcons={(
+                    <>
+                        <IoPeopleCircleOutline />
+                        {authorName}
+                    </>
+                )}
+                heading={(
+                    <DateOutput
+                        value={entryDate}
+                    />
+                )}
+                headingClassName={styles.heading}
+                headingSectionClassName={styles.headingSection}
+                headingContainerClassName={styles.headingContainer}
+                headingSize="extraSmall"
                 headerActions={(
-                    <QuickActionButton
-                        name={index}
-                        onClick={onRemove}
-                        title={_ts('pillarAnalysis', 'removeAnalyticalEntryButtonTitle')}
-                    >
-                        <IoClose />
-                    </QuickActionButton>
+                    <>
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={() => console.log('here')}
+                            variant="transparent"
+                        >
+                            <IoPencilOutline />
+                        </QuickActionButton>
+                        <QuickActionButton
+                            name={index}
+                            onClick={onRemove}
+                            title={_ts('pillarAnalysis', 'removeAnalyticalEntryButtonTitle')}
+                            variant="transparent"
+                        >
+                            <IoTrash />
+                        </QuickActionButton>
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={handleEntryCardFlip}
+                            title="flip"
+                            variant="transparent"
+                        >
+                            <IoRepeat />
+                        </QuickActionButton>
+                    </>
                 )}
             >
                 <NonFieldError error={error} />
                 <NonFieldError error={error?.entry} />
-                {entry && (
+                {entry && !entryCardFlipped && (
                     <ExcerptInput
                         className={styles.excerpt}
                         value={entry.excerpt}

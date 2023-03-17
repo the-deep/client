@@ -17,6 +17,18 @@
         background-color: var(--dui-color-foreground);
         overflow: auto;
 
+        .heading-section {
+            align-items: center;
+
+            .heading-container {
+                align-items: center;
+
+                .heading {
+                    font-size: var(--dui-font-size-medium);
+                }
+            }
+        }
+
         &.is-being-dragged {
             max-height: 120px;
         }
