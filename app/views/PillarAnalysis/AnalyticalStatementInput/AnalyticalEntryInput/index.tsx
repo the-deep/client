@@ -23,13 +23,16 @@ import { DroppedValue } from '../index';
 import styles from './styles.css';
 
 interface AnalyticalEntryInputProps {
-    statementClientId: string;
+    statementClientId: string | undefined;
     value: PartialAnalyticalEntryType;
     error: Error<AnalyticalEntryType> | undefined;
     // onChange: (value: PartialAnalyticalEntryType, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
-    onAnalyticalEntryDrop: (droppedValue: DroppedValue, dropOverEntryClientId: string) => void;
+    onAnalyticalEntryDrop: (
+        droppedValue: DroppedValue,
+        dropOverEntryClientId: string | undefined,
+    ) => void;
     dropDisabled?: boolean;
 }
 
