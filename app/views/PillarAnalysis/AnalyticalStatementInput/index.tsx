@@ -40,6 +40,7 @@ import {
 import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import AnalyticalNGramsModal from './AnalyticalNGramsModal';
+import MoreDetailsModal from './MoreDetailsModal';
 import styles from './styles.css';
 
 export const ENTRIES_LIMIT = 50;
@@ -65,8 +66,10 @@ export interface AnalyticalStatementInputProps {
 }
 
 const defaultVal = (): AnalyticalStatementType => ({
+    statement: '',
+    order: -1,
     clientId: `auto-${randomString()}`,
-    analyticalEntries: [],
+    entries: [],
 });
 
 function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
@@ -87,19 +90,25 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     const onFieldChange = useFormObject(index, onChange, defaultVal);
 
     const error = getErrorObject(riskyError);
-    const arrayError = getErrorObject(error?.analyticalEntries);
+    const arrayError = getErrorObject(error?.entries);
     const [
         showAnalysisChart,,
         hideAnalysisChart,,
         toggleAnalysisChart,
     ] = useModalState(false);
 
+    const [
+        moreDetailsModalShown,
+        showMoreDetailsModal,
+        hideMoreDetailsModal,
+    ] = useModalState(false);
+
     const {
         // setValue: onAnalyticalEntryChange,
         removeValue: onAnalyticalEntryRemove,
-    } = useFormArray('analyticalEntries', onFieldChange);
+    } = useFormArray('entries', onFieldChange);
 
-    type AnalyticalEntry = typeof value.analyticalEntries;
+    type AnalyticalEntry = typeof value.entries;
 
     const handleAnalyticalEntryDrop = useCallback(
         (dropValue: DroppedValue, dropOverEntryClientId?: string) => {
@@ -107,13 +116,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 (oldEntries: AnalyticalEntry) => {
                     // NOTE: Treat moved item as a new item by removing the old one and
                     // adding the new one again
-                    const movedItem = value.analyticalEntries
-                        ?.find((item) => item.entry === +dropValue.entryId);
+                    const movedItem = value.entries
+                        ?.find((item) => item.entry === dropValue.entryId);
 
                     // NOTE: Don't let users add more that certain items
                     if (
                         isNotDefined(movedItem)
-                        && (value?.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT
+                        && (value?.entries?.length ?? 0) >= ENTRIES_LIMIT
                     ) {
                         return oldEntries;
                     }
@@ -123,17 +132,17 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     const clientId = randomString();
                     let newAnalyticalEntry: PartialAnalyticalEntryType = {
                         clientId,
-                        entry: +dropValue.entryId,
+                        entry: dropValue.entryId,
                         order: value.order ?? 1,
                     };
 
-                    if (value.analyticalEntries && isDefined(movedItem)) {
+                    if (value.entries && isDefined(movedItem)) {
                         newAnalyticalEntry = {
                             ...movedItem,
                             order: value.order ?? 1,
                         };
-                        const movedItemOldIndex = value.analyticalEntries
-                            .findIndex((item) => item.entry === +dropValue.entryId);
+                        const movedItemOldIndex = value.entries
+                            .findIndex((item) => item.entry === dropValue.entryId);
                         newAnalyticalEntries.splice(movedItemOldIndex, 1);
                     }
 
@@ -150,7 +159,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     // whole list in bulk
                     return reorder(newAnalyticalEntries);
                 },
-                'analyticalEntries' as const,
+                'entries' as const,
             );
             if (
                 isDefined(dropValue.statementClientId)
@@ -164,7 +173,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         },
         [
             onEntryDrop, onFieldChange, onEntryMove,
-            value.analyticalEntries, value.order, value.clientId,
+            value.entries, value.order, value.clientId,
         ],
     );
 
@@ -227,6 +236,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     >
                         <IoBarChartSharp />
                     </QuickActionButton>
+                    <QuickActionButton
+                        name="View more details modal"
+                        onClick={showMoreDetailsModal}
+                        big
+                    >
+                        <IoBarChartSharp />
+                    </QuickActionButton>
                 </>
             )}
             // actionsContainerClassName={styles.actionsContainer}
@@ -253,7 +269,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             )}
         >
             <div className={styles.entryContainer}>
-                {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
+                {value.entries?.map((analyticalEntry, myIndex) => (
                     <AnalyticalEntryInput
                         key={analyticalEntry.clientId}
                         index={myIndex}
@@ -261,7 +277,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         value={analyticalEntry}
                         // onChange={onAnalyticalEntryChange}
                         onRemove={onAnalyticalEntryRemove}
-                        error={arrayError?.[analyticalEntry.clientId]}
+                        error={(
+                            analyticalEntry.clientId
+                                ? arrayError?.[analyticalEntry.clientId] : undefined
+                        )}
                         onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
                     />
                 ))}
@@ -272,8 +291,17 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     mainStatement={value.statement}
                     onStatementChange={handleStatementChange}
                     statementId={value.clientId}
-                    analyticalEntries={value.analyticalEntries}
+                    analyticalEntries={value.entries}
                     onNgramClick={onSelectedNgramChange}
+                />
+            )}
+            {moreDetailsModalShown && (
+                <MoreDetailsModal
+                    onModalClose={hideMoreDetailsModal}
+                    mainStatement={value.statement}
+                    onStatementChange={handleStatementChange}
+                    statementId={value.clientId}
+                    analyticalEntries={value.entries}
                 />
             )}
             <DropContainer
