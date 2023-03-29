@@ -80,10 +80,10 @@ const keySelector = (item: EntryMin) => item.id;
 
 interface Props {
     onModalClose: () => void,
-    statementId: string;
+    statementId: string | undefined;
     mainStatement: string | undefined,
     onStatementChange: (newVal: string | undefined) => void;
-    analyticalEntries: PartialAnalyticalStatementType['analyticalEntries']
+    analyticalEntries: PartialAnalyticalStatementType['entries'];
     onNgramClick: (item: string) => void;
 }
 
