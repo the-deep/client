@@ -19,7 +19,7 @@ export function resolveTime(date: Date | number | string, resolution: 'day' | 'm
     const newDate = getDateSafe(date);
 
     if (resolution === 'day' || resolution === 'month' || resolution === 'year') {
-        newDate.setUTCHours(0, 0, 0, 0);
+        newDate.setUTCHours(12, 0, 0, 0);
     }
     if (resolution === 'month' || resolution === 'year') {
         newDate.setDate(1);
@@ -46,6 +46,8 @@ export function getTimestamps(
     // eslint-disable-next-line no-constant-condition
     while (true) {
         const myDate = new Date(sanitizedStartDate);
+        // NOTE: We are doing this to avoid issues due to timezone
+        myDate.setUTCHours(12, 0, 0, 0);
         if (resolution === 'year') {
             myDate.setFullYear(sanitizedStartDate.getFullYear() + increment);
         } else if (resolution === 'month') {
@@ -54,7 +56,7 @@ export function getTimestamps(
             myDate.setDate(sanitizedStartDate.getDate() + increment);
         }
         // NOTE: We are doing this to avoid issues due to timezone
-        myDate.setUTCHours(0, 0, 0, 0);
+        myDate.setUTCHours(12, 0, 0, 0);
 
         if (myDate > sanitizedEndDate) {
             break;
@@ -123,7 +125,11 @@ export function getTimeseriesWithoutGaps(
 
     const mapping = listToMap(
         timeseriesData,
-        (item) => new Date(item.date).getTime(),
+        (item) => {
+            const newDate = new Date(item.date);
+            newDate.setUTCHours(12, 0, 0, 0);
+            return newDate.getTime();
+        },
         (item) => item.total,
     );
 
