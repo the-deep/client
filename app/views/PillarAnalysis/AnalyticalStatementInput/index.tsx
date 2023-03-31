@@ -40,7 +40,7 @@ import {
 import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import AnalyticalNGramsModal from './AnalyticalNGramsModal';
-import MoreDetailsModal from './MoreDetailsModal';
+import StoryAnalysisModal from './StoryAnalysisModal';
 import styles from './styles.css';
 
 export const ENTRIES_LIMIT = 50;
@@ -99,8 +99,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
 
     const [
         moreDetailsModalShown,
-        showMoreDetailsModal,
-        hideMoreDetailsModal,
+        showStoryAnalysisModal,
+        hideStoryAnalysisModal,
     ] = useModalState(false);
 
     const {
@@ -238,7 +238,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     </QuickActionButton>
                     <QuickActionButton
                         name="View more details modal"
-                        onClick={showMoreDetailsModal}
+                        onClick={showStoryAnalysisModal}
                         big
                     >
                         <IoBarChartSharp />
@@ -296,8 +296,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 />
             )}
             {moreDetailsModalShown && (
-                <MoreDetailsModal
-                    onModalClose={hideMoreDetailsModal}
+                <StoryAnalysisModal
+                    onModalClose={hideStoryAnalysisModal}
                     mainStatement={value.statement}
                     onStatementChange={handleStatementChange}
                     statementId={value.clientId}
