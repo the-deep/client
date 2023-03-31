@@ -1,0 +1,97 @@
+.story-analysis-modal {
+    display: flex;
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        border-top: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        overflow-y: auto;
+
+        .container {
+            display: flex;
+            flex-grow: 1;
+            background-color: var(--dui-color-foreground);
+            padding-top: var(--dui-spacing-small);
+
+            .content {
+                display: flex;
+                gap: var(--dui-spacing-large);
+
+                .left {
+                    display: flex;
+                    flex-basis: 50%;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    gap: var(--dui-spacing-large);
+
+                    .stats {
+                        border-radius: 0.25rem;
+                        background-color: var(--dui-color-background);
+                        min-height: 6rem;
+                    }
+
+                    .visualization {
+                        display: flex;
+                        flex-direction: column;
+                        flex-grow: 1;
+                        border-radius: 0.25rem;
+                        background-color: var(--dui-color-background);
+
+                        .header {
+                            background-color: var(--dui-color-background-information);
+                        }
+
+                        .tab {
+                            background-color: var(--dui-color-background-information);
+                            font-size: var(--dui-font-size-large);
+                            font-weight: var(--dui-font-weight-regular);
+                        }
+
+                        .active-tab {
+                            background-color: var(--dui-color-surface-information);
+                        }
+                    }
+                }
+
+                .right {
+                    display: flex;
+                    flex-basis: 50%;
+                    flex-grow: 1;
+                    gap: var(--dui-spacing-medium);
+                    padding-right: var(--dui-spacing-small);
+
+                    .markdown-container {
+                        display: flex;
+                        flex-direction: column;
+
+                        .title {
+                            padding-bottom: var(--dui-spacing-small);
+                            font-size: var(--dui-font-size-large);
+                            font-weight: var(--dui-font-weight-bold);
+                        }
+
+                        .actions {
+                            display: flex;
+                            justify-content: space-between;
+                            padding-bottom: var(--dui-spacing-small);
+                        }
+                    }
+
+                    .card-container {
+                        display: flex;
+                        flex-basis: 50%;
+                        flex-direction: column;
+                        flex-grow: 1;
+                        gap: var(--dui-spacing-extra-large);
+                    }
+
+                    .divider {
+                        display: flex;
+                        border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                    }
+                }
+            }
+        }
+    }
+}
