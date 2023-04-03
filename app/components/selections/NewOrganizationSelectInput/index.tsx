@@ -158,7 +158,7 @@ function NewOrganizationSelectInput<K extends string, GK extends string>(
                 return ({
                     ...previousResult,
                     organizations: {
-                        ...previousResult.organizations,
+                        ...newOrganizations,
                         results: [
                             ...(oldOrganizations.results ?? []),
                             ...(newOrganizations.results ?? []),

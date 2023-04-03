@@ -61,7 +61,7 @@ function ProjectSelectInput<K extends string, GK extends string>(
         (): MyProjectsQueryVariables => ({
             search: debouncedSearchText,
             page: 1,
-            pageSize: 3,
+            pageSize: 10,
         }),
         [debouncedSearchText],
     );
@@ -99,7 +99,7 @@ function ProjectSelectInput<K extends string, GK extends string>(
                 return ({
                     ...previousResult,
                     projects: {
-                        ...previousResult.projects,
+                        ...newProjects,
                         results: [
                             ...(oldProjects.results ?? []),
                             ...(newProjects.results ?? []),

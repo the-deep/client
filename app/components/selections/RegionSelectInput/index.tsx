@@ -109,7 +109,7 @@ function RegionSelectInput<K extends string, GK extends string>(
                 return ({
                     ...previousResult,
                     regions: {
-                        ...previousResult.regions,
+                        ...newRegions,
                         results: [
                             ...(oldRegions.results ?? []),
                             ...(newRegions.results ?? []),
