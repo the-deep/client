@@ -167,6 +167,17 @@ const PILLAR_ANALYSIS = gql`
                     droppedExcerpt
                     lead {
                         id
+                        authors {
+                            id
+                            title
+                            shortName
+                            mergedAs {
+                                id
+                                title
+                                shortName
+                            }
+                        }
+                        url
                     }
                     image {
                         id
@@ -336,6 +347,17 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                         excerpt
                         lead {
                             id
+                            authors {
+                                id
+                                title
+                                shortName
+                                mergedAs {
+                                    id
+                                    title
+                                    shortName
+                                }
+                            }
+                            url
                         }
                         image {
                             id
