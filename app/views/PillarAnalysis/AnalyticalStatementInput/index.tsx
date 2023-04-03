@@ -298,8 +298,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             {moreDetailsModalShown && (
                 <StoryAnalysisModal
                     onModalClose={hideStoryAnalysisModal}
-                    mainStatement={value.statement}
-                    onStatementChange={handleStatementChange}
+                    onSave={handleStatementChange}
                     statementId={value.clientId}
                     analyticalEntries={value.entries}
                 />

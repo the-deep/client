@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ContainerCard,
@@ -23,8 +23,10 @@ function EntryCard(props: Props) {
         entry,
     } = props;
 
-    const authors = entry.lead.authors
-        ?.map((author) => organizationTitleSelector(author)).join(',');
+    const authors = useMemo(() => (
+        entry.lead.authors
+            ?.map((author) => organizationTitleSelector(author)).join(',')
+    ), [entry.lead.authors]);
 
     return (
         <ContainerCard
