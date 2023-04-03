@@ -1,0 +1,9 @@
+.entry-card {
+    display: flex;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .header {
+        display: flex;
+        justify-content: center;
+    }
+}
