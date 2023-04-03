@@ -3,11 +3,10 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Button,
 } from '@the-deep/deep-ui';
+import useScript from '#hooks/useScript';
 import _ts from '#ts';
 
 import styles from './styles.css';
-
-const pollTime = 3000;
 
 interface Props {
     className?: string;
@@ -42,30 +41,23 @@ function GoogleDrivePicker(props: Props) {
         navHidden,
     } = props;
 
-    const [loaded, setLoaded] = useState(!!window.gapi);
+    const gapiStatus = useScript('https://apis.google.com/js/api.js');
+    const gisStatus = useScript('https://accounts.google.com/gsi/client');
+    const [gisLoaded, setGisLoaded] = useState(false);
     const [pickerApiLoaded, setPickerApiLoaded] = useState(false);
-    const [authApiLoaded, setAuthApiLoaded] = useState(false);
-
-    const onAuthApiLoad = useCallback(() => {
-        setAuthApiLoaded(true);
-    }, []);
 
     const onPickerApiLoad = useCallback(() => {
         setPickerApiLoaded(true);
     }, []);
 
     useEffect(() => {
-        let timeout: ReturnType<typeof setTimeout>;
-        if (loaded) {
-            window.gapi.load('auth2', { callback: onAuthApiLoad });
+        if (gapiStatus === 'ready') {
             window.gapi.load('picker', { callback: onPickerApiLoad });
-        } else {
-            timeout = setTimeout(() => setLoaded(!!window.gapi), pollTime);
         }
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [loaded, onAuthApiLoad, onPickerApiLoad]);
+        if (gisStatus === 'ready') {
+            setGisLoaded(true);
+        }
+    }, [gapiStatus, onPickerApiLoad, gisStatus]);
 
     const createPicker = useCallback((authToken: string) => {
         if (onAuthenticateSuccess) {
@@ -101,24 +93,29 @@ function GoogleDrivePicker(props: Props) {
         onChange,
     ]);
 
-    const handleAuthResult = useCallback((result: gapi.auth2.AuthorizeResponse) => {
-        if (result.access_token) {
-            createPicker(result.access_token);
-        } else {
-            // eslint-disable-next-line no-console
-            console.error('google auth response', result.error);
-        }
-    }, [createPicker]);
-
     const handleClick = useCallback(() => {
-        window.gapi.auth2.authorize({
+        const tokenClient = window.google.accounts.oauth2.initTokenClient({
             client_id: clientId,
             scope,
-        }, handleAuthResult);
+            error_callback: (response) => {
+                console.warn('response', response);
+            },
+            callback: (response) => {
+                if (response.access_token === null) {
+                    tokenClient.requestAccessToken({ prompt: 'consent' });
+                }
+
+                if (response.access_token) {
+                    createPicker(response.access_token);
+                }
+            },
+        });
+
+        tokenClient.requestAccessToken({ prompt: '' });
     }, [
         clientId,
         scope,
-        handleAuthResult,
+        createPicker,
     ]);
 
     return (
@@ -129,7 +126,7 @@ function GoogleDrivePicker(props: Props) {
             onClick={handleClick}
             icons={icons}
             iconsContainerClassName={iconsContainerClassName}
-            disabled={disabled || !(authApiLoaded && pickerApiLoaded)}
+            disabled={disabled || !(gisLoaded && pickerApiLoaded)}
         >
             {children || _ts('components.googlePicker', 'openGoogleChooserText')}
         </Button>

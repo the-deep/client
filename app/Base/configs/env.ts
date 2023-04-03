@@ -31,9 +31,6 @@ export const zendeskSupportUrl = 'https://deephelp.zendesk.com/hc/en-us';
 export const mapboxStyle = process.env.REACT_APP_MAPBOX_STYLE;
 export const mapboxToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN as string;
 
-// Google analytics
-export const gaTrackingKey = process.env.REACT_APP_GA_TRACKING_ID || 'UA-112330910-2';
-
 // Sentry
 export const sentryAppDsn = process.env.REACT_APP_SENTRY_DSN;
 export const sentryTraceSampleRate = Number(process.env.REACT_APP_SENTRY_TRACES_SAMPLE_RATE) || 0.2;
@@ -50,3 +47,4 @@ export const hCaptchaKey = process.env.REACT_APP_HCATPCHA_SITEKEY || '10000000-f
 // Google drive
 export const driveDeveloperKey = process.env.REACT_APP_GOOGLE_DRIVE_DEVELOPER_KEY || 'AIzaSyDINvjHwIS_HHsb3qCgFm_2GFHKqEUwucE';
 export const driveClientId = process.env.REACT_APP_GOOGLE_DRIVE_CLIENT_KEY || '642927279233-98drcidvhmudgv9dh70m7k66730n9rjr.apps.googleusercontent.com';
+export const googleAnalyticsMeasurementId = process.env.REACT_APP_GA_MEASUREMENT_ID;

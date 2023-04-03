@@ -1,15 +1,12 @@
-import { InitializeOptions } from 'react-ga';
 import {
     isDebugMode,
-    gaTrackingKey,
+    googleAnalyticsMeasurementId,
 } from './env';
 
-export const trackingId = gaTrackingKey;
+export const trackingId = googleAnalyticsMeasurementId;
 
-export const gaConfig: InitializeOptions = {
-    debug: isDebugMode,
-    testMode: isDebugMode,
+export const gaConfig = {
     gaOptions: {
-        userId: undefined,
+        testMode: isDebugMode,
     },
 };

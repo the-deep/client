@@ -10,8 +10,8 @@ import {
     Button,
 } from '@the-deep/deep-ui';
 import { ApolloProvider } from '@apollo/client';
-import ReactGA from 'react-ga';
 import { setMapboxToken } from '@togglecorp/re-map';
+import ReactGA from 'react-ga4';
 
 import '@the-deep/deep-ui/build/esm/index.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -30,7 +30,6 @@ import { sync } from '#base/hooks/useAuthSync';
 import Navbar from '#base/components/Navbar';
 import Routes from '#base/components/Routes';
 import { User } from '#base/types/user';
-import { trackingId, gaConfig } from '#base/configs/googleAnalytics';
 import {
     processDeepUrls,
     processDeepOptions,
@@ -43,6 +42,7 @@ import {
 import { apolloClient } from '#base/configs/apollo';
 import localforageInstance from '#base/configs/localforage';
 import { mapboxToken } from '#base/configs/env';
+import { trackingId, gaConfig } from '#base/configs/googleAnalytics';
 
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 
@@ -57,13 +57,18 @@ setMapboxToken(mapboxToken);
 if (sentryConfig) {
     init(sentryConfig);
 }
+if (trackingId) {
+    ReactGA.initialize([{
+        trackingId,
+        gaOptions: gaConfig,
+    }]);
 
-ReactGA.initialize(trackingId, gaConfig);
-browserHistory.listen((location) => {
-    const page = location.pathname ?? window.location.pathname;
-    ReactGA.set({ page });
-    ReactGA.pageview(page);
-});
+    browserHistory.listen((location) => {
+        const page = location.pathname + location.search + location.hash;
+        ReactGA.set({ page });
+        ReactGA.send({ hitType: 'pageview', page });
+    });
+}
 
 function Base() {
     const [user, setUser] = useState<User | undefined>();

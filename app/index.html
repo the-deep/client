@@ -72,11 +72,14 @@
             });
         </script>
         <!-- End of deephelp Zendesk Widget script -->
-
-        <!-- Start of Dropbox and Google Drive -->
-        <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+        <!-- Start of Google tag (gtag.js) -->
+        <% if (process.env.REACT_APP_GA_MEASUREMENT_ID) { %>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=<%=process.env.REACT_APP_GA_MEASUREMENT_ID%>"></script>
+        <% } %>
+        <!-- End of Google tag (gtag.js) -->
+        <!-- Start of Dropbox -->
         <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="ukbw5572vxp6oib"></script>
-        <!-- End of Dropbox and Google Drive -->
+        <!-- End of Dropbox -->
 
         <!-- Start of service-worker -->
         <script>
