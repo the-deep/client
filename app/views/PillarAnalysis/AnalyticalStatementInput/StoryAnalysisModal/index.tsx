@@ -1,55 +1,107 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext, useMemo } from 'react';
 import {
     Button,
     Container,
-    ContainerCard,
+    ListView,
     Modal,
     Tab,
     TabList,
     TabPanel,
     Tabs,
 } from '@the-deep/deep-ui';
+import { isDefined, encodeDate } from '@togglecorp/fujs';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import rehypeSanitize from 'rehype-sanitize';
 
+import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
+
+import EntryCard from './EntryCard';
+import EntryContext, { EntryMin } from '../../context';
 import {
     PartialAnalyticalStatementType,
 } from '../../schema';
 
 import styles from './styles.css';
 
+const keySelector = (item: EntryMin) => item.id;
+
+function generateReportText(entry: EntryMin) {
+    const authors = entry.lead.authors
+        ?.map((author) => organizationTitleSelector(author)).join(',');
+    const entryCreatedDate = new Date(entry.createdAt);
+    const entryText = entry?.excerpt.replace(/[.,\s]*$/, ' ');
+
+    // FIXME: Use publicUrl here
+    return `${entryText}([${authors}](${entry.lead.id}), ${encodeDate(entryCreatedDate)}).`;
+}
+
 interface Props {
-    onModalClose: () => void,
-    statementId: string | undefined;
-    mainStatement: string | undefined,
-    onStatementChange: (newVal: string | undefined) => void;
     analyticalEntries: PartialAnalyticalStatementType['entries'];
+    onModalClose: () => void,
+    onSave: (newVal: string | undefined) => void;
+    statementId: string | undefined;
 }
 
 function StoryAnalysisModal(props: Props) {
     const {
-        onModalClose,
-        mainStatement,
         analyticalEntries,
+        onModalClose,
+        onSave,
         statementId,
-        onStatementChange,
     } = props;
 
-    console.warn('mainStatement', mainStatement, analyticalEntries, statementId, onStatementChange);
-    const [tab, setTab] = useState<string | undefined>('map');
-    const [value, setValue] = React.useState<string | undefined>('');
-
-    const handleGenerateReportText = useCallback(() => {
-        console.warn('generate report');
-    }, []);
-
-    const handleCompleteStatement = useCallback(() => {
-        console.warn('message');
-    }, []);
+    const { entries } = useContext(EntryContext);
 
     const [pristine, setPristine] = useState(true);
+    const [tab, setTab] = useState<string | undefined>('map');
+    const [informationGap, setInformationGap] = React.useState<string | undefined>();
+    const [analyticalStatement, setAnalyticalStatement] = React.useState<string | undefined>();
+    const [reportText, setReportText] = React.useState<string | undefined>();
 
-    console.warn('setPristine', setPristine);
+    const handleSave = useCallback(() => {
+        onSave(analyticalStatement);
+    }, [onSave, analyticalStatement]);
+
+    const entriesForReport = useMemo(() => (
+        analyticalEntries?.map(
+            (ae) => (ae.entry ? entries?.[ae.entry] : undefined),
+        ).filter(isDefined) ?? []
+    ), [entries, analyticalEntries]);
+
+    const entriesRendererParams = useCallback((_: string, data: EntryMin) => ({
+        entry: data,
+    }), []);
+
+    const handleGenerateReportText = useCallback(() => {
+        if (pristine) {
+            setPristine(false);
+        }
+        const report = entriesForReport?.map((entry) => generateReportText(entry)).join(' ');
+        setReportText(report);
+    }, [entriesForReport, pristine]);
+
+    const handleAnalyticalStatementChange = useCallback((newValue: string | undefined) => {
+        if (pristine) {
+            setPristine(false);
+        }
+        setAnalyticalStatement(newValue);
+    }, [pristine]);
+
+    const handleInformationGapChange = useCallback((newValue: string | undefined) => {
+        if (pristine) {
+            setPristine(false);
+        }
+        setInformationGap(newValue);
+    }, [pristine]);
+
+    const handleReportTextChange = useCallback((newValue: string | undefined) => {
+        if (pristine) {
+            setPristine(false);
+        }
+        setReportText(newValue);
+    }, [pristine]);
+
+    const generateReportTextDisabled = (reportText?.trim().length ?? 0) > 0;
 
     return (
         <Modal
@@ -66,9 +118,9 @@ function StoryAnalysisModal(props: Props) {
                     <Button
                         name={statementId}
                         disabled={pristine}
-                        onClick={handleCompleteStatement}
+                        onClick={handleSave}
                     >
-                        Complete Statement
+                        Save
                     </Button>
                 )}
                 contentClassName={styles.content}
@@ -134,9 +186,8 @@ function StoryAnalysisModal(props: Props) {
                         <div className={styles.markdownContainer}>
                             <div className={styles.title}>Information Gap</div>
                             <MDEditor
-                                className={styles.markdownEditor}
-                                value={value}
-                                onChange={setValue}
+                                value={informationGap}
+                                onChange={handleInformationGapChange}
                                 commands={[
                                     commands.bold,
                                     commands.italic,
@@ -148,42 +199,39 @@ function StoryAnalysisModal(props: Props) {
                                 }}
                             />
                         </div>
-                        <div className={styles.markdownContainer}>
+                        <div className={styles.entriesContainer}>
                             <div className={styles.actions}>
                                 <div className={styles.title}>Original Entries</div>
                                 <Button
                                     name={undefined}
                                     onClick={handleGenerateReportText}
+                                    disabled={generateReportTextDisabled}
                                     spacing="compact"
                                     variant="secondary"
                                 >
                                     Generate Report Text
                                 </Button>
                             </div>
-                            <MDEditor
-                                className={styles.markdownEditor}
-                                value={value}
-                                onChange={setValue}
-                                commands={[
-                                    commands.bold,
-                                    commands.italic,
-                                    commands.divider,
-                                ]}
-                                preview="edit"
-                                previewOptions={{
-                                    rehypePlugins: [[rehypeSanitize]],
-                                }}
-                            />
+                            <div className={styles.entriesList}>
+                                <ListView
+                                    className={styles.entries}
+                                    data={entriesForReport}
+                                    keySelector={keySelector}
+                                    renderer={EntryCard}
+                                    rendererParams={entriesRendererParams}
+                                    filtered={false}
+                                    errored={false}
+                                    pending={false}
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div className={styles.divider} />
                     <div className={styles.cardContainer}>
                         <div className={styles.markdownContainer}>
                             <div className={styles.title}>Analytical Statement</div>
                             <MDEditor
-                                className={styles.markdownEditor}
-                                value={value}
-                                onChange={setValue}
+                                value={analyticalStatement}
+                                onChange={handleAnalyticalStatementChange}
                                 commands={[
                                     commands.bold,
                                     commands.italic,
@@ -198,14 +246,14 @@ function StoryAnalysisModal(props: Props) {
                         <div className={styles.markdownContainer}>
                             <div className={styles.title}>Report Text</div>
                             <MDEditor
-                                className={styles.markdownEditor}
-                                value={value}
-                                onChange={setValue}
+                                value={reportText}
+                                onChange={handleReportTextChange}
                                 commands={[
                                     commands.bold,
                                     commands.italic,
                                     commands.divider,
                                 ]}
+                                height={500}
                                 preview="edit"
                                 previewOptions={{
                                     rehypePlugins: [[rehypeSanitize]],

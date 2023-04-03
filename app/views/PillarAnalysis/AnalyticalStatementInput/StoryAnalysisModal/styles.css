@@ -1,22 +1,25 @@
 .story-analysis-modal {
     display: flex;
+    overflow: auto;
 
     .modal-body {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
         border-top: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-        overflow-y: auto;
+        overflow: auto;
 
         .container {
             display: flex;
             flex-grow: 1;
             background-color: var(--dui-color-foreground);
             padding-top: var(--dui-spacing-small);
+            overflow: auto;
 
             .content {
                 display: flex;
                 gap: var(--dui-spacing-large);
+                overflow: auto;
 
                 .left {
                     display: flex;
@@ -60,10 +63,37 @@
                     flex-grow: 1;
                     gap: var(--dui-spacing-medium);
                     padding-right: var(--dui-spacing-small);
+                    padding-left: var(--dui-spacing-small);
+                    overflow: auto;
 
                     .markdown-container {
                         display: flex;
                         flex-direction: column;
+
+                        :global {
+                            .w-md-editor-text-input .wmde-markdown {
+                                line-height: 1.5;
+                                font-family: 'Source Sans Pro', sans-serif;
+                                font-size: var(--dui-font-size-medium);
+                            }
+                        }
+
+                        .title {
+                            padding-bottom: var(--dui-spacing-small);
+                            font-size: var(--dui-font-size-large);
+                            font-weight: var(--dui-font-weight-bold);
+                        }
+
+                        .editor {
+                            overflow: auto;
+                        }
+                    }
+
+                    .entries-container {
+                        display: flex;
+                        flex-direction: column;
+                        flex-grow: 1;
+                        overflow: auto;
 
                         .title {
                             padding-bottom: var(--dui-spacing-small);
@@ -76,6 +106,19 @@
                             justify-content: space-between;
                             padding-bottom: var(--dui-spacing-small);
                         }
+
+                        .entries-list {
+                            display: flex;
+                            flex-direction: column;
+                            flex-grow: 1;
+                            overflow: auto;
+
+                            .entries {
+                                display: flex;
+                                flex-direction: column;
+                                gap: var(--dui-spacing-large);
+                            }
+                        }
                     }
 
                     .card-container {
@@ -84,11 +127,6 @@
                         flex-direction: column;
                         flex-grow: 1;
                         gap: var(--dui-spacing-extra-large);
-                    }
-
-                    .divider {
-                        display: flex;
-                        border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                     }
                 }
             }
