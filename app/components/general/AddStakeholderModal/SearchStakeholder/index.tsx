@@ -6,18 +6,53 @@ import {
     Container,
     Kraken,
 } from '@the-deep/deep-ui';
-import { Organization, MultiResponse } from '#types';
+import {
+    useQuery,
+    gql,
+} from '@apollo/client';
 
-import { useRequest } from '#base/utils/restRequest';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import AddOrganizationButton from '#components/general/AddOrganizationButton';
 import _ts from '#ts';
+import {
+    OrganizationsListQuery,
+    OrganizationsListQueryVariables,
+} from '#generated/types';
 
-import Stakeholder from './Stakeholder';
+import Stakeholder, { OrganizationItemType } from './Stakeholder';
 import styles from './styles.css';
 
-const stakeholderKeySelector = (d: Organization) => d.id.toString();
-const SEARCH_LIMIT = 25;
+const ORGANIZATIONS_LIST = gql`
+query OrganizationsList($search: String) {
+    organizations(search: $search) {
+        totalCount
+        results {
+            id
+            longName
+            shortName
+            title
+            url
+            verified
+            organizationType {
+                id
+                title
+                shortName
+                description
+            }
+            logo {
+                id
+                title
+                file {
+                    name
+                    url
+                }
+            }
+        }
+    }
+}
+`;
+
+const stakeholderKeySelector = (d: OrganizationItemType) => d.id;
 
 interface Props {
     className?: string;
@@ -31,38 +66,40 @@ function SearchStakeholder(props: Props) {
     const [searchText, setSearchText] = useState<string | undefined>();
     const debouncedSearchText = useDebouncedValue(searchText);
 
-    const searchQueryParams = useMemo(() => ({
+    const organizationsVariables = useMemo(() => ({
         search: debouncedSearchText,
-        limit: SEARCH_LIMIT,
     }), [debouncedSearchText]);
 
     const {
-        pending,
-        response: stakeholders,
-    } = useRequest<MultiResponse<Organization>>(
+        data: organizationsList,
+        loading: organizationsListPending,
+    } = useQuery<OrganizationsListQuery, OrganizationsListQueryVariables>(
+        ORGANIZATIONS_LIST,
         {
-            url: 'server://organizations/',
-            method: 'GET',
             skip: !searchText,
-            query: searchQueryParams,
+            variables: organizationsVariables,
         },
     );
 
-    const stakeholderRendererParams = useCallback((_: string, data: Organization) => ({
+    const stakeholderRendererParams = useCallback((_: string, data: OrganizationItemType) => ({
         searchValue: searchText,
         value: data,
     }), [searchText]);
 
-    const emptyMessage = useMemo(() => ((stakeholders?.count ?? 0) === 0 && !searchText
-        ? _ts('project.detail.stakeholders', 'typeToSearchOrganizationMessage')
-        : _ts('project.detail.stakeholders', 'noResultsFoundMessage')),
-    [searchText, stakeholders?.count]);
+    const emptyMessage = useMemo(() => (
+        (organizationsList?.organizations?.totalCount ?? 0) === 0 && !searchText
+            ? _ts('project.detail.stakeholders', 'typeToSearchOrganizationMessage')
+            : _ts('project.detail.stakeholders', 'noResultsFoundMessage')
+    ), [
+        searchText,
+        organizationsList?.organizations?.totalCount,
+    ]);
 
     const handleSearchTextChange = useCallback((newValue: string | undefined) => {
         setSearchText(newValue);
     }, []);
 
-    const handleOrganizationAdd = useCallback((v: Organization) => {
+    const handleOrganizationAdd = useCallback((v: OrganizationItemType) => {
         setSearchText(v.title);
     }, []);
 
@@ -90,8 +127,8 @@ function SearchStakeholder(props: Props) {
                 className={styles.items}
                 pendingMessage={_ts('project.detail.stakeholders', 'searching')}
                 emptyMessage={emptyMessage}
-                pending={pending}
-                data={stakeholders?.results}
+                pending={organizationsListPending}
+                data={organizationsList?.organizations?.results}
                 renderer={Stakeholder}
                 keySelector={stakeholderKeySelector}
                 errored={false}

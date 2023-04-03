@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { isDefined } from '@togglecorp/fujs';
 import {
     ElementFragments,
     DraggableContent,
@@ -7,13 +8,15 @@ import {
 
 import Avatar from '#components/Avatar';
 import HighlightableTextOutput from '#components/HighlightableTextOutput';
-import { Organization } from '#types';
+import { OrganizationsListQuery } from '#generated/types';
 
 import styles from './styles.css';
 
+export type OrganizationItemType = NonNullable<NonNullable<OrganizationsListQuery['organizations']>['results']>[number];
+
 interface Props {
     searchValue?: string;
-    value: Organization;
+    value: OrganizationItemType;
 }
 
 function Stakeholder(props: Props) {
@@ -23,9 +26,9 @@ function Stakeholder(props: Props) {
     } = props;
 
     const dragValue = useMemo(() => ({
-        id: String(value.id),
+        id: value.id,
         title: value.title,
-        logoUrl: value.logoUrl,
+        logoUrl: value.logo?.file?.url,
     }), [value]);
 
     return (
@@ -37,10 +40,10 @@ function Stakeholder(props: Props) {
             contentClassName={styles.content}
         >
             <ElementFragments
-                icons={(
+                icons={isDefined(value.logo?.file?.url) && (
                     <Avatar
                         className={styles.icon}
-                        src={value.logoUrl}
+                        src={value.logo?.file?.url}
                         alt={value.title}
                     />
                 )}
