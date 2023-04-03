@@ -14,19 +14,17 @@ import {
 } from '@the-deep/deep-ui';
 
 import {
-    BasicRegion,
-    Region,
     ProjectDetails,
 } from '#types';
 import _ts from '#ts';
-import RegionSelectInput from '#components/selections/RegionSelectInput';
+import RegionSelectInput, { Region } from '#components/selections/RegionSelectInput';
 import { useLazyRequest } from '#base/utils/restRequest';
 
 import RegionTabPanel from './RegionTabPanel';
 
 import styles from './styles.css';
 
-const regionKeySelector = (d: Region) => d.id.toString();
+const regionKeySelector = (d: Region) => d.id;
 
 interface Props {
     className?: string;
@@ -115,7 +113,7 @@ function RegionsMap(props: Props) {
     });
 
     const tabRendererParams = useCallback(
-        (id: string, data: BasicRegion) => ({
+        (id: string, data: Region) => ({
             name: id,
             children: data.title,
             transparentBorder: true,
@@ -166,7 +164,7 @@ function RegionsMap(props: Props) {
                     <RegionSelectInput
                         className={styles.region}
                         name="regions"
-                        projectId={+projectId}
+                        projectId={projectId}
                         value={undefined}
                         onChange={onRegionSelect}
                         options={regionOptions}
