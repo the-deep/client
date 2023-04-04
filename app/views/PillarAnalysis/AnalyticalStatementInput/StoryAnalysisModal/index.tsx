@@ -10,9 +10,8 @@ import {
     Tabs,
 } from '@the-deep/deep-ui';
 import { isDefined, encodeDate } from '@togglecorp/fujs';
-import MDEditor, { commands } from '@uiw/react-md-editor';
-import rehypeSanitize from 'rehype-sanitize';
 
+import MarkdownEditor from '#components/MarkdownEditor';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 
 import EntryCard from './EntryCard';
@@ -184,19 +183,13 @@ function StoryAnalysisModal(props: Props) {
                 <div className={styles.right}>
                     <div className={styles.cardContainer}>
                         <div className={styles.markdownContainer}>
-                            <div className={styles.title}>Information Gap</div>
-                            <MDEditor
+                            <MarkdownEditor
+                                className={styles.editor}
+                                labelContainerClassName={styles.labelContainer}
+                                label="Information Gap"
+                                name="informationGap"
                                 value={informationGap}
                                 onChange={handleInformationGapChange}
-                                commands={[
-                                    commands.bold,
-                                    commands.italic,
-                                    commands.divider,
-                                ]}
-                                preview="edit"
-                                previewOptions={{
-                                    rehypePlugins: [[rehypeSanitize]],
-                                }}
                             />
                         </div>
                         <div className={styles.entriesContainer}>
@@ -228,36 +221,23 @@ function StoryAnalysisModal(props: Props) {
                     </div>
                     <div className={styles.cardContainer}>
                         <div className={styles.markdownContainer}>
-                            <div className={styles.title}>Analytical Statement</div>
-                            <MDEditor
+                            <MarkdownEditor
+                                className={styles.editor}
+                                labelContainerClassName={styles.labelContainer}
+                                label="Analytical Statement"
+                                name="analyticalStatement"
                                 value={analyticalStatement}
                                 onChange={handleAnalyticalStatementChange}
-                                commands={[
-                                    commands.bold,
-                                    commands.italic,
-                                    commands.divider,
-                                ]}
-                                preview="edit"
-                                previewOptions={{
-                                    rehypePlugins: [[rehypeSanitize]],
-                                }}
                             />
                         </div>
                         <div className={styles.markdownContainer}>
-                            <div className={styles.title}>Report Text</div>
-                            <MDEditor
+                            <MarkdownEditor
+                                className={styles.editor}
+                                labelContainerClassName={styles.labelContainer}
+                                label="Report Text"
+                                name="reportText"
                                 value={reportText}
                                 onChange={handleReportTextChange}
-                                commands={[
-                                    commands.bold,
-                                    commands.italic,
-                                    commands.divider,
-                                ]}
-                                height={500}
-                                preview="edit"
-                                previewOptions={{
-                                    rehypePlugins: [[rehypeSanitize]],
-                                }}
                             />
                         </div>
                     </div>
