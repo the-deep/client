@@ -70,14 +70,6 @@
                         display: flex;
                         flex-direction: column;
 
-                        :global {
-                            .w-md-editor-text-input .wmde-markdown {
-                                line-height: 1.5;
-                                font-family: 'Source Sans Pro', sans-serif;
-                                font-size: var(--dui-font-size-medium);
-                            }
-                        }
-
                         .title {
                             padding-bottom: var(--dui-spacing-small);
                             font-size: var(--dui-font-size-large);
@@ -85,7 +77,15 @@
                         }
 
                         .editor {
-                            overflow: auto;
+                            display: flex;
+                            gap: 0;
+
+                            .label-container {
+                                padding-bottom: var(--dui-spacing-small);
+                                color: var(--dui-color-text);
+                                font-size: var(--dui-font-size-large);
+                                font-weight: var(--dui-font-weight-bold);
+                            }
                         }
                     }
 
