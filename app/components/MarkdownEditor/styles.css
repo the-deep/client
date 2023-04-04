@@ -1,0 +1,11 @@
+.markdown-editor {
+    width: 100%;
+
+    :global {
+        .w-md-editor-text-input .wmde-markdown {
+            line-height: 1.5;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: var(--dui-font-size-medium);
+        }
+    }
+}
