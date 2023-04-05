@@ -7145,10 +7145,10 @@ date-fns@^1.27.2:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
   integrity sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
 
-deasync@^0.1.24:
-  version "0.1.24"
-  resolved "https://registry.yarnpkg.com/deasync/-/deasync-0.1.24.tgz#6ecc9c6ff9eba64a4f4572ae3c4db77fed09268a"
-  integrity sha512-i98vg42xNfRZCymummMAN0rIcQ1gZFinSe3btvPIvy6JFTaeHcumeKybRo2HTv86nasfmT0nEgAn2ggLZhOCVA==
+deasync@^0.1.0:
+  version "0.1.28"
+  resolved "https://registry.yarnpkg.com/deasync/-/deasync-0.1.28.tgz#9b447b79b3f822432f0ab6a8614c0062808b5ad2"
+  integrity sha512-QqLF6inIDwiATrfROIyQtwOQxjZuek13WRYZ7donU5wJPLoP67MnYxA6QtqdvdBy2mMqv5m3UefBVdJjvevOYg==
   dependencies:
     bindings "^1.5.0"
     node-addon-api "^1.7.1"
@@ -7855,13 +7855,14 @@ eslint-plugin-jsx-a11y@^6.5.1:
     language-tags "^1.0.5"
     minimatch "^3.0.4"
 
-"eslint-plugin-postcss-modules@git+https://github.com/toggle-corp/eslint-plugin-postcss-modules.git#latest":
+eslint-plugin-postcss-modules@^2.0.0:
   version "2.0.0"
-  resolved "git+https://github.com/toggle-corp/eslint-plugin-postcss-modules.git#2fce9ebea3ecf18c0a48dfcae815fb951165ff1e"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-postcss-modules/-/eslint-plugin-postcss-modules-2.0.0.tgz#d136d6fb5bd9afa6ac73c22aea85212aa2531806"
+  integrity sha512-82usNIaeAEHKbQOnbSs+H3d9nP6TKD2zBZC/wuedbGMTbF8XGkdxI83kptTE6BcvIWgnLPciVa8voe6zIw4ddw==
   dependencies:
     anymatch "^3.0.0"
     camelcase "^6.0.0"
-    deasync "^0.1.24"
+    deasync "^0.1.0"
     icss-utils "^5.1.0"
     postcss "^8.3.0"
     postcss-load-config "^3.1.0"
@@ -13698,6 +13699,11 @@ react-ga4@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-ga4/-/react-ga4-2.0.0.tgz#d125807cc30b087a6aa24401ec5f1f1c2d176fe9"
   integrity sha512-WHi98hMunzh4ngRdNil8NN6Qly3ZZUkprhbgSqA+NFzovp8zqpYV3jcbKL9FnMdeBQHGhv8AVNCT2oFEE+EFXA==
+
+react-google-charts@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-google-charts/-/react-google-charts-4.0.0.tgz#f648e4fe8ac8a1f47542c2cac040df6afb21e2d6"
+  integrity sha512-9OG0EkBb9JerKEPQYdhmAXnhGLzOdOHOPS9j7l+P1a3z1kcmq9mGDa7PUoX/VQUY4IjZl2/81nsO4o+1cuYsuw==
 
 react-highlight-words@^0.18.0:
   version "0.18.0"
