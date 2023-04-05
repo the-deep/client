@@ -1,0 +1,10 @@
+.word-tree-chart {
+    background-color: var(--dui-color-foreground);
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+}
