@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, memo } from 'react';
 import {
     Message,
 } from '@the-deep/deep-ui';
-import { isNotDefined, isDefined } from '@togglecorp/fujs';
+import { isDefined } from '@togglecorp/fujs';
 import { Chart } from 'react-google-charts';
 
 import styles from './styles.css';
@@ -10,14 +10,15 @@ import styles from './styles.css';
 interface Props {
     text: string;
     rootWord: string | undefined;
+    onWordClick?: (word: string) => void,
 }
 
 function getMostCommonWord(text: string) {
     const words = text.match(/([!?,;:.&"-]+|\S*[A-Z]\.|\S*(?:[^!?,;:.\s&-]))/gm);
 
     let maxCount = 0;
-    let mostCommonWord;
-    const wordsMap = words?.reduce((acc, word) => {
+    let mostCommonWord = words?.[0] ?? text;
+    words?.reduce((acc, word) => {
         let currentVal = acc.get(word);
         if (currentVal) {
             acc.set(word, currentVal += 1);
@@ -39,47 +40,86 @@ function isWordPresent(text: string, word: string) {
     return words?.some((w) => w === word);
 }
 
-function WordTree(props: Props) {
+interface WordTreeChartProps {
+    text: string;
+    word: string;
+    onWordClick?: (word: string) => void;
+}
+
+function WordTreeChart(props: WordTreeChartProps) {
     const {
         text,
-        rootWord,
+        word,
+        onWordClick,
     } = props;
 
-    const lowercasedText = useMemo(() => text.toLowerCase(), [text]);
-
-    const isRootWordPresent = useMemo(() => {
-        if (rootWord) {
-            return isWordPresent(text, rootWord);
-        }
-        return false;
-    }, [text, rootWord]);
-
-    const mostCommonWord = useMemo(() => (
-        getMostCommonWord(lowercasedText)
-    ), [lowercasedText]);
-
+    console.warn('text', text, word);
     const options = useMemo(() => ({
         wordtree: {
             format: 'implicit',
             type: 'double',
             showTooltip: false,
-            word: isRootWordPresent ? rootWord : mostCommonWord,
+            word,
         },
         showTooltip: false,
-    }), [mostCommonWord, rootWord]);
+    }), [word]);
+
+    const handleSelect = useCallback(({ chartWrapper }) => {
+        if (onWordClick) {
+            const selectedWord = chartWrapper.getChart().getSelection().word;
+            onWordClick(selectedWord);
+        }
+    }, [onWordClick]);
+
+    const chartEvents = useMemo(() => ([
+        {
+            eventName: 'select' as const,
+            callback: handleSelect,
+        },
+    ]), [handleSelect]);
 
     const data = useMemo(() => (
-        [['Phrases'], [lowercasedText]]
+        [['Phrases'], [text]]
+    ), [text]);
+
+    return (
+        <Chart
+            className={styles.wordTreeChart}
+            chartType="WordTree"
+            height="99%"
+            width="99%"
+            data={data}
+            options={options}
+            chartEvents={chartEvents}
+        />
+    );
+}
+
+function WordTree(props: Props) {
+    const {
+        text,
+        rootWord: rootWordFromProps,
+        onWordClick,
+    } = props;
+
+    const lowercasedText = useMemo(() => text.toLowerCase(), [text]);
+
+    const mostCommonWord = useMemo(() => (
+        getMostCommonWord(lowercasedText)
     ), [lowercasedText]);
 
-    if (isDefined(rootWord) && !isRootWordPresent) {
-        return (
-            <Message
-                className={styles.message}
-                message="Root word is not present. Please add the word that is in the text."
-            />
-        );
-    }
+    const rootWord = useMemo(() => (
+        isDefined(rootWordFromProps)
+            && rootWordFromProps.trim().length > 0 ? rootWordFromProps : mostCommonWord
+    ), [rootWordFromProps, mostCommonWord]);
+
+    const isRootWordPresent = useMemo(() => {
+        if (isDefined(rootWord)) {
+            return isWordPresent(lowercasedText, rootWord.toLowerCase());
+        }
+        return false;
+    }, [lowercasedText, rootWord]);
+
     if (text.length < 1) {
         return (
             <Message
@@ -89,16 +129,22 @@ function WordTree(props: Props) {
         );
     }
 
+    if (!isRootWordPresent) {
+        return (
+            <Message
+                className={styles.message}
+                message="Root word is not present. Please add the word that is in the text."
+            />
+        );
+    }
+
     return (
-        <Chart
-            className={styles.wordTreeChart}
-            height="100%"
-            width="100%"
-            chartType="WordTree"
-            data={data}
-            options={options}
+        <WordTreeChart
+            text={text}
+            word={rootWord}
+            onWordClick={onWordClick}
         />
     );
 }
 
-export default WordTree;
+export default memo(WordTree);
