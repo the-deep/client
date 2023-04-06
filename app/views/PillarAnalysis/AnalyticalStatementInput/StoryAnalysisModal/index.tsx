@@ -12,8 +12,8 @@ import {
     TextInput,
     QuickActionButton,
 } from '@the-deep/deep-ui';
-import { isDefined, encodeDate } from '@togglecorp/fujs';
-import { IoSearch } from 'react-icons/io5';
+import { isDefined, encodeDate, _cs } from '@togglecorp/fujs';
+import { IoChevronForward } from 'react-icons/io5';
 
 import WordTree from '#components/WordTree';
 import MarkdownEditor from '#components/MarkdownEditor';
@@ -236,7 +236,6 @@ function StoryAnalysisModal(props: Props) {
                                 <div className={styles.contextActions}>
                                     <SegmentInput
                                         name="context"
-                                        label="Source Text"
                                         value={sourceOption}
                                         onChange={handleSourceOptionChange}
                                         options={sourceOptions}
@@ -244,19 +243,18 @@ function StoryAnalysisModal(props: Props) {
                                         labelSelector={labelSelector}
                                     />
                                     <TextInput
-                                        className={styles.input}
-                                        label="Root Word"
                                         name="word"
                                         value={word}
+                                        placeholder="Root word"
                                         onChange={setWord}
                                         actions={(
                                             <QuickActionButton
                                                 name="drawChart"
-                                                variant="action"
+                                                variant="secondary"
                                                 onClick={handleDrawChart}
-                                                title="Draw Chart"
+                                                title="Set root word"
                                             >
-                                                <IoSearch />
+                                                <IoChevronForward />
                                             </QuickActionButton>
                                         )}
                                     />
@@ -323,14 +321,16 @@ function StoryAnalysisModal(props: Props) {
                                 onChange={handleAnalyticalStatementChange}
                             />
                         </div>
-                        <div className={styles.markdownContainer}>
+                        <div className={_cs(styles.markdownContainer, styles.reportTextContainer)}>
                             <MarkdownEditor
                                 className={styles.editor}
                                 labelContainerClassName={styles.labelContainer}
+                                inputSectionClassName={styles.inputSection}
                                 label="Report Text"
                                 name="reportText"
                                 value={reportText}
                                 onChange={handleReportTextChange}
+                                height="100%"
                             />
                         </div>
                     </div>
