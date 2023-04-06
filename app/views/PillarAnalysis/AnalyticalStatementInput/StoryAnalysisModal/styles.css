@@ -54,6 +54,30 @@
                         .active-tab {
                             background-color: var(--dui-color-surface-information);
                         }
+
+                        .tab-panel-container {
+                            display: flex;
+                            flex-grow: 1;
+
+                            .tab-panel {
+                                display: flex;
+                                flex-direction: column;
+                                flex-grow: 1;
+                                background-color: var(--dui-color-foreground);
+                                padding-top: var(--dui-spacing-small);
+                                gap: var(--dui-spacing-small);
+
+                                .context-actions {
+                                    display: flex;
+                                    gap: var(--dui-spacing-small);
+                                }
+
+                                .word-tree-container {
+                                    display: flex;
+                                    flex-grow: 1;
+                                }
+                            }
+                        }
                     }
                 }
 
