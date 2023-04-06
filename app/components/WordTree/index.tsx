@@ -86,7 +86,7 @@ function WordTreeChart(props: WordTreeChartProps) {
         <Chart
             className={styles.wordTreeChart}
             chartType="WordTree"
-            height="99%"
+            height="98%"
             width="99%"
             data={data}
             options={options}
