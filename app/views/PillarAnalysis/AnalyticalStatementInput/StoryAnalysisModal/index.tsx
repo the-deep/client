@@ -8,9 +8,14 @@ import {
     TabList,
     TabPanel,
     Tabs,
+    SegmentInput,
+    TextInput,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 import { isDefined, encodeDate } from '@togglecorp/fujs';
+import { IoSearch } from 'react-icons/io5';
 
+import WordTree from '#components/WordTree';
 import MarkdownEditor from '#components/MarkdownEditor';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 
@@ -22,7 +27,26 @@ import {
 
 import styles from './styles.css';
 
-const keySelector = (item: EntryMin) => item.id;
+const entryKeySelector = (item: EntryMin) => item.id;
+
+interface KeyLabel {
+    key: 'originalEntries' | 'reportText';
+    label: string;
+}
+
+const sourceOptions: KeyLabel[] = [
+    {
+        key: 'originalEntries',
+        label: 'Original Entries',
+    },
+    {
+        key: 'reportText',
+        label: 'Report Text',
+    },
+];
+
+const keySelector = (d: KeyLabel) => d.key;
+const labelSelector = (d: KeyLabel) => d.label;
 
 function generateReportText(entry: EntryMin) {
     const authors = entry.lead.authors
@@ -55,7 +79,10 @@ function StoryAnalysisModal(props: Props) {
     const [tab, setTab] = useState<string | undefined>('map');
     const [informationGap, setInformationGap] = React.useState<string | undefined>();
     const [analyticalStatement, setAnalyticalStatement] = React.useState<string | undefined>();
-    const [reportText, setReportText] = React.useState<string | undefined>();
+    const [reportText, setReportText] = React.useState<string | undefined>('');
+    const [sourceOption, setSourceOption] = useState<KeyLabel['key']>('originalEntries');
+    const [word, setWord] = useState<string>();
+    const [rootWord, setRootWord] = useState<string>();
 
     const handleSave = useCallback(() => {
         onSave(analyticalStatement);
@@ -97,10 +124,39 @@ function StoryAnalysisModal(props: Props) {
         if (pristine) {
             setPristine(false);
         }
+        if (sourceOption === 'reportText') {
+            setSourceOption('originalEntries');
+        }
         setReportText(newValue);
     }, [pristine]);
 
+    const handleDrawChart = useCallback(() => {
+        setRootWord(word);
+    }, [word]);
+
+    const handleSourceOptionChange = useCallback((option) => {
+        setSourceOption(option);
+        setWord(undefined);
+        setRootWord(undefined);
+    }, []);
+
+    const handleWordSelect = useCallback((selectedWord: string) => {
+        setWord(selectedWord);
+        setRootWord(selectedWord);
+    }, []);
+
     const generateReportTextDisabled = (reportText?.trim().length ?? 0) > 0;
+
+    const originalEntriesText = useMemo(() => (
+        entriesForReport?.map((entry) => generateReportText(entry)).join(' ')
+    ), [entriesForReport]);
+
+    const sourceText = useMemo(() => {
+        if (sourceOption === 'originalEntries') {
+            return originalEntriesText;
+        }
+        return reportText ?? '';
+    }, [sourceOption, originalEntriesText, reportText]);
 
     return (
         <Modal
@@ -172,10 +228,47 @@ function StoryAnalysisModal(props: Props) {
                                     </Tab>
                                 </TabList>
                             )}
+                            contentClassName={styles.tabPanelContainer}
                         >
                             <TabPanel name="map" />
                             <TabPanel name="nGrams" />
-                            <TabPanel name="context" />
+                            <TabPanel name="context" className={styles.tabPanel}>
+                                <div className={styles.contextActions}>
+                                    <SegmentInput
+                                        name="context"
+                                        label="Source Text"
+                                        value={sourceOption}
+                                        onChange={handleSourceOptionChange}
+                                        options={sourceOptions}
+                                        keySelector={keySelector}
+                                        labelSelector={labelSelector}
+                                    />
+                                    <TextInput
+                                        className={styles.input}
+                                        label="Root Word"
+                                        name="word"
+                                        value={word}
+                                        onChange={setWord}
+                                        actions={(
+                                            <QuickActionButton
+                                                name="drawChart"
+                                                variant="action"
+                                                onClick={handleDrawChart}
+                                                title="Draw Chart"
+                                            >
+                                                <IoSearch />
+                                            </QuickActionButton>
+                                        )}
+                                    />
+                                </div>
+                                <div className={styles.wordTreeContainer}>
+                                    <WordTree
+                                        text={sourceText}
+                                        rootWord={rootWord}
+                                        onWordClick={handleWordSelect}
+                                    />
+                                </div>
+                            </TabPanel>
                             <TabPanel name="summary" />
                         </Container>
                     </Tabs>
@@ -209,7 +302,7 @@ function StoryAnalysisModal(props: Props) {
                                 <ListView
                                     className={styles.entries}
                                     data={entriesForReport}
-                                    keySelector={keySelector}
+                                    keySelector={entryKeySelector}
                                     renderer={EntryCard}
                                     rendererParams={entriesRendererParams}
                                     filtered={false}
