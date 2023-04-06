@@ -69,7 +69,8 @@
 
                                 .context-actions {
                                     display: flex;
-                                    gap: var(--dui-spacing-small);
+                                    padding-top: var(--dui-spacing-small);
+                                    gap: var(--dui-spacing-medium);
                                 }
 
                                 .word-tree-container {
@@ -102,7 +103,14 @@
 
                         .editor {
                             display: flex;
+                            flex-grow: 1;
                             gap: 0;
+
+                            .input-section {
+                                display: flex;
+                                align-items: stretch;
+                                flex-grow: 1;
+                            }
 
                             .label-container {
                                 padding-bottom: var(--dui-spacing-small);
@@ -111,6 +119,12 @@
                                 font-weight: var(--dui-font-weight-bold);
                             }
                         }
+                    }
+
+                    .report-text-container {
+                        display: flex;
+                        flex-grow: 1;
+                        overflow: auto;
                     }
 
                     .entries-container {
@@ -151,6 +165,9 @@
                         flex-direction: column;
                         flex-grow: 1;
                         gap: var(--dui-spacing-extra-large);
+                        padding-right: var(--dui-spacing-extra-small);
+                        padding-left: var(--dui-spacing-extra-small);
+                        overflow: auto;
                     }
                 }
             }

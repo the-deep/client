@@ -40,6 +40,7 @@ function MarkdownEditor<T extends string>(props: MarkdownEditorProps<T>) {
         preview = 'edit',
         previewOptions: previewOptionsFromProps,
         editorClassName,
+        height,
     } = props;
 
     const handleChange = useCallback((val: string | undefined) => {
@@ -81,6 +82,7 @@ function MarkdownEditor<T extends string>(props: MarkdownEditorProps<T>) {
                     ]}
                     preview={preview}
                     previewOptions={previewOptions}
+                    height={height}
                 />
             )}
         />
