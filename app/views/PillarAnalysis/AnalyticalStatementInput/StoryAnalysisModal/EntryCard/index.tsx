@@ -43,6 +43,7 @@ function EntryCard(props: Props) {
                 <IoPersonOutline title="authors" />
             )}
             heading={authors}
+            contentClassName={styles.content}
         >
             {entry.image?.file?.url && (
                 <ImagePreview

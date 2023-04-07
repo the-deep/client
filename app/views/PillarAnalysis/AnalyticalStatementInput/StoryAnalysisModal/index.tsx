@@ -128,7 +128,7 @@ function StoryAnalysisModal(props: Props) {
             setSourceOption('originalEntries');
         }
         setReportText(newValue);
-    }, [pristine]);
+    }, [pristine, sourceOption]);
 
     const handleDrawChart = useCallback(() => {
         setRootWord(word);
@@ -330,7 +330,6 @@ function StoryAnalysisModal(props: Props) {
                                 name="reportText"
                                 value={reportText}
                                 onChange={handleReportTextChange}
-                                height="100%"
                             />
                         </div>
                     </div>
