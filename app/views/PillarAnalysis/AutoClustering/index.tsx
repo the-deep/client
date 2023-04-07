@@ -28,14 +28,71 @@ import {
     PillarAutoClusteringMutationVariables,
 } from '#generated/types';
 
-import { EntryMin } from '../context';
+import {
+    Entry,
+} from '..';
 import {
     PartialAnalyticalStatementType,
 } from '../schema';
 
 import styles from './styles.css';
 
+const ENTRY_DETAILS = gql`
+    fragment EntryDetails on EntryType {
+        id
+        excerpt
+        entryType
+        clientId
+        createdAt
+        controlled
+        verifiedBy {
+            id
+        }
+        createdBy {
+            displayName
+        }
+        modifiedAt
+        droppedExcerpt
+        attributes {
+            clientId
+            data
+            id
+            widget
+            widgetType
+            widgetVersion
+            geoSelectedOptions {
+                id
+                adminLevelTitle
+                regionTitle
+                title
+            }
+        }
+        lead {
+            id
+            authors {
+                id
+                title
+                shortName
+                mergedAs {
+                    id
+                    title
+                    shortName
+                }
+            }
+            url
+        }
+        image {
+            id
+            title
+            file {
+                url
+            }
+        }
+    }
+`;
+
 const PILLAR_AUTO_CLUSTERING_RESULTS = gql`
+    ${ENTRY_DETAILS}
     query PillarAutoClusteringResults(
         $projectId: ID!,
         $topicModelingId: ID!,
@@ -48,33 +105,7 @@ const PILLAR_AUTO_CLUSTERING_RESULTS = gql`
                 clusters {
                     id
                     entries {
-                        id
-                        excerpt
-                        entryType
-                        clientId
-                        createdAt
-                        droppedExcerpt
-                        lead {
-                            id
-                            authors {
-                                id
-                                title
-                                shortName
-                                mergedAs {
-                                    id
-                                    title
-                                    shortName
-                                }
-                            }
-                            url
-                        }
-                        image {
-                            id
-                            title
-                            file {
-                                url
-                            }
-                        }
+                        ...EntryDetails
                     }
                 }
             }
@@ -110,7 +141,7 @@ interface Props {
     pillarId: string;
     projectId: string;
     entriesFilter: EntriesFilterDataInputType;
-    onEntriesMappingChange: React.Dispatch<React.SetStateAction<Obj<EntryMin>>>;
+    onEntriesMappingChange: React.Dispatch<React.SetStateAction<Obj<Entry>>>;
     onStatementsFromClustersSet: (newStatements: PartialAnalyticalStatementType[]) => void;
 }
 
@@ -122,6 +153,7 @@ function AutoClustering(props: Props) {
         onEntriesMappingChange,
         onStatementsFromClustersSet,
     } = props;
+
     const alert = useAlert();
 
     const [activeTopicModellingId, setActiveTopicModellingId] = useState<string | undefined>();
@@ -234,7 +266,7 @@ function AutoClustering(props: Props) {
     const handleClustersApply = useCallback(() => {
         const listOfEntries = clusters?.map(
             (cluster) => (cluster?.entries.filter(isDefined) ?? []),
-        ).flat();
+        ).flat() as Entry[];
         onEntriesMappingChange((oldEntriesMappings) => ({
             ...oldEntriesMappings,
             ...listToMap(
@@ -243,6 +275,7 @@ function AutoClustering(props: Props) {
                 (item) => item,
             ),
         }));
+
         const newStatements: PartialAnalyticalStatementType[] = clusters?.filter(isDefined).map(
             (cluster, index) => ({
                 entries: cluster.entries.filter(isDefined).map((entry, entryIndex) => ({
