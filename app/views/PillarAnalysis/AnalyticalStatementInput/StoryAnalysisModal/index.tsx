@@ -102,7 +102,7 @@ function StoryAnalysisModal(props: Props) {
         if (pristine) {
             setPristine(false);
         }
-        const report = entriesForReport?.map((entry) => generateReportText(entry)).join(' ');
+        const report = entriesForReport.map((entry) => generateReportText(entry)).join(' ');
         setReportText(report);
     }, [entriesForReport, pristine]);
 
@@ -148,7 +148,7 @@ function StoryAnalysisModal(props: Props) {
     const generateReportTextDisabled = (reportText?.trim().length ?? 0) > 0;
 
     const originalEntriesText = useMemo(() => (
-        entriesForReport?.map((entry) => generateReportText(entry)).join(' ')
+        entriesForReport.map((entry) => entry.excerpt).join(' ')
     ), [entriesForReport]);
 
     const sourceText = useMemo(() => {
