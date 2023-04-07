@@ -87,8 +87,6 @@
                     flex-basis: 50%;
                     flex-grow: 1;
                     gap: var(--dui-spacing-medium);
-                    padding-right: var(--dui-spacing-small);
-                    padding-left: var(--dui-spacing-small);
                     overflow: auto;
 
                     .markdown-container {
@@ -106,12 +104,6 @@
                             flex-grow: 1;
                             gap: 0;
 
-                            .input-section {
-                                display: flex;
-                                align-items: stretch;
-                                flex-grow: 1;
-                            }
-
                             .label-container {
                                 padding-bottom: var(--dui-spacing-small);
                                 color: var(--dui-color-text);
@@ -125,6 +117,14 @@
                         display: flex;
                         flex-grow: 1;
                         overflow: auto;
+
+                        .input-section {
+                            display: flex;
+                            align-items: stretch;
+                            flex-grow: 1;
+                            padding-right: var(--dui-spacing-super-small);
+                            padding-left: var(--dui-spacing-super-small);
+                        }
                     }
 
                     .entries-container {
