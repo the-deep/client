@@ -39,7 +39,6 @@ import {
 } from '../schema';
 import AnalyticalEntryInput from './AnalyticalEntryInput';
 
-import AnalyticalNGramsModal from './AnalyticalNGramsModal';
 import StoryAnalysisModal from './StoryAnalysisModal';
 import styles from './styles.css';
 
@@ -84,18 +83,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         index,
         attributes,
         listeners,
-        onSelectedNgramChange,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
 
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.entries);
-    const [
-        showAnalysisChart,,
-        hideAnalysisChart,,
-        toggleAnalysisChart,
-    ] = useModalState(false);
 
     const [
         moreDetailsModalShown,
@@ -230,13 +223,6 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         )}
                     </QuickActionButton>
                     <QuickActionButton
-                        name="View n-grams analysis"
-                        onClick={toggleAnalysisChart}
-                        big
-                    >
-                        <IoBarChartSharp />
-                    </QuickActionButton>
-                    <QuickActionButton
                         name="View more details modal"
                         onClick={showStoryAnalysisModal}
                         big
@@ -285,16 +271,6 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     />
                 ))}
             </div>
-            {showAnalysisChart && (
-                <AnalyticalNGramsModal
-                    onModalClose={hideAnalysisChart}
-                    mainStatement={value.statement}
-                    onStatementChange={handleStatementChange}
-                    statementId={value.clientId}
-                    analyticalEntries={value.entries}
-                    onNgramClick={onSelectedNgramChange}
-                />
-            )}
             {moreDetailsModalShown && (
                 <StoryAnalysisModal
                     onModalClose={hideStoryAnalysisModal}

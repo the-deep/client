@@ -134,9 +134,11 @@
 
                         .tab-list {
                             display: flex;
+                            align-items: center;
                             flex-grow: 1;
 
                             .tab {
+                                align-items: stretch;
                                 font-size: var(--dui-font-size-medium);
                             }
 
