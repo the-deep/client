@@ -14,7 +14,8 @@ interface Props {
 }
 
 function getMostCommonWord(text: string) {
-    const words = text.match(/([!?,;:.&"-]+|\S*[A-Z]\.|\S*(?:[^!?,;:.\s&-]))/gm);
+    const words = text.match(/([!?,;:.&"-]+|\S*[A-Z]\.|\S*(?:[^!?,;:.\s&-]))/gm)
+        ?.filter((word) => word.length > 2);
 
     let maxCount = 0;
     let mostCommonWord = words?.[0] ?? text;
@@ -101,11 +102,9 @@ function WordTree(props: Props) {
         onWordClick,
     } = props;
 
-    const lowercasedText = useMemo(() => text.toLowerCase(), [text]);
-
     const mostCommonWord = useMemo(() => (
-        getMostCommonWord(lowercasedText)
-    ), [lowercasedText]);
+        getMostCommonWord(text)
+    ), [text]);
 
     const rootWord = useMemo(() => (
         isDefined(rootWordFromProps)
@@ -114,10 +113,10 @@ function WordTree(props: Props) {
 
     const isRootWordPresent = useMemo(() => {
         if (isDefined(rootWord)) {
-            return isWordPresent(lowercasedText, rootWord.toLowerCase());
+            return isWordPresent(text, rootWord);
         }
         return false;
-    }, [lowercasedText, rootWord]);
+    }, [text, rootWord]);
 
     if (text.length < 1) {
         return (
