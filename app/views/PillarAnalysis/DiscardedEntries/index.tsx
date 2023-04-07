@@ -6,55 +6,77 @@ import {
     MultiSelectInput,
     Pager,
 } from '@the-deep/deep-ui';
+import { useQuery, gql } from '@apollo/client';
 
-import { useRequest } from '#base/utils/restRequest';
 import { isFiltered } from '#utils/common';
+
 import {
-    MultiResponse,
-} from '#types';
-import {
-    EntryType,
-    TabularDataFields,
-} from '#types/entry';
+    DiscardedEntriesQuery,
+    DiscardedEntriesQueryVariables,
+} from '#generated/types';
 
 import DiscardedEntryItem, { Props as DiscardedEntryProps } from './DiscardedEntry';
 import { DiscardedTags } from '../index';
 import styles from './styles.css';
 
-const entryMap = {
-    excerpt: 'EXCERPT',
-    image: 'IMAGE',
-    dataSeries: 'DATA_SERIES',
-} as const;
+const DISCARDED_ENTRIES = gql`
+    query DiscardedEntries (
+        $projectId: ID!,
+        $pillarId: ID!,
+        $page: Int,
+        $pageSize: Int,
+    ) {
+        project(id: $projectId) {
+            id
+            analysisPillar(id: $pillarId) {
+                id
+                discardedEntries (
+                    page: $page,
+                    pageSize: $pageSize,
+                ) {
+                    page
+                    pageSize
+                    results {
+                        id
+                        tag
+                        entry {
+                            id
+                            excerpt
+                            droppedExcerpt
+                            entryType
+                            image {
+                                id
+                                title
+                                file {
+                                    name
+                                    url
+                                }
+                            }
+                            createdAt
+                            createdBy {
+                                id
+                                displayName
+                            }
+                        }
+                    }
+                    totalCount
+                }
+            }
+        }
+    }
+`;
 
-interface DiscardedEntry {
-    id: number;
-    entry: number;
-    tag: number;
-    tagDisplay: string;
-    entryDetails: {
-        id: number;
-        droppedExcerpt?: string;
-        entryType: EntryType;
-        excerpt?: string;
-        imageDetails?: {
-            id: string;
-            title?: string;
-            file?: string;
-        };
-        tabularFieldData?: TabularDataFields;
-    };
-}
+const keySelector = (d: DiscardedTags) => d.name;
+const labelSelector = (d: DiscardedTags) => d.description ?? '';
 
-const keySelector = (d: DiscardedTags) => d.key;
-const labelSelector = (d: DiscardedTags) => d.value;
-
+type DiscardedEntryType = NonNullable<NonNullable<NonNullable<NonNullable<NonNullable<DiscardedEntriesQuery['project']>['analysisPillar']>['discardedEntries']>['results']>[number]>;
 const maxItemsPerPage = 5;
-const entryKeySelector = (d: DiscardedEntry) => d.entry;
+const entryKeySelector = (d: DiscardedEntryType) => d.entry.id;
 
 interface Props {
     className?: string;
-    pillarId: number;
+    projectId: string;
+    pillarId: string;
     discardedTags?: DiscardedTags[];
     onUndiscardSuccess: () => void;
 }
@@ -63,58 +85,69 @@ function DiscardedEntries(props: Props) {
     const {
         className,
         pillarId,
+        projectId,
         discardedTags,
         onUndiscardSuccess,
     } = props;
 
     const [activePage, setActivePage] = useState(1);
-    const [entriesCount, setEntriesCount] = useState(0);
-    const [selectedDiscardedTag, setSelectedDiscardedTag] = useState<number[] | undefined>();
+    const [selectedDiscardedTag, setSelectedDiscardedTag] = useState<string[] | undefined>();
 
-    const entriesRequestQuery = useMemo(() => ({
-        offset: (activePage - 1) * maxItemsPerPage,
-        limit: maxItemsPerPage,
-        tag: selectedDiscardedTag,
-    }), [activePage, selectedDiscardedTag]);
+    const discardedEntriesVariables = useMemo(() => ({
+        projectId,
+        pillarId,
+        page: activePage,
+        pageSize: maxItemsPerPage,
+    }), [
+        pillarId,
+        projectId,
+        activePage,
+    ]);
 
     const {
-        pending: pendingEntries,
-        response: entriesResponse,
-        retrigger: triggerEntriesPull,
-    } = useRequest<MultiResponse<DiscardedEntry>>({
-        url: `server://analysis-pillar/${pillarId}/discarded-entries/`,
-        query: entriesRequestQuery,
-        onSuccess: (response) => {
-            setEntriesCount(response.count);
+        data: discardedEntriesResponse,
+        loading: discardedEntriesPending,
+        refetch: refetchDiscardedEntries,
+    } = useQuery<DiscardedEntriesQuery, DiscardedEntriesQueryVariables>(
+        DISCARDED_ENTRIES,
+        {
+            variables: discardedEntriesVariables,
         },
-        preserveResponse: true,
-    });
-
-    const handleEntryUndiscard = useCallback(() => {
-        triggerEntriesPull();
-        onUndiscardSuccess();
-    }, [triggerEntriesPull, onUndiscardSuccess]);
-
-    const entryCardRendererParams = useCallback(
-        (_: number, data: DiscardedEntry): DiscardedEntryProps => ({
-            discardedEntryId: data.id,
-            tagDisplay: data.tagDisplay,
-            excerpt: data.entryDetails.excerpt ?? '',
-            image: data.entryDetails?.imageDetails?.file ? ({
-                id: String(data.entryDetails.imageDetails.id),
-                title: data.entryDetails.imageDetails.title ?? '',
-                file: {
-                    url: data.entryDetails.imageDetails.file,
-                },
-            }) : undefined,
-            entryType: entryMap[data.entryDetails.entryType],
-            pillarId,
-            onEntryUndiscard: handleEntryUndiscard,
-        }),
-        [pillarId, handleEntryUndiscard],
     );
 
-    const handleDiscardedTagFilterChange = useCallback((newValue: number[]) => {
+    const discardedEntries = discardedEntriesResponse?.project
+        ?.analysisPillar?.discardedEntries?.results;
+    const entriesCount = discardedEntriesResponse?.project
+        ?.analysisPillar?.discardedEntries?.totalCount ?? 0;
+
+    const handleEntryUndiscard = useCallback(() => {
+        refetchDiscardedEntries();
+        onUndiscardSuccess();
+    }, [refetchDiscardedEntries, onUndiscardSuccess]);
+
+    const entryCardRendererParams = useCallback(
+        (_: string, data: DiscardedEntryType): DiscardedEntryProps => ({
+            projectId,
+            discardedEntryId: data.id,
+            tagDisplay: data.tag,
+            excerpt: data.entry.excerpt,
+            image: data.entry.image?.file ? ({
+                id: data.entry.image.id,
+                title: data.entry.image.title ?? '',
+                file: {
+                    url: data.entry.image.file.url,
+                },
+            }) : undefined,
+            entryType: data.entry.entryType,
+            onEntryUndiscard: handleEntryUndiscard,
+        }),
+        [
+            handleEntryUndiscard,
+            projectId,
+        ],
+    );
+
+    const handleDiscardedTagFilterChange = useCallback((newValue: string[]) => {
         setActivePage(0);
         setSelectedDiscardedTag(newValue);
     }, []);
@@ -135,11 +168,11 @@ function DiscardedEntries(props: Props) {
             </div>
             <ListView
                 className={styles.list}
-                data={entriesResponse?.results}
+                data={discardedEntries}
                 keySelector={entryKeySelector}
                 renderer={DiscardedEntryItem}
                 rendererParams={entryCardRendererParams}
-                pending={pendingEntries}
+                pending={discardedEntriesPending}
                 emptyIcon={(
                     <Kraken
                         variant="experiment"

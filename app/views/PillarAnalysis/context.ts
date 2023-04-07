@@ -1,14 +1,25 @@
 import React from 'react';
 import { Obj } from '@togglecorp/fujs';
-import {
-    ProjectEntriesForAnalysisQuery,
-} from '#generated/types';
+import { removeNull } from '@togglecorp/toggle-form';
 
-export type EntryMin = NonNullable<NonNullable<NonNullable<NonNullable<NonNullable<ProjectEntriesForAnalysisQuery>['project']>['analysisPillar']>['entries']>['results']>[number];
+import { Entry } from '.';
+
+export function transformEntry(entry: Entry) {
+    return removeNull({
+        ...entry,
+        lead: entry?.lead?.id,
+        image: entry.image?.id,
+        attributes: entry.attributes?.map((attribute) => ({
+            ...attribute,
+            // NOTE: we don't need this on form
+            geoSelectedOptions: undefined,
+        })),
+    });
+}
 
 interface ContextProps {
-    entries: Obj<EntryMin>;
-    setEntries: React.Dispatch<React.SetStateAction<Obj<EntryMin>>>;
+    entries: Obj<Entry>;
+    setEntries: React.Dispatch<React.SetStateAction<Obj<Entry>>>;
 }
 
 const context = React.createContext<ContextProps>({
