@@ -56,6 +56,7 @@ export interface Props {
     suggestionMode?: boolean;
 
     rightComponent?: React.ReactNode;
+    noPadding?: boolean;
 }
 
 function CompactSection(props: Props) {
@@ -83,6 +84,7 @@ function CompactSection(props: Props) {
         recommendations,
 
         rightComponent,
+        noPadding = false,
     } = props;
 
     const filteredWidgets = useMemo(
@@ -242,7 +244,11 @@ function CompactSection(props: Props) {
 
     return (
         <Container
-            className={_cs(className, styles.compactSection)}
+            className={_cs(
+                className,
+                styles.compactSection,
+                noPadding && styles.noPadding,
+            )}
             heading={title}
             headerActions={(!readOnly && !addButtonHidden) && (
                 <QuickActionButton

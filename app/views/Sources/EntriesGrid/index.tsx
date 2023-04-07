@@ -77,7 +77,7 @@ export const PROJECT_ENTRIES = gql`
         $leadPublishedOnLte: Date,
         $leadStatuses: [LeadStatusEnum!],
         $leadAuthoringOrganizationTypes: [ID!],
-        ) {
+    ) {
         project(id: $projectId) {
             id
             entries(

@@ -4,7 +4,7 @@
     padding: 0;
     height: 100%;
     gap: 0;
-    --width-analytical-statement: 320px;
+    --width-analytical-statement: 420px;
 
     .header {
         border: var(--dui-width-separator-thin) solid var(--dui-color-surface-information);
