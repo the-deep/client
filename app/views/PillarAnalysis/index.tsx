@@ -64,12 +64,10 @@ import {
 } from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import SubNavbar from '#components/SubNavbar';
-import { FrameworkFilterType } from '#types/newAnalyticalFramework';
 import BackLink from '#components/BackLink';
 import NonFieldError from '#components/NonFieldError';
 import { transformSourcesFilterToEntriesFilter } from '#components/leadFilters/SourcesFilter/utils';
 import SourcesAppliedFilters from '#components/leadFilters/SourcesAppliedFilters';
-import { useRequest } from '#base/utils/restRequest';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
@@ -80,6 +78,7 @@ import SourcesFilter, {
     getProjectSourcesQueryVariables,
 } from '#components/leadFilters/SourcesFilter';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
+import { DeepReplace } from '#utils/types';
 import { PartialFormType, FormType as FilterFormType } from '#components/leadFilters/SourcesFilter/schema';
 import {
     PillarAnalysisDetailsQuery,
@@ -89,11 +88,16 @@ import {
     PillarAnalysisUpdateMutation,
     AnalysisPillarUpdateInputType,
     PillarAnalysisUpdateMutationVariables,
+    WidgetType as WidgetRaw,
+    AttributeType as WidgetAttributeRaw,
 } from '#generated/types';
+import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
 
 import _ts from '#ts';
 
 import { AnalysisPillars } from '#types';
+import { WidgetAttribute as WidgetAttributeFromEntry } from '#types/newEntry';
+import { FrameworkFilterType, Widget } from '#types/newAnalyticalFramework';
 
 /*
 import {
@@ -117,7 +121,7 @@ import {
     PartialAnalyticalStatementType,
 } from './schema';
 
-import EntryContext, { EntryMin } from './context';
+import EntryContext from './context';
 import AutoClustering from './AutoClustering';
 
 import styles from './styles.css';
@@ -137,7 +141,62 @@ const hasAssessmentOptions: BooleanOption[] = [
     { key: 'false', value: 'Assessment not completed' },
 ];
 
+export const ENTRY_DETAILS = gql`
+    fragment EntryDetails on EntryType {
+        id
+        excerpt
+        entryType
+        clientId
+        createdAt
+        controlled
+        verifiedBy {
+            id
+        }
+        createdBy {
+            displayName
+        }
+        modifiedAt
+        droppedExcerpt
+        attributes {
+            clientId
+            data
+            id
+            widget
+            widgetType
+            widgetVersion
+            geoSelectedOptions {
+                id
+                adminLevelTitle
+                regionTitle
+                title
+            }
+        }
+        lead {
+            id
+            authors {
+                id
+                title
+                shortName
+                mergedAs {
+                    id
+                    title
+                    shortName
+                }
+            }
+            url
+        }
+        image {
+            id
+            title
+            file {
+                url
+            }
+        }
+    }
+`;
+
 const PILLAR_ANALYSIS = gql`
+    ${ENTRY_DETAILS}
     fragment PillarAnalysis on AnalysisPillarType {
         id
         title
@@ -160,33 +219,7 @@ const PILLAR_ANALYSIS = gql`
                 id
                 clientId
                 entry {
-                    id
-                    excerpt
-                    entryType
-                    clientId
-                    createdAt
-                    droppedExcerpt
-                    lead {
-                        id
-                        authors {
-                            id
-                            title
-                            shortName
-                            mergedAs {
-                                id
-                                title
-                                shortName
-                            }
-                        }
-                        url
-                    }
-                    image {
-                        id
-                        title
-                        file {
-                            url
-                        }
-                    }
+                    ...EntryDetails
                 }
                 order
             }
@@ -218,6 +251,7 @@ const PILLAR_ANALYSIS_UPDATE = gql`
 
 const PILLAR_ANALYSIS_DETAILS = gql`
     ${PILLAR_ANALYSIS}
+    ${FRAMEWORK_FRAGMENT}
     query PillarAnalysisDetails(
         $projectId: ID!,
         $pillarId: ID!,
@@ -245,6 +279,7 @@ const PILLAR_ANALYSIS_DETAILS = gql`
                     filterType
                     filterTypeDisplay
                 }
+                ...FrameworkResponse
             }
         }
         sourceStatusOptions: __type(name: "LeadStatusEnum") {
@@ -288,10 +323,26 @@ const PILLAR_ANALYSIS_DETAILS = gql`
                 description
             }
         }
+        discardedEntryTagOptions: __type(name: "DiscardedEntryTagTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
     }
 `;
 
+export type EntryType = NonNullable<NonNullable<NonNullable<NonNullable<NonNullable<NonNullable<PillarAnalysisDetailsQuery['project']>['analysisPillar']>['statements']>[number]>['entries']>[number]>['entry'];
+export type Entry = DeepReplace<EntryType, Omit<WidgetAttributeRaw, 'widgetTypeDisplay' | 'widthTypeDisplay'>, WidgetAttributeFromEntry>;
+
+type FrameworkType = NonNullable<NonNullable<PillarAnalysisDetailsQuery['project']>['analysisFramework']>;
+export type Framework = DeepReplace<FrameworkType, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, Widget>;
+
+export type AnalyticalFrameworkType = NonNullable<NonNullable<PillarAnalysisDetailsQuery['project']>['analysisFramework']>;
+
 export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
+    ${ENTRY_DETAILS}
     query ProjectEntriesForAnalysis(
             $projectId: ID!
             $pillarId: ID!
@@ -340,44 +391,14 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                 ) {
                     totalCount
                     results {
-                        clientId
-                        id
-                        createdAt
-                        entryType
-                        droppedExcerpt
-                        excerpt
-                        lead {
-                            id
-                            url
-                            authors {
-                                id
-                                title
-                                shortName
-                                mergedAs {
-                                    id
-                                    title
-                                    shortName
-                                }
-                            }
-                        }
-                        image {
-                            id
-                            title
-                            file {
-                                url
-                            }
-                        }
+                        ...EntryDetails
                     }
                 }
             }
         }
     }
 `;
-
-export interface DiscardedTags {
-    key: number;
-    value: string;
-}
+export type DiscardedTags = NonNullable<NonNullable<PillarAnalysisDetailsQuery['discardedEntryTagOptions']>['enumValues']>[number];
 
 // This is an aribtrary number
 const STATEMENTS_LIMIT = 30;
@@ -386,7 +407,7 @@ type TabNames = 'entries' | 'discarded';
 
 const maxItemsPerPage = 25;
 
-const entryKeySelector = (d: EntryMin) => d.id;
+const entryKeySelector = (d: Entry) => d.id;
 
 /*
 const mapStateToProps = (state: AppState, props: unknown) => ({
@@ -466,11 +487,12 @@ function PillarAnalysis() {
     } = useFilterState();
 
     // NOTE: retain entries mapping to show entry information in entry cards
-    const [entriesMapping, setEntriesMapping] = useState<Obj<EntryMin>>({});
+    const [entriesMapping, setEntriesMapping] = useState<Obj<Entry>>({});
 
     const {
         loading: frameworkGetPending,
         data: projectDetailsResponse,
+        refetch: getAnalysisDetails,
     } = useQuery<PillarAnalysisDetailsQuery, PillarAnalysisDetailsQueryVariables>(
         PILLAR_ANALYSIS_DETAILS,
         {
@@ -484,6 +506,7 @@ function PillarAnalysis() {
                 if (!pillarData) {
                     return;
                 }
+
                 const newFilters = listToGroupList(
                     pillarData.filters as AnalysisPillars['filters'],
                     (o) => o.key,
@@ -508,7 +531,7 @@ function PillarAnalysis() {
                 });
                 const listOfEntries = pillarData.statements?.map(
                     (statement) => statement.entries?.map((entry) => entry.entry),
-                ).flat().filter(isDefined);
+                ).flat().filter(isDefined) as Entry[] | undefined | null;
                 setEntriesMapping((oldEntriesMappings) => ({
                     ...oldEntriesMappings,
                     ...listToMap(
@@ -588,8 +611,13 @@ function PillarAnalysis() {
         },
     );
 
+    const discardedTags: DiscardedTags[] = useMemo(() => (
+        projectDetailsResponse?.discardedEntryTagOptions?.enumValues ?? []
+    ), [projectDetailsResponse?.discardedEntryTagOptions?.enumValues]);
+
     const analysisDetails = projectDetailsResponse?.project?.analysis;
     const analysisPillarDetails = projectDetailsResponse?.project?.analysisPillar;
+    const frameworkDetails = projectDetailsResponse?.project?.analysisFramework as Framework;
 
     const [
         filtersShown,
@@ -823,16 +851,11 @@ function PillarAnalysis() {
     );
 
     const entriesResponse = useMemo(() => (
-        removeNull(projectEntriesResponse?.project?.analysisPillar?.entries)
+        removeNull(projectEntriesResponse?.project?.analysisPillar?.entries) as {
+            totalCount: number | null | undefined;
+            results: Entry[] | null | undefined;
+        }
     ), [projectEntriesResponse]);
-
-    const {
-        pending: pendingDiscardedTags,
-        response: discardedTags,
-    } = useRequest<DiscardedTags[]>({
-        url: 'server://discarded-entry-options/',
-        method: 'GET',
-    });
 
     const handleEntryDrop = useCallback(
         (entryId: string) => {
@@ -952,8 +975,9 @@ function PillarAnalysis() {
     );
 
     const entryCardRendererParams = useCallback(
-        (key: string, data: EntryMin): SourceEntryItemProps => ({
+        (key: string, data: Entry): SourceEntryItemProps => ({
             entryId: key,
+            entry: data,
             excerpt: data.excerpt,
             image: data.image,
             createdAt: data.createdAt,
@@ -964,17 +988,26 @@ function PillarAnalysis() {
             pillarModifiedDate: projectDetailsResponse?.project?.analysisPillar?.modifiedAt,
             discardedTags,
             onEntryDiscard: getEntries,
+            projectId,
+            framework: frameworkDetails,
+            geoAreaOptions,
+            setGeoAreaOptions,
+            onEntryDataChange: getAnalysisDetails,
         }), [
             pillarId,
+            projectId,
             getEntries,
             discardedTags,
             projectDetailsResponse?.project?.analysisPillar?.modifiedAt,
+            frameworkDetails,
+            geoAreaOptions,
+            setGeoAreaOptions,
+            getAnalysisDetails,
         ],
     );
 
     const pending = frameworkGetPending
-        || pendingPillarAnalysisSave
-        || pendingDiscardedTags;
+        || pendingPillarAnalysisSave;
 
     const handleNgramChange = useCallback((val: string | undefined) => {
         setSourcesFilterValue((filterVal) => ({
@@ -991,18 +1024,25 @@ function PillarAnalysis() {
         className: styles.analyticalStatement,
         index,
         value: statement,
+        framework: frameworkDetails,
         onChange: onAnalyticalStatementChange,
         onRemove: onAnalyticalStatementRemove,
+        geoAreaOptions,
+        setGeoAreaOptions,
         onEntryMove: handleEntryMove,
         onEntryDrop: handleEntryDrop,
         onSelectedNgramChange: handleNgramChange,
         error: statement?.clientId ? arrayError?.[statement?.clientId] : undefined,
+        onEntryDataChange: getAnalysisDetails,
     }), [
         handleNgramChange,
         onAnalyticalStatementChange,
         onAnalyticalStatementRemove,
+        getAnalysisDetails,
         handleEntryMove,
         handleEntryDrop,
+        frameworkDetails,
+        geoAreaOptions,
         arrayError,
     ]);
 
@@ -1261,9 +1301,10 @@ function PillarAnalysis() {
                                 >
                                     <DiscardedEntries
                                         className={styles.discardedEntriesContainer}
-                                        pillarId={+pillarId}
+                                        pillarId={pillarId}
                                         discardedTags={discardedTags}
                                         onUndiscardSuccess={getEntries}
+                                        projectId={projectId}
                                     />
                                 </TabPanel>
                             </CollapsibleContainer>

@@ -1,6 +1,7 @@
-import React, { memo, useState, useMemo, useCallback, useContext } from 'react';
+import React, { memo, useMemo, useCallback, useContext } from 'react';
+import { generatePath } from 'react-router-dom';
 import {
-    IoTrash,
+    IoTrashOutline,
     IoPeopleCircleOutline,
     IoPencilOutline,
     IoRepeat,
@@ -10,7 +11,9 @@ import {
     DraggableContent,
     QuickActionButton,
     DateOutput,
-    // useBooleanState,
+    useBooleanState,
+    TextOutput,
+    QuickActionLink,
 } from '@the-deep/deep-ui';
 import {
     Error,
@@ -22,10 +25,16 @@ import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 import NonFieldError from '#components/NonFieldError';
 import ExcerptInput from '#components/entry/ExcerptInput';
+import EditableEntry from '#components/entry/EditableEntry';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
-import EntryContext from '../../context';
+import routes from '#base/configs/routes';
+
+import EntryContext, { transformEntry } from '../../context';
 import { AnalyticalEntryType, PartialAnalyticalEntryType } from '../../schema';
+// import { AnalyticalFrameworkType } from '../..';
 import { DroppedValue } from '../index';
+import { Framework } from '../..';
 
 import styles from './styles.css';
 
@@ -41,6 +50,12 @@ interface AnalyticalEntryInputProps {
         dropOverEntryClientId: string | undefined,
     ) => void;
     dropDisabled?: boolean;
+    framework: Framework;
+    projectId: string;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    onEntryDataChange: () => void;
+    // framework: Framework | undefined | null;
 }
 
 function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
@@ -53,6 +68,11 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
         statementClientId,
         onAnalyticalEntryDrop,
         dropDisabled,
+        framework,
+        projectId,
+        geoAreaOptions,
+        setGeoAreaOptions,
+        onEntryDataChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -65,8 +85,9 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
 
     const [
         entryCardFlipped,
-        setEntryCardFlipped,
-    ] = useState<boolean>(false);
+        , , ,
+        toggleEntryCardFlipped,
+    ] = useBooleanState(false);
 
     const handleAnalyticalEntryAdd = useCallback(
         (val: Record<string, unknown> | undefined) => {
@@ -87,13 +108,26 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
     const { entries } = useContext(EntryContext);
     const entry = value.entry ? entries[value.entry] : undefined;
 
-    const authorName = entry?.lead.authors?.[0]?.shortName ?? '';
+    const authorName = entry?.lead.authors?.[0]?.shortName;
     const entryDate = entry?.createdAt;
 
+    const editEntryLink = useMemo(() => ({
+        pathname: generatePath(routes.entryEdit.path, {
+            projectId,
+            leadId: entry?.lead.id,
+        }),
+        state: {
+            entryId: entry?.clientId,
+            activePage: 'primary',
+        },
+        hash: '#/primary-tagging',
+    }), [
+        projectId,
+        entry?.lead.id,
+        entry?.clientId,
+    ]);
+
     // const onFieldChange = useFormObject(index, value, onChange);
-    const handleEntryCardFlip = useCallback(() => {
-        setEntryCardFlipped((oldVal) => !oldVal);
-    }, []);
 
     return (
         <DropContainer
@@ -114,6 +148,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 className={_cs(
                     styles.entry,
                     entryDraggedStatus && styles.isBeingDragged,
+                    entryCardFlipped && styles.isFlipped,
                 )}
                 name="entry"
                 dropEffect="move"
@@ -129,6 +164,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 )}
                 heading={(
                     <DateOutput
+                        format="yyyy/MM/dd"
                         value={entryDate}
                     />
                 )}
@@ -136,26 +172,29 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 headingSectionClassName={styles.headingSection}
                 headingContainerClassName={styles.headingContainer}
                 headingSize="extraSmall"
+                borderBelowHeader
+                borderBelowHeaderWidth="thin"
+                headerActionsContainerClassName={styles.headerActions}
                 headerActions={(
                     <>
-                        <QuickActionButton
-                            name={undefined}
-                            onClick={() => console.log('here')}
+                        <QuickActionLink
+                            title="Edit entry"
+                            to={editEntryLink}
                             variant="transparent"
                         >
                             <IoPencilOutline />
-                        </QuickActionButton>
+                        </QuickActionLink>
                         <QuickActionButton
                             name={index}
                             onClick={onRemove}
                             title={_ts('pillarAnalysis', 'removeAnalyticalEntryButtonTitle')}
                             variant="transparent"
                         >
-                            <IoTrash />
+                            <IoTrashOutline />
                         </QuickActionButton>
                         <QuickActionButton
                             name={undefined}
-                            onClick={handleEntryCardFlip}
+                            onClick={toggleEntryCardFlipped}
                             title="flip"
                             variant="transparent"
                         >
@@ -176,6 +215,37 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                         imageRaw={undefined}
                         leadImageUrl={undefined}
                     />
+                )}
+                {entry && entryCardFlipped && (
+                    <>
+                        <div className={styles.extraDetails}>
+                            <TextOutput
+                                label="Created Date"
+                                value={<DateOutput value={entry.createdAt} />}
+                            />
+                            <TextOutput
+                                label="Added By"
+                                value={entry.createdBy?.displayName}
+                            />
+                        </div>
+                        <EditableEntry
+                            className={styles.entryDetail}
+                            entry={transformEntry(entry)}
+                            entryId={entry.id}
+                            leadId={entry.lead.id}
+                            projectId={projectId}
+                            primaryTagging={framework?.primaryTagging}
+                            secondaryTagging={framework?.secondaryTagging}
+                            entryImage={entry.image}
+                            controlled={entry.controlled}
+                            verifiedBy={entry.verifiedBy}
+                            geoAreaOptions={geoAreaOptions}
+                            onGeoAreaOptionsChange={setGeoAreaOptions}
+                            onEntryDataChange={onEntryDataChange}
+                            compact
+                            noPaddingInWidgetContainer
+                        />
+                    </>
                 )}
             </DraggableContent>
         </DropContainer>

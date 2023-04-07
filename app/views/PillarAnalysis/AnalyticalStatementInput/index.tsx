@@ -36,6 +36,7 @@ import {
 
 import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import { Attributes, Listeners } from '#components/SortableList';
 import { reorder, genericMemo } from '#utils/common';
 
@@ -44,6 +45,8 @@ import {
     PartialAnalyticalEntryType,
     PartialAnalyticalStatementType,
 } from '../schema';
+
+import { Framework } from '..';
 import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import StoryAnalysisModal from './StoryAnalysisModal';
@@ -69,6 +72,10 @@ export interface AnalyticalStatementInputProps {
     attributes?: Attributes;
     listeners?: Listeners;
     onSelectedNgramChange: (item: string | undefined) => void;
+    framework: Framework;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    onEntryDataChange: () => void;
 }
 
 const defaultVal = (): AnalyticalStatementType => ({
@@ -126,6 +133,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         index,
         attributes,
         listeners,
+        framework,
+        geoAreaOptions,
+        setGeoAreaOptions,
+        onEntryDataChange,
     } = props;
 
     const alert = useAlert();
@@ -355,6 +366,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         index={myIndex}
                         statementClientId={value.clientId}
                         value={analyticalEntry}
+                        projectId={projectId}
                         // onChange={onAnalyticalEntryChange}
                         onRemove={onAnalyticalEntryRemove}
                         error={(
@@ -362,6 +374,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                                 ? arrayError?.[analyticalEntry.clientId] : undefined
                         )}
                         onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
+                        framework={framework}
+                        geoAreaOptions={geoAreaOptions}
+                        setGeoAreaOptions={setGeoAreaOptions}
+                        onEntryDataChange={onEntryDataChange}
                     />
                 ))}
             </div>
@@ -376,6 +392,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         ?.project?.triggerAutomaticSummary?.result?.id}
                     automaticNgramsId={automaticStoryAnalysis
                         ?.project?.triggerAutomaticNgram?.result?.id}
+                    onRemove={onAnalyticalEntryRemove}
+                    index={index}
+                    framework={framework}
+                    geoAreaOptions={geoAreaOptions}
+                    setGeoAreaOptions={setGeoAreaOptions}
+                    onEntryDataChange={onEntryDataChange}
                 />
             )}
             <DropContainer

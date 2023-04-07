@@ -100,6 +100,7 @@ interface Props {
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     firstElementRef?: React.RefObject<HTMLDivElement>;
+    noPaddingInWidgetContainer?: boolean;
 }
 
 function EditableEntry(props: Props) {
@@ -120,6 +121,7 @@ function EditableEntry(props: Props) {
         geoAreaOptions,
         onGeoAreaOptionsChange,
         firstElementRef,
+        noPaddingInWidgetContainer,
     } = props;
 
     const history = useHistory();
@@ -346,6 +348,7 @@ function EditableEntry(props: Props) {
             onGeoAreaOptionsChange={onGeoAreaOptionsChange}
             allWidgets={allWidgets}
             hideEntryId={hideEntryId}
+            noPaddingInWidgetContainer={noPaddingInWidgetContainer}
             rightComponent={(
                 <ExcerptInput
                     value={value.excerpt}

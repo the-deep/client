@@ -80,6 +80,7 @@ interface EntryInputProps<T extends string | number | undefined> {
 
     allWidgets: Widget[] | undefined | null;
     rightComponent?: React.ReactNode;
+    noPaddingInWidgetContainer?: boolean;
 }
 
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
@@ -109,6 +110,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         recommendations,
         onApplyToAll,
         rightComponent,
+        noPaddingInWidgetContainer = false,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -164,6 +166,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         suggestionMode: variant === 'nlp',
         allWidgets,
         rightComponent,
+        noPadding: noPaddingInWidgetContainer,
     }), [
         variant,
         allWidgets,
@@ -181,6 +184,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         value.clientId,
         onApplyToAll,
         rightComponent,
+        noPaddingInWidgetContainer,
     ]);
 
     const compactMode = variant === 'compact' || variant === 'nlp';
@@ -268,6 +272,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 emptyMessageHidden={variant === 'nlp'}
                 suggestionMode={variant === 'nlp'}
                 rightComponent={rightComponent}
+                noPadding={noPaddingInWidgetContainer}
             />
         </div>
     );

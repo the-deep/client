@@ -18,19 +18,21 @@ import { IoChevronForward } from 'react-icons/io5';
 import WordTree from '#components/WordTree';
 import MarkdownEditor from '#components/MarkdownEditor';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import EntryCard from './EntryCard';
-import EntryContext, { EntryMin } from '../../context';
+import EntryContext from '../../context';
 import Summary from './Summary';
 import Ngrams from './Ngrams';
 
 import {
     PartialAnalyticalStatementType,
 } from '../../schema';
+import { Entry, Framework } from '../..';
 
 import styles from './styles.css';
 
-const entryKeySelector = (item: EntryMin) => item.id;
+const entryKeySelector = (item: Entry) => item.id;
 
 type TabType = 'map' | 'nGrams' | 'context' | 'summary';
 
@@ -53,7 +55,7 @@ const sourceOptions: KeyLabel[] = [
 const keySelector = (d: KeyLabel) => d.key;
 const labelSelector = (d: KeyLabel) => d.label;
 
-function generateReportText(entry: EntryMin) {
+function generateReportText(entry: Entry) {
     const authors = entry.lead.authors
         ?.map((author) => organizationTitleSelector(author)).join(',');
     const entryCreatedDate = new Date(entry.createdAt);
@@ -71,6 +73,12 @@ interface Props {
     projectId: string;
     automaticNgramsId: string | undefined;
     automaticSummaryId: string | undefined;
+    onRemove: (index: number) => void;
+    index: number;
+    framework: Framework;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    onEntryDataChange: () => void;
 }
 
 function StoryAnalysisModal(props: Props) {
@@ -82,6 +90,12 @@ function StoryAnalysisModal(props: Props) {
         projectId,
         automaticNgramsId,
         automaticSummaryId,
+        onRemove,
+        index,
+        framework,
+        geoAreaOptions,
+        setGeoAreaOptions,
+        onEntryDataChange,
     } = props;
 
     const { entries } = useContext(EntryContext);
@@ -105,9 +119,25 @@ function StoryAnalysisModal(props: Props) {
         ).filter(isDefined) ?? []
     ), [entries, analyticalEntries]);
 
-    const entriesRendererParams = useCallback((_: string, data: EntryMin) => ({
+    const entriesRendererParams = useCallback((_: string, data: Entry) => ({
+        className: styles.entry,
         entry: data,
-    }), []);
+        projectId,
+        onRemove,
+        index,
+        framework,
+        geoAreaOptions,
+        setGeoAreaOptions,
+        onEntryDataChange,
+    }), [
+        projectId,
+        index,
+        onRemove,
+        framework,
+        geoAreaOptions,
+        setGeoAreaOptions,
+        onEntryDataChange,
+    ]);
 
     const handleGenerateReportText = useCallback(() => {
         if (pristine) {
@@ -312,23 +342,21 @@ function StoryAnalysisModal(props: Props) {
                                     onClick={handleGenerateReportText}
                                     disabled={generateReportTextDisabled}
                                     spacing="compact"
-                                    variant="secondary"
+                                    variant="tertiary"
                                 >
                                     Generate Report Text
                                 </Button>
                             </div>
-                            <div className={styles.entriesList}>
-                                <ListView
-                                    className={styles.entries}
-                                    data={entriesForReport}
-                                    keySelector={entryKeySelector}
-                                    renderer={EntryCard}
-                                    rendererParams={entriesRendererParams}
-                                    filtered={false}
-                                    errored={false}
-                                    pending={false}
-                                />
-                            </div>
+                            <ListView
+                                className={styles.entries}
+                                data={entriesForReport}
+                                keySelector={entryKeySelector}
+                                renderer={EntryCard}
+                                rendererParams={entriesRendererParams}
+                                filtered={false}
+                                errored={false}
+                                pending={false}
+                            />
                         </div>
                     </div>
                     <div className={styles.cardContainer}>
