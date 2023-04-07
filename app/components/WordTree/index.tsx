@@ -53,7 +53,6 @@ function WordTreeChart(props: WordTreeChartProps) {
         onWordClick,
     } = props;
 
-    console.warn('text', text, word);
     const options = useMemo(() => ({
         wordtree: {
             format: 'implicit',

@@ -6,4 +6,8 @@
         display: flex;
         justify-content: center;
     }
+
+    .content {
+        font-size: var(--dui-font-size-medium);
+    }
 }
