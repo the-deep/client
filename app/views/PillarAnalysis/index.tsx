@@ -118,6 +118,7 @@ import {
 } from './schema';
 
 import EntryContext, { EntryMin } from './context';
+import AutoClustering from './AutoClustering';
 
 import styles from './styles.css';
 
@@ -1021,6 +1022,13 @@ function PillarAnalysis() {
         [entriesMapping, setEntriesMapping],
     );
 
+    const handleStatementsFromClustersSet = useCallback(
+        (newStatements: PartialAnalyticalStatementType[]) => {
+            setFieldValue(newStatements, 'statements');
+        },
+        [setFieldValue],
+    );
+
     const isCurrentFilterEmpty = doesObjectHaveNoData(sourcesFilters, ['', null]);
     const isFilterEmpty = doesObjectHaveNoData(sourcesFilterValue, ['', null]);
 
@@ -1202,6 +1210,15 @@ function PillarAnalysis() {
                                         >
                                             {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
                                         </Tab>
+                                        <AutoClustering
+                                            pillarId={pillarId}
+                                            projectId={projectId}
+                                            entriesFilter={entriesFilter}
+                                            onEntriesMappingChange={setEntriesMapping}
+                                            onStatementsFromClustersSet={
+                                                handleStatementsFromClustersSet
+                                            }
+                                        />
                                     </TabList>
                                 )}
                             >
