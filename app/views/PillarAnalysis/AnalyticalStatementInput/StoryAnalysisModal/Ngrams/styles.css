@@ -1,0 +1,17 @@
+.ngrams {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
+
+    .chart-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .chart {
+            min-height: 20rem;
+        }
+    }
+}
