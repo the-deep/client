@@ -25,7 +25,7 @@ function EntryCard(props: Props) {
 
     const authors = useMemo(() => (
         entry.lead.authors
-            ?.map((author) => organizationTitleSelector(author)).join(',')
+            ?.map((author) => organizationTitleSelector(author)).join(', ')
     ), [entry.lead.authors]);
 
     return (
