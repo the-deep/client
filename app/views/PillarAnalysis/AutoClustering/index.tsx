@@ -174,7 +174,7 @@ function AutoClustering(props: Props) {
         },
         [
             activeTopicModellingId,
-            autoClusteringResults,
+            autoClusteringResults?.project?.analysisTopicModel?.status,
             startPolling,
             stopPolling,
         ],
