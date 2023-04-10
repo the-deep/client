@@ -113,7 +113,7 @@ function StoryAnalysisModal(props: Props) {
         if (pristine) {
             setPristine(false);
         }
-        const report = entriesForReport.map((entry) => generateReportText(entry)).join(' ');
+        const report = entriesForReport.map((entry) => generateReportText(entry)).join('\n\n');
         setReportText(report);
     }, [entriesForReport, pristine]);
 
