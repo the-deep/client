@@ -1,0 +1,4 @@
+.summary {
+    display: flex;
+    flex-grow: 1;
+}
