@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { isDefined } from '@togglecorp/fujs';
 import {

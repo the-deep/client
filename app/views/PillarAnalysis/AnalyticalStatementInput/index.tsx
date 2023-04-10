@@ -6,6 +6,7 @@ import {
     IoBarChartSharp,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
+import { useParams } from 'react-router-dom';
 
 import {
     _cs,
@@ -18,6 +19,7 @@ import {
     DropContainer,
     QuickActionButton,
     TextArea,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     useFormArray,
@@ -26,6 +28,11 @@ import {
     Error,
     getErrorObject,
 } from '@togglecorp/toggle-form';
+import { gql, useMutation } from '@apollo/client';
+import {
+    AutomaticStoryAnalysisMutation,
+    AutomaticStoryAnalysisMutationVariables,
+} from '#generated/types';
 
 import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
@@ -71,6 +78,42 @@ const defaultVal = (): AnalyticalStatementType => ({
     entries: [],
 });
 
+const AUTOMATIC_STORY_ANALYSIS = gql`
+    mutation AutomaticStoryAnalysis($projectId: ID!, $entriesId: [ID!]) {
+        project(id: $projectId) {
+            triggerAutomaticNgram(data: {entriesId: $entriesId}) {
+                errors
+                ok
+                result {
+                    id
+                    status
+                    unigrams {
+                        count
+                        word
+                    }
+                    bigrams {
+                        count
+                        word
+                    }
+                    trigrams {
+                        count
+                        word
+                    }
+                }
+            }
+            triggerAutomaticSummary(data: {entriesId: $entriesId}) {
+                errors
+                ok
+                result {
+                    id
+                    status
+                    summary
+                }
+            }
+        }
+    }
+`;
+
 function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     const {
         className,
@@ -85,7 +128,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         listeners,
     } = props;
 
+    const alert = useAlert();
+
     const onFieldChange = useFormObject(index, onChange, defaultVal);
+    const {
+        projectId,
+    } = useParams<{ projectId: string}>();
 
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.entries);
@@ -95,6 +143,52 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         showStoryAnalysisModal,
         hideStoryAnalysisModal,
     ] = useModalState(false);
+
+    const [
+        createAutomaticStoryAnalysis,
+        {
+            data: automaticStoryAnalysis,
+        },
+    ] = useMutation<AutomaticStoryAnalysisMutation, AutomaticStoryAnalysisMutationVariables>(
+        AUTOMATIC_STORY_ANALYSIS,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.project?.triggerAutomaticNgram
+                    || !response.project?.triggerAutomaticSummary) {
+                    return;
+                }
+
+                if (response.project.triggerAutomaticSummary.errors) {
+                    alert.show(
+                        'There were errors when creating automatic summary.',
+                        { variant: 'error' },
+                    );
+                }
+                if (response.project.triggerAutomaticNgram.errors) {
+                    alert.show(
+                        'There were errors when creating automatic Ngram.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to create automatic story analysis.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const handleStoryAnalysisModalOpen = useCallback(() => {
+        createAutomaticStoryAnalysis({
+            variables: {
+                projectId,
+                entriesId: value.entries?.map((ae) => ae.entry).filter(isDefined),
+            },
+        });
+        showStoryAnalysisModal();
+    }, [value.entries, showStoryAnalysisModal, projectId, createAutomaticStoryAnalysis]);
 
     const {
         // setValue: onAnalyticalEntryChange,
@@ -224,7 +318,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     </QuickActionButton>
                     <QuickActionButton
                         name="View more details modal"
-                        onClick={showStoryAnalysisModal}
+                        onClick={handleStoryAnalysisModalOpen}
                         big
                     >
                         <IoBarChartSharp />
@@ -277,6 +371,11 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     onSave={handleStatementChange}
                     statementId={value.clientId}
                     analyticalEntries={value.entries}
+                    projectId={projectId}
+                    automaticSummaryId={automaticStoryAnalysis
+                        ?.project?.triggerAutomaticSummary?.result?.id}
+                    automaticNgramsId={automaticStoryAnalysis
+                        ?.project?.triggerAutomaticNgram?.result?.id}
                 />
             )}
             <DropContainer
