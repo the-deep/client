@@ -21,6 +21,9 @@ import { organizationTitleSelector } from '#components/selections/NewOrganizatio
 
 import EntryCard from './EntryCard';
 import EntryContext, { EntryMin } from '../../context';
+import Summary from './Summary';
+import Ngrams from './Ngrams';
+
 import {
     PartialAnalyticalStatementType,
 } from '../../schema';
@@ -28,6 +31,8 @@ import {
 import styles from './styles.css';
 
 const entryKeySelector = (item: EntryMin) => item.id;
+
+type TabType = 'map' | 'nGrams' | 'context' | 'summary';
 
 interface KeyLabel {
     key: 'originalEntries' | 'reportText';
@@ -63,6 +68,9 @@ interface Props {
     onModalClose: () => void,
     onSave: (newVal: string | undefined) => void;
     statementId: string | undefined;
+    projectId: string;
+    automaticNgramsId: string | undefined;
+    automaticSummaryId: string | undefined;
 }
 
 function StoryAnalysisModal(props: Props) {
@@ -71,12 +79,15 @@ function StoryAnalysisModal(props: Props) {
         onModalClose,
         onSave,
         statementId,
+        projectId,
+        automaticNgramsId,
+        automaticSummaryId,
     } = props;
 
     const { entries } = useContext(EntryContext);
 
     const [pristine, setPristine] = useState(true);
-    const [tab, setTab] = useState<string | undefined>('map');
+    const [tab, setTab] = useState<TabType | undefined>('map');
     const [informationGap, setInformationGap] = React.useState<string | undefined>();
     const [analyticalStatement, setAnalyticalStatement] = React.useState<string | undefined>();
     const [reportText, setReportText] = React.useState<string | undefined>('');
@@ -231,7 +242,12 @@ function StoryAnalysisModal(props: Props) {
                             contentClassName={styles.tabPanelContainer}
                         >
                             <TabPanel name="map" />
-                            <TabPanel name="nGrams" />
+                            <TabPanel name="nGrams" className={styles.tabPanel}>
+                                <Ngrams
+                                    projectId={projectId}
+                                    ngramsId={automaticNgramsId}
+                                />
+                            </TabPanel>
                             <TabPanel name="context" className={styles.tabPanel}>
                                 <div className={styles.contextActions}>
                                     <SegmentInput
@@ -267,7 +283,12 @@ function StoryAnalysisModal(props: Props) {
                                     />
                                 </div>
                             </TabPanel>
-                            <TabPanel name="summary" />
+                            <TabPanel name="summary" className={styles.tabPanel}>
+                                <Summary
+                                    projectId={projectId}
+                                    summaryId={automaticSummaryId}
+                                />
+                            </TabPanel>
                         </Container>
                     </Tabs>
                 </div>

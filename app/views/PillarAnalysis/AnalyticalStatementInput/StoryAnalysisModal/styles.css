@@ -13,8 +13,7 @@
             display: flex;
             flex-grow: 1;
             background-color: var(--dui-color-foreground);
-            padding-top: var(--dui-spacing-small);
-            overflow: auto;
+            gap: var(--dui-spacing-small);
 
             .content {
                 display: flex;
@@ -64,8 +63,10 @@
                                 flex-direction: column;
                                 flex-grow: 1;
                                 background-color: var(--dui-color-foreground);
-                                padding-top: var(--dui-spacing-small);
+                                padding-top: var(--dui-spacing-medium);
+                                overflow: auto;
                                 gap: var(--dui-spacing-small);
+
 
                                 .context-actions {
                                     display: flex;
