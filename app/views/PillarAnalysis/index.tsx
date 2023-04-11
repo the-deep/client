@@ -188,6 +188,16 @@ export const ENTRY_DETAILS = gql`
                     title
                 }
             }
+            source {
+                id
+                title
+                shortName
+                mergedAs {
+                    id
+                    title
+                    shortName
+                }
+            }
             url
         }
         image {
