@@ -279,11 +279,14 @@ function AutoClustering(props: Props) {
         const newStatements: PartialAnalyticalStatementType[] = clusters?.filter(isDefined).map(
             (cluster, index) => ({
                 entries: cluster.entries.filter(isDefined).map((entry, entryIndex) => ({
+                    clientId: randomString(),
                     order: entryIndex + 1,
                     entry: entry.id,
                 })),
                 order: index + 1,
                 includeInReport: false,
+                reportText: '',
+                informationGaps: '',
                 clientId: randomString(),
             }),
         ) ?? [];
@@ -306,6 +309,7 @@ function AutoClustering(props: Props) {
             <>
                 <Button
                     name={undefined}
+                    className={styles.clusterButton}
                     onClick={showModal}
                     variant="tertiary"
                     spacing="compact"
@@ -354,6 +358,7 @@ function AutoClustering(props: Props) {
 
     return (
         <ConfirmButton
+            className={styles.clusterButton}
             name={undefined}
             onConfirm={handleAutoClusteringTriggerClick}
             message="Are you sure you want to trigger auto clustering of entries into new stories? This will replace current analytical statements with suggested groupings using NLP."
