@@ -182,6 +182,11 @@ export const ENTRY_DETAILS = gql`
                     title
                     shortName
                 }
+                organizationType {
+                    id
+                    shortName
+                    title
+                }
             }
             url
         }

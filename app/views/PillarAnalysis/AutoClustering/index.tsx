@@ -38,7 +38,7 @@ import {
 import styles from './styles.css';
 
 const ENTRY_DETAILS = gql`
-    fragment EntryDetails on EntryType {
+    fragment EntryDetail on EntryType {
         id
         excerpt
         entryType
@@ -105,7 +105,7 @@ const PILLAR_AUTO_CLUSTERING_RESULTS = gql`
                 clusters {
                     id
                     entries {
-                        ...EntryDetails
+                        ...EntryDetail
                     }
                 }
             }
