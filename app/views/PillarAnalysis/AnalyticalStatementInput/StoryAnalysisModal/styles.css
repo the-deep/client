@@ -7,6 +7,8 @@
         flex-direction: column;
         flex-grow: 1;
         border-top: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        padding-top: var(--dui-spacing-small);
+        padding-bottom: var(--dui-spacing-small);
         overflow: auto;
 
         .container {
@@ -67,6 +69,11 @@
                                 overflow: auto;
                                 gap: var(--dui-spacing-small);
 
+                                .message {
+                                    display: flex;
+                                    flex-grow: 1;
+                                    justify-content: center;
+                                }
 
                                 .context-actions {
                                     display: flex;

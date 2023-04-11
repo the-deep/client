@@ -2,17 +2,19 @@ import React, { useState, useCallback, useContext, useMemo } from 'react';
 import {
     Button,
     Container,
+    Kraken,
     ListView,
+    Message,
     Modal,
+    QuickActionButton,
+    SegmentInput,
     Tab,
     TabList,
     TabPanel,
     Tabs,
-    SegmentInput,
     TextInput,
-    QuickActionButton,
 } from '@the-deep/deep-ui';
-import { isDefined, encodeDate, _cs } from '@togglecorp/fujs';
+import { isDefined, encodeDate, _cs, unique, listToGroupList } from '@togglecorp/fujs';
 import { IoChevronForward } from 'react-icons/io5';
 
 import WordTree from '#components/WordTree';
@@ -24,6 +26,7 @@ import EntryCard from './EntryCard';
 import EntryContext from '../../context';
 import Summary from './Summary';
 import Ngrams from './Ngrams';
+import Stats from './Stats';
 
 import {
     PartialAnalyticalStatementType,
@@ -113,7 +116,7 @@ function StoryAnalysisModal(props: Props) {
         onSave(analyticalStatement);
     }, [onSave, analyticalStatement]);
 
-    const entriesForReport = useMemo(() => (
+    const originalEntries = useMemo(() => (
         analyticalEntries?.map(
             (ae) => (ae.entry ? entries?.[ae.entry] : undefined),
         ).filter(isDefined) ?? []
@@ -143,9 +146,9 @@ function StoryAnalysisModal(props: Props) {
         if (pristine) {
             setPristine(false);
         }
-        const report = entriesForReport.map((entry) => generateReportText(entry)).join('\n\n');
+        const report = originalEntries.map((entry) => generateReportText(entry)).join('\n\n');
         setReportText(report);
-    }, [entriesForReport, pristine]);
+    }, [originalEntries, pristine]);
 
     const handleAnalyticalStatementChange = useCallback((newValue: string | undefined) => {
         if (pristine) {
@@ -189,8 +192,8 @@ function StoryAnalysisModal(props: Props) {
     const generateReportTextDisabled = (reportText?.trim().length ?? 0) > 0;
 
     const originalEntriesText = useMemo(() => (
-        entriesForReport.map((entry) => entry.excerpt).join(' ')
-    ), [entriesForReport]);
+        originalEntries.map((entry) => entry.excerpt).join(' ')
+    ), [originalEntries]);
 
     const sourceText = useMemo(() => {
         if (sourceOption === 'originalEntries') {
@@ -198,6 +201,45 @@ function StoryAnalysisModal(props: Props) {
         }
         return reportText ?? '';
     }, [sourceOption, originalEntriesText, reportText]);
+
+    const organizationTypes = useMemo(() => {
+        const entriesOrganizationTypes = originalEntries.flatMap((entry) => (
+            entry?.lead?.authors?.flatMap((author) => author.organizationType)?.filter(isDefined)
+        )).filter(isDefined);
+
+        const groupedOrganizationTypes = listToGroupList(
+            entriesOrganizationTypes,
+            (organizationType) => organizationType.id,
+        );
+        return unique(entriesOrganizationTypes, (d) => d.id)
+            ?.map((uniqueOrganizationType) => ({
+                ...uniqueOrganizationType,
+                count: groupedOrganizationTypes[uniqueOrganizationType.id].length,
+            }));
+    }, [originalEntries]);
+
+    const stats = useMemo(() => {
+        // INFO: patten used from https://stephencharlesweiss.com/regex-markdown-link
+        const entriesInReport = reportText
+            ?.match(/!?\[([^\]]*)?\]\(((https?:\/\/)?[A-Za-z0-9\:\/\. ]+)(\"(.+)\")?\)/gm) //eslint-disable-line
+            ?.filter(isDefined);
+        const sourcesUsed = unique(entriesInReport ?? []).length;
+        const totalSources = unique(originalEntries.map((entry) => entry.lead.id)).length;
+        const entriesUsed = entriesInReport?.length ?? 0;
+        const totalEntries = originalEntries.length ?? 0;
+
+        /* INFO: Adding sources or entries that are different from the original sources or entries
+         * is possible while editing report text. If this is the case, the total sources / total
+         * entries count may be higher than the sources used / entries used count. We put a ceiling
+         * to the sources used / entries used values to total sources / total entries.
+         */
+        return {
+            sourcesUsed: sourcesUsed > totalSources ? totalSources : sourcesUsed,
+            totalSources,
+            entriesUsed: entriesUsed > totalEntries ? totalEntries : entriesUsed,
+            totalEntries,
+        };
+    }, [reportText]);
 
     return (
         <Modal
@@ -222,7 +264,12 @@ function StoryAnalysisModal(props: Props) {
                 contentClassName={styles.content}
             >
                 <div className={styles.left}>
-                    <div className={styles.stats}>Stats</div>
+                    <div className={styles.stats}>
+                        <Stats
+                            diversityChartData={organizationTypes}
+                            {...stats}
+                        />
+                    </div>
                     <Tabs
                         value={tab}
                         onChange={setTab}
@@ -271,7 +318,13 @@ function StoryAnalysisModal(props: Props) {
                             )}
                             contentClassName={styles.tabPanelContainer}
                         >
-                            <TabPanel name="map" />
+                            <TabPanel name="map" className={styles.tabPanel}>
+                                <Message
+                                    className={styles.message}
+                                    message="Automatic geo location analysis is not available at the moment."
+                                    icon={(<Kraken variant="sleep" />)}
+                                />
+                            </TabPanel>
                             <TabPanel name="nGrams" className={styles.tabPanel}>
                                 <Ngrams
                                     projectId={projectId}
@@ -347,16 +400,18 @@ function StoryAnalysisModal(props: Props) {
                                     Generate Report Text
                                 </Button>
                             </div>
-                            <ListView
-                                className={styles.entries}
-                                data={entriesForReport}
-                                keySelector={entryKeySelector}
-                                renderer={EntryCard}
-                                rendererParams={entriesRendererParams}
-                                filtered={false}
-                                errored={false}
-                                pending={false}
-                            />
+                            <div className={styles.entriesList}>
+                                <ListView
+                                    className={styles.entries}
+                                    data={originalEntries}
+                                    keySelector={entryKeySelector}
+                                    renderer={EntryCard}
+                                    rendererParams={entriesRendererParams}
+                                    filtered={false}
+                                    errored={false}
+                                    pending={false}
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className={styles.cardContainer}>
