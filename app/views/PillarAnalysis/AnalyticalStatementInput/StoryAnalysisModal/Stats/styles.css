@@ -1,0 +1,32 @@
+.stats {
+    display: flex;
+    gap: var(--dui-spacing-medium);
+    background-color: var(--dui-color-foreground);
+    padding-top: var(--dui-spacing-medium);
+
+    .heading {
+        font-size: var(--dui-font-size-large);
+        font-weight: var(--dui-font-weight-bold);
+    }
+
+    .container {
+        display: flex;
+        flex-basis: 35%;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+
+        .title {
+            padding-bottom: var(--dui-spacing-medium);
+        }
+    }
+
+    .chart-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .chart {
+            min-height: 7rem;
+        }
+    }
+}
