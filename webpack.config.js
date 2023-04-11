@@ -151,7 +151,6 @@ module.exports = () => {
                 filename: 'index.html',
                 title: pkg.name,
                 meta: {
-                    charset: 'UTF-8',
                     viewport: 'width=device-width, initial-scale=1.0',
                     description: pkg.description,
                     referrer: 'origin',
