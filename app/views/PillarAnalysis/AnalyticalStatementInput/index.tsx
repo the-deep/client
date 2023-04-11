@@ -294,6 +294,14 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onFieldChange(newStatementVal, 'statement');
     }, [onFieldChange]);
 
+    const handleInfoGapsChange = useCallback((newVal: string | undefined) => {
+        onFieldChange(newVal, 'informationGaps');
+    }, [onFieldChange]);
+
+    const handleReportTextChange = useCallback((newVal: string | undefined) => {
+        onFieldChange(newVal, 'reportText');
+    }, [onFieldChange]);
+
     return (
         <Container
             className={_cs(styles.analyticalStatementInput, className)}
@@ -384,7 +392,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             {moreDetailsModalShown && (
                 <StoryAnalysisModal
                     onModalClose={hideStoryAnalysisModal}
-                    onSave={handleStatementChange}
+                    analyticalStatement={value.statement}
+                    reportText={value.reportText}
+                    informationGaps={value.informationGaps}
+                    onStatementChange={handleStatementChange}
+                    onReportTextChange={handleReportTextChange}
+                    onInfoGapsChange={handleInfoGapsChange}
                     statementId={value.clientId}
                     analyticalEntries={value.entries}
                     projectId={projectId}
