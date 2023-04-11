@@ -71,7 +71,6 @@ function generateReportText(entry: Entry) {
 interface Props {
     analyticalEntries: PartialAnalyticalStatementType['entries'];
     onModalClose: () => void,
-    onSave: (newVal: string | undefined) => void;
     statementId: string | undefined;
     projectId: string;
     automaticNgramsId: string | undefined;
@@ -82,13 +81,19 @@ interface Props {
     geoAreaOptions: GeoArea[] | undefined | null;
     setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     onEntryDataChange: () => void;
+    onStatementChange: (newVal: string | undefined) => void;
+    onReportTextChange: (newVal: string | undefined) => void;
+    onInfoGapsChange: (newVal: string | undefined) => void;
+    analyticalStatement: string | undefined;
+    reportText: string | undefined;
+    informationGaps: string | undefined;
 }
 
 function StoryAnalysisModal(props: Props) {
     const {
         analyticalEntries,
         onModalClose,
-        onSave,
+        onStatementChange,
         statementId,
         projectId,
         automaticNgramsId,
@@ -99,22 +104,41 @@ function StoryAnalysisModal(props: Props) {
         geoAreaOptions,
         setGeoAreaOptions,
         onEntryDataChange,
+        onReportTextChange,
+        onInfoGapsChange,
+        analyticalStatement: analyticalStatementFromProps,
+        reportText: reportTextFromProps,
+        informationGaps: informationGapsFromProps,
     } = props;
 
     const { entries } = useContext(EntryContext);
 
     const [pristine, setPristine] = useState(true);
     const [tab, setTab] = useState<TabType | undefined>('map');
-    const [informationGap, setInformationGap] = React.useState<string | undefined>();
-    const [analyticalStatement, setAnalyticalStatement] = React.useState<string | undefined>();
-    const [reportText, setReportText] = React.useState<string | undefined>('');
+    const [informationGaps, setInformationGaps] = useState<string | undefined>(
+        informationGapsFromProps,
+    );
+    const [analyticalStatement, setAnalyticalStatement] = useState<string | undefined>(
+        analyticalStatementFromProps,
+    );
+    const [reportText, setReportText] = useState<string | undefined>(reportTextFromProps);
     const [sourceOption, setSourceOption] = useState<KeyLabel['key']>('originalEntries');
     const [word, setWord] = useState<string>();
     const [rootWord, setRootWord] = useState<string>();
 
     const handleSave = useCallback(() => {
-        onSave(analyticalStatement);
-    }, [onSave, analyticalStatement]);
+        onStatementChange(analyticalStatement);
+        onReportTextChange(reportText);
+        onInfoGapsChange(informationGaps);
+        setPristine(true);
+    }, [
+        onStatementChange,
+        onReportTextChange,
+        onInfoGapsChange,
+        analyticalStatement,
+        reportText,
+        informationGaps,
+    ]);
 
     const originalEntries = useMemo(() => (
         analyticalEntries?.map(
@@ -161,7 +185,7 @@ function StoryAnalysisModal(props: Props) {
         if (pristine) {
             setPristine(false);
         }
-        setInformationGap(newValue);
+        setInformationGaps(newValue);
     }, [pristine]);
 
     const handleReportTextChange = useCallback((newValue: string | undefined) => {
@@ -383,7 +407,7 @@ function StoryAnalysisModal(props: Props) {
                                 labelContainerClassName={styles.labelContainer}
                                 label="Information Gap"
                                 name="informationGap"
-                                value={informationGap}
+                                value={informationGaps}
                                 onChange={handleInformationGapChange}
                             />
                         </div>

@@ -219,6 +219,8 @@ const PILLAR_ANALYSIS = gql`
             clientId
             order
             statement
+            reportText
+            informationGaps
             includeInReport
             entries {
                 id
@@ -568,11 +570,17 @@ function PillarAnalysis() {
                         clientId: clientId1,
                         order: 1,
                         includeInReport: false,
+                        statement: '',
+                        reportText: '',
+                        informationGaps: '',
                     };
                     const newAnalyticalStatement2: PartialAnalyticalStatementType = {
                         clientId: clientId2,
                         order: 2,
                         includeInReport: false,
+                        statement: '',
+                        reportText: '',
+                        informationGaps: '',
                     };
                     analyticalStatements = [newAnalyticalStatement1, newAnalyticalStatement2];
                 }
@@ -892,6 +900,9 @@ function PillarAnalysis() {
                 clientId,
                 order: oldStatements.length + 1,
                 includeInReport: false,
+                statement: '',
+                reportText: '',
+                informationGaps: '',
             };
             setFieldValue(
                 [...oldStatements, newAnalyticalStatement],

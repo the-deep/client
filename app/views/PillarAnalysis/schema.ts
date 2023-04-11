@@ -50,6 +50,8 @@ const analyticalStatementSchema: AnalyticalStatementSchema = {
         order: [requiredCondition],
         clonedFrom: [],
         statement: [requiredStringCondition],
+        informationGaps: [],
+        reportText: [],
         includeInReport: [requiredCondition],
         entries: analyticalEntriesSchema,
     }),
