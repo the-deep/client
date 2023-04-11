@@ -79,6 +79,16 @@ const ENTRY_DETAILS = gql`
                     shortName
                 }
             }
+            source {
+                id
+                title
+                shortName
+                mergedAs {
+                    id
+                    title
+                    shortName
+                }
+            }
             url
         }
         image {
