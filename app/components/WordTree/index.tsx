@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, memo } from 'react';
 import {
+    Kraken,
     Message,
 } from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
@@ -123,6 +124,7 @@ function WordTree(props: Props) {
             <Message
                 className={styles.message}
                 message="Empty text. Please add relevant text to visualize in word tree."
+                icon={<Kraken variant="crutches" />}
             />
         );
     }
@@ -132,6 +134,7 @@ function WordTree(props: Props) {
             <Message
                 className={styles.message}
                 message="Root word is not present. Please add the word that is in the text."
+                icon={<Kraken variant="search" />}
             />
         );
     }

@@ -76,10 +76,10 @@ function Summary(props: Props) {
 
     if (data?.project?.analysisAutomaticSummary?.status === 'SEND_FAILED') {
         return (
-            <div className={styles.summary}>
+            <div className={styles.message}>
                 <Message
                     message="The NLP service is not responding at the moment. Please try again after some time."
-                    icon={(<Kraken variant="crutches" />)}
+                    icon={(<Kraken variant="sleep" />)}
                 />
             </div>
         );
@@ -87,19 +87,37 @@ function Summary(props: Props) {
 
     if (isDefined(error) || data?.project?.analysisAutomaticSummary?.status === 'FAILED') {
         return (
-            <div className={styles.summary}>
+            <div className={styles.message}>
                 <Message
                     message="There was an error while generating summary from the entries."
-                    icon={(<Kraken variant="crutches" />)}
+                    icon={(<Kraken variant="icecream" />)}
                 />
             </div>
         );
     }
 
+    const pending = loading
+        || data?.project?.analysisAutomaticSummary?.status === 'STARTED'
+        || data?.project?.analysisAutomaticSummary?.status === 'PENDING';
+
+    if (pending) {
+        return (
+            <PendingMessage />
+        );
+    }
+
     return (
         <div className={styles.summary}>
-            {loading && <PendingMessage />}
-            {data?.project?.analysisAutomaticSummary?.summary}
+            {(data?.project?.analysisAutomaticSummary?.summary?.length ?? 0) > 0 ? (
+                data?.project?.analysisAutomaticSummary?.summary
+            ) : (
+                <div className={styles.message}>
+                    <Message
+                        message="We couldn't generate automatic summary from the entries. Please add more entries and try again."
+                        icon={(<Kraken variant="crutches" />)}
+                    />
+                </div>
+            )}
         </div>
     );
 }
