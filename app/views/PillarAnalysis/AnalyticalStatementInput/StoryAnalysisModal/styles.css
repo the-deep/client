@@ -110,7 +110,7 @@
                         .editor {
                             display: flex;
                             flex-grow: 1;
-                            gap: 0;
+                            gap: var(--dui-width-separator-thin);
 
                             .label-container {
                                 padding-bottom: var(--dui-spacing-small);
