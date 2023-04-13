@@ -66,7 +66,8 @@ function generateReportText(entry: Entry) {
     const entryCreatedDate = new Date(entry.createdAt);
     const entryText = entry?.excerpt.replace(/[.,\s]*$/, ' ');
 
-    return `${entryText}([${organizations}](${entry.lead.url}), ${encodeDate(entryCreatedDate)}).`;
+    const url = entry.lead.url.length > 0 ? entry.lead.url : entry.lead.shareViewUrl;
+    return `${entryText}([${organizations}](${url}), ${encodeDate(entryCreatedDate)}).`;
 }
 
 interface Props {
@@ -244,10 +245,10 @@ function StoryAnalysisModal(props: Props) {
     }, [originalEntries]);
 
     const stats = useMemo(() => {
-        // INFO: patten used from https://stephencharlesweiss.com/regex-markdown-link
         const entriesInReport = reportText
-            ?.match(/!?\[([^\]]*)?\]\(((https?:\/\/)?[A-Za-z0-9\:\/\. ]+)(\"(.+)\")?\)/gm) //eslint-disable-line
+            ?.match(/\(https?:\/\/[^ ]*\)/gmi)
             ?.filter(isDefined);
+
         const sourcesUsed = unique(entriesInReport ?? []).length;
         const totalSources = unique(originalEntries.map((entry) => entry.lead.id)).length;
         const entriesUsed = entriesInReport?.length ?? 0;
@@ -264,7 +265,7 @@ function StoryAnalysisModal(props: Props) {
             entriesUsed: entriesUsed > totalEntries ? totalEntries : entriesUsed,
             totalEntries,
         };
-    }, [reportText]);
+    }, [reportText, originalEntries]);
 
     return (
         <Modal
@@ -425,18 +426,16 @@ function StoryAnalysisModal(props: Props) {
                                     Generate Report Text
                                 </Button>
                             </div>
-                            <div className={styles.entriesList}>
-                                <ListView
-                                    className={styles.entries}
-                                    data={originalEntries}
-                                    keySelector={entryKeySelector}
-                                    renderer={EntryCard}
-                                    rendererParams={entriesRendererParams}
-                                    filtered={false}
-                                    errored={false}
-                                    pending={false}
-                                />
-                            </div>
+                            <ListView
+                                className={styles.entries}
+                                data={originalEntries}
+                                keySelector={entryKeySelector}
+                                renderer={EntryCard}
+                                rendererParams={entriesRendererParams}
+                                filtered={false}
+                                errored={false}
+                                pending={false}
+                            />
                         </div>
                     </div>
                     <div className={styles.cardContainer}>

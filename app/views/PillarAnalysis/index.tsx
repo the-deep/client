@@ -199,6 +199,7 @@ export const ENTRY_DETAILS = gql`
                 }
             }
             url
+            shareViewUrl
         }
         image {
             id
