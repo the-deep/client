@@ -2,7 +2,6 @@
     display: flex;
     gap: var(--dui-spacing-medium);
     background-color: var(--dui-color-foreground);
-    padding-top: var(--dui-spacing-medium);
 
     .heading {
         font-size: var(--dui-font-size-large);
