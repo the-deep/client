@@ -13,6 +13,14 @@
     .heading-section {
         align-items: center;
 
+        .authors {
+            display: inline-block;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         .heading-container {
             align-items: center;
 

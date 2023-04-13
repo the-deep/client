@@ -17,7 +17,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import { Entry, Framework } from '#views/PillarAnalysis';
-import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import ExcerptInput from '#components/entry/ExcerptInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import EditableEntry from '#components/entry/EditableEntry';
@@ -76,7 +75,7 @@ function EntryCard(props: Props) {
     ]);
     const authors = useMemo(() => (
         entry.lead.authors
-            ?.map((author) => organizationTitleSelector(author)).join(', ')
+            ?.map((author) => author.shortName).join(', ')
     ), [entry.lead.authors]);
 
     return (
@@ -97,7 +96,12 @@ function EntryCard(props: Props) {
             headerIcons={(
                 <>
                     <IoPeopleCircleOutline />
-                    {authors}
+                    <span
+                        title={authors}
+                        className={styles.authors}
+                    >
+                        {authors}
+                    </span>
                 </>
             )}
             heading={(

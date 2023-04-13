@@ -61,7 +61,7 @@ const labelSelector = (d: KeyLabel) => d.label;
 
 function generateReportText(entry: Entry) {
     const authors = entry.lead.authors
-        ?.map((author) => organizationTitleSelector(author)).join(',');
+        ?.map((author) => organizationTitleSelector(author)).join(', ');
     const publisher = entry.lead.source ? organizationTitleSelector(entry.lead.source) : '';
     const organizations = (authors?.length ?? 0) > 0 ? authors : publisher;
     const entryCreatedDate = new Date(entry.createdAt);
@@ -270,7 +270,10 @@ function StoryAnalysisModal(props: Props) {
             entriesUsed: entriesUsed > totalEntries ? totalEntries : entriesUsed,
             totalEntries,
         };
-    }, [reportText, originalEntries]);
+    }, [
+        reportText,
+        originalEntries,
+    ]);
 
     return (
         <Modal
