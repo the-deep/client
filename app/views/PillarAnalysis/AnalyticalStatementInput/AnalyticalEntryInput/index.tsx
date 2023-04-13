@@ -108,7 +108,8 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
     const { entries } = useContext(EntryContext);
     const entry = value.entry ? entries[value.entry] : undefined;
 
-    const authorName = entry?.lead.authors?.[0]?.shortName;
+    const authors = entry?.lead.authors
+        ?.map((author) => (author.shortName)).join(', ');
     const entryDate = entry?.createdAt;
 
     const editEntryLink = useMemo(() => ({
@@ -159,7 +160,12 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 headerIcons={(
                     <>
                         <IoPeopleCircleOutline />
-                        {authorName}
+                        <span
+                            title={authors}
+                            className={styles.authors}
+                        >
+                            {authors}
+                        </span>
                     </>
                 )}
                 heading={(
