@@ -118,10 +118,10 @@ function Ngrams(props: Props) {
 
     if (data?.project?.analysisAutomaticNgram?.status === 'SEND_FAILED') {
         return (
-            <div className={styles.ngrams}>
+            <div className={styles.message}>
                 <Message
                     message="The NLP service is not responding at the moment. Please try again after some time."
-                    icon={(<Kraken variant="crutches" />)}
+                    icon={<Kraken variant="sleep" />}
                 />
             </div>
         );
@@ -129,19 +129,27 @@ function Ngrams(props: Props) {
 
     if (isDefined(error) || data?.project?.analysisAutomaticNgram?.status === 'FAILED') {
         return (
-            <div className={styles.ngrams}>
+            <div className={styles.message}>
                 <Message
                     message="There was an error while generating N-grams from the entries."
-                    icon={(<Kraken variant="crutches" />)}
+                    icon={<Kraken variant="icecream" />}
                 />
             </div>
         );
     }
 
+    const pending = loading
+        || data?.project?.analysisAutomaticNgram?.status === 'STARTED'
+        || data?.project?.analysisAutomaticNgram?.status === 'PENDING';
+
+    if (pending) {
+        return (
+            <PendingMessage />
+        );
+    }
     return (
         <div className={styles.ngrams}>
-            {loading && <PendingMessage />}
-            {(unigrams?.length > 0 || bigrams?.length > 0 || trigrams?.length > 0) && (
+            {(unigrams?.length > 0 || bigrams?.length > 0 || trigrams?.length > 0) ? (
                 <div className={styles.chartContainer}>
                     {unigrams.length > 0 && (
                         <ResponsiveContainer className={styles.chart}>
@@ -238,6 +246,13 @@ function Ngrams(props: Props) {
                             </BarChart>
                         </ResponsiveContainer>
                     )}
+                </div>
+            ) : (
+                <div className={styles.message}>
+                    <Message
+                        message="We couldn't generate automatic n-grams from the entries. Please add more entries and try again."
+                        icon={(<Kraken variant="crutches" />)}
+                    />
                 </div>
             )}
         </div>
