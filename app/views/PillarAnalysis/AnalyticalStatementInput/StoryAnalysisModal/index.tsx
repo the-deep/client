@@ -21,6 +21,7 @@ import WordTree from '#components/WordTree';
 import MarkdownEditor from '#components/MarkdownEditor';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
+import SourcesFilterContext from '#components/leadFilters/SourcesFilterContext';
 
 import EntryCard from './EntryCard';
 import EntryContext from '../../context';
@@ -114,6 +115,7 @@ function StoryAnalysisModal(props: Props) {
     } = props;
 
     const { entries } = useContext(EntryContext);
+    const { organizationTypeOptions } = useContext(SourcesFilterContext);
 
     const [pristine, setPristine] = useState(true);
     const [tab, setTab] = useState<TabType | undefined>('map');
@@ -229,20 +231,23 @@ function StoryAnalysisModal(props: Props) {
     }, [sourceOption, originalEntriesText, reportText]);
 
     const organizationTypes = useMemo(() => {
-        const entriesOrganizationTypes = originalEntries.flatMap((entry) => (
-            entry?.lead?.authors?.flatMap((author) => author.organizationType)?.filter(isDefined)
-        )).filter(isDefined);
-
-        const groupedOrganizationTypes = listToGroupList(
-            entriesOrganizationTypes,
-            (organizationType) => organizationType.id,
+        const uniqueAuthors = unique(
+            originalEntries?.flatMap(
+                (entry) => entry?.lead?.authors?.filter(isDefined),
+            )?.filter(isDefined),
+            (d) => d.id,
         );
-        return unique(entriesOrganizationTypes, (d) => d.id)
-            ?.map((uniqueOrganizationType) => ({
-                ...uniqueOrganizationType,
-                count: groupedOrganizationTypes[uniqueOrganizationType.id].length,
-            }));
-    }, [originalEntries]);
+
+        const groupedAuthorsByOrganizationType = listToGroupList(
+            uniqueAuthors.filter((a) => isDefined(a.organizationType?.id)),
+            (author) => author?.organizationType?.id ?? 'none',
+        );
+
+        return (organizationTypeOptions ?? []).map((organizationType) => ({
+            ...organizationType,
+            count: groupedAuthorsByOrganizationType[organizationType.id]?.length ?? 0,
+        }));
+    }, [originalEntries, organizationTypeOptions]);
 
     const stats = useMemo(() => {
         const entriesInReport = reportText
