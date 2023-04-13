@@ -37,7 +37,6 @@ import {
     useAlert,
     Button,
     QuickActionButton,
-    TextArea,
     CollapsibleContainer,
     Tabs,
     Tab,
@@ -80,6 +79,8 @@ import SourcesFilter, {
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import { DeepReplace } from '#utils/types';
 import { PartialFormType, FormType as FilterFormType } from '#components/leadFilters/SourcesFilter/schema';
+import MarkdownEditor from '#components/MarkdownEditor';
+
 import {
     PillarAnalysisDetailsQuery,
     PillarAnalysisDetailsQueryVariables,
@@ -1145,32 +1146,38 @@ function PillarAnalysis() {
                         {inputsShown && (
                             <>
                                 <div className={styles.inputContainer}>
-                                    <Heading
-                                        className={styles.inputHeader}
-                                    >
-                                        {_ts('pillarAnalysis', 'mainStatementLabel')}
-                                    </Heading>
-                                    <TextArea
+                                    <MarkdownEditor
+                                        className={styles.editor}
+                                        label={(
+                                            <Heading
+                                                className={styles.inputHeader}
+                                            >
+                                                {_ts('pillarAnalysis', 'mainStatementLabel')}
+                                            </Heading>
+                                        )}
                                         name="mainStatement"
                                         onChange={setFieldValue}
                                         value={value.mainStatement}
                                         error={error?.mainStatement}
-                                        rows={4}
+                                        height={150}
                                         disabled={pending}
                                     />
                                 </div>
                                 <div className={styles.inputContainer}>
-                                    <Heading
-                                        className={styles.inputHeader}
-                                    >
-                                        {_ts('pillarAnalysis', 'infoGapLabel')}
-                                    </Heading>
-                                    <TextArea
+                                    <MarkdownEditor
+                                        className={styles.editor}
+                                        label={(
+                                            <Heading
+                                                className={styles.inputHeader}
+                                            >
+                                                {_ts('pillarAnalysis', 'infoGapLabel')}
+                                            </Heading>
+                                        )}
                                         name="informationGap"
                                         value={value.informationGap}
                                         onChange={setFieldValue}
                                         error={error?.informationGap}
-                                        rows={4}
+                                        height={150}
                                         disabled={pending}
                                     />
                                 </div>
