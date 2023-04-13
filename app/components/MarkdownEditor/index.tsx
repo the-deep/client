@@ -70,20 +70,24 @@ function MarkdownEditor<T extends string>(props: MarkdownEditorProps<T>) {
             readOnly={readOnly}
             uiMode={uiMode}
             input={(
-                <MDEditor
-                    className={_cs(editorClassName, styles.markdownEditor)}
-                    value={value}
-                    onChange={handleChange}
-                    commands={[
-                        commands.bold,
-                        commands.italic,
-                        commands.divider,
-                        ...(commandsFromProps ?? []),
-                    ]}
-                    preview={preview}
-                    previewOptions={previewOptions}
-                    height={height}
-                />
+                <div data-color-mode="light" className={styles.container}>
+                    <div className="wmde-markdown-var" />
+                    <MDEditor
+                        className={_cs(editorClassName, styles.markdownEditor)}
+                        value={value}
+                        onChange={handleChange}
+                        commands={[
+                            commands.bold,
+                            commands.italic,
+                            commands.divider,
+                            ...(commandsFromProps ?? []),
+                        ]}
+                        preview={preview}
+                        previewOptions={previewOptions}
+                        height={height}
+                    />
+                </div>
+
             )}
         />
     );

@@ -39,6 +39,12 @@
                 .input-header {
                     padding: var(--dui-spacing-medium) 0;
                 }
+
+                .editor {
+                    display: flex;
+                    flex-grow: 1;
+                    gap: var(--dui-width-separator-thin);
+                }
             }
 
             .show-inputs-button {

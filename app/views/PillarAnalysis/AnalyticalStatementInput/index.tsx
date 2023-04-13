@@ -18,7 +18,6 @@ import {
     Container,
     DropContainer,
     QuickActionButton,
-    TextArea,
     useAlert,
 } from '@the-deep/deep-ui';
 import {
@@ -34,6 +33,7 @@ import {
     AutomaticStoryAnalysisMutationVariables,
 } from '#generated/types';
 
+import MarkdownEditor from '#components/MarkdownEditor';
 import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
 import { GeoArea } from '#components/GeoMultiSelectInput';
@@ -310,12 +310,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             headerDescription={(
                 <div className={styles.headerDescription}>
                     <NonFieldError error={error} />
-                    <TextArea
+                    <MarkdownEditor
                         className={styles.statement}
                         // FIXME: use translation
                         placeholder="Enter analytical statement"
                         name="statement"
-                        rows={4}
+                        height={150}
                         value={value.statement}
                         onChange={onFieldChange}
                         error={error?.statement}
@@ -336,8 +336,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         )}
                     </QuickActionButton>
                     <QuickActionButton
-                        name="View more details modal"
+                        title="View Story Analysis"
+                        name="viewStoryAnalsysi"
                         onClick={handleStoryAnalysisModalOpen}
+                        disabled={(value.entries?.length ?? 0) <= 0}
                         big
                     >
                         <IoBarChartSharp />
