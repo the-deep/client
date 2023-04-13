@@ -124,7 +124,8 @@ function SourceEntryItem(props: Props) {
         setDragEnd,
     ] = useModalState(false);
 
-    const authorName = entry?.lead.authors?.[0]?.shortName;
+    const authors = entry?.lead.authors
+        ?.map((author) => author.shortName).join(', ');
     const entryDate = entry?.createdAt;
 
     const discardedEntriesVariables = useMemo(() => ({
@@ -249,7 +250,12 @@ function SourceEntryItem(props: Props) {
             headerIcons={(
                 <>
                     <IoPeopleCircleOutline />
-                    {authorName}
+                    <span
+                        title={authors}
+                        className={styles.authors}
+                    >
+                        {authors}
+                    </span>
                 </>
             )}
             heading={(

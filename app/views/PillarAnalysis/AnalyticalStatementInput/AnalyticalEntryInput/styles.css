@@ -18,13 +18,23 @@
         overflow: auto;
 
         .heading-section {
+            display: flex;
             align-items: center;
+
+            .authors {
+                display: inline-block;
+                max-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
 
             .heading-container {
                 align-items: center;
 
                 .heading {
                     font-size: var(--dui-font-size-medium);
+
                 }
             }
             .header-actions {
