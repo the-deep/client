@@ -62,8 +62,13 @@ function Stats(props: Props) {
                     <RadarChart cx="50%" cy="50%" outerRadius="100%" data={diversityChartData}>
                         <PolarGrid />
                         <PolarAngleAxis dataKey="title" tick={false} />
-                        <Radar name="Diversity" dataKey="count" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                        <Tooltip />
+                        <Radar name="Count" dataKey="count" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                        <Tooltip
+                            isAnimationActive={false}
+                            offset={20}
+                            allowEscapeViewBox={{ x: false, y: true }}
+                            wrapperStyle={{ zIndex: 1000 }}
+                        />
                     </RadarChart>
                 </ResponsiveContainer>
             </div>
