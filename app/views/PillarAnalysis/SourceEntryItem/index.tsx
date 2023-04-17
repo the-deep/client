@@ -36,6 +36,10 @@ import {
 } from '#generated/types';
 import routes from '#base/configs/routes';
 import { useModalState } from '#hooks/stateManagement';
+import {
+    organizationShortNameSelector,
+    organizationTitleSelector,
+} from '#components/selections/NewOrganizationMultiSelectInput';
 
 import { genericMemo } from '#utils/common';
 import _ts from '#ts';
@@ -124,8 +128,13 @@ function SourceEntryItem(props: Props) {
         setDragEnd,
     ] = useModalState(false);
 
-    const authors = entry?.lead.authors
-        ?.map((author) => author.shortName).join(', ');
+    const authors = useMemo(() => (
+        entry?.lead.authors
+            ?.map((author) => (
+                organizationShortNameSelector(author) ?? organizationTitleSelector(author)
+            )).join(', ')
+    ), [entry?.lead]);
+
     const entryDate = entry?.createdAt;
 
     const discardedEntriesVariables = useMemo(() => ({
@@ -249,10 +258,10 @@ function SourceEntryItem(props: Props) {
             borderBelowHeaderWidth="thin"
             headerIcons={(
                 <>
-                    <IoPeopleCircleOutline />
+                    <IoPeopleCircleOutline className={styles.headingItem} />
                     <span
                         title={authors}
-                        className={styles.authors}
+                        className={_cs(styles.authors, styles.headingItem)}
                     >
                         {authors}
                     </span>
@@ -260,6 +269,7 @@ function SourceEntryItem(props: Props) {
             )}
             heading={(
                 <DateOutput
+                    className={styles.headingItem}
                     format="yyyy/MM/dd"
                     value={entryDate}
                 />
