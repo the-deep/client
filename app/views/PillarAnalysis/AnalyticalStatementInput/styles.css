@@ -40,6 +40,7 @@
             background-color: var(--dui-color-white);
             padding: var(--dui-spacing-medium);
             gap: var(--dui-spacing-medium);
+            overflow-x: hidden;
         }
 
         .drop-container {
@@ -48,6 +49,7 @@
             transition: .2s min-height ease-in-out;
             background-color: var(--dui-color-white);
             min-height: 24px;
+            overflow-y: hidden;
 
             &.dragged-over {
                 min-height: 160px;

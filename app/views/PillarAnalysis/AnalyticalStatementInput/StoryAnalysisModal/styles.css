@@ -141,16 +141,17 @@
                         flex-grow: 1;
                         overflow: auto;
 
-                        .title {
-                            padding-bottom: var(--dui-spacing-small);
-                            font-size: var(--dui-font-size-large);
-                            font-weight: var(--dui-font-weight-bold);
-                        }
-
                         .actions {
                             display: flex;
+                            flex-shrink: 0;
                             justify-content: space-between;
                             padding-bottom: var(--dui-spacing-small);
+
+                            .title {
+                                padding-bottom: var(--dui-spacing-small);
+                                font-size: var(--dui-font-size-large);
+                                font-weight: var(--dui-font-weight-bold);
+                            }
                         }
 
                         .entries {

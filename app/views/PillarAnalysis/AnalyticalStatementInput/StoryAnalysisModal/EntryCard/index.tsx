@@ -21,6 +21,11 @@ import ExcerptInput from '#components/entry/ExcerptInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import EditableEntry from '#components/entry/EditableEntry';
 import routes from '#base/configs/routes';
+import {
+    organizationShortNameSelector,
+    organizationTitleSelector,
+} from '#components/selections/NewOrganizationMultiSelectInput';
+
 import { transformEntry } from '../../../context';
 import _ts from '#ts';
 
@@ -74,9 +79,11 @@ function EntryCard(props: Props) {
         entry?.clientId,
     ]);
     const authors = useMemo(() => (
-        entry.lead.authors
-            ?.map((author) => author.shortName).join(', ')
-    ), [entry.lead.authors]);
+        entry?.lead.authors
+            ?.map((author) => (
+                organizationShortNameSelector(author) ?? organizationTitleSelector(author)
+            )).join(', ')
+    ), [entry?.lead]);
 
     return (
         <Container
@@ -95,10 +102,10 @@ function EntryCard(props: Props) {
             borderBelowHeaderWidth="thin"
             headerIcons={(
                 <>
-                    <IoPeopleCircleOutline />
+                    <IoPeopleCircleOutline className={styles.headingItem} />
                     <span
                         title={authors}
-                        className={styles.authors}
+                        className={_cs(styles.authors, styles.headingItem)}
                     >
                         {authors}
                     </span>
@@ -106,6 +113,7 @@ function EntryCard(props: Props) {
             )}
             heading={(
                 <DateOutput
+                    className={styles.headingItem}
                     format="yyyy/MM/dd"
                     value={entryDate}
                 />
