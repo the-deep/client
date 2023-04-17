@@ -37,6 +37,8 @@ import {
 
 import styles from './styles.css';
 
+const MIN_ENTRIES = 25;
+
 const ENTRY_DETAILS = gql`
     fragment EntryDetail on EntryType {
         id
@@ -90,6 +92,7 @@ const ENTRY_DETAILS = gql`
                 }
             }
             url
+            shareViewUrl
         }
         image {
             id
@@ -150,6 +153,7 @@ const PILLAR_AUTO_CLUSTERING = gql`
 interface Props {
     pillarId: string;
     projectId: string;
+    entriesCount: number | null | undefined;
     entriesFilter: EntriesFilterDataInputType;
     onEntriesMappingChange: React.Dispatch<React.SetStateAction<Obj<Entry>>>;
     onStatementsFromClustersSet: (newStatements: PartialAnalyticalStatementType[]) => void;
@@ -160,6 +164,7 @@ function AutoClustering(props: Props) {
         pillarId,
         projectId,
         entriesFilter,
+        entriesCount,
         onEntriesMappingChange,
         onStatementsFromClustersSet,
     } = props;
@@ -314,6 +319,13 @@ function AutoClustering(props: Props) {
         setActiveTopicModellingId(undefined);
     }, []);
 
+    let buttonTitle = 'Auto Cluster';
+    if ((entriesCount ?? 0) < 26) {
+        buttonTitle = 'Auto clustering cannot be trigged if number of entries are less than 25.';
+    } else if (autoClusteringResultsPending) {
+        buttonTitle = 'DEEP is processing entries';
+    }
+
     if (activeTopicModellingId) {
         return (
             <>
@@ -323,7 +335,7 @@ function AutoClustering(props: Props) {
                     onClick={showModal}
                     variant="tertiary"
                     spacing="compact"
-                    title={autoClusteringResultsPending ? 'DEEP is processing entries' : 'Auto Clustering'}
+                    title={buttonTitle}
                 >
                     Auto Cluster
                 </Button>
@@ -336,7 +348,7 @@ function AutoClustering(props: Props) {
                     >
                         <Message
                             pendingMessage="Deep is processing entries"
-                            pending={autoClusteringResultsPending || status === 'PENDING'}
+                            pending={autoClusteringResultsPending || status === 'PENDING' || status === 'STARTED'}
                             errored={status === 'FAILED' || status === 'SEND_FAILED'}
                             erroredEmptyMessage="Failed to group entries into stories"
                             erroredEmptyIcon={<Kraken variant="crutches" />}
@@ -372,10 +384,10 @@ function AutoClustering(props: Props) {
             name={undefined}
             onConfirm={handleAutoClusteringTriggerClick}
             message="Are you sure you want to trigger auto clustering of entries into new stories? This will replace current analytical statements with suggested groupings using NLP."
-            disabled={pendingAutoClusterTrigger}
+            disabled={pendingAutoClusterTrigger || ((entriesCount ?? 0) < MIN_ENTRIES)}
             variant="tertiary"
             spacing="compact"
-            title={!pendingAutoClusterTrigger ? 'Trigger Auto Clustering' : 'DEEP is processing entries'}
+            title={buttonTitle}
         >
             Auto Cluster
         </ConfirmButton>

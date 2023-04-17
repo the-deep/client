@@ -26,6 +26,7 @@ import styles from './styles.css';
 const AUTOMATIC_NGRAMS = gql`
     query AutomaticNgrams($projectId: ID!, $ngramsId: ID!) {
         project(id: $projectId) {
+            id
             analysisAutomaticNgram(id: $ngramsId) {
                 id
                 status

@@ -18,6 +18,11 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
+        .heading-item {
+            color: var(--dui-color-text-label);
+        }
+
         .heading-container {
             align-items: center;
 
