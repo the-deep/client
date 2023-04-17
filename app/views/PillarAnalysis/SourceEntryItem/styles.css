@@ -13,6 +13,10 @@
     .heading-section {
         align-items: center;
 
+        .heading-item {
+            color: var(--dui-color-text-label);
+        }
+
         .authors {
             display: inline-block;
             max-width: 100px;

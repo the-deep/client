@@ -17,6 +17,10 @@
         background-color: var(--dui-color-foreground);
         overflow: auto;
 
+        .heading-item {
+            color: var(--dui-color-text-label);
+        }
+
         .heading-section {
             display: flex;
             align-items: center;

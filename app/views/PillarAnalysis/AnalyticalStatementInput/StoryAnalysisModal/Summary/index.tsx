@@ -16,6 +16,7 @@ import styles from './styles.css';
 const AUTOMATIC_SUMMARY = gql`
 query AutomaticSummary($projectId: ID!, $summaryId: ID!) {
     project(id: $projectId) {
+        id
         analysisAutomaticSummary(id: $summaryId) {
             id
             status

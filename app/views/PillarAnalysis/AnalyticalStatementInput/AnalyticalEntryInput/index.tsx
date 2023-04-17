@@ -27,12 +27,14 @@ import NonFieldError from '#components/NonFieldError';
 import ExcerptInput from '#components/entry/ExcerptInput';
 import EditableEntry from '#components/entry/EditableEntry';
 import { GeoArea } from '#components/GeoMultiSelectInput';
-
+import {
+    organizationShortNameSelector,
+    organizationTitleSelector,
+} from '#components/selections/NewOrganizationMultiSelectInput';
 import routes from '#base/configs/routes';
 
 import EntryContext, { transformEntry } from '../../context';
 import { AnalyticalEntryType, PartialAnalyticalEntryType } from '../../schema';
-// import { AnalyticalFrameworkType } from '../..';
 import { DroppedValue } from '../index';
 import { Framework } from '../..';
 
@@ -108,8 +110,12 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
     const { entries } = useContext(EntryContext);
     const entry = value.entry ? entries[value.entry] : undefined;
 
-    const authors = entry?.lead.authors
-        ?.map((author) => (author.shortName)).join(', ');
+    const authors = useMemo(() => (
+        entry?.lead.authors
+            ?.map((author) => (
+                organizationShortNameSelector(author) ?? organizationTitleSelector(author)
+            )).join(', ')
+    ), [entry?.lead]);
     const entryDate = entry?.createdAt;
 
     const editEntryLink = useMemo(() => ({
@@ -159,10 +165,10 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 contentClassName={styles.content}
                 headerIcons={(
                     <>
-                        <IoPeopleCircleOutline />
+                        <IoPeopleCircleOutline className={styles.headingItem} />
                         <span
                             title={authors}
-                            className={styles.authors}
+                            className={_cs(styles.authors, styles.headingItem)}
                         >
                             {authors}
                         </span>
@@ -170,6 +176,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 )}
                 heading={(
                     <DateOutput
+                        className={styles.headingItem}
                         format="yyyy/MM/dd"
                         value={entryDate}
                     />

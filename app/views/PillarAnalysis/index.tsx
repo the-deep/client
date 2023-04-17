@@ -1290,6 +1290,7 @@ function PillarAnalysis() {
                                             projectId={projectId}
                                             entriesFilter={entriesFilter}
                                             onEntriesMappingChange={setEntriesMapping}
+                                            entriesCount={entriesResponse?.totalCount}
                                             onStatementsFromClustersSet={
                                                 handleStatementsFromClustersSet
                                             }
