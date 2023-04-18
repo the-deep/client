@@ -39,7 +39,7 @@ function Stats(props: Props) {
                 <ProgressLine
                     titleClassName={styles.title}
                     progress={(sourcesUsed / totalSources) * 100}
-                    title={`${sourcesUsed} out of ${totalSources} sources used in report text`}
+                    title={`${sourcesUsed} out of ${totalSources} sources used in analysis`}
                     variant="complement1"
                     hideInfoCircleBackground
                     hideInfoCircle
@@ -50,7 +50,7 @@ function Stats(props: Props) {
                 <ProgressLine
                     titleClassName={styles.title}
                     progress={(entriesUsed / totalEntries) * 100}
-                    title={`${entriesUsed} out of ${totalEntries} entries used in report text`}
+                    title={`${entriesUsed} out of ${totalEntries} entries used in analysis`}
                     variant="complement2"
                     hideInfoCircleBackground
                     hideInfoCircle

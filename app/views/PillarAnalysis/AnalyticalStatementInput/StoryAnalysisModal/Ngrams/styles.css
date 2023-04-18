@@ -1,8 +1,12 @@
 .ngrams {
     display: flex;
-    flex-direction: column;
     flex-grow: 1;
     overflow: auto;
+
+    .tab-list {
+        display: flex;
+        flex-direction: column;
+    }
 
     .chart-container {
         display: flex;
