@@ -52,7 +52,7 @@ const sourceOptions: KeyLabel[] = [
     },
     {
         key: 'reportText',
-        label: 'Report Text',
+        label: 'Analysis',
     },
 ];
 
@@ -431,7 +431,7 @@ function StoryAnalysisModal(props: Props) {
                                     spacing="compact"
                                     variant="tertiary"
                                 >
-                                    Generate Report Text
+                                    Generate Analysis
                                 </Button>
                             </div>
                             <ListView
@@ -462,7 +462,7 @@ function StoryAnalysisModal(props: Props) {
                                 className={styles.editor}
                                 labelContainerClassName={styles.labelContainer}
                                 inputSectionClassName={styles.inputSection}
-                                label="Report Text"
+                                label="Analysis"
                                 name="reportText"
                                 value={reportText}
                                 onChange={handleReportTextChange}
