@@ -80,8 +80,8 @@ function EntityCreationLineChart(props: Props) {
         ],
     );
 
-    const timeSpentLabelFormatter = useCallback((value: number) => (
-        [value, `Total ${heading}`] as const
+    const timeSpentLabelFormatter = useCallback((value: number): [number, string] => (
+        [value, `Total ${heading}`]
     ), [heading]);
 
     return (

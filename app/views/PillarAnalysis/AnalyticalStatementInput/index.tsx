@@ -52,7 +52,7 @@ import AnalyticalEntryInput from './AnalyticalEntryInput';
 import StoryAnalysisModal from './StoryAnalysisModal';
 import styles from './styles.css';
 
-export const ENTRIES_LIMIT = 50;
+export const ENTRIES_LIMIT = 200;
 
 export interface DroppedValue {
     entryId: string;
@@ -88,7 +88,7 @@ const defaultVal = (): AnalyticalStatementType => ({
 const AUTOMATIC_STORY_ANALYSIS = gql`
     mutation AutomaticStoryAnalysis($projectId: ID!, $entriesId: [ID!]) {
         project(id: $projectId) {
-            triggerAutomaticNgram(data: {entriesId: $entriesId}) {
+            triggerAnalysisAutomaticNgram(data: {entriesId: $entriesId}) {
                 errors
                 ok
                 result {
@@ -108,7 +108,7 @@ const AUTOMATIC_STORY_ANALYSIS = gql`
                     }
                 }
             }
-            triggerAutomaticSummary(data: {entriesId: $entriesId}) {
+            triggerAnalysisAutomaticSummary(data: {entriesId: $entriesId}) {
                 errors
                 ok
                 result {
@@ -164,18 +164,18 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         AUTOMATIC_STORY_ANALYSIS,
         {
             onCompleted: (response) => {
-                if (!response || !response.project?.triggerAutomaticNgram
-                    || !response.project?.triggerAutomaticSummary) {
+                if (!response || !response.project?.triggerAnalysisAutomaticNgram
+                    || !response.project?.triggerAnalysisAutomaticSummary) {
                     return;
                 }
 
-                if (response.project.triggerAutomaticSummary.errors) {
+                if (response.project.triggerAnalysisAutomaticSummary.errors) {
                     alert.show(
                         'There were errors when creating automatic summary.',
                         { variant: 'error' },
                     );
                 }
-                if (response.project.triggerAutomaticNgram.errors) {
+                if (response.project.triggerAnalysisAutomaticNgram.errors) {
                     alert.show(
                         'There were errors when creating automatic Ngram.',
                         { variant: 'error' },
@@ -404,9 +404,9 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     analyticalEntries={value.entries}
                     projectId={projectId}
                     automaticSummaryId={automaticStoryAnalysis
-                        ?.project?.triggerAutomaticSummary?.result?.id}
+                        ?.project?.triggerAnalysisAutomaticSummary?.result?.id}
                     automaticNgramsId={automaticStoryAnalysis
-                        ?.project?.triggerAutomaticNgram?.result?.id}
+                        ?.project?.triggerAnalysisAutomaticNgram?.result?.id}
                     onRemove={onAnalyticalEntryRemove}
                     index={index}
                     framework={framework}
