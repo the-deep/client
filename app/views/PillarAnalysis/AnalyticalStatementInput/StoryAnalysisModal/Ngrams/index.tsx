@@ -1,10 +1,14 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { isDefined } from '@togglecorp/fujs';
 import {
     Kraken,
     Message,
     PendingMessage,
+    Tabs,
+    Tab,
+    TabPanel,
+    TabList,
 } from '@the-deep/deep-ui';
 import {
     ResponsiveContainer,
@@ -12,7 +16,6 @@ import {
     Bar,
     XAxis,
     YAxis,
-    Tooltip,
     LabelList,
     Legend,
 } from 'recharts';
@@ -47,6 +50,51 @@ const AUTOMATIC_NGRAMS = gql`
     }
 `;
 
+const unigramData = [
+    {
+        count: 3,
+        word: 'and',
+    },
+    {
+        count: 40,
+        word: 'here',
+    },
+    {
+        count: 13,
+        word: 'know',
+    },
+];
+
+const bigramData = [
+    {
+        count: 5,
+        word: 'hand',
+    },
+    {
+        count: 30,
+        word: 'there',
+    },
+    {
+        count: 19,
+        word: 'now',
+    },
+];
+
+const trigramData = [
+    {
+        count: 25,
+        word: 'data',
+    },
+    {
+        count: 15,
+        word: 'drop',
+    },
+    {
+        count: 30,
+        word: 'board',
+    },
+];
+
 const chartMargins = {
     top: 0,
     bottom: 0,
@@ -66,6 +114,8 @@ function Ngrams(props: Props) {
         projectId,
         ngramsId,
     } = props;
+
+    const [activeTab, setActiveTab] = useState<string | undefined>('unigram');
 
     const {
         data,
@@ -105,7 +155,12 @@ function Ngrams(props: Props) {
         ],
     );
 
-    const nGrams = useMemo(() => (data?.project?.analysisAutomaticNgram ?? {
+    // const nGrams = useMemo(() => (data?.project?.analysisAutomaticNgram ?? {
+    const nGrams = useMemo(() => ({
+        unigrams: unigramData,
+        bigrams: bigramData,
+        trigrams: trigramData,
+    } ?? {
         unigrams: [],
         bigrams: [],
         trigrams: [],
@@ -148,110 +203,142 @@ function Ngrams(props: Props) {
             <PendingMessage />
         );
     }
+
     return (
         <div className={styles.ngrams}>
             {(unigrams?.length > 0 || bigrams?.length > 0 || trigrams?.length > 0) ? (
-                <div className={styles.chartContainer}>
+                <Tabs
+                    value={activeTab}
+                    onChange={setActiveTab}
+                    variant="secondary"
+                >
+                    <TabList className={styles.tabList}>
+                        {unigrams.length > 0 && (
+                            <Tab name="unigram">
+                                Unigram
+                            </Tab>
+                        )}
+                        {bigrams.length > 0 && (
+                            <Tab name="bigram">
+                                Bigram
+                            </Tab>
+                        )}
+                        {trigrams.length > 0 && (
+                            <Tab name="trigram">
+                                Trigram
+                            </Tab>
+                        )}
+                    </TabList>
                     {unigrams.length > 0 && (
-                        <ResponsiveContainer className={styles.chart}>
-                            <BarChart
-                                layout="vertical"
-                                data={unigrams}
-                                margin={chartMargins}
-                            >
-                                <XAxis type="number" />
-                                <YAxis
-                                    dataKey="word"
-                                    type="category"
-                                    scale="band"
-                                    tickFormatter={emptyTickFormatter}
-                                />
-                                <Tooltip />
-                                <Legend verticalAlign="top" />
-                                <Bar
-                                    name="Unigrams"
-                                    dataKey="count"
-                                    barSize={20}
-                                    fill="#796ec6"
-                                    opacity="0.4"
+                        <TabPanel
+                            name="unigram"
+                            className={styles.chartContainer}
+                        >
+                            <ResponsiveContainer className={styles.chart}>
+                                <BarChart
+                                    layout="vertical"
+                                    data={unigrams}
+                                    margin={chartMargins}
                                 >
-                                    <LabelList
+                                    <XAxis type="number" />
+                                    <YAxis
                                         dataKey="word"
-                                        position="insideLeft"
+                                        type="category"
+                                        tickFormatter={emptyTickFormatter}
                                     />
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
+                                    <Legend verticalAlign="top" />
+                                    <Bar
+                                        name="Unigrams"
+                                        dataKey="count"
+                                        barSize={20}
+                                        fill="#1a3ed0"
+                                        opacity="0.4"
+                                    >
+                                        <LabelList
+                                            dataKey="word"
+                                            position="insideLeft"
+                                        />
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </TabPanel>
                     )}
                     {bigrams.length > 0 && (
-                        <ResponsiveContainer className={styles.chart}>
-                            <BarChart
-                                layout="vertical"
-                                data={bigrams}
-                                margin={chartMargins}
-                            >
-                                <XAxis type="number" />
-                                <YAxis
-                                    dataKey="word"
-                                    type="category"
-                                    scale="band"
-                                    tickFormatter={emptyTickFormatter}
-                                />
-                                <Tooltip />
-                                <Legend verticalAlign="top" />
-                                <Bar
-                                    name="Bigrams"
-                                    dataKey="count"
-                                    barSize={20}
-                                    fill="#FB8A91"
-                                    opacity="0.4"
+                        <TabPanel
+                            name="bigram"
+                            className={styles.chartContainer}
+                        >
+                            <ResponsiveContainer className={styles.chart}>
+                                <BarChart
+                                    layout="vertical"
+                                    data={bigrams}
+                                    margin={chartMargins}
                                 >
-                                    <LabelList
+                                    <XAxis type="number" />
+                                    <YAxis
                                         dataKey="word"
-                                        position="insideLeft"
+                                        type="category"
+                                        tickFormatter={emptyTickFormatter}
                                     />
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
+                                    <Legend verticalAlign="top" />
+                                    <Bar
+                                        name="Bigrams"
+                                        dataKey="count"
+                                        barSize={20}
+                                        fill="#1a3ed0"
+                                        opacity="0.4"
+                                    >
+                                        <LabelList
+                                            dataKey="word"
+                                            position="insideLeft"
+                                        />
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </TabPanel>
                     )}
                     {trigrams.length > 0 && (
-                        <ResponsiveContainer className={styles.chart}>
-                            <BarChart
-                                layout="vertical"
-                                data={trigrams}
-                                margin={chartMargins}
-                            >
-                                <XAxis type="number" />
-                                <YAxis
-                                    dataKey="word"
-                                    tickFormatter={emptyTickFormatter}
-                                    type="category"
-                                    scale="band"
-                                />
-                                <Tooltip />
-                                <Legend
-                                    verticalAlign="top"
-                                />
-                                <Bar
-                                    name="Trigrams"
-                                    dataKey="count"
-                                    barSize={20}
-                                    fill="#4CC1B7"
-                                    opacity="0.4"
+                        <TabPanel
+                            name="trigram"
+                            className={styles.chartContainer}
+                        >
+                            <ResponsiveContainer className={styles.chart}>
+                                <BarChart
+                                    data={trigrams}
+                                    layout="vertical"
+                                    margin={chartMargins}
                                 >
-                                    <LabelList
+                                    <XAxis dataKey="count" type="number" />
+                                    <YAxis
                                         dataKey="word"
-                                        position="insideLeft"
+                                        tickFormatter={emptyTickFormatter}
+                                        type="category"
                                     />
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
+                                    <Legend
+                                        verticalAlign="top"
+                                    />
+                                    <Bar
+                                        name="trigrams"
+                                        dataKey="count"
+                                        barSize={20}
+                                        fill="#1a3ed0"
+                                        opacity="0.4"
+                                    >
+                                        <LabelList
+                                            dataKey="word"
+                                            position="insideLeft"
+                                        />
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </TabPanel>
                     )}
-                </div>
+                </Tabs>
             ) : (
                 <div className={styles.message}>
                     <Message
-                        message="We couldn't generate automatic n-grams from the entries. Please add more entries and try again."
+                        message="We couldn't generate automatic n-grams
+                        from the entries. Please add more entries and try again."
                         icon={(<Kraken variant="crutches" />)}
                     />
                 </div>

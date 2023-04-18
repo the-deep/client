@@ -1,7 +1,10 @@
 .container {
+    display: flex;
+    flex-direction: column;
     width: 100%;
 
     .markdown-editor {
+        flex-grow: 1;
         width: 100%;
 
         :global {
