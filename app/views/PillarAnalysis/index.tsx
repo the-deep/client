@@ -420,7 +420,7 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
 export type DiscardedTags = NonNullable<NonNullable<PillarAnalysisDetailsQuery['discardedEntryTagOptions']>['enumValues']>[number];
 
 // This is an aribtrary number
-const STATEMENTS_LIMIT = 30;
+const STATEMENTS_LIMIT = 20;
 
 type TabNames = 'entries' | 'discarded';
 
