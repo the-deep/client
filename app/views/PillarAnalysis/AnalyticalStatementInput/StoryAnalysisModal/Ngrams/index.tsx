@@ -50,51 +50,6 @@ const AUTOMATIC_NGRAMS = gql`
     }
 `;
 
-const unigramData = [
-    {
-        count: 3,
-        word: 'and',
-    },
-    {
-        count: 40,
-        word: 'here',
-    },
-    {
-        count: 13,
-        word: 'know',
-    },
-];
-
-const bigramData = [
-    {
-        count: 5,
-        word: 'hand',
-    },
-    {
-        count: 30,
-        word: 'there',
-    },
-    {
-        count: 19,
-        word: 'now',
-    },
-];
-
-const trigramData = [
-    {
-        count: 25,
-        word: 'data',
-    },
-    {
-        count: 15,
-        word: 'drop',
-    },
-    {
-        count: 30,
-        word: 'board',
-    },
-];
-
 const chartMargins = {
     top: 0,
     bottom: 0,
@@ -155,12 +110,7 @@ function Ngrams(props: Props) {
         ],
     );
 
-    // const nGrams = useMemo(() => (data?.project?.analysisAutomaticNgram ?? {
-    const nGrams = useMemo(() => ({
-        unigrams: unigramData,
-        bigrams: bigramData,
-        trigrams: trigramData,
-    } ?? {
+    const nGrams = useMemo(() => (data?.project?.analysisAutomaticNgram ?? {
         unigrams: [],
         bigrams: [],
         trigrams: [],

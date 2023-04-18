@@ -133,7 +133,7 @@ const PILLAR_AUTO_CLUSTERING = gql`
         $filterData: EntriesFilterDataInputType,
     ) {
         project(id: $projectId) {
-            triggerTopicModel(
+            triggerAnalysisTopicModel(
                 data: {
                     analysisPillar: $pillarId,
                     additionalFilters: $filterData,
@@ -236,7 +236,7 @@ function AutoClustering(props: Props) {
         PILLAR_AUTO_CLUSTERING,
         {
             onCompleted: (response) => {
-                const autoClusteringResponse = response?.project?.triggerTopicModel;
+                const autoClusteringResponse = response?.project?.triggerAnalysisTopicModel;
                 if (autoClusteringResponse?.ok) {
                     setActiveTopicModellingId(autoClusteringResponse?.result?.id);
                 } else if (autoClusteringResponse?.errors) {
