@@ -88,6 +88,26 @@ const defaultVal = (): AnalyticalStatementType => ({
 const AUTOMATIC_STORY_ANALYSIS = gql`
     mutation AutomaticStoryAnalysis($projectId: ID!, $entriesId: [ID!]) {
         project(id: $projectId) {
+            triggerAnalysisGeoLocation(data: {entriesId: $entriesId}) {
+                errors
+                ok
+                result {
+                    id
+                    status
+                    entryGeo {
+                        data {
+                            geoids {
+                                countrycode
+                                featurecode
+                                geonameid
+                                latitude
+                                longitude
+                                match
+                            }
+                        }
+                    }
+                }
+            }
             triggerAnalysisAutomaticNgram(data: {entriesId: $entriesId}) {
                 errors
                 ok
@@ -164,8 +184,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         AUTOMATIC_STORY_ANALYSIS,
         {
             onCompleted: (response) => {
-                if (!response || !response.project?.triggerAnalysisAutomaticNgram
-                    || !response.project?.triggerAnalysisAutomaticSummary) {
+                if (
+                    !response
+                    || !response.project?.triggerAnalysisAutomaticNgram
+                    || !response.project?.triggerAnalysisAutomaticSummary
+                    || !response.project?.triggerAnalysisGeoLocation
+                ) {
                     return;
                 }
 
@@ -178,6 +202,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 if (response.project.triggerAnalysisAutomaticNgram.errors) {
                     alert.show(
                         'There were errors when creating automatic Ngram.',
+                        { variant: 'error' },
+                    );
+                }
+                if (response.project.triggerAnalysisGeoLocation.errors) {
+                    alert.show(
+                        'There were errors when extracting geo locations.',
                         { variant: 'error' },
                     );
                 }
@@ -407,6 +437,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         ?.project?.triggerAnalysisAutomaticSummary?.result?.id}
                     automaticNgramsId={automaticStoryAnalysis
                         ?.project?.triggerAnalysisAutomaticNgram?.result?.id}
+                    automaticNlpMapId={automaticStoryAnalysis
+                        ?.project?.triggerAnalysisGeoLocation?.result?.id}
                     onRemove={onAnalyticalEntryRemove}
                     index={index}
                     framework={framework}

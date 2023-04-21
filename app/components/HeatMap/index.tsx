@@ -58,25 +58,22 @@ export const visibleLayout: mapboxgl.LineLayout = {
     visibility: 'visible',
 };
 
-export const mapOptions: Partial<MapboxOptions> = {
-    zoom: 2,
-    center: [50, 10],
-};
-
-export interface EntryByRegion {
+interface Point {
     centroid?: unknown;
     count?: number;
 }
 
 interface Props {
-    entriesByRegion: EntryByRegion[] | undefined | null;
+    points: Point[] | undefined | null;
     className?: string;
+    defaultZoom?: number;
 }
 
-function EntriesHeatMap(props: Props) {
+function HeatMap(props: Props) {
     const {
         className,
-        entriesByRegion,
+        points,
+        defaultZoom = 2,
     } = props;
 
     const [intensityValue, setIntesityValue] = useState(0.75);
@@ -92,14 +89,14 @@ function EntriesHeatMap(props: Props) {
     ]);
 
     const geoJson: GeoJSON.FeatureCollection<GeoJSON.Point> | undefined = useMemo(() => {
-        if (!entriesByRegion) {
+        if (!points) {
             return undefined;
         }
-        const projectFeatures = entriesByRegion.map((entryByRegion) => ({
+        const projectFeatures = points.map((point) => ({
             type: 'Feature' as const,
-            geometry: entryByRegion.centroid as GeoJSON.Point,
+            geometry: point.centroid as GeoJSON.Point,
             properties: {
-                count: entryByRegion.count,
+                count: point.count,
             },
         })).filter(isDefined);
 
@@ -107,7 +104,12 @@ function EntriesHeatMap(props: Props) {
             type: 'FeatureCollection',
             features: projectFeatures ?? [],
         });
-    }, [entriesByRegion]);
+    }, [points]);
+
+    const mapOptions: Partial<MapboxOptions> = useMemo(() => ({
+        zoom: defaultZoom,
+        center: [50, 10],
+    }), [defaultZoom]);
 
     return (
         <Map
@@ -161,4 +163,4 @@ function EntriesHeatMap(props: Props) {
     );
 }
 
-export default EntriesHeatMap;
+export default HeatMap;
