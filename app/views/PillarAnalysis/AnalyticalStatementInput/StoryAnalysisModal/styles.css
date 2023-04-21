@@ -69,12 +69,6 @@
                                 overflow: auto;
                                 gap: var(--dui-spacing-small);
 
-                                .message {
-                                    display: flex;
-                                    flex-grow: 1;
-                                    justify-content: center;
-                                }
-
                                 .context-actions {
                                     display: flex;
                                     padding-top: var(--dui-spacing-small);

@@ -2,9 +2,7 @@ import React, { useState, useCallback, useContext, useMemo } from 'react';
 import {
     Button,
     Container,
-    Kraken,
     ListView,
-    Message,
     Modal,
     QuickActionButton,
     SegmentInput,
@@ -26,6 +24,7 @@ import SourcesFilterContext from '#components/leadFilters/SourcesFilterContext';
 import EntryCard from './EntryCard';
 import EntryContext from '../../context';
 import Summary from './Summary';
+import NlpMap from './Map';
 import Ngrams from './Ngrams';
 import Stats from './Stats';
 
@@ -78,6 +77,7 @@ interface Props {
     projectId: string;
     automaticNgramsId: string | undefined;
     automaticSummaryId: string | undefined;
+    automaticNlpMapId: string | undefined;
     onRemove: (index: number) => void;
     index: number;
     framework: Framework;
@@ -101,6 +101,7 @@ function StoryAnalysisModal(props: Props) {
         projectId,
         automaticNgramsId,
         automaticSummaryId,
+        automaticNlpMapId,
         onRemove,
         index,
         framework,
@@ -353,10 +354,9 @@ function StoryAnalysisModal(props: Props) {
                             contentClassName={styles.tabPanelContainer}
                         >
                             <TabPanel name="map" className={styles.tabPanel}>
-                                <Message
-                                    className={styles.message}
-                                    message="Automatic geo location analysis is not available at the moment."
-                                    icon={(<Kraken variant="sleep" />)}
+                                <NlpMap
+                                    projectId={projectId}
+                                    nlpMapId={automaticNlpMapId}
                                 />
                             </TabPanel>
                             <TabPanel name="nGrams" className={styles.tabPanel}>
