@@ -118,7 +118,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                 className={styles.recentActivityDate}
                 // FIXME: Get this information from server
                 value={data.date}
-                format="hh:mm aaa, MMM dd, yyyy"
+                format="hh:mm aaa, dd MMM, yyyy"
             />
         ),
     }), []);
