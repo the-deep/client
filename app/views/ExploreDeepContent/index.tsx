@@ -149,8 +149,8 @@ function ExploreDeepContent(props: Props) {
         loading,
     } = props;
 
-    const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
-    const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
+    const startDateString = formatDateToString(new Date(startDate), 'dd-MM-yyyy');
+    const endDateString = formatDateToString(new Date(endDate), 'dd-MM-yyyy');
 
     const [representationType, setRepresentationType] = useState<Option['key']>('table');
 
