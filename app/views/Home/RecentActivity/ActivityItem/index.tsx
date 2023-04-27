@@ -134,7 +134,7 @@ function ActivityItem(props: RecentActivityProps) {
             <DateOutput
                 className={styles.createdDate}
                 value={activity?.createdAt}
-                format="hh:mm aaa, MMM dd, yyyy"
+                format="hh:mm aaa, dd MMM, yyyy"
             />
         </Element>
     );
