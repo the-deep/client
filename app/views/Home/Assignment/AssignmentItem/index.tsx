@@ -130,7 +130,7 @@ function AssignmentItem(props: AssignmentItemProps) {
             <DateOutput
                 className={styles.createdDate}
                 value={createdAt}
-                format="hh:mm aaa, MMM dd, yyyy"
+                format="hh:mm aaa, dd MMM, yyyy"
             />
         </Element>
     );
