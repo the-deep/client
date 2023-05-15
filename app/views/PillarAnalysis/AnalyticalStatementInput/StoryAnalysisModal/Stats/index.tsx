@@ -39,7 +39,7 @@ function Stats(props: Props) {
                 <ProgressLine
                     titleClassName={styles.title}
                     progress={(sourcesUsed / totalSources) * 100}
-                    title={`${sourcesUsed} out of ${totalSources} sources used in analysis`}
+                    title={`${sourcesUsed} out of ${totalSources} sources used`}
                     variant="complement1"
                     hideInfoCircleBackground
                     hideInfoCircle
@@ -50,14 +50,14 @@ function Stats(props: Props) {
                 <ProgressLine
                     titleClassName={styles.title}
                     progress={(entriesUsed / totalEntries) * 100}
-                    title={`${entriesUsed} out of ${totalEntries} entries used in analysis`}
+                    title={`${entriesUsed} out of ${totalEntries} entries used`}
                     variant="complement2"
                     hideInfoCircleBackground
                     hideInfoCircle
                 />
             </div>
             <div className={styles.chartContainer}>
-                <div className={styles.heading}>Diversity</div>
+                <div className={styles.heading}>Source Diversity</div>
                 <ResponsiveContainer className={styles.chart}>
                     <RadarChart cx="50%" cy="50%" outerRadius="100%" data={diversityChartData}>
                         <PolarGrid />

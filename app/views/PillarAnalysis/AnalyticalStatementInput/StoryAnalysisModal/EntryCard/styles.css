@@ -31,7 +31,15 @@
             }
         }
         .header-actions {
+            transition: all var(--dui-duration-transition-medium) ease-in-out;
+            opacity: 0;
             color: var(--dui-color-accent);
+        }
+    }
+
+    &:hover {
+        .header-actions {
+            opacity: 1;
         }
     }
 

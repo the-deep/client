@@ -129,7 +129,7 @@ function DiscardedEntry(props: Props) {
                 styles.children,
                 entryType === 'IMAGE' && styles.image,
             )}
-            footerIcons={(
+            headerIcons={(
                 <Tag>
                     {tagDisplay}
                 </Tag>

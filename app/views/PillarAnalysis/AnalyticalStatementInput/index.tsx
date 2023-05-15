@@ -18,6 +18,7 @@ import {
     Container,
     DropContainer,
     QuickActionButton,
+    QuickActionConfirmButton,
     useAlert,
 } from '@the-deep/deep-ui';
 import {
@@ -332,6 +333,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onFieldChange(newVal, 'reportText');
     }, [onFieldChange]);
 
+    const handleDeleteAnalyticalStatement = useCallback(() => {
+        onRemove(index);
+    }, [index, onRemove]);
+
     return (
         <Container
             className={_cs(styles.analyticalStatementInput, className)}
@@ -367,7 +372,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     </QuickActionButton>
                     <QuickActionButton
                         title="View Story Analysis"
-                        name="viewStoryAnalsysi"
+                        name="viewStoryAnalysis"
                         onClick={handleStoryAnalysisModalOpen}
                         disabled={(value.entries?.length ?? 0) <= 0}
                         big
@@ -379,14 +384,16 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             // actionsContainerClassName={styles.actionsContainer}
             headerActions={(
                 <>
-                    <QuickActionButton
+                    <QuickActionConfirmButton
                         name={index}
-                        onClick={onRemove}
+                        onConfirm={handleDeleteAnalyticalStatement}
+                        message="Are you sure you want to delete this analytical statement?"
+                        showConfirmationInitially={false}
                         // FIXME: use translation
                         title="Remove Analytical Statement"
                     >
                         <IoClose />
-                    </QuickActionButton>
+                    </QuickActionConfirmButton>
                     <QuickActionButton
                         name={index}
                         // FIXME: use translation

@@ -7,7 +7,7 @@ import {
 } from '@togglecorp/fujs';
 import { useMutation, gql } from '@apollo/client';
 import {
-    IoTrashOutline,
+    IoBan,
     IoPeopleCircleOutline,
     IoPencilOutline,
     IoRepeat,
@@ -16,7 +16,6 @@ import {
     Tag,
     DraggableContent,
     PendingMessage,
-    useConfirmation,
     QuickActionDropdownMenu,
     DropdownMenuItem,
     QuickActionLink,
@@ -192,26 +191,13 @@ function SourceEntryItem(props: Props) {
         },
     );
 
-    const handleDiscardConfirm = useCallback(() => {
+    const handleDiscardButtonClick = useCallback((tagKey: string) => {
+        setSelectedDiscardType(tagKey);
         if (isDefined(selectedDiscardType)) {
             createDiscardedEntry();
             setSelectedDiscardType(undefined);
         }
     }, [createDiscardedEntry, selectedDiscardType]);
-
-    const [
-        modal,
-        onDiscardButtonClick,
-    ] = useConfirmation<undefined>({
-        showConfirmationInitially: false,
-        onConfirm: handleDiscardConfirm,
-        message: 'Are you sure you want to discard this entry?',
-    });
-
-    const handleDiscardButtonClick = useCallback((tagKey: string) => {
-        setSelectedDiscardType(tagKey);
-        onDiscardButtonClick();
-    }, [onDiscardButtonClick]);
 
     const editEntryLink = useMemo(() => ({
         pathname: generatePath(routes.entryEdit.path, {
@@ -270,7 +256,7 @@ function SourceEntryItem(props: Props) {
             heading={(
                 <DateOutput
                     className={styles.headingItem}
-                    format="yyyy/MM/dd"
+                    format="dd/MM/yyyy"
                     value={entryDate}
                 />
             )}
@@ -285,7 +271,7 @@ function SourceEntryItem(props: Props) {
                         <IoPencilOutline />
                     </QuickActionLink>
                     <QuickActionDropdownMenu
-                        label={<IoTrashOutline />}
+                        label={<IoBan />}
                         title="Discard entry"
                         disabled={createDiscardedEntryPending}
                         variant="transparent"
@@ -348,7 +334,6 @@ function SourceEntryItem(props: Props) {
                     noPaddingInWidgetContainer
                 />
             )}
-            {modal}
         </DraggableContent>
     );
 }
