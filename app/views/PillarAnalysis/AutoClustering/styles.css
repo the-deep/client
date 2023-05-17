@@ -1,0 +1,11 @@
+.cluster-button {
+    margin: 0 var(--dui-spacing-extra-small);
+}
+
+.modal {
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--dui-spacing-small);
+    }
+}

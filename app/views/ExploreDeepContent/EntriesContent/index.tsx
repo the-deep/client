@@ -9,10 +9,10 @@ import {
     todaysDate,
 } from '#utils/common';
 import useSizeTracking from '#hooks/useSizeTracking';
+import EntriesHeatMap from '#components/HeatMap';
 import { getTimeseriesWithoutGaps } from '#utils/temporal';
 
 import EntityCreationLineChart from '../EntityCreationLineChart';
-import EntriesHeatMap from './EntriesHeatMap';
 import BrushLineChart from '../BrushLineChart';
 
 import styles from './styles.css';
@@ -77,7 +77,7 @@ function EntriesContent(props: Props) {
                 {loading && <PendingMessage />}
                 <EntriesHeatMap
                     className={styles.map}
-                    entriesByRegion={entriesCountByRegion}
+                    points={entriesCountByRegion}
                 />
             </div>
             <div ref={barContainerRef}>

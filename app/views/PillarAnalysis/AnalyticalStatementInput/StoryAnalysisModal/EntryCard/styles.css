@@ -1,0 +1,63 @@
+.entry-card {
+    display: flex;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    background-color: var(--dui-color-foreground);
+
+    .header {
+        display: flex;
+        justify-content: center;
+    }
+
+    .heading-section {
+        align-items: center;
+
+        .authors {
+            display: inline-block;
+            max-width: 70px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .heading-item {
+            color: var(--dui-color-text-label);
+        }
+
+        .heading-container {
+            align-items: center;
+
+            .heading {
+                font-size: var(--dui-font-size-medium);
+            }
+        }
+        .header-actions {
+            color: var(--dui-color-accent);
+        }
+    }
+
+    &.is-flipped {
+        max-height: 360px;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        gap: var(--dui-spacing-medium);
+
+        .excerpt {
+            min-height: unset;
+        }
+
+        .extra-details {
+            display: flex;
+            align-items: baseline;
+            gap: var(--dui-spacing-large);
+        }
+
+        .entry-detail {
+            background-color: unset;
+            padding: unset;
+        }
+    }
+}

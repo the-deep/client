@@ -1,0 +1,19 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .markdown-editor {
+        flex-grow: 1;
+        width: 100%;
+
+        :global {
+            .w-md-editor-text-pre > code,
+            .w-md-editor-text-input {
+                line-height: 1.5 !important;
+                font-family: 'Source Sans Pro', sans-serif !important;
+                font-size: var(--dui-font-size-medium) !important;
+            }
+        }
+    }
+}

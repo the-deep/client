@@ -76,6 +76,13 @@ export function organizationTitleSelector(org: BasicOrganization) {
     return org.title;
 }
 
+export function organizationShortNameSelector(org: BasicOrganization) {
+    if (org.mergedAs) {
+        return org.mergedAs.shortName;
+    }
+    return org.shortName;
+}
+
 function OrganizationSearchMultiSelectInput<K extends string, GK extends string>(
     props: OrganizationMultiSelectInputProps<K, GK>,
 ) {

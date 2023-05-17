@@ -6,6 +6,7 @@ import {
     IoBarChartSharp,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
+import { useParams } from 'react-router-dom';
 
 import {
     _cs,
@@ -17,7 +18,7 @@ import {
     Container,
     DropContainer,
     QuickActionButton,
-    TextArea,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     useFormArray,
@@ -26,9 +27,16 @@ import {
     Error,
     getErrorObject,
 } from '@togglecorp/toggle-form';
+import { gql, useMutation } from '@apollo/client';
+import {
+    AutomaticStoryAnalysisMutation,
+    AutomaticStoryAnalysisMutationVariables,
+} from '#generated/types';
 
+import MarkdownEditor from '#components/MarkdownEditor';
 import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import { Attributes, Listeners } from '#components/SortableList';
 import { reorder, genericMemo } from '#utils/common';
 
@@ -37,12 +45,14 @@ import {
     PartialAnalyticalEntryType,
     PartialAnalyticalStatementType,
 } from '../schema';
+
+import { Framework } from '..';
 import AnalyticalEntryInput from './AnalyticalEntryInput';
 
-import AnalyticalNGramsModal from './AnalyticalNGramsModal';
+import StoryAnalysisModal from './StoryAnalysisModal';
 import styles from './styles.css';
 
-export const ENTRIES_LIMIT = 50;
+export const ENTRIES_LIMIT = 200;
 
 export interface DroppedValue {
     entryId: string;
@@ -62,12 +72,74 @@ export interface AnalyticalStatementInputProps {
     attributes?: Attributes;
     listeners?: Listeners;
     onSelectedNgramChange: (item: string | undefined) => void;
+    framework: Framework;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    onEntryDataChange: () => void;
 }
 
 const defaultVal = (): AnalyticalStatementType => ({
+    statement: '',
+    order: -1,
     clientId: `auto-${randomString()}`,
-    analyticalEntries: [],
+    entries: [],
 });
+
+const AUTOMATIC_STORY_ANALYSIS = gql`
+    mutation AutomaticStoryAnalysis($projectId: ID!, $entriesId: [ID!]) {
+        project(id: $projectId) {
+            triggerAnalysisGeoLocation(data: {entriesId: $entriesId}) {
+                errors
+                ok
+                result {
+                    id
+                    status
+                    entryGeo {
+                        data {
+                            geoids {
+                                countrycode
+                                featurecode
+                                geonameid
+                                latitude
+                                longitude
+                                match
+                            }
+                        }
+                    }
+                }
+            }
+            triggerAnalysisAutomaticNgram(data: {entriesId: $entriesId}) {
+                errors
+                ok
+                result {
+                    id
+                    status
+                    unigrams {
+                        count
+                        word
+                    }
+                    bigrams {
+                        count
+                        word
+                    }
+                    trigrams {
+                        count
+                        word
+                    }
+                }
+            }
+            triggerAnalysisAutomaticSummary(data: {entriesId: $entriesId}) {
+                errors
+                ok
+                result {
+                    id
+                    status
+                    summary
+                }
+            }
+        }
+    }
+`;
 
 function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     const {
@@ -81,25 +153,90 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         index,
         attributes,
         listeners,
-        onSelectedNgramChange,
+        framework,
+        geoAreaOptions,
+        setGeoAreaOptions,
+        onEntryDataChange,
     } = props;
 
+    const alert = useAlert();
+
     const onFieldChange = useFormObject(index, onChange, defaultVal);
+    const {
+        projectId,
+    } = useParams<{ projectId: string}>();
 
     const error = getErrorObject(riskyError);
-    const arrayError = getErrorObject(error?.analyticalEntries);
+    const arrayError = getErrorObject(error?.entries);
+
     const [
-        showAnalysisChart,,
-        hideAnalysisChart,,
-        toggleAnalysisChart,
+        moreDetailsModalShown,
+        showStoryAnalysisModal,
+        hideStoryAnalysisModal,
     ] = useModalState(false);
+
+    const [
+        createAutomaticStoryAnalysis,
+        {
+            data: automaticStoryAnalysis,
+        },
+    ] = useMutation<AutomaticStoryAnalysisMutation, AutomaticStoryAnalysisMutationVariables>(
+        AUTOMATIC_STORY_ANALYSIS,
+        {
+            onCompleted: (response) => {
+                if (
+                    !response
+                    || !response.project?.triggerAnalysisAutomaticNgram
+                    || !response.project?.triggerAnalysisAutomaticSummary
+                    || !response.project?.triggerAnalysisGeoLocation
+                ) {
+                    return;
+                }
+
+                if (response.project.triggerAnalysisAutomaticSummary.errors) {
+                    alert.show(
+                        'There were errors when creating automatic summary.',
+                        { variant: 'error' },
+                    );
+                }
+                if (response.project.triggerAnalysisAutomaticNgram.errors) {
+                    alert.show(
+                        'There were errors when creating automatic Ngram.',
+                        { variant: 'error' },
+                    );
+                }
+                if (response.project.triggerAnalysisGeoLocation.errors) {
+                    alert.show(
+                        'There were errors when extracting geo locations.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to create automatic story analysis.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const handleStoryAnalysisModalOpen = useCallback(() => {
+        createAutomaticStoryAnalysis({
+            variables: {
+                projectId,
+                entriesId: value.entries?.map((ae) => ae.entry).filter(isDefined),
+            },
+        });
+        showStoryAnalysisModal();
+    }, [value.entries, showStoryAnalysisModal, projectId, createAutomaticStoryAnalysis]);
 
     const {
         // setValue: onAnalyticalEntryChange,
         removeValue: onAnalyticalEntryRemove,
-    } = useFormArray('analyticalEntries', onFieldChange);
+    } = useFormArray('entries', onFieldChange);
 
-    type AnalyticalEntry = typeof value.analyticalEntries;
+    type AnalyticalEntry = typeof value.entries;
 
     const handleAnalyticalEntryDrop = useCallback(
         (dropValue: DroppedValue, dropOverEntryClientId?: string) => {
@@ -107,13 +244,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 (oldEntries: AnalyticalEntry) => {
                     // NOTE: Treat moved item as a new item by removing the old one and
                     // adding the new one again
-                    const movedItem = value.analyticalEntries
-                        ?.find((item) => item.entry === +dropValue.entryId);
+                    const movedItem = value.entries
+                        ?.find((item) => item.entry === dropValue.entryId);
 
                     // NOTE: Don't let users add more that certain items
                     if (
                         isNotDefined(movedItem)
-                        && (value?.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT
+                        && (value?.entries?.length ?? 0) >= ENTRIES_LIMIT
                     ) {
                         return oldEntries;
                     }
@@ -123,17 +260,17 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     const clientId = randomString();
                     let newAnalyticalEntry: PartialAnalyticalEntryType = {
                         clientId,
-                        entry: +dropValue.entryId,
+                        entry: dropValue.entryId,
                         order: value.order ?? 1,
                     };
 
-                    if (value.analyticalEntries && isDefined(movedItem)) {
+                    if (value.entries && isDefined(movedItem)) {
                         newAnalyticalEntry = {
                             ...movedItem,
                             order: value.order ?? 1,
                         };
-                        const movedItemOldIndex = value.analyticalEntries
-                            .findIndex((item) => item.entry === +dropValue.entryId);
+                        const movedItemOldIndex = value.entries
+                            .findIndex((item) => item.entry === dropValue.entryId);
                         newAnalyticalEntries.splice(movedItemOldIndex, 1);
                     }
 
@@ -150,7 +287,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     // whole list in bulk
                     return reorder(newAnalyticalEntries);
                 },
-                'analyticalEntries' as const,
+                'entries' as const,
             );
             if (
                 isDefined(dropValue.statementClientId)
@@ -164,7 +301,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         },
         [
             onEntryDrop, onFieldChange, onEntryMove,
-            value.analyticalEntries, value.order, value.clientId,
+            value.entries, value.order, value.clientId,
         ],
     );
 
@@ -187,6 +324,14 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onFieldChange(newStatementVal, 'statement');
     }, [onFieldChange]);
 
+    const handleInfoGapsChange = useCallback((newVal: string | undefined) => {
+        onFieldChange(newVal, 'informationGaps');
+    }, [onFieldChange]);
+
+    const handleReportTextChange = useCallback((newVal: string | undefined) => {
+        onFieldChange(newVal, 'reportText');
+    }, [onFieldChange]);
+
     return (
         <Container
             className={_cs(styles.analyticalStatementInput, className)}
@@ -195,12 +340,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             headerDescription={(
                 <div className={styles.headerDescription}>
                     <NonFieldError error={error} />
-                    <TextArea
+                    <MarkdownEditor
                         className={styles.statement}
                         // FIXME: use translation
                         placeholder="Enter analytical statement"
                         name="statement"
-                        rows={4}
+                        height={150}
                         value={value.statement}
                         onChange={onFieldChange}
                         error={error?.statement}
@@ -221,8 +366,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         )}
                     </QuickActionButton>
                     <QuickActionButton
-                        name="View n-grams analysis"
-                        onClick={toggleAnalysisChart}
+                        title="View Story Analysis"
+                        name="viewStoryAnalsysi"
+                        onClick={handleStoryAnalysisModalOpen}
+                        disabled={(value.entries?.length ?? 0) <= 0}
                         big
                     >
                         <IoBarChartSharp />
@@ -253,27 +400,51 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             )}
         >
             <div className={styles.entryContainer}>
-                {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
+                {value.entries?.map((analyticalEntry, myIndex) => (
                     <AnalyticalEntryInput
                         key={analyticalEntry.clientId}
                         index={myIndex}
                         statementClientId={value.clientId}
                         value={analyticalEntry}
+                        projectId={projectId}
                         // onChange={onAnalyticalEntryChange}
                         onRemove={onAnalyticalEntryRemove}
-                        error={arrayError?.[analyticalEntry.clientId]}
+                        error={(
+                            analyticalEntry.clientId
+                                ? arrayError?.[analyticalEntry.clientId] : undefined
+                        )}
                         onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
+                        framework={framework}
+                        geoAreaOptions={geoAreaOptions}
+                        setGeoAreaOptions={setGeoAreaOptions}
+                        onEntryDataChange={onEntryDataChange}
                     />
                 ))}
             </div>
-            {showAnalysisChart && (
-                <AnalyticalNGramsModal
-                    onModalClose={hideAnalysisChart}
-                    mainStatement={value.statement}
+            {moreDetailsModalShown && (
+                <StoryAnalysisModal
+                    onModalClose={hideStoryAnalysisModal}
+                    analyticalStatement={value.statement}
+                    reportText={value.reportText}
+                    informationGaps={value.informationGaps}
                     onStatementChange={handleStatementChange}
+                    onReportTextChange={handleReportTextChange}
+                    onInfoGapsChange={handleInfoGapsChange}
                     statementId={value.clientId}
-                    analyticalEntries={value.analyticalEntries}
-                    onNgramClick={onSelectedNgramChange}
+                    analyticalEntries={value.entries}
+                    projectId={projectId}
+                    automaticSummaryId={automaticStoryAnalysis
+                        ?.project?.triggerAnalysisAutomaticSummary?.result?.id}
+                    automaticNgramsId={automaticStoryAnalysis
+                        ?.project?.triggerAnalysisAutomaticNgram?.result?.id}
+                    automaticNlpMapId={automaticStoryAnalysis
+                        ?.project?.triggerAnalysisGeoLocation?.result?.id}
+                    onRemove={onAnalyticalEntryRemove}
+                    index={index}
+                    framework={framework}
+                    geoAreaOptions={geoAreaOptions}
+                    setGeoAreaOptions={setGeoAreaOptions}
+                    onEntryDataChange={onEntryDataChange}
                 />
             )}
             <DropContainer

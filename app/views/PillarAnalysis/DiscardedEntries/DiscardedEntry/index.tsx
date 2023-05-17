@@ -1,5 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { useMutation, gql } from '@apollo/client';
 import { AiOutlineUndo } from 'react-icons/ai';
 
 import {
@@ -10,30 +11,48 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 
-import { useLazyRequest } from '#base/utils/restRequest';
 import ExcerptInput from '#components/entry/ExcerptInput';
 import _ts from '#ts';
+import {
+    UndiscardEntryMutation,
+    UndiscardEntryMutationVariables,
+} from '#generated/types';
 
-import { EntryMin } from '../../context';
+import { Entry } from '../..';
+
 import styles from './styles.css';
+
+const UNDISCARD_ENTRY = gql`
+    mutation UndiscardEntry(
+        $projectId: ID!,
+        $discardedEntryId: ID!,
+    ) {
+        project(id: $projectId) {
+            discardedEntryDelete(id: $discardedEntryId) {
+                ok
+                errors
+            }
+        }
+    }
+`;
 
 export interface Props {
     className?: string;
-    discardedEntryId: number;
-    pillarId: number;
+    discardedEntryId: string;
     tagDisplay: string;
     onEntryUndiscard: () => void;
+    projectId: string;
 
-    excerpt: EntryMin['excerpt'];
-    image?: EntryMin['image'];
-    entryType: EntryMin['entryType'];
+    excerpt: Entry['excerpt'];
+    image?: Entry['image'];
+    entryType: Entry['entryType'];
 }
 
 function DiscardedEntry(props: Props) {
     const {
         className,
         discardedEntryId,
-        pillarId,
+        projectId,
         onEntryUndiscard,
         tagDisplay,
         entryType,
@@ -43,27 +62,65 @@ function DiscardedEntry(props: Props) {
 
     const alert = useAlert();
 
-    const {
-        pending,
-        trigger,
-    } = useLazyRequest<unknown>({
-        url: `server://analysis-pillar/${pillarId}/discarded-entries/${discardedEntryId}/`,
-        method: 'DELETE',
-        failureMessage: 'Failed to undiscarded entry.',
-        onSuccess: () => {
-            if (onEntryUndiscard) {
-                onEntryUndiscard();
-            }
-            alert.show(
-                'Successfully undiscarded the selected entry entry.',
-                { variant: 'success' },
-            );
+    const variables = useMemo(() => ({
+        projectId,
+        discardedEntryId,
+    }), [
+        projectId,
+        discardedEntryId,
+    ]);
+    const [
+        undiscardEntry,
+        {
+            loading: undiscardEntryPending,
         },
-    });
+    ] = useMutation<UndiscardEntryMutation, UndiscardEntryMutationVariables>(
+        UNDISCARD_ENTRY,
+        {
+            variables,
+            onCompleted: (response) => {
+                const undiscardEntryResponse = response?.project?.discardedEntryDelete;
+                if (!undiscardEntryResponse) {
+                    return;
+                }
+
+                const {
+                    ok,
+                } = undiscardEntryResponse;
+
+                if (ok) {
+                    alert.show(
+                        'Successfully discarded selected entry.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                    if (onEntryUndiscard) {
+                        onEntryUndiscard();
+                    }
+                } else if (!ok) {
+                    alert.show(
+                        'Failed to undiscarded entry.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to undiscarded entry.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
 
     const handleUndiscardClick = useCallback(() => {
-        trigger(null);
-    }, [trigger]);
+        undiscardEntry();
+    }, [undiscardEntry]);
 
     return (
         <Container
@@ -81,7 +138,7 @@ function DiscardedEntry(props: Props) {
                 <QuickActionConfirmButton
                     name="undiscard"
                     title="Undiscard entry"
-                    disabled={pending}
+                    disabled={undiscardEntryPending}
                     onConfirm={handleUndiscardClick}
                     message={_ts('pillarAnalysis', 'confirmUndiscardEntryMessage')}
                     showConfirmationInitially={false}
@@ -90,7 +147,7 @@ function DiscardedEntry(props: Props) {
                 </QuickActionConfirmButton>
             )}
         >
-            {pending && (<PendingMessage />)}
+            {undiscardEntryPending && (<PendingMessage />)}
             <ExcerptInput
                 entryType={entryType}
                 image={image}

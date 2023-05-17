@@ -7,4 +7,14 @@
         padding: var(--dui-spacing-small);
         gap: var(--dui-spacing-large);
     }
+
+    &.no-padding {
+        &:first-child {
+            padding-top: unset;
+        }
+        padding-left: unset;
+        .widget-list {
+            padding: unset;
+        }
+    }
 }

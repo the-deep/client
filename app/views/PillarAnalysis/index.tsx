@@ -5,10 +5,13 @@ import {
     useLocation,
 } from 'react-router-dom';
 import produce from 'immer';
-import { useQuery, gql } from '@apollo/client';
+import {
+    useQuery,
+    gql,
+    useMutation,
+} from '@apollo/client';
 import {
     _cs,
-    unique,
     doesObjectHaveNoData,
     isDefined,
     mapToList,
@@ -17,7 +20,6 @@ import {
     randomString,
     listToMap,
     Obj,
-    checkVersion,
 } from '@togglecorp/fujs';
 import {
     IoAdd,
@@ -35,7 +37,6 @@ import {
     useAlert,
     Button,
     QuickActionButton,
-    TextArea,
     CollapsibleContainer,
     Tabs,
     Tab,
@@ -51,6 +52,7 @@ import {
     EntriesAsList,
     removeNull,
     getErrorObject,
+    internal,
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
@@ -61,12 +63,10 @@ import {
 } from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import SubNavbar from '#components/SubNavbar';
-import { FrameworkFilterType } from '#types/newAnalyticalFramework';
 import BackLink from '#components/BackLink';
 import NonFieldError from '#components/NonFieldError';
 import { transformSourcesFilterToEntriesFilter } from '#components/leadFilters/SourcesFilter/utils';
 import SourcesAppliedFilters from '#components/leadFilters/SourcesAppliedFilters';
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
@@ -76,22 +76,29 @@ import SourcesFilter, {
     useFilterState,
     getProjectSourcesQueryVariables,
 } from '#components/leadFilters/SourcesFilter';
-import { transformErrorToToggleFormError } from '#utils/rest';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
+import { DeepReplace } from '#utils/types';
 import { PartialFormType, FormType as FilterFormType } from '#components/leadFilters/SourcesFilter/schema';
+import MarkdownEditor from '#components/MarkdownEditor';
+
 import {
-    ProjectFilterDetailsQuery,
-    ProjectFilterDetailsQueryVariables,
+    PillarAnalysisDetailsQuery,
+    PillarAnalysisDetailsQueryVariables,
     ProjectEntriesForAnalysisQuery,
     ProjectEntriesForAnalysisQueryVariables,
+    PillarAnalysisUpdateMutation,
+    AnalysisPillarUpdateInputType,
+    PillarAnalysisUpdateMutationVariables,
+    WidgetType as WidgetRaw,
+    AttributeType as WidgetAttributeRaw,
 } from '#generated/types';
+import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
 
 import _ts from '#ts';
 
-import {
-    MultiResponse,
-    AnalysisPillars,
-    EntryType,
-} from '#types';
+import { AnalysisPillars } from '#types';
+import { WidgetAttribute as WidgetAttributeFromEntry } from '#types/newEntry';
+import { FrameworkFilterType, Widget } from '#types/newAnalyticalFramework';
 
 /*
 import {
@@ -107,7 +114,6 @@ import {
 import DiscardedEntries from './DiscardedEntries';
 import SourceEntryItem, { Props as SourceEntryItemProps } from './SourceEntryItem';
 import AnalyticalStatementInput, {
-    ENTRIES_LIMIT,
     AnalyticalStatementInputProps,
 } from './AnalyticalStatementInput';
 import {
@@ -116,7 +122,8 @@ import {
     PartialAnalyticalStatementType,
 } from './schema';
 
-import EntryContext, { EntryMin } from './context';
+import EntryContext from './context';
+import AutoClustering from './AutoClustering';
 
 import styles from './styles.css';
 
@@ -135,10 +142,149 @@ const hasAssessmentOptions: BooleanOption[] = [
     { key: 'false', value: 'Assessment not completed' },
 ];
 
-const PROJECT_FILTER_DETAILS = gql`
-    query ProjectFilterDetails($projectId: ID!) {
+export const ENTRY_DETAILS = gql`
+    fragment EntryDetails on EntryType {
+        id
+        excerpt
+        entryType
+        clientId
+        createdAt
+        controlled
+        verifiedBy {
+            id
+        }
+        createdBy {
+            displayName
+        }
+        modifiedAt
+        droppedExcerpt
+        attributes {
+            clientId
+            data
+            id
+            widget
+            widgetType
+            widgetVersion
+            geoSelectedOptions {
+                id
+                adminLevelTitle
+                regionTitle
+                title
+            }
+        }
+        lead {
+            id
+            authors {
+                id
+                title
+                shortName
+                mergedAs {
+                    id
+                    title
+                    shortName
+                }
+                organizationType {
+                    id
+                    shortName
+                    title
+                }
+            }
+            source {
+                id
+                title
+                shortName
+                mergedAs {
+                    id
+                    title
+                    shortName
+                }
+            }
+            url
+            shareViewUrl
+        }
+        image {
+            id
+            title
+            file {
+                url
+            }
+        }
+    }
+`;
+
+const PILLAR_ANALYSIS = gql`
+    ${ENTRY_DETAILS}
+    fragment PillarAnalysis on AnalysisPillarType {
+        id
+        title
+        assignee {
+            id
+            displayName
+        }
+        mainStatement
+        informationGap
+        createdAt
+        modifiedAt
+        filters
+        statements {
+            id
+            clientId
+            order
+            statement
+            reportText
+            informationGaps
+            includeInReport
+            entries {
+                id
+                clientId
+                entry {
+                    ...EntryDetails
+                }
+                order
+            }
+        }
+    }
+`;
+
+const PILLAR_ANALYSIS_UPDATE = gql`
+    ${PILLAR_ANALYSIS}
+    mutation PillarAnalysisUpdate(
+        $id: ID!,
+        $projectId: ID!,
+        $data: AnalysisPillarUpdateInputType!,
+    ) {
+        project(id: $projectId) {
+            analysisPillarUpdate(
+                id: $id,
+                data: $data,
+            ) {
+                ok
+                errors
+                result {
+                    ...PillarAnalysis
+                }
+            }
+        }
+    }
+`;
+
+const PILLAR_ANALYSIS_DETAILS = gql`
+    ${PILLAR_ANALYSIS}
+    ${FRAMEWORK_FRAGMENT}
+    query PillarAnalysisDetails(
+        $projectId: ID!,
+        $pillarId: ID!,
+        $analysisId: ID!,
+    ) {
         project(id: $projectId) {
             id
+            analysis(id: $analysisId) {
+                id
+                title
+            }
+            analysisPillar(id: $pillarId) {
+                ...PillarAnalysis
+            }
             analysisFramework {
                 id
                 filters {
@@ -152,6 +298,7 @@ const PROJECT_FILTER_DETAILS = gql`
                     filterType
                     filterTypeDisplay
                 }
+                ...FrameworkResponse
             }
         }
         sourceStatusOptions: __type(name: "LeadStatusEnum") {
@@ -195,10 +342,26 @@ const PROJECT_FILTER_DETAILS = gql`
                 description
             }
         }
+        discardedEntryTagOptions: __type(name: "DiscardedEntryTagTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
     }
 `;
 
+export type EntryType = NonNullable<NonNullable<NonNullable<NonNullable<NonNullable<NonNullable<PillarAnalysisDetailsQuery['project']>['analysisPillar']>['statements']>[number]>['entries']>[number]>['entry'];
+export type Entry = DeepReplace<EntryType, Omit<WidgetAttributeRaw, 'widgetTypeDisplay' | 'widthTypeDisplay'>, WidgetAttributeFromEntry>;
+
+type FrameworkType = NonNullable<NonNullable<PillarAnalysisDetailsQuery['project']>['analysisFramework']>;
+export type Framework = DeepReplace<FrameworkType, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, Widget>;
+
+export type AnalyticalFrameworkType = NonNullable<NonNullable<PillarAnalysisDetailsQuery['project']>['analysisFramework']>;
+
 export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
+    ${ENTRY_DETAILS}
     query ProjectEntriesForAnalysis(
             $projectId: ID!
             $pillarId: ID!
@@ -211,6 +374,7 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $entryTypes: [EntryTagTypeEnum!],
             $filterableData: [EntryFilterDataInputType!]
             $leadAssignees: [ID!],
+            $leadCreatedBy: [ID!],
             $leadConfidentialities: [LeadConfidentialityEnum!],
             $leadPriorities: [LeadPriorityEnum!],
             $leadPublishedOnGte: Date,
@@ -236,6 +400,7 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                     leadAssignees: $leadAssignees,
                     leadConfidentialities: $leadConfidentialities,
                     leadPriorities: $leadPriorities,
+                    leadCreatedBy: $leadCreatedBy,
                     leadPublishedOnGte: $leadPublishedOnGte,
                     leadPublishedOnLte: $leadPublishedOnLte,
                     leadStatuses: $leadStatuses,
@@ -245,71 +410,23 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                 ) {
                     totalCount
                     results {
-                        clientId
-                        id
-                        createdAt
-                        entryType
-                        droppedExcerpt
-                        excerpt
-                        lead {
-                            id
-                        }
-                        image {
-                            id
-                            title
-                            file {
-                                url
-                            }
-                        }
+                        ...EntryDetails
                     }
                 }
             }
         }
     }
 `;
-
-export interface DiscardedTags {
-    key: number;
-    value: string;
-}
+export type DiscardedTags = NonNullable<NonNullable<PillarAnalysisDetailsQuery['discardedEntryTagOptions']>['enumValues']>[number];
 
 // This is an aribtrary number
-const STATEMENTS_LIMIT = 30;
-
-interface EntryFields {
-    id: number;
-    excerpt: string;
-    droppedExcerpt?: string;
-    imageDetails?: {
-        id: number;
-        file: string;
-    };
-    entryType: EntryType;
-}
-
-const analysisEntriesRequestQuery = {
-    // NOTE: 30 columns x 50 rows
-    limit: STATEMENTS_LIMIT * ENTRIES_LIMIT,
-    fields: [
-        'id',
-        'excerpt',
-        'dropped_excerpt',
-        'image_details',
-        'entry_type',
-    ],
-};
+const STATEMENTS_LIMIT = 20;
 
 type TabNames = 'entries' | 'discarded';
 
-const entryMap = {
-    excerpt: 'EXCERPT',
-    image: 'IMAGE',
-    dataSeries: 'DATA_SERIES',
-} as const;
-
 const maxItemsPerPage = 25;
 
-const entryKeySelector = (d: EntryMin) => d.id;
+const entryKeySelector = (d: Entry) => d.id;
 
 /*
 const mapStateToProps = (state: AppState, props: unknown) => ({
@@ -336,7 +453,7 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
 
 type FormType = typeof defaultFormValues;
 
-const statementKeySelector = (d: PartialAnalyticalStatementType) => d.clientId;
+const statementKeySelector = (d: PartialAnalyticalStatementType) => d.clientId ?? '';
 
 function PillarAnalysis() {
     const {
@@ -351,14 +468,6 @@ function PillarAnalysis() {
     // const initialValue = pillarAnalysisFromProps?.data ?? defaultFormValues;
     const initialValue = defaultFormValues;
 
-    // NOTE: Here to mock redux or other state management later on
-    const [
-        pillarAnalysisFromState,
-        setPillarAnalysis,
-    ] = useState<AnalysisPillars | undefined>(undefined);
-
-    const [versionId, setVersionId] = useState(pillarAnalysisFromState?.versionId);
-
     const {
         pristine,
         value,
@@ -370,39 +479,14 @@ function PillarAnalysis() {
     } = useForm(schema, initialValue);
 
     const error = getErrorObject(riskyError);
-    const arrayError = getErrorObject(error?.analyticalStatements);
+    const arrayError = getErrorObject(error?.statements);
 
     const {
         setValue: onAnalyticalStatementChange,
         removeValue: onAnalyticalStatementRemove,
-    } = useFormArray('analyticalStatements', setFieldValue);
+    } = useFormArray('statements', setFieldValue);
 
     const [activeTab, setActiveTab] = useState<TabNames | undefined>('entries');
-
-    const {
-        loading: frameworkGetPending,
-        data: frameworkResponse,
-    } = useQuery<ProjectFilterDetailsQuery, ProjectFilterDetailsQueryVariables>(
-        PROJECT_FILTER_DETAILS,
-        {
-            variables: {
-                projectId,
-            },
-        },
-    );
-
-    const [
-        filtersShown,
-        showFilter,
-        , ,
-        toggleShowFilter,
-    ] = useBooleanState(false);
-
-    const [
-        inputsShown,
-        , , ,
-        toggleShowInputs,
-    ] = useBooleanState(false);
 
     // NOTE: data actually used to send to server
     const [
@@ -420,6 +504,158 @@ function PillarAnalysis() {
         pristine: filterPristine,
         setPristine: setFilterPristine,
     } = useFilterState();
+
+    // NOTE: retain entries mapping to show entry information in entry cards
+    const [entriesMapping, setEntriesMapping] = useState<Obj<Entry>>({});
+
+    const {
+        loading: frameworkGetPending,
+        data: projectDetailsResponse,
+        refetch: getAnalysisDetails,
+    } = useQuery<PillarAnalysisDetailsQuery, PillarAnalysisDetailsQueryVariables>(
+        PILLAR_ANALYSIS_DETAILS,
+        {
+            variables: {
+                projectId,
+                pillarId,
+                analysisId,
+            },
+            onCompleted: (response) => {
+                const pillarData = removeNull(response?.project?.analysisPillar);
+                if (!pillarData) {
+                    return;
+                }
+
+                const newFilters = listToGroupList(
+                    pillarData.filters as AnalysisPillars['filters'],
+                    (o) => o.key,
+                    (o) => o.id,
+                );
+                const filtersList = mapToList(
+                    newFilters,
+                    (d, k) => ({
+                        filterKey: k,
+                        valueList: d,
+                    }),
+                );
+                setSourcesFilterValue({
+                    entriesFilterData: {
+                        filterableData: filtersList,
+                    },
+                });
+                setSourcesFilters({
+                    entriesFilterData: {
+                        filterableData: filtersList,
+                    },
+                });
+                const listOfEntries = pillarData.statements?.map(
+                    (statement) => statement.entries?.map((entry) => entry.entry),
+                ).flat().filter(isDefined) as Entry[] | undefined | null;
+                setEntriesMapping((oldEntriesMappings) => ({
+                    ...oldEntriesMappings,
+                    ...listToMap(
+                        listOfEntries ?? [],
+                        (item) => item.id,
+                        (item) => item,
+                    ),
+                }));
+
+                // eslint-disable-next-line max-len
+                let analyticalStatements: PartialAnalyticalStatementType[] = pillarData.statements?.map((statement) => ({
+                    ...statement,
+                    entries: statement.entries?.map((statementEntry) => ({
+                        ...statementEntry,
+                        entry: statementEntry.entry.id,
+                    })),
+                })) ?? [];
+
+                if (
+                    ((pillarData.statements?.length ?? 0) === 0)
+                    && (pillarData.createdAt === pillarData.modifiedAt)
+                ) {
+                    // NOTE: We are adding 2 analytical statements if the pillar analysis
+                    // is new and doesn't have any analytical statements
+                    // by default (happens if its cloned)
+                    const clientId1 = randomString();
+                    const clientId2 = randomString();
+                    const newAnalyticalStatement1: PartialAnalyticalStatementType = {
+                        clientId: clientId1,
+                        order: 1,
+                        includeInReport: false,
+                        statement: '',
+                        reportText: '',
+                        informationGaps: '',
+                    };
+                    const newAnalyticalStatement2: PartialAnalyticalStatementType = {
+                        clientId: clientId2,
+                        order: 2,
+                        includeInReport: false,
+                        statement: '',
+                        reportText: '',
+                        informationGaps: '',
+                    };
+                    analyticalStatements = [newAnalyticalStatement1, newAnalyticalStatement2];
+                }
+
+                /*
+                const {
+                    shouldSetValue,
+                    isValueOverriden,
+                } = checkVersion(versionId, pillarData.versionId);
+
+                if (!shouldSetValue) {
+                    return;
+                }
+                */
+
+                // FIXME: check set pristine value
+                // FIXME: only set after checking version id
+                setValue((): FormType => ({
+                    mainStatement: pillarData.mainStatement,
+                    informationGap: pillarData.informationGap,
+                    statements: analyticalStatements,
+                }));
+
+                // NOTE:
+                // sometimes
+                // 1. user could just open old document (the cache is set)
+                // 2. user doesn't modify anything
+                // 3. user returns later and finds there's new data on server
+                // 4. we don't need to show notification in this case even if it's overridden
+                /*
+                if (isValueOverriden && !pristine) {
+                    alert.show(
+                        _ts('pillarAnalysis', 'dateOverridden'),
+                        {
+                            variant: 'info',
+                        },
+                    );
+                }
+                */
+            },
+        },
+    );
+
+    const discardedTags: DiscardedTags[] = useMemo(() => (
+        projectDetailsResponse?.discardedEntryTagOptions?.enumValues ?? []
+    ), [projectDetailsResponse?.discardedEntryTagOptions?.enumValues]);
+
+    const analysisDetails = projectDetailsResponse?.project?.analysis;
+    const analysisPillarDetails = projectDetailsResponse?.project?.analysisPillar;
+    const frameworkDetails = projectDetailsResponse?.project?.analysisFramework as Framework;
+
+    const [
+        filtersShown,
+        showFilter,
+        , ,
+        toggleShowFilter,
+    ] = useBooleanState(false);
+
+    const [
+        inputsShown,
+        , , ,
+        toggleShowInputs,
+    ] = useBooleanState(false);
 
     const handleSourcesFiltersValueChange = useCallback(
         (...filterValue: EntriesAsList<PartialFormType>) => {
@@ -460,18 +696,18 @@ function PillarAnalysis() {
         setGeoAreaOptions,
     ] = useState<GeoArea[] | undefined | null>(undefined);
 
-    const statusOptions = frameworkResponse
+    const statusOptions = projectDetailsResponse
         ?.sourceStatusOptions?.enumValues;
-    const priorityOptions = frameworkResponse
+    const priorityOptions = projectDetailsResponse
         ?.sourcePriorityOptions?.enumValues;
-    const confidentialityOptions = frameworkResponse
+    const confidentialityOptions = projectDetailsResponse
         ?.sourceConfidentialityOptions?.enumValues;
     // FIXME: this may be problematic in the future
-    const organizationTypeOptions = frameworkResponse
+    const organizationTypeOptions = projectDetailsResponse
         ?.organizationTypes?.results;
-    const entryTypeOptions = frameworkResponse
+    const entryTypeOptions = projectDetailsResponse
         ?.entryTypeOptions?.enumValues;
-    const frameworkFilters = (frameworkResponse
+    const frameworkFilters = (projectDetailsResponse
         ?.project?.analysisFramework?.filters) as (FrameworkFilterType[] | null | undefined);
 
     const sourcesFilterContextValue = useMemo(() => ({
@@ -547,162 +783,7 @@ function PillarAnalysis() {
         },
     );
 
-    // NOTE: retain entries mapping to show entry information in entry cards
-    const [entriesMapping, setEntriesMapping] = useState<Obj<EntryMin>>({});
-
-    // NOTE: write analysis data on redux
     /*
-    useEffect(
-        () => {
-            setPillarAnalysisData({
-                id: pillarId,
-                versionId,
-                data: value,
-                pristine,
-            });
-        },
-        [value, versionId, pillarId, setPillarAnalysisData, pristine],
-    );
-    */
-
-    const {
-        pending: pendingEntriesInitialData,
-        trigger: fetchUsedEntriesData,
-    } = useLazyRequest<MultiResponse<EntryFields>, number[]>({
-        url: `server://analysis-pillar/${pillarId}/entries/`,
-        method: 'POST',
-        body: (ctx) => ({
-            filters: [
-                ['entries_id', ctx],
-            ],
-        }),
-        query: analysisEntriesRequestQuery,
-        onSuccess: (response) => {
-            setEntriesMapping((oldEntriesMappings) => ({
-                ...oldEntriesMappings,
-                ...listToMap(
-                    response.results,
-                    (item) => item.id,
-                    (item) => ({
-                        excerpt: item.excerpt,
-                        entryType: entryMap[item.entryType],
-                        image: item.imageDetails ? ({
-                            id: item.imageDetails.id,
-                            file: {
-                                url: item.imageDetails.file,
-                            },
-                        }) : undefined,
-                    }),
-                ),
-            }));
-        },
-    });
-
-    const {
-        pending: pendingPillarAnalysis,
-    } = useRequest<AnalysisPillars>({
-        url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
-        method: 'GET',
-        onSuccess: (response) => {
-            // FIXME: how to handle PillarFilterItem
-            const newFilters = listToGroupList(
-                response.filters,
-                (o) => o.key,
-                (o) => o.id,
-            );
-            const filtersList = mapToList(
-                newFilters,
-                (d, k) => ({
-                    filterKey: k,
-                    valueList: d,
-                }),
-            );
-            setPillarAnalysis(response);
-            setSourcesFilterValue({
-                entriesFilterData: {
-                    filterableData: filtersList,
-                },
-            });
-
-            // eslint-disable-next-line max-len
-            let analyticalStatements: PartialAnalyticalStatementType[] = response.analyticalStatements ?? [];
-            if (
-                (response.analyticalStatements?.length ?? 0) === 0
-                && response.versionId === 1
-            ) {
-                // NOTE: We are adding 2 analytical statements if the pillar analysis
-                // is new and doesn't have any analytical statements
-                // by default (happens if its cloned)
-                const clientId1 = randomString();
-                const clientId2 = randomString();
-                const newAnalyticalStatement1: PartialAnalyticalStatementType = {
-                    clientId: clientId1,
-                    order: 1,
-                    includeInReport: false,
-                };
-                const newAnalyticalStatement2: PartialAnalyticalStatementType = {
-                    clientId: clientId2,
-                    order: 2,
-                    includeInReport: false,
-                };
-                analyticalStatements = [newAnalyticalStatement1, newAnalyticalStatement2];
-            }
-
-            if ((response.analyticalStatements?.length ?? 0) > 0) {
-                const entryIds = response.analyticalStatements
-                    ?.map((statement) => statement.analyticalEntries)
-                    .flat()?.filter(isDefined).map((entry) => entry.entry);
-
-                const entryIdsInState = pillarAnalysisFromState?.analyticalStatements
-                    ?.map((statement) => (
-                        statement.analyticalEntries?.map((entry) => entry.entry)
-                    )).flat().filter(isDefined).flat();
-
-                const allEntryIds = unique(
-                    [
-                        ...(entryIds ?? []),
-                        ...(entryIdsInState ?? []),
-                    ],
-                    (d) => d,
-                );
-                fetchUsedEntriesData(allEntryIds);
-            }
-
-            const {
-                shouldSetValue,
-                isValueOverriden,
-            } = checkVersion(versionId, response.versionId);
-
-            if (!shouldSetValue) {
-                return;
-            }
-            setVersionId(response.versionId);
-
-            // FIXME: check set pristine value
-            // FIXME: only set after checking version id
-            setValue((): FormType => ({
-                mainStatement: response.mainStatement,
-                informationGap: response.informationGap,
-                analyticalStatements,
-            }));
-
-            // NOTE:
-            // sometimes
-            // 1. user could just open old document (the cache is set)
-            // 2. user doesn't modify anything
-            // 3. user returns later and finds there's new data on server
-            // 4. we don't need to show notification in this case even if it's overridden
-            if (isValueOverriden && !pristine) {
-                alert.show(
-                    _ts('pillarAnalysis', 'dateOverridden'),
-                    {
-                        variant: 'info',
-                    },
-                );
-            }
-        },
-    });
-
     const {
         pending: pendingPillarAnalysisSave,
         trigger: updateAnalysisPillars,
@@ -711,11 +792,10 @@ function PillarAnalysis() {
         body: (ctx) => ctx,
         method: 'PATCH',
         onSuccess: (response) => {
-            setVersionId(response.versionId);
             setValue((): FormType => ({
                 mainStatement: response.mainStatement,
                 informationGap: response.informationGap,
-                analyticalStatements: response.analyticalStatements,
+                statements: response.statements,
             }));
             alert.show(
                 _ts('pillarAnalysis', 'pillarAnalysisUpdateSuccess'),
@@ -731,18 +811,76 @@ function PillarAnalysis() {
         },
         failureMessage: 'Failed to update pillar analysis.',
     });
+    */
+
+    const [
+        updateAnalysisPillars,
+        {
+            loading: pendingPillarAnalysisSave,
+        },
+    ] = useMutation<PillarAnalysisUpdateMutation, PillarAnalysisUpdateMutationVariables>(
+        PILLAR_ANALYSIS_UPDATE,
+        {
+            onCompleted: (response) => {
+                const pillarResponse = response?.project?.analysisPillarUpdate;
+                if (!pillarResponse) {
+                    return;
+                }
+
+                const {
+                    ok,
+                    errors,
+                } = pillarResponse;
+
+                if (ok) {
+                    const analyticalStatements: PartialAnalyticalStatementType[] = pillarResponse
+                        .result?.statements?.map((statement) => ({
+                            ...statement,
+                            entries: statement.entries?.map((statementEntry) => ({
+                                ...statementEntry,
+                                entry: statementEntry.entry.id,
+                            })),
+                        })) ?? [];
+                    setValue((): FormType => ({
+                        mainStatement: pillarResponse?.result?.mainStatement,
+                        informationGap: pillarResponse?.result?.informationGap,
+                        statements: analyticalStatements,
+                    }));
+                    alert.show(
+                        _ts('pillarAnalysis', 'pillarAnalysisUpdateSuccess'),
+                        {
+                            variant: 'success',
+                        },
+                    );
+                } else if (!ok) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    if (formError?.project) {
+                        setError({
+                            ...formError,
+                            [internal]: formError?.project as string,
+                        });
+                    } else {
+                        setError(formError);
+                    }
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Error during update.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
 
     const entriesResponse = useMemo(() => (
-        removeNull(projectEntriesResponse?.project?.analysisPillar?.entries)
+        removeNull(projectEntriesResponse?.project?.analysisPillar?.entries) as {
+            totalCount: number | null | undefined;
+            results: Entry[] | null | undefined;
+        }
     ), [projectEntriesResponse]);
-
-    const {
-        pending: pendingDiscardedTags,
-        response: discardedTags,
-    } = useRequest<DiscardedTags[]>({
-        url: 'server://discarded-entry-options/',
-        method: 'GET',
-    });
 
     const handleEntryDrop = useCallback(
         (entryId: string) => {
@@ -763,27 +901,30 @@ function PillarAnalysis() {
     const handleAnalyticalStatementAdd = useCallback(
         () => {
             // NOTE: Don't let users add more that certain items
-            if ((value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT) {
+            if ((value.statements?.length ?? 0) >= STATEMENTS_LIMIT) {
                 return;
             }
 
-            const oldStatements = value.analyticalStatements ?? [];
+            const oldStatements = value.statements ?? [];
 
             const clientId = randomString();
             const newAnalyticalStatement: PartialAnalyticalStatementType = {
                 clientId,
                 order: oldStatements.length + 1,
                 includeInReport: false,
+                statement: '',
+                reportText: '',
+                informationGaps: '',
             };
             setFieldValue(
                 [...oldStatements, newAnalyticalStatement],
-                'analyticalStatements' as const,
+                'statements' as const,
             );
         },
-        [setFieldValue, value.analyticalStatements],
+        [setFieldValue, value.statements],
     );
 
-    type AnalyticalStatements = typeof value.analyticalStatements;
+    type AnalyticalStatements = typeof value.statements;
 
     const handleEntryMove = useCallback(
         (entryId: string, statementClientId: string) => {
@@ -793,8 +934,8 @@ function PillarAnalysis() {
                         const selectedIndex = safeStatements
                             .findIndex((s) => s.clientId === statementClientId);
                         if (selectedIndex !== -1) {
-                            const safeEntries = safeStatements[selectedIndex].analyticalEntries;
-                            const entryIndex = safeEntries?.findIndex((s) => s.entry === +entryId);
+                            const safeEntries = safeStatements[selectedIndex].entries;
+                            const entryIndex = safeEntries?.findIndex((s) => s.entry === entryId);
 
                             if (isDefined(entryIndex) && entryIndex !== -1) {
                                 safeEntries?.splice(entryIndex, 1);
@@ -802,7 +943,7 @@ function PillarAnalysis() {
                         }
                     })
                 ),
-                'analyticalStatements' as const,
+                'statements' as const,
             );
         },
         [setFieldValue],
@@ -840,37 +981,61 @@ function PillarAnalysis() {
             const submit = createSubmitHandler(
                 validate,
                 setError,
-                updateAnalysisPillars,
+                (finalVal) => {
+                    updateAnalysisPillars({
+                        variables: {
+                            id: pillarId,
+                            projectId,
+                            data: { ...finalVal } as AnalysisPillarUpdateInputType,
+                        },
+                    });
+                },
             );
             submit();
         },
-        [setError, validate, updateAnalysisPillars],
+        [
+            pillarId,
+            projectId,
+            setError,
+            validate,
+            updateAnalysisPillars,
+        ],
     );
 
     const entryCardRendererParams = useCallback(
-        (key: string, data: EntryMin): SourceEntryItemProps => ({
+        (key: string, data: Entry): SourceEntryItemProps => ({
             entryId: key,
+            entry: data,
             excerpt: data.excerpt,
             image: data.image,
             createdAt: data.createdAt,
             // tabularFieldData: data.tabularFieldData,
             entryType: data.entryType,
+            // authoringOrganization: data.lead.authors[0].shortName,
             pillarId,
-            pillarModifiedDate: pillarAnalysisFromState?.modifiedAt,
+            pillarModifiedDate: projectDetailsResponse?.project?.analysisPillar?.modifiedAt,
             discardedTags,
             onEntryDiscard: getEntries,
+            projectId,
+            framework: frameworkDetails,
+            geoAreaOptions,
+            setGeoAreaOptions,
+            onEntryDataChange: getAnalysisDetails,
         }), [
             pillarId,
+            projectId,
             getEntries,
             discardedTags,
-            pillarAnalysisFromState?.modifiedAt,
+            projectDetailsResponse?.project?.analysisPillar?.modifiedAt,
+            frameworkDetails,
+            geoAreaOptions,
+            setGeoAreaOptions,
+            getAnalysisDetails,
         ],
     );
 
-    const pending = pendingPillarAnalysis
-        || pendingEntriesInitialData
-        || pendingPillarAnalysisSave
-        || pendingDiscardedTags;
+    const pending = frameworkGetPending
+        || pendingPillarAnalysisSave;
 
     const handleNgramChange = useCallback((val: string | undefined) => {
         setSourcesFilterValue((filterVal) => ({
@@ -887,18 +1052,25 @@ function PillarAnalysis() {
         className: styles.analyticalStatement,
         index,
         value: statement,
+        framework: frameworkDetails,
         onChange: onAnalyticalStatementChange,
         onRemove: onAnalyticalStatementRemove,
+        geoAreaOptions,
+        setGeoAreaOptions,
         onEntryMove: handleEntryMove,
         onEntryDrop: handleEntryDrop,
         onSelectedNgramChange: handleNgramChange,
-        error: arrayError?.[statement?.clientId],
+        error: statement?.clientId ? arrayError?.[statement?.clientId] : undefined,
+        onEntryDataChange: getAnalysisDetails,
     }), [
         handleNgramChange,
         onAnalyticalStatementChange,
         onAnalyticalStatementRemove,
+        getAnalysisDetails,
         handleEntryMove,
         handleEntryDrop,
+        frameworkDetails,
+        geoAreaOptions,
         arrayError,
     ]);
 
@@ -906,10 +1078,10 @@ function PillarAnalysis() {
         newValues: PartialAnalyticalStatementType[],
     ) => {
         const orderedValues = reorder(newValues);
-        setFieldValue(orderedValues, 'analyticalStatements');
+        setFieldValue(orderedValues, 'statements');
     }, [setFieldValue]);
 
-    const statementsCount = value.analyticalStatements?.length ?? 0;
+    const statementsCount = value.statements?.length ?? 0;
 
     const entryContextValue = useMemo(
         () => ({
@@ -917,6 +1089,13 @@ function PillarAnalysis() {
             setEntries: setEntriesMapping,
         }),
         [entriesMapping, setEntriesMapping],
+    );
+
+    const handleStatementsFromClustersSet = useCallback(
+        (newStatements: PartialAnalyticalStatementType[]) => {
+            setFieldValue(newStatements, 'statements');
+        },
+        [setFieldValue],
     );
 
     const isCurrentFilterEmpty = doesObjectHaveNoData(sourcesFilters, ['', null]);
@@ -950,8 +1129,8 @@ function PillarAnalysis() {
                 )}
             >
                 {breadcrumb([
-                    pillarAnalysisFromState?.analysisTitle,
-                    pillarAnalysisFromState?.title ?? '',
+                    analysisDetails?.title,
+                    analysisPillarDetails?.title ?? '',
                 ])}
             </SubNavbar>
             <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
@@ -967,32 +1146,38 @@ function PillarAnalysis() {
                         {inputsShown && (
                             <>
                                 <div className={styles.inputContainer}>
-                                    <Heading
-                                        className={styles.inputHeader}
-                                    >
-                                        {_ts('pillarAnalysis', 'mainStatementLabel')}
-                                    </Heading>
-                                    <TextArea
+                                    <MarkdownEditor
+                                        className={styles.editor}
+                                        label={(
+                                            <Heading
+                                                className={styles.inputHeader}
+                                            >
+                                                {_ts('pillarAnalysis', 'mainStatementLabel')}
+                                            </Heading>
+                                        )}
                                         name="mainStatement"
                                         onChange={setFieldValue}
                                         value={value.mainStatement}
                                         error={error?.mainStatement}
-                                        rows={4}
+                                        height={150}
                                         disabled={pending}
                                     />
                                 </div>
                                 <div className={styles.inputContainer}>
-                                    <Heading
-                                        className={styles.inputHeader}
-                                    >
-                                        {_ts('pillarAnalysis', 'infoGapLabel')}
-                                    </Heading>
-                                    <TextArea
+                                    <MarkdownEditor
+                                        className={styles.editor}
+                                        label={(
+                                            <Heading
+                                                className={styles.inputHeader}
+                                            >
+                                                {_ts('pillarAnalysis', 'infoGapLabel')}
+                                            </Heading>
+                                        )}
                                         name="informationGap"
                                         value={value.informationGap}
                                         onChange={setFieldValue}
                                         error={error?.informationGap}
-                                        rows={4}
+                                        height={150}
                                         disabled={pending}
                                     />
                                 </div>
@@ -1100,6 +1285,16 @@ function PillarAnalysis() {
                                         >
                                             {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
                                         </Tab>
+                                        <AutoClustering
+                                            pillarId={pillarId}
+                                            projectId={projectId}
+                                            entriesFilter={entriesFilter}
+                                            onEntriesMappingChange={setEntriesMapping}
+                                            entriesCount={entriesResponse?.totalCount}
+                                            onStatementsFromClustersSet={
+                                                handleStatementsFromClustersSet
+                                            }
+                                        />
                                     </TabList>
                                 )}
                             >
@@ -1141,9 +1336,10 @@ function PillarAnalysis() {
                                 >
                                     <DiscardedEntries
                                         className={styles.discardedEntriesContainer}
-                                        pillarId={+pillarId}
+                                        pillarId={pillarId}
                                         discardedTags={discardedTags}
                                         onUndiscardSuccess={getEntries}
+                                        projectId={projectId}
                                     />
                                 </TabPanel>
                             </CollapsibleContainer>
@@ -1159,7 +1355,7 @@ function PillarAnalysis() {
                                     )}
                                     name="analyticalStatements"
                                     onChange={onOrderChange}
-                                    data={value.analyticalStatements}
+                                    data={value.statements}
                                     keySelector={statementKeySelector}
                                     renderer={AnalyticalStatementInput}
                                     direction="horizontal"

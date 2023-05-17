@@ -17,16 +17,61 @@
         background-color: var(--dui-color-foreground);
         overflow: auto;
 
+        .heading-item {
+            color: var(--dui-color-text-label);
+        }
+
+        .heading-section {
+            display: flex;
+            align-items: center;
+
+            .authors {
+                display: inline-block;
+                max-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .heading-container {
+                align-items: center;
+
+                .heading {
+                    font-size: var(--dui-font-size-medium);
+
+                }
+            }
+            .header-actions {
+                color: var(--dui-color-accent);
+            }
+        }
+
         &.is-being-dragged {
             max-height: 120px;
         }
+        &.is-flipped {
+            max-height: 360px;
+        }
 
         .content {
-            align-self: stretch;
+            display: flex;
+            flex-direction: column;
             overflow: auto;
+            gap: var(--dui-spacing-medium);
 
             .excerpt {
                 min-height: unset;
+            }
+
+            .extra-details {
+                display: flex;
+                align-items: baseline;
+                gap: var(--dui-spacing-large);
+            }
+
+            .entry-detail {
+                background-color: unset;
+                padding: unset;
             }
         }
     }
