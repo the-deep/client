@@ -7,7 +7,7 @@ import { Entry } from '.';
 export function transformEntry(entry: Entry) {
     return removeNull({
         ...entry,
-        lead: entry?.lead?.id,
+        lead: entry.lead?.id,
         image: entry.image?.id,
         attributes: entry.attributes?.map((attribute) => ({
             ...attribute,
