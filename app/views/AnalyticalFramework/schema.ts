@@ -6,6 +6,7 @@ import {
     requiredStringCondition,
     requiredListCondition,
     defaultUndefinedType,
+    defaultEmptyArrayType,
     PartialForm,
 } from '@togglecorp/toggle-form';
 
@@ -148,8 +149,8 @@ const schema: FormSchema = {
                                 geoWidget: [requiredCondition],
                                 severityWidget: [requiredCondition],
                                 reliabilityWidget: [requiredCondition],
-                                multiselectWidgets: [requiredCondition],
-                                organigramWidgets: [requiredCondition],
+                                multiselectWidgets: [defaultEmptyArrayType],
+                                organigramWidgets: [defaultEmptyArrayType],
                             }),
                         },
                     }),

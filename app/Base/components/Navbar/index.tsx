@@ -71,6 +71,7 @@ function Navbar(props: Props) {
     } = useQuery<UserNotificationsCountQuery, UserNotificationsCountQueryVariables>(
         USER_NOTIFICATIONS_COUNT,
         {
+            skip: !authenticated,
             pollInterval: NOTIFICATION_POLL_INTERVAL,
         },
     );
