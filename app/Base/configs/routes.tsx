@@ -445,6 +445,54 @@ const newAssessmentExportCreateRoute = wrap({
         return project.allowedPermissions.includes('CREATE_EXPORT');
     },
 });
+const newAssessmentEditRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/assessments/:assessmentId(\\d+)/',
+    title: 'Edit Assessment',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/EditAry')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        // NOTE: using permission for LEAD as we don't have one for assessment
+        return project.hasAssessmentTemplate && (
+            project.allowedPermissions.includes('CREATE_LEAD')
+            || project.allowedPermissions.includes('UPDATE_LEAD')
+        );
+    },
+});
+
+const createNewAssessmentEditRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/assessments/new/',
+    title: 'Create Assessment',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/EditAry')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        // NOTE: using permission for LEAD as we don't have one for assessment
+        return project.hasAssessmentTemplate && (
+            project.allowedPermissions.includes('CREATE_LEAD')
+            || project.allowedPermissions.includes('UPDATE_LEAD')
+        );
+    },
+});
+
 const assessmentEditRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/assessments/leads/:leadId(\\d+)/',
@@ -603,6 +651,8 @@ const routes = {
     entryEdit: entryEditRoute,
     assessmentEdit: assessmentEditRoute,
     groupAssessmentEdit: groupAssessmentEditRoute,
+    newAssessmentEdit: newAssessmentEditRoute,
+    createNewAssessmentEdit: createNewAssessmentEditRoute,
     entryEditRedirect,
     documentViewerRedirect,
     projectRedirect,
