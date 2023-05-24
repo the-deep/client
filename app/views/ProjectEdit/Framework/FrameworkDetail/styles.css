@@ -54,10 +54,22 @@
                 gap: var(--dui-spacing-medium);
                 overflow-y: auto;
 
+                .value{
+                    &:hover {
+                        text-decoration: underline;
+                        color: var(--dui-color-brand);
+                    }
+                }
+
                 .block {
                     display: flex;
                     align-items: flex-start;
                     flex-direction: column;
+                }
+
+                .show-more {
+                    padding: 0;
+                    font-size: var(--dui-font-size-small);
                 }
 
                 .project-title {

@@ -654,12 +654,6 @@ function PillarAnalysis() {
         toggleShowFilter,
     ] = useBooleanState(false);
 
-    const [
-        inputsShown,
-        , , ,
-        toggleShowInputs,
-    ] = useBooleanState(false);
-
     const handleSourcesFiltersValueChange = useCallback(
         (...filterValue: EntriesAsList<PartialFormType>) => {
             // FIXME: let's use a different handler here
@@ -1143,13 +1137,26 @@ function PillarAnalysis() {
                 <div className={styles.content}>
                     {(frameworkGetPending || pending) && <PendingMessage />}
                     <NonFieldError error={error} />
-                    <div
-                        className={_cs(
-                            styles.inputsContainer,
-                            inputsShown && styles.inputsShown,
-                        )}
-                    >
-                        {inputsShown && (
+                    <div className={styles.infoWrapper}>
+                        <CollapsibleContainer
+                            className={styles.infoContainer}
+                            contentClassName={styles.inputsContainer}
+                            expandButtonClassName={styles.expandTopSectionButton}
+                            collapseButtonClassName={styles.collapseTopSectionButton}
+                            collapseButtonContent={(
+                                <div className={styles.buttonContent}>
+                                    Hide
+                                    <IoChevronUp />
+                                </div>
+                            )}
+                            expandButtonContent={(
+                                <div className={styles.buttonContent}>
+                                    Show Main Statements and Information Gaps
+                                    <IoChevronDown />
+                                </div>
+                            )}
+                            collapsedInitially
+                        >
                             <>
                                 <div className={styles.inputContainer}>
                                     <MarkdownEditor
@@ -1188,16 +1195,7 @@ function PillarAnalysis() {
                                     />
                                 </div>
                             </>
-                        )}
-                        <Button
-                            className={styles.showInputsButton}
-                            name={undefined}
-                            onClick={toggleShowInputs}
-                            icons={inputsShown ? <IoChevronUp /> : <IoChevronDown />}
-                            variant="transparent"
-                        >
-                            {inputsShown ? 'Hide' : 'Show Main Statement and Information Gaps'}
-                        </Button>
+                        </CollapsibleContainer>
                     </div>
                     <div className={styles.filterContainer}>
                         <Button
