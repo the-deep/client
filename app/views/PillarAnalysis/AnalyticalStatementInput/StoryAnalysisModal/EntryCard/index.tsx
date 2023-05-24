@@ -114,7 +114,7 @@ function EntryCard(props: Props) {
             heading={(
                 <DateOutput
                     className={styles.headingItem}
-                    format="yyyy/MM/dd"
+                    format="dd/MM/yyyy"
                     value={entryDate}
                 />
             )}
@@ -164,7 +164,7 @@ function EntryCard(props: Props) {
                     <div className={styles.extraDetails}>
                         <TextOutput
                             label="Created Date"
-                            value={<DateOutput value={entry.createdAt} />}
+                            value={<DateOutput format="dd/MM/yyyy" value={entry.createdAt} />}
                         />
                         <TextOutput
                             label="Added By"

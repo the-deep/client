@@ -7,6 +7,8 @@ import {
     InputContainerProps,
 } from '@the-deep/deep-ui';
 
+import { genericMemo } from '#utils/common';
+
 import styles from './styles.css';
 
 export type MarkdownEditorProps<T> = Omit<InputContainerProps, 'input' | 'onChange' | 'name' | 'value'> & {
@@ -93,4 +95,4 @@ function MarkdownEditor<T extends string>(props: MarkdownEditorProps<T>) {
     );
 }
 
-export default MarkdownEditor;
+export default genericMemo(MarkdownEditor);

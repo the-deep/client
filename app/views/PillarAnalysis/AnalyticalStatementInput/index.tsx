@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     IoClose,
     IoCheckmarkCircleSharp,
@@ -15,9 +15,14 @@ import {
     randomString,
 } from '@togglecorp/fujs';
 import {
+    Tabs,
+    Tab,
+    TabList,
+    TabPanel,
     Container,
     DropContainer,
     QuickActionButton,
+    QuickActionConfirmButton,
     useAlert,
 } from '@the-deep/deep-ui';
 import {
@@ -53,37 +58,6 @@ import StoryAnalysisModal from './StoryAnalysisModal';
 import styles from './styles.css';
 
 export const ENTRIES_LIMIT = 200;
-
-export interface DroppedValue {
-    entryId: string;
-    statementClientId?: string;
-}
-
-export interface AnalyticalStatementInputProps {
-    className?: string;
-    value: PartialAnalyticalStatementType;
-    error: Error<AnalyticalStatementType> | undefined;
-    onChange: (value: SetValueArg<PartialAnalyticalStatementType>, index: number) => void;
-    onRemove: (index: number) => void;
-    onEntryMove: (entryId: string, statementClientId: string) => void;
-    onEntryDrop: (entryId: string) => void;
-    index: number;
-    isBeingDragged?: boolean;
-    attributes?: Attributes;
-    listeners?: Listeners;
-    onSelectedNgramChange: (item: string | undefined) => void;
-    framework: Framework;
-    geoAreaOptions: GeoArea[] | undefined | null;
-    setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
-    onEntryDataChange: () => void;
-}
-
-const defaultVal = (): AnalyticalStatementType => ({
-    statement: '',
-    order: -1,
-    clientId: `auto-${randomString()}`,
-    entries: [],
-});
 
 const AUTOMATIC_STORY_ANALYSIS = gql`
     mutation AutomaticStoryAnalysis($projectId: ID!, $entriesId: [ID!]) {
@@ -141,6 +115,39 @@ const AUTOMATIC_STORY_ANALYSIS = gql`
     }
 `;
 
+const defaultVal = (): AnalyticalStatementType => ({
+    statement: '',
+    order: -1,
+    clientId: `auto-${randomString()}`,
+    entries: [],
+});
+
+type Field = 'infogaps' | 'myAnalysis' | 'statement';
+
+export interface DroppedValue {
+    entryId: string;
+    statementClientId?: string;
+}
+
+export interface AnalyticalStatementInputProps {
+    className?: string;
+    value: PartialAnalyticalStatementType;
+    error: Error<AnalyticalStatementType> | undefined;
+    onChange: (value: SetValueArg<PartialAnalyticalStatementType>, index: number) => void;
+    onRemove: (index: number) => void;
+    onEntryMove: (entryId: string, statementClientId: string) => void;
+    onEntryDrop: (entryId: string) => void;
+    index: number;
+    isBeingDragged?: boolean;
+    attributes?: Attributes;
+    listeners?: Listeners;
+    onSelectedNgramChange: (item: string | undefined) => void;
+    framework: Framework;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    onEntryDataChange: () => void;
+}
+
 function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     const {
         className,
@@ -158,6 +165,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         setGeoAreaOptions,
         onEntryDataChange,
     } = props;
+
+    const [selectedField, setSelectedField] = useState<Field | undefined>('statement');
 
     const alert = useAlert();
 
@@ -332,6 +341,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onFieldChange(newVal, 'reportText');
     }, [onFieldChange]);
 
+    const handleDeleteAnalyticalStatement = useCallback(() => {
+        onRemove(index);
+    }, [index, onRemove]);
+
     return (
         <Container
             className={_cs(styles.analyticalStatementInput, className)}
@@ -340,16 +353,68 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             headerDescription={(
                 <div className={styles.headerDescription}>
                     <NonFieldError error={error} />
-                    <MarkdownEditor
-                        className={styles.statement}
-                        // FIXME: use translation
-                        placeholder="Enter analytical statement"
-                        name="statement"
-                        height={150}
-                        value={value.statement}
-                        onChange={onFieldChange}
-                        error={error?.statement}
-                    />
+                    <Tabs
+                        value={selectedField}
+                        onChange={setSelectedField}
+                        variant="primary"
+                    >
+                        <TabList>
+                            <Tab
+                                className={styles.tab}
+                                name="statement"
+                                transparentBorder
+                            >
+                                Statement
+                            </Tab>
+                            <Tab
+                                className={styles.tab}
+                                name="infogaps"
+                                transparentBorder
+                            >
+                                Info Gaps
+                            </Tab>
+                            <Tab
+                                className={styles.tab}
+                                name="myAnalysis"
+                                transparentBorder
+                            >
+                                My Analysis
+                            </Tab>
+                        </TabList>
+                        <TabPanel name="statement">
+                            <MarkdownEditor
+                                className={styles.statement}
+                                placeholder="Enter analytical statement"
+                                name="statement"
+                                height={150}
+                                value={value.statement}
+                                onChange={onFieldChange}
+                                error={error?.statement}
+                            />
+                        </TabPanel>
+                        <TabPanel name="infogaps">
+                            <MarkdownEditor
+                                className={styles.statement}
+                                placeholder="Enter info gaps"
+                                name="informationGaps"
+                                height={150}
+                                value={value.informationGaps}
+                                onChange={onFieldChange}
+                                error={error?.informationGaps}
+                            />
+                        </TabPanel>
+                        <TabPanel name="myAnalysis">
+                            <MarkdownEditor
+                                className={styles.statement}
+                                placeholder="My analysis"
+                                name="reportText"
+                                height={150}
+                                value={value.reportText}
+                                onChange={onFieldChange}
+                                error={error?.reportText}
+                            />
+                        </TabPanel>
+                    </Tabs>
                 </div>
             )}
             headerIcons={(
@@ -367,7 +432,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     </QuickActionButton>
                     <QuickActionButton
                         title="View Story Analysis"
-                        name="viewStoryAnalsysi"
+                        name="viewStoryAnalysis"
                         onClick={handleStoryAnalysisModalOpen}
                         disabled={(value.entries?.length ?? 0) <= 0}
                         big
@@ -379,14 +444,16 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             // actionsContainerClassName={styles.actionsContainer}
             headerActions={(
                 <>
-                    <QuickActionButton
+                    <QuickActionConfirmButton
                         name={index}
-                        onClick={onRemove}
+                        onConfirm={handleDeleteAnalyticalStatement}
+                        message="Are you sure you want to delete this analytical statement?"
+                        showConfirmationInitially={false}
                         // FIXME: use translation
                         title="Remove Analytical Statement"
                     >
                         <IoClose />
-                    </QuickActionButton>
+                    </QuickActionConfirmButton>
                     <QuickActionButton
                         name={index}
                         // FIXME: use translation

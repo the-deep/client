@@ -39,6 +39,7 @@ const DISCARDED_ENTRIES = gql`
                     results {
                         id
                         tag
+                        tagDisplay
                         entry {
                             id
                             excerpt
@@ -129,7 +130,7 @@ function DiscardedEntries(props: Props) {
         (_: string, data: DiscardedEntryType): DiscardedEntryProps => ({
             projectId,
             discardedEntryId: data.id,
-            tagDisplay: data.tag,
+            tagDisplay: data.tagDisplay,
             excerpt: data.entry.excerpt,
             image: data.entry.image?.file ? ({
                 id: data.entry.image.id,

@@ -23,6 +23,10 @@
         }
     }
 
+    .tab {
+        padding: var(--dui-spacing-small);
+    }
+
     .drag-content {
         display: flex;
         align-self: stretch;

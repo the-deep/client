@@ -388,6 +388,9 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             id
             analysisPillar(id: $pillarId) {
                 id
+                discardedEntries {
+                    totalCount
+                }
                 entries(
                     page: $page,
                     pageSize: $pageSize,
@@ -882,6 +885,9 @@ function PillarAnalysis() {
         }
     ), [projectEntriesResponse]);
 
+    const discardedEntriesCount = projectEntriesResponse
+        ?.project?.analysisPillar?.discardedEntries?.totalCount;
+
     const handleEntryDrop = useCallback(
         (entryId: string) => {
             const entry = entriesResponse?.results?.find((item) => item.id === entryId);
@@ -1283,7 +1289,11 @@ function PillarAnalysis() {
                                             name="discarded"
                                             className={styles.tab}
                                         >
-                                            {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
+                                            {_ts(
+                                                'pillarAnalysis',
+                                                'discardedEntriesTabLabel',
+                                                { entriesCount: discardedEntriesCount },
+                                            )}
                                         </Tab>
                                         <AutoClustering
                                             pillarId={pillarId}

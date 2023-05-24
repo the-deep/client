@@ -22,62 +22,104 @@
                 gap: var(--dui-spacing-large);
                 overflow: auto;
 
-                .left {
+                .left-container {
                     display: flex;
-                    flex-basis: 50%;
-                    flex-direction: column;
-                    flex-grow: 1;
-                    gap: var(--dui-spacing-large);
 
-                    .stats {
-                        border-radius: 0.25rem;
-                        background-color: var(--dui-color-background);
-                        min-height: 6rem;
+                    .left-panel {
+                        display: flex;
+                        flex-basis: var(--width-left-container);
+                        flex-shrink: 0;
+                        border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                        background-color: transparent;
+                        padding: 0;
+                        overflow: auto;
                     }
 
-                    .visualization {
+                    .expand-charts-button {
+                        align-items: flex-start;
+                        border: none;
+                        border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                        border-radius: 0;
+                        background-color: var(--dui-color-background-information);
+                        padding: var(--dui-spacing-medium);
+                        color: var(--dui-color-text);
+
+                        >* {
+                            height: auto;
+                        }
+                        .button-text {
+                            display: flex;
+                            align-items: flex-end;
+                            transform: rotate(180deg);
+                            padding: var(--dui-spacing-medium) 0;
+                            text-transform: capitalize;
+                            gap: var(--dui-spacing-small);
+                            writing-mode: vertical-rl;
+                        }
+                    }
+                    .collapse-charts-button {
+                        margin: var(--dui-spacing-small);
+                        color: var(--dui-color-accent);
+                        font-size: var(--dui-font-size-extra-large);
+                    }
+
+                    .left {
                         display: flex;
+                        flex-basis: 50%;
                         flex-direction: column;
                         flex-grow: 1;
-                        border-radius: 0.25rem;
-                        background-color: var(--dui-color-background);
+                        gap: var(--dui-spacing-large);
 
-                        .header {
-                            background-color: var(--dui-color-background-information);
+                        .stats {
+                            border-radius: 0.25rem;
+                            background-color: var(--dui-color-background);
+                            min-height: 6rem;
                         }
 
-                        .tab {
-                            background-color: var(--dui-color-background-information);
-                            font-size: var(--dui-font-size-large);
-                            font-weight: var(--dui-font-weight-regular);
-                        }
-
-                        .active-tab {
-                            background-color: var(--dui-color-surface-information);
-                        }
-
-                        .tab-panel-container {
+                        .visualization {
                             display: flex;
+                            flex-direction: column;
                             flex-grow: 1;
+                            border-radius: 0.25rem;
+                            background-color: var(--dui-color-background);
 
-                            .tab-panel {
+                            .header {
+                                background-color: var(--dui-color-background-information);
+                            }
+
+                            .tab {
+                                background-color: var(--dui-color-background-information);
+                                font-size: var(--dui-font-size-large);
+                                font-weight: var(--dui-font-weight-regular);
+                            }
+
+                            .active-tab {
+                                background-color: var(--dui-color-surface-information);
+                            }
+
+                            .tab-panel-container {
                                 display: flex;
-                                flex-direction: column;
                                 flex-grow: 1;
-                                background-color: var(--dui-color-foreground);
-                                padding-top: var(--dui-spacing-medium);
-                                overflow: auto;
-                                gap: var(--dui-spacing-small);
 
-                                .context-actions {
+                                .tab-panel {
                                     display: flex;
-                                    padding-top: var(--dui-spacing-small);
-                                    gap: var(--dui-spacing-medium);
-                                }
-
-                                .word-tree-container {
-                                    display: flex;
+                                    flex-direction: column;
                                     flex-grow: 1;
+                                    background-color: var(--dui-color-foreground);
+                                    padding-top: var(--dui-spacing-medium);
+                                    overflow: auto;
+                                    gap: var(--dui-spacing-small);
+
+                                    .context-actions {
+                                        display: flex;
+                                        padding-top: var(--dui-spacing-small);
+                                        gap: var(--dui-spacing-medium);
+                                    }
+
+                                    .word-tree-container {
+                                        display: flex;
+                                        flex-grow: 1;
+                                    }
                                 }
                             }
                         }

@@ -177,7 +177,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 heading={(
                     <DateOutput
                         className={styles.headingItem}
-                        format="yyyy/MM/dd"
+                        format="dd/MM/yyyy"
                         value={entryDate}
                     />
                 )}
