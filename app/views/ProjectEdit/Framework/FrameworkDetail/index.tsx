@@ -10,6 +10,7 @@ import {
     IoCopyOutline,
     IoCheckmark,
     IoDownloadOutline,
+    IoChevronForward,
 } from 'react-icons/io5';
 import {
     FiEdit2,
@@ -32,6 +33,8 @@ import {
     Link,
     DateOutput,
     TextOutput,
+    RawButton,
+    Button,
 } from '@the-deep/deep-ui';
 import { removeNull } from '@togglecorp/toggle-form';
 
@@ -65,15 +68,24 @@ const emptyObject = {};
 
 const FRAMEWORK_DETAILS = gql`
     ${FRAMEWORK_FRAGMENT}
-    query FrameworkDetails($frameworkId: ID!) {
+    query FrameworkDetails(
+        $frameworkId: ID!,
+        $frameworkIds: [ID!],
+        $page: Int,
+        $pageSize: Int,
+    ) {
+        analysisFrameworks {
+            results {
+                title
+                id
+            }
+            totalCount
+        }
         analysisFramework(id: $frameworkId) {
             title
             description
             createdAt
-            visibleProjects {
-                id
-                title
-            }
+            clonedFrom
             allowedPermissions
             createdBy {
                 displayName
@@ -84,6 +96,19 @@ const FRAMEWORK_DETAILS = gql`
             }
             # NOTE: Does not need predictionTagsMapping from FrameworkResponse
             ...FrameworkResponse
+        }
+        projects (
+            analysisFrameworks: $frameworkIds,
+            page: $page,
+            pageSize: $pageSize,
+        ) {
+            results {
+                title
+                id
+            }
+            totalCount
+            page
+            pageSize
         }
     }
 `;
@@ -106,6 +131,7 @@ interface Props {
     frameworkId: string;
     projectId: string;
     onFrameworkCreate: (newFrameworkId: string) => void;
+    onClonedFrameworkClick: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
 function FrameworkDetail(props: Props) {
@@ -115,6 +141,7 @@ function FrameworkDetail(props: Props) {
         frameworkId,
         projectId,
         onFrameworkCreate,
+        onClonedFrameworkClick,
     } = props;
     const { setProject } = useContext(ProjectContext);
 
@@ -124,12 +151,18 @@ function FrameworkDetail(props: Props) {
     const variables = useMemo(
         (): FrameworkDetailsQueryVariables => ({
             frameworkId,
+            frameworkIds: [frameworkId],
+            page: 1,
+            pageSize: 10,
         }),
-        [frameworkId],
+        [
+            frameworkId,
+        ],
     );
     const {
         loading: frameworkGetPending,
         data: frameworkDetailsResponse,
+        fetchMore,
     } = useQuery<FrameworkDetailsQuery, FrameworkDetailsQueryVariables>(
         FRAMEWORK_DETAILS,
         {
@@ -145,9 +178,54 @@ function FrameworkDetail(props: Props) {
         () => removeNull(frameworkDetailsResponse?.analysisFramework as Framework | undefined),
         [frameworkDetailsResponse],
     );
+
+    const visibleProjects = frameworkDetailsResponse?.projects?.results;
+
     const sections = frameworkDetails?.primaryTagging;
 
     const exportLink = frameworkDetails?.export?.url;
+
+    const frameworks = frameworkDetailsResponse?.analysisFrameworks?.results;
+
+    const getFrameworkTitle = useCallback((id: string | undefined) => (
+        frameworks?.find((framework) => framework.id === id)?.title
+    ), [frameworks]);
+
+    const handleShowMoreVisibleProjects = useCallback(() => {
+        fetchMore({
+            variables: {
+                ...variables,
+                page: (frameworkDetailsResponse?.projects?.page ?? 1) + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult) {
+                    return previousResult;
+                }
+
+                const oldProjects = previousResult.projects;
+                const newProjects = fetchMoreResult?.projects;
+
+                if (!newProjects) {
+                    return previousResult;
+                }
+
+                return ({
+                    ...previousResult,
+                    projects: {
+                        ...newProjects,
+                        results: [
+                            ...(oldProjects?.results ?? []),
+                            ...(newProjects.results ?? []),
+                        ],
+                    },
+                });
+            },
+        });
+    }, [
+        fetchMore,
+        variables,
+        frameworkDetailsResponse?.projects,
+    ]);
 
     const {
         pending: projectPatchPending,
@@ -341,20 +419,58 @@ function FrameworkDetail(props: Props) {
                             )}
                             hideLabelColon
                         />
-                        {(frameworkDetails?.visibleProjects?.length ?? 0) > 0 && (
-                            <TextOutput
-                                className={styles.block}
-                                label={_ts('projectEdit', 'recentlyUsedInProjectsTitle')}
-                                value={(
-                                    <List
-                                        data={frameworkDetails?.visibleProjects}
-                                        keySelector={itemKeySelector}
-                                        rendererParams={itemRendererParams}
-                                        renderer={Link}
-                                    />
+                        <TextOutput
+                            className={styles.block}
+                            label="Cloned from"
+                            value={isDefined(frameworkDetails?.clonedFrom)
+                                ? (
+                                    <RawButton
+                                        name={frameworkDetails?.clonedFrom}
+                                        onClick={onClonedFrameworkClick}
+                                        disabled={isNotDefined(frameworkDetails?.clonedFrom)}
+                                    >
+                                        {getFrameworkTitle(frameworkDetails?.clonedFrom)}
+                                    </RawButton>
+                                ) : '-'}
+                            valueContainerClassName={styles.value}
+                            hideLabelColon
+                        />
+                        <TextOutput
+                            className={styles.block}
+                            label="Used in"
+                            value={`${frameworkDetailsResponse?.projects?.totalCount ?? '-'} projects`}
+                            hideLabelColon
+                        />
+                        {(isDefined(visibleProjects)
+                        && isDefined(frameworkDetailsResponse?.projects)
+                        && (visibleProjects?.length ?? 0)) > 0 && (
+                            <>
+                                <TextOutput
+                                    className={styles.block}
+                                    label={_ts('projectEdit', 'recentlyUsedInProjectsTitle')}
+                                    value={(
+                                        <List
+                                            data={visibleProjects}
+                                            keySelector={itemKeySelector}
+                                            rendererParams={itemRendererParams}
+                                            renderer={Link}
+                                        />
+                                    )}
+                                    hideLabelColon
+                                />
+                                {((visibleProjects?.length ?? 0 + 1)
+                                < (frameworkDetailsResponse?.projects?.totalCount ?? 0)) && (
+                                    <Button
+                                        name={undefined}
+                                        actions={<IoChevronForward />}
+                                        onClick={handleShowMoreVisibleProjects}
+                                        variant="transparent"
+                                        className={styles.showMore}
+                                    >
+                                        Show more
+                                    </Button>
                                 )}
-                                hideLabelColon
-                            />
+                            </>
                         )}
                     </div>
                     <Card className={styles.preview}>

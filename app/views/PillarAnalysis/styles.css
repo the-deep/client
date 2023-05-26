@@ -24,43 +24,79 @@
         flex-grow: 1;
         overflow-y: auto;
 
-        .inputs-container {
+        .info-wrapper {
             display: flex;
-            flex-shrink: 0;
-            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-            padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
-            gap: var(--dui-spacing-large);
+            flex-direction: column;
+            padding: var(--dui-spacing-medium);
 
-            .input-container {
+            .info-container {
                 display: flex;
                 flex-direction: column;
-                flex-grow: 1;
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                background-color: var(--dui-color-background-information);
+                gap: 0;
 
-                .input-header {
-                    padding: var(--dui-spacing-medium) 0;
-                }
-
-                .editor {
+                .inputs-container {
                     display: flex;
-                    flex-grow: 1;
-                    gap: var(--dui-width-separator-thin);
-                }
-            }
+                    flex-shrink: 0;
+                    gap: var(--dui-spacing-large);
 
-            .show-inputs-button {
-                align-self: flex-end;
-                flex-grow: 1;
-                flex-shrink: 0;
-            }
+                    .input-container {
+                        display: flex;
+                        flex-direction: column;
+                        flex-grow: 1;
 
-            &.inputs-shown {
-                padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+                        .input-header {
+                            padding: var(--dui-spacing-small) 0;
+                        }
 
-                .show-inputs-button {
-                    flex-grow: unset;
+                        .editor {
+                            display: flex;
+                            flex-grow: 1;
+                            gap: var(--dui-width-separator-thin);
+                        }
+                    }
                 }
             }
         }
+
+        .expand-top-section-button {
+            border: none;
+            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            border-radius: 0;
+            background-color: var(--dui-color-background-information);
+            padding: var(--dui-spacing-medium);
+            width: 100%;
+            color: var(--dui-color-text);
+            >* {
+                justify-content: flex-end;
+            }
+
+            .button-content{
+                display: flex;
+                align-items: flex-end;
+                padding: var(--dui-spacing-medium) 0;
+                text-transform: capitalize;
+                gap: var(--dui-spacing-small);
+            }
+        }
+        .collapse-top-section-button {
+            border: none;
+            background-color: var(--dui-color-background-information);
+            color: var(--dui-color-text);
+
+            >* {
+                height: auto;
+            }
+
+            .button-content{
+                display: flex;
+                align-items: center;
+                text-transform: capitalize;
+                gap: var(--dui-spacing-small);
+            }
+        }
+
 
         .filter-container {
             display: flex;

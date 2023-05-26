@@ -290,6 +290,7 @@ function ProjectFramework(props: Props) {
                         projectFrameworkId={project?.analysisFramework?.id}
                         projectId={projectId}
                         frameworkId={selectedFramework}
+                        onClonedFrameworkClick={setSelectedFramework}
                         className={styles.selectedFrameworkDetails}
                         onFrameworkCreate={handleNewFrameworkAddSuccess}
                     />
