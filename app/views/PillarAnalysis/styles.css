@@ -24,37 +24,34 @@
         flex-grow: 1;
         overflow-y: auto;
 
-        .info-wrapper {
+        .info-container {
             display: flex;
             flex-direction: column;
-            padding: var(--dui-spacing-medium);
+            flex-shrink: 0;
+            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            background-color: var(--dui-color-background-information);
+            gap: 0;
 
-            .info-container {
+            .inputs-container {
                 display: flex;
-                flex-direction: column;
-                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                background-color: var(--dui-color-background-information);
-                gap: 0;
+                flex-shrink: 0;
+                gap: var(--dui-spacing-large);
+                padding: 0 var(--dui-spacing-large);
 
-                .inputs-container {
+                .input-container {
                     display: flex;
+                    flex-basis: calc(50% - var(--dui-spacing-large) / 2);
+                    flex-direction: column;
                     flex-shrink: 0;
-                    gap: var(--dui-spacing-large);
 
-                    .input-container {
+                    .input-header {
+                        padding: var(--dui-spacing-small) 0;
+                    }
+
+                    .editor {
                         display: flex;
-                        flex-direction: column;
                         flex-grow: 1;
-
-                        .input-header {
-                            padding: var(--dui-spacing-small) 0;
-                        }
-
-                        .editor {
-                            display: flex;
-                            flex-grow: 1;
-                            gap: var(--dui-width-separator-thin);
-                        }
+                        gap: var(--dui-width-separator-thin);
                     }
                 }
             }
@@ -68,13 +65,15 @@
             padding: var(--dui-spacing-medium);
             width: 100%;
             color: var(--dui-color-text);
+
             >* {
-                justify-content: flex-end;
+                justify-content: flex-start;
+                height: unset;
             }
 
             .button-content{
                 display: flex;
-                align-items: flex-end;
+                align-items: center;
                 padding: var(--dui-spacing-medium) 0;
                 text-transform: capitalize;
                 gap: var(--dui-spacing-small);
