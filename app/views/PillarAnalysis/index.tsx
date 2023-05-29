@@ -1137,66 +1137,62 @@ function PillarAnalysis() {
                 <div className={styles.content}>
                     {(frameworkGetPending || pending) && <PendingMessage />}
                     <NonFieldError error={error} />
-                    <div className={styles.infoWrapper}>
-                        <CollapsibleContainer
-                            className={styles.infoContainer}
-                            contentClassName={styles.inputsContainer}
-                            expandButtonClassName={styles.expandTopSectionButton}
-                            collapseButtonClassName={styles.collapseTopSectionButton}
-                            collapseButtonContent={(
-                                <div className={styles.buttonContent}>
-                                    Hide
-                                    <IoChevronUp />
-                                </div>
-                            )}
-                            expandButtonContent={(
-                                <div className={styles.buttonContent}>
-                                    Show Main Statements and Information Gaps
-                                    <IoChevronDown />
-                                </div>
-                            )}
-                            collapsedInitially
-                        >
-                            <>
-                                <div className={styles.inputContainer}>
-                                    <MarkdownEditor
-                                        className={styles.editor}
-                                        label={(
-                                            <Heading
-                                                className={styles.inputHeader}
-                                            >
-                                                {_ts('pillarAnalysis', 'mainStatementLabel')}
-                                            </Heading>
-                                        )}
-                                        name="mainStatement"
-                                        onChange={setFieldValue}
-                                        value={value.mainStatement}
-                                        error={error?.mainStatement}
-                                        height={150}
-                                        disabled={pending}
-                                    />
-                                </div>
-                                <div className={styles.inputContainer}>
-                                    <MarkdownEditor
-                                        className={styles.editor}
-                                        label={(
-                                            <Heading
-                                                className={styles.inputHeader}
-                                            >
-                                                {_ts('pillarAnalysis', 'infoGapLabel')}
-                                            </Heading>
-                                        )}
-                                        name="informationGap"
-                                        value={value.informationGap}
-                                        onChange={setFieldValue}
-                                        error={error?.informationGap}
-                                        height={150}
-                                        disabled={pending}
-                                    />
-                                </div>
-                            </>
-                        </CollapsibleContainer>
-                    </div>
+                    <CollapsibleContainer
+                        className={styles.infoContainer}
+                        contentClassName={styles.inputsContainer}
+                        expandButtonClassName={styles.expandTopSectionButton}
+                        collapseButtonClassName={styles.collapseTopSectionButton}
+                        collapseButtonContent={(
+                            <div className={styles.buttonContent}>
+                                Hide
+                                <IoChevronUp />
+                            </div>
+                        )}
+                        expandButtonContent={(
+                            <div className={styles.buttonContent}>
+                                Show Main Statements and Information Gaps
+                                <IoChevronDown />
+                            </div>
+                        )}
+                        collapsedInitially
+                    >
+                        <div className={styles.inputContainer}>
+                            <MarkdownEditor
+                                className={styles.editor}
+                                label={(
+                                    <Heading
+                                        className={styles.inputHeader}
+                                    >
+                                        {_ts('pillarAnalysis', 'mainStatementLabel')}
+                                    </Heading>
+                                )}
+                                name="mainStatement"
+                                onChange={setFieldValue}
+                                value={value.mainStatement}
+                                error={error?.mainStatement}
+                                height={150}
+                                disabled={pending}
+                            />
+                        </div>
+                        <div className={styles.inputContainer}>
+                            <MarkdownEditor
+                                className={styles.editor}
+                                label={(
+                                    <Heading
+                                        className={styles.inputHeader}
+                                    >
+                                        {_ts('pillarAnalysis', 'infoGapLabel')}
+                                    </Heading>
+                                )}
+                                name="informationGap"
+                                value={value.informationGap}
+                                onChange={setFieldValue}
+                                error={error?.informationGap}
+                                height={150}
+                                disabled={pending}
+                            />
+                        </div>
+                    </CollapsibleContainer>
                     <div className={styles.filterContainer}>
                         <Button
                             name={undefined}

@@ -350,8 +350,9 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             className={_cs(styles.analyticalStatementInput, className)}
             contentClassName={styles.dragContent}
             headerClassName={styles.header}
+            headerDescriptionClassName={styles.headerDescription}
             headerDescription={(
-                <div className={styles.headerDescription}>
+                <>
                     <NonFieldError error={error} />
                     <Tabs
                         value={selectedField}
@@ -415,7 +416,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                             />
                         </TabPanel>
                     </Tabs>
-                </div>
+                </>
             )}
             headerIcons={(
                 <>
