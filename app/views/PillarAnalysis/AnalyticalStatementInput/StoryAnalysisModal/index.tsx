@@ -303,200 +303,188 @@ function StoryAnalysisModal(props: Props) {
                 </Button>
             )}
         >
-            <Container
-                className={styles.container}
-                spacing="none"
+            <CollapsibleContainer
+                className={styles.leftPanel}
+                expandButtonClassName={styles.expandChartsButton}
+                collapseButtonClassName={styles.collapseChartsButton}
+                expandButtonContent={(
+                    <div className={styles.buttonText}>
+                        Show Charts
+                        <IoChevronBackOutline />
+                    </div>
+                )}
                 contentClassName={styles.content}
             >
-                <div className={styles.leftContainer}>
-                    <CollapsibleContainer
-                        className={styles.leftPanel}
-                        expandButtonClassName={styles.expandChartsButton}
-                        collapseButtonClassName={styles.collapseChartsButton}
-                        expandButtonContent={(
-                            <div className={styles.buttonText}>
-                                Show Charts
-                                <IoChevronBackOutline />
-                            </div>
+                <Stats
+                    className={styles.stats}
+                    diversityChartData={organizationTypes}
+                    sourcesUsed={stats.sourcesUsed}
+                    totalSources={stats.totalSources}
+                    entriesUsed={stats.entriesUsed}
+                    totalEntries={stats.totalEntries}
+                />
+                <Tabs
+                    value={tab}
+                    onChange={setTab}
+                    variant="primary"
+                >
+                    <Container
+                        className={styles.visualization}
+                        spacing="none"
+                        headingSize="medium"
+                        headerClassName={styles.header}
+                        heading={(
+                            <TabList>
+                                <Tab
+                                    className={styles.tab}
+                                    name="map"
+                                    transparentBorder
+                                >
+                                    Map
+                                </Tab>
+                                <Tab
+                                    className={styles.tab}
+                                    name="nGrams"
+                                    transparentBorder
+                                >
+                                    N-grams
+                                </Tab>
+                                <Tab
+                                    className={styles.tab}
+                                    name="context"
+                                    transparentBorder
+                                >
+                                    Context
+                                </Tab>
+                                <Tab
+                                    className={styles.tab}
+                                    name="summary"
+                                    transparentBorder
+                                >
+                                    Automatic Summary
+                                </Tab>
+                            </TabList>
                         )}
-                        contentClassName={styles.content}
+                        contentClassName={styles.tabPanelContainer}
                     >
-                        <div className={styles.left}>
-                            <div className={styles.stats}>
-                                <Stats
-                                    diversityChartData={organizationTypes}
-                                    {...stats}
+                        <TabPanel name="map" className={styles.tabPanel}>
+                            <NlpMap
+                                projectId={projectId}
+                                nlpMapId={automaticNlpMapId}
+                            />
+                        </TabPanel>
+                        <TabPanel name="nGrams" className={styles.tabPanel}>
+                            <Ngrams
+                                projectId={projectId}
+                                ngramsId={automaticNgramsId}
+                            />
+                        </TabPanel>
+                        <TabPanel name="context" className={styles.tabPanel}>
+                            <div className={styles.contextActions}>
+                                <SegmentInput
+                                    name="context"
+                                    value={sourceOption}
+                                    onChange={handleSourceOptionChange}
+                                    options={sourceOptions}
+                                    keySelector={keySelector}
+                                    labelSelector={labelSelector}
+                                />
+                                <TextInput
+                                    name="word"
+                                    value={word}
+                                    placeholder="Key word"
+                                    onChange={setWord}
+                                    actions={(
+                                        <QuickActionButton
+                                            name="drawChart"
+                                            variant="secondary"
+                                            onClick={handleDrawChart}
+                                            title="Set key word"
+                                        >
+                                            <IoChevronForward />
+                                        </QuickActionButton>
+                                    )}
                                 />
                             </div>
-                            <Tabs
-                                value={tab}
-                                onChange={setTab}
-                                variant="secondary"
-                            >
-                                <Container
-                                    className={styles.visualization}
-                                    spacing="none"
-                                    headingSize="medium"
-                                    headerClassName={styles.header}
-                                    heading={(
-                                        <TabList>
-                                            <Tab
-                                                className={styles.tab}
-                                                activeClassName={styles.activeTab}
-                                                name="map"
-                                                transparentBorder
-                                            >
-                                                Map
-                                            </Tab>
-                                            <Tab
-                                                className={styles.tab}
-                                                activeClassName={styles.activeTab}
-                                                name="nGrams"
-                                                transparentBorder
-                                            >
-                                                N-grams
-                                            </Tab>
-                                            <Tab
-                                                className={styles.tab}
-                                                activeClassName={styles.activeTab}
-                                                name="context"
-                                                transparentBorder
-                                            >
-                                                Context
-                                            </Tab>
-                                            <Tab
-                                                className={styles.tab}
-                                                activeClassName={styles.activeTab}
-                                                name="summary"
-                                                transparentBorder
-                                            >
-                                                Automatic Summary
-                                            </Tab>
-                                        </TabList>
-                                    )}
-                                    contentClassName={styles.tabPanelContainer}
-                                >
-                                    <TabPanel name="map" className={styles.tabPanel}>
-                                        <NlpMap
-                                            projectId={projectId}
-                                            nlpMapId={automaticNlpMapId}
-                                        />
-                                    </TabPanel>
-                                    <TabPanel name="nGrams" className={styles.tabPanel}>
-                                        <Ngrams
-                                            projectId={projectId}
-                                            ngramsId={automaticNgramsId}
-                                        />
-                                    </TabPanel>
-                                    <TabPanel name="context" className={styles.tabPanel}>
-                                        <div className={styles.contextActions}>
-                                            <SegmentInput
-                                                name="context"
-                                                value={sourceOption}
-                                                onChange={handleSourceOptionChange}
-                                                options={sourceOptions}
-                                                keySelector={keySelector}
-                                                labelSelector={labelSelector}
-                                            />
-                                            <TextInput
-                                                name="word"
-                                                value={word}
-                                                placeholder="Key word"
-                                                onChange={setWord}
-                                                actions={(
-                                                    <QuickActionButton
-                                                        name="drawChart"
-                                                        variant="secondary"
-                                                        onClick={handleDrawChart}
-                                                        title="Set key word"
-                                                    >
-                                                        <IoChevronForward />
-                                                    </QuickActionButton>
-                                                )}
-                                            />
-                                        </div>
-                                        <div className={styles.wordTreeContainer}>
-                                            <WordTree
-                                                text={sourceText}
-                                                rootWord={rootWord}
-                                                onWordClick={handleWordSelect}
-                                            />
-                                        </div>
-                                    </TabPanel>
-                                    <TabPanel name="summary" className={styles.tabPanel}>
-                                        <Summary
-                                            projectId={projectId}
-                                            summaryId={automaticSummaryId}
-                                        />
-                                    </TabPanel>
-                                </Container>
-                            </Tabs>
-                        </div>
-                    </CollapsibleContainer>
-                </div>
-                <div className={styles.right}>
-                    <div className={styles.cardContainer}>
-                        <div className={styles.markdownContainer}>
-                            <MarkdownEditor
-                                className={styles.editor}
-                                labelContainerClassName={styles.labelContainer}
-                                label="Information Gaps"
-                                name="informationGap"
-                                value={informationGaps}
-                                onChange={handleInformationGapChange}
-                            />
-                        </div>
-                        <div className={styles.entriesContainer}>
-                            <div className={styles.actions}>
-                                <div className={styles.title}>Original Entries</div>
-                                <QuickActionButton
-                                    name={undefined}
-                                    onClick={handleGenerateReportText}
-                                    disabled={generateReportTextDisabled}
-                                    spacing="compact"
-                                    variant="tertiary"
-                                    title="Generate analysis"
-                                >
-                                    <VscServerProcess />
-                                </QuickActionButton>
+                            <div className={styles.wordTreeContainer}>
+                                <WordTree
+                                    text={sourceText}
+                                    rootWord={rootWord}
+                                    onWordClick={handleWordSelect}
+                                />
                             </div>
-                            <ListView
-                                className={styles.entries}
-                                data={originalEntries}
-                                keySelector={entryKeySelector}
-                                renderer={EntryCard}
-                                rendererParams={entriesRendererParams}
-                                filtered={false}
-                                errored={false}
-                                pending={false}
+                        </TabPanel>
+                        <TabPanel name="summary" className={styles.tabPanel}>
+                            <Summary
+                                projectId={projectId}
+                                summaryId={automaticSummaryId}
                             />
-                        </div>
+                        </TabPanel>
+                    </Container>
+                </Tabs>
+            </CollapsibleContainer>
+            <div className={styles.right}>
+                <div className={styles.cardContainer}>
+                    <div className={styles.markdownContainer}>
+                        <MarkdownEditor
+                            className={styles.editor}
+                            labelContainerClassName={styles.labelContainer}
+                            label="Information Gaps"
+                            name="informationGap"
+                            value={informationGaps}
+                            onChange={handleInformationGapChange}
+                        />
                     </div>
-                    <div className={styles.cardContainer}>
-                        <div className={styles.markdownContainer}>
-                            <MarkdownEditor
-                                className={styles.editor}
-                                labelContainerClassName={styles.labelContainer}
-                                label="Analytical Statement"
-                                name="analyticalStatement"
-                                value={analyticalStatement}
-                                onChange={handleAnalyticalStatementChange}
-                            />
+                    <div className={styles.entriesContainer}>
+                        <div className={styles.actions}>
+                            <div className={styles.title}>Original Entries</div>
+                            <QuickActionButton
+                                name={undefined}
+                                onClick={handleGenerateReportText}
+                                disabled={generateReportTextDisabled}
+                                spacing="compact"
+                                variant="tertiary"
+                                title="Generate analysis"
+                            >
+                                <VscServerProcess />
+                            </QuickActionButton>
                         </div>
-                        <div className={_cs(styles.markdownContainer, styles.reportTextContainer)}>
-                            <MarkdownEditor
-                                className={styles.editor}
-                                labelContainerClassName={styles.labelContainer}
-                                inputSectionClassName={styles.inputSection}
-                                label="My Analysis"
-                                name="reportText"
-                                value={reportText}
-                                onChange={handleReportTextChange}
-                            />
-                        </div>
+                        <ListView
+                            className={styles.entries}
+                            data={originalEntries}
+                            keySelector={entryKeySelector}
+                            renderer={EntryCard}
+                            rendererParams={entriesRendererParams}
+                            filtered={false}
+                            errored={false}
+                            pending={false}
+                        />
                     </div>
                 </div>
-            </Container>
+                <div className={styles.cardContainer}>
+                    <div className={styles.markdownContainer}>
+                        <MarkdownEditor
+                            className={styles.editor}
+                            labelContainerClassName={styles.labelContainer}
+                            label="Analytical Statement"
+                            name="analyticalStatement"
+                            value={analyticalStatement}
+                            onChange={handleAnalyticalStatementChange}
+                        />
+                    </div>
+                    <div className={_cs(styles.markdownContainer, styles.reportTextContainer)}>
+                        <MarkdownEditor
+                            className={styles.editor}
+                            labelContainerClassName={styles.labelContainer}
+                            inputSectionClassName={styles.inputSection}
+                            label="My Analysis"
+                            name="reportText"
+                            value={reportText}
+                            onChange={handleReportTextChange}
+                        />
+                    </div>
+                </div>
+            </div>
         </Modal>
     );
 }

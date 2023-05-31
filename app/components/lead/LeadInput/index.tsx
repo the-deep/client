@@ -573,8 +573,8 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
             </div>
             {hasAssessment && (
                 <>
+                    {/*
                     <LeadGroupSelectInput
-                        // FIXME: Filter this out based on if the project has assessment or not
                         name="leadGroup"
                         className={styles.input}
                         value={value.leadGroup}
@@ -597,6 +597,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                             </QuickActionButton>
                         )}
                     />
+                    */}
                     <Checkbox
                         name="isAssessmentLead"
                         value={value.isAssessmentLead}

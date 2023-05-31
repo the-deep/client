@@ -1,4 +1,5 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     PolarAngleAxis,
     PolarGrid,
@@ -13,6 +14,7 @@ import ProgressLine from '#components/ProgressLine';
 import styles from './styles.css';
 
 interface Props {
+    className?: string;
     sourcesUsed: number;
     totalSources: number;
     entriesUsed: number;
@@ -25,6 +27,7 @@ interface Props {
 }
 function Stats(props: Props) {
     const {
+        className,
         sourcesUsed,
         totalSources,
         entriesUsed,
@@ -33,7 +36,7 @@ function Stats(props: Props) {
     } = props;
 
     return (
-        <div className={styles.stats}>
+        <div className={_cs(className, styles.stats)}>
             <div className={styles.container}>
                 <div className={styles.heading}>Sources</div>
                 <ProgressLine
@@ -62,12 +65,17 @@ function Stats(props: Props) {
                     <RadarChart cx="50%" cy="50%" outerRadius="100%" data={diversityChartData}>
                         <PolarGrid />
                         <PolarAngleAxis dataKey="title" tick={false} />
-                        <Radar name="Count" dataKey="count" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                        <Radar
+                            name="Count"
+                            dataKey="count"
+                            stroke="#8884d8"
+                            fill="#8884d8"
+                            fillOpacity={0.6}
+                        />
                         <Tooltip
                             isAnimationActive={false}
                             offset={20}
-                            allowEscapeViewBox={{ x: false, y: true }}
-                            wrapperStyle={{ zIndex: 1000 }}
+                            wrapperStyle={{ zIndex: 100000000 }}
                         />
                     </RadarChart>
                 </ResponsiveContainer>

@@ -58,11 +58,12 @@
         }
 
         .expand-top-section-button {
+            flex-shrink: 0;
             border: none;
             border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
             border-radius: 0;
             background-color: var(--dui-color-background-information);
-            padding: var(--dui-spacing-medium);
+            padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
             width: 100%;
             color: var(--dui-color-text);
 
@@ -74,12 +75,12 @@
             .button-content{
                 display: flex;
                 align-items: center;
-                padding: var(--dui-spacing-medium) 0;
                 text-transform: capitalize;
                 gap: var(--dui-spacing-small);
             }
         }
         .collapse-top-section-button {
+            flex-shrink: 0;
             border: none;
             background-color: var(--dui-color-background-information);
             color: var(--dui-color-text);
