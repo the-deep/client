@@ -1,0 +1,16 @@
+.edit-assessment {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: auto;
+
+    .header {
+        flex-shrink: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+}

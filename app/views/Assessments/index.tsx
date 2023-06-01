@@ -41,7 +41,7 @@ const ASSESSMENT_LIST = gql`
     ) {
         project(id: $projectId) {
             id
-            assessments (
+            assessmentRegistries (
                 search: $search,
                 createdAtLte: $endDate,
                 createdAtGte: $startDate,
