@@ -89,7 +89,7 @@ import {
 } from './queries';
 
 import SourceDetails from './SourceDetails';
-import LeftPane, { TabOptions } from './LeftPane';
+import LeftPane, { TabOptions } from '#components/LeftPaneEntries';
 import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 
 import getSchema, { defaultFormValues, PartialEntryType, PartialFormType } from '#components/entry/schema';
