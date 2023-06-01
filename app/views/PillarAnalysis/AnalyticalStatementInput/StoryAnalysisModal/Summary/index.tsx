@@ -110,7 +110,9 @@ function Summary(props: Props) {
     return (
         <div className={styles.summary}>
             {(data?.project?.analysisAutomaticSummary?.summary?.length ?? 0) > 0 ? (
-                data?.project?.analysisAutomaticSummary?.summary
+                <p className={styles.summaryText}>
+                    {data?.project?.analysisAutomaticSummary?.summary}
+                </p>
             ) : (
                 <div className={styles.message}>
                     <Message

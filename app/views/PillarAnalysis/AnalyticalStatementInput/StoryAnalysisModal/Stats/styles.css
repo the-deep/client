@@ -1,7 +1,7 @@
 .stats {
     display: flex;
     gap: var(--dui-spacing-medium);
-    background-color: var(--dui-color-foreground);
+    overflow: hidden;
 
     .heading {
         font-size: var(--dui-font-size-large);

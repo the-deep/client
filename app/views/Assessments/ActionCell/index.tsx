@@ -112,6 +112,7 @@ function ActionCell(props: Props) {
                     <FiEdit2 />
                 </SmartQuickActionLink>
             )}
+            {/* FIXME: Remove lead group Id association with assessment registry later */}
             {leadGroupId && (
                 <SmartQuickActionLink
                     className={styles.button}
