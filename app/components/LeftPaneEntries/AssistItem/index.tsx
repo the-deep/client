@@ -50,7 +50,6 @@ import {
 } from '#components/entry/schema';
 import { Framework } from '#components/entry/types';
 
-import { createDefaultAttributes } from '../../utils';
 import AssistPopup from './AssistPopup';
 import {
     createOrganigramAttr,
@@ -60,6 +59,7 @@ import {
     createSelectAttr,
     createMultiSelectAttr,
     createGeoAttr,
+    createDefaultAttributes,
 } from './utils';
 
 import styles from './styles.css';

@@ -58,17 +58,23 @@ import { UserContext } from '#base/context/UserContext';
 import {
     LeadPreviewForTextQuery,
     LeadPreviewForTextQueryVariables,
+    LeadEntriesQuery,
 } from '#generated/types';
 
 import { PartialEntryType as EntryInput } from '#components/entry/schema';
-import { Framework } from '#components/entry/types';
 
 import CanvasDrawModal from './CanvasDrawModal';
-import { Lead, EntryImagesMap } from '../index';
+import {
+    Entry,
+    Framework,
+} from '#components/entry/types';
 import SimplifiedTextView from './SimplifiedTextView';
 import EntryItem, { ExcerptModal } from './EntryItem';
 import AutoEntriesModal from './AutoEntriesModal';
 import styles from './styles.css';
+
+type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
+type Lead = NonNullable<NonNullable<LeadEntriesQuery['project']>['lead']>;
 
 const LEAD_PREVIEW = gql`
     query LeadPreviewForText(

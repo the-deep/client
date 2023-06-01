@@ -8,7 +8,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import LeadPreview, { Attachment } from '#components/lead/LeadPreview';
-import SimplifiedTextView from '#views/EntryEdit/LeftPane/SimplifiedTextView';
+import SimplifiedTextView from '#components/LeftPaneEntries/SimplifiedTextView';
 
 import styles from './styles.css';
 
