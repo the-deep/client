@@ -84,6 +84,7 @@ import usePromptOnCloseAndRefresh from '#hooks/usePromptOnCloseAndRefresh';
 import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 import getSchema, { defaultFormValues, PartialEntryType, PartialFormType } from '#components/entry/schema';
 import { Entry, EntryInput as EntryInputType, Framework } from '#components/entry/types';
+import LeftPane, { TabOptions } from '#components/LeftPaneEntries';
 import {
     PROJECT_FRAMEWORK,
     BULK_UPDATE_ENTRIES,
@@ -92,7 +93,6 @@ import {
 } from './queries';
 
 import SourceDetails from './SourceDetails';
-import LeftPane, { TabOptions } from './LeftPane';
 
 import { createDefaultAttributes } from './utils';
 
