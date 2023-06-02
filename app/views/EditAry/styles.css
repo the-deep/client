@@ -10,7 +10,14 @@
 
     .container {
         display: flex;
-        flex-direction: column;
         flex-grow: 1;
+
+        .left-pane {
+            flex-shrink: 0;
+            width: calc(16rem + 16vw);
+        }
+        .form {
+            flex-grow: 1;
+        }
     }
 }

@@ -348,6 +348,34 @@ function SimplifiedTextView(props: Props) {
                 >
                     {assistedTaggingEnabled ? (
                         <>
+                            {isDefined(onAddButtonClick) && (
+                                <QuickActionButton
+                                    title="Add entry"
+                                    name={textContent}
+                                    variant="primary"
+                                    className={styles.addButton}
+                                    onClick={handleAddButtonClick}
+                                >
+                                    <IoAdd />
+                                </QuickActionButton>
+                            )}
+                            {isDefined(onAssistedEntryAdd) && (
+                                <QuickActionButton
+                                    title="Assist"
+                                    name={textContent}
+                                    variant="nlp-primary"
+                                    className={styles.addButton}
+                                    onClick={handleAssistButtonClick}
+                                >
+                                    <Svg
+                                        className={styles.brainIcon}
+                                        src={brainIcon}
+                                    />
+                                </QuickActionButton>
+                            )}
+                        </>
+                    ) : (
+                        isDefined(onAddButtonClick) && (
                             <QuickActionButton
                                 title="Add entry"
                                 name={textContent}
@@ -357,29 +385,7 @@ function SimplifiedTextView(props: Props) {
                             >
                                 <IoAdd />
                             </QuickActionButton>
-                            <QuickActionButton
-                                title="Assist"
-                                name={textContent}
-                                variant="nlp-primary"
-                                className={styles.addButton}
-                                onClick={handleAssistButtonClick}
-                            >
-                                <Svg
-                                    className={styles.brainIcon}
-                                    src={brainIcon}
-                                />
-                            </QuickActionButton>
-                        </>
-                    ) : (
-                        <QuickActionButton
-                            title="Add entry"
-                            name={textContent}
-                            variant="primary"
-                            className={styles.addButton}
-                            onClick={handleAddButtonClick}
-                        >
-                            <IoAdd />
-                        </QuickActionButton>
+                        )
                     )}
                 </div>
             )}
