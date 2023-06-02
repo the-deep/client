@@ -35,11 +35,11 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import { UserContext } from '#base/context/UserContext';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import ProjectUserSelectInput, { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
-import LeadGroupSelectInput, { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+// import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import NewOrganizationMultiSelectInput from '#components/selections/NewOrganizationMultiSelectInput';
 import AddOrganizationModal from '#components/general/AddOrganizationModal';
 import NonFieldError from '#components/NonFieldError';
-import AddLeadGroupModal from '#components/general/AddLeadGroupModal';
+// import AddLeadGroupModal from '#components/general/AddLeadGroupModal';
 import {
     enumKeySelector,
     enumLabelSelector,
@@ -124,9 +124,9 @@ interface Props<N extends string | number | undefined> {
     authorOrganizationOptions: BasicOrganization[] | undefined | null;
     // eslint-disable-next-line max-len
     onAuthorOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
-    leadGroupOptions: BasicLeadGroup[] | undefined | null;
+    // leadGroupOptions: BasicLeadGroup[] | undefined | null;
     // eslint-disable-next-line max-len
-    onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
+    // onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
     assigneeOptions: BasicProjectUser[] | undefined | null;
     // eslint-disable-next-line max-len
     onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
@@ -153,8 +153,8 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         onSourceOrganizationOptionsChange,
         authorOrganizationOptions,
         onAuthorOrganizationOptionsChange,
-        leadGroupOptions,
-        onLeadGroupOptionsChange,
+        // leadGroupOptions,
+        // onLeadGroupOptionsChange,
         assigneeOptions,
         onAssigneeOptionChange,
         hasAssessment,
@@ -191,11 +191,13 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         setShowAddOrganizationModalFalse,
     ] = useBooleanState(false);
 
+    /*
     const [
         showAddLeadGroupModal,
         setShowAddLeadAddGroupModal,
         setShowAddLeadGroupModalFalse,
     ] = useBooleanState(false);
+     */
 
     const handlePdfSelect = useCallback((pdfUrl) => {
         setSelectedPdf(pdfUrl);
@@ -394,14 +396,18 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         onAuthorOrganizationOptionsChange,
     ]);
 
-    const handleAddLeadGroupClick = useCallback(() => {
-        setShowAddLeadAddGroupModal();
-    }, [setShowAddLeadAddGroupModal]);
+    /*
+       const handleAddLeadGroupClick = useCallback(() => {
+       setShowAddLeadAddGroupModal();
+       }, [setShowAddLeadAddGroupModal]);
+    */
 
-    const handleLeadGroupAdd = useCallback((val: BasicLeadGroup) => {
-        setFieldValue(val.id, 'leadGroup');
-        onLeadGroupOptionsChange((oldVal) => [...oldVal ?? [], val]);
-    }, [setFieldValue, onLeadGroupOptionsChange]);
+    /*
+       const handleLeadGroupAdd = useCallback((val: BasicLeadGroup) => {
+       setFieldValue(val.id, 'leadGroup');
+       onLeadGroupOptionsChange((oldVal) => [...oldVal ?? [], val]);
+       }, [setFieldValue, onLeadGroupOptionsChange]);
+     */
 
     const pending = pendingFromProps || pendingUserToken || webInfoPending || rawWebInfoPending;
 
@@ -644,12 +650,12 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     onOrganizationAdd={handleOrganizationAdd}
                 />
             )}
-            {showAddLeadGroupModal && (
+            { /* showAddLeadGroupModal && (
                 <AddLeadGroupModal
                     onModalClose={setShowAddLeadGroupModalFalse}
                     onLeadGroupAdd={handleLeadGroupAdd}
                 />
-            )}
+                ) */ }
         </div>
     );
 }

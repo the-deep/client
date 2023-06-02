@@ -27,7 +27,7 @@ import { ProjectContext } from '#base/context/ProjectContext';
 import LeadPreview from '#components/lead/LeadPreview';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
-import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+// import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import { isFiltered } from '#utils/common';
 import {
     LeadType,
@@ -116,10 +116,12 @@ function LeadsPane(props: Props) {
         setAuthorOrganizationOptions,
     ] = useState<BasicOrganization[] | undefined | null>();
 
+    /*
     const [
         leadGroupOptions,
         setLeadGroupOptions,
     ] = useState<BasicLeadGroup[] | undefined | null>();
+     */
 
     const currentLeadIndex = leads?.findIndex(
         (lead) => lead.clientId === selectedLead,
@@ -224,8 +226,8 @@ function LeadsPane(props: Props) {
                             onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
                             authorOrganizationOptions={authorOrganizationOptions}
                             onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
-                            leadGroupOptions={leadGroupOptions}
-                            onLeadGroupOptionsChange={setLeadGroupOptions}
+                            // leadGroupOptions={leadGroupOptions}
+                            // onLeadGroupOptionsChange={setLeadGroupOptions}
                             assigneeOptions={projectUserOptions}
                             onAssigneeOptionChange={setProjectUserOptions}
                             hasAssessment={project?.hasAssessmentTemplate}

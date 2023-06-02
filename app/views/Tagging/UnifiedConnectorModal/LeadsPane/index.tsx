@@ -45,7 +45,7 @@ import { UserContext } from '#base/context/UserContext';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
-import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+// import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import LeadPreview from '#components/lead/LeadPreview';
 import LeadInput from '#components/lead/LeadInput';
 import { PartialFormType, PartialLeadType } from '#components/general/BulkUploadModal/schema';
@@ -210,9 +210,9 @@ interface Props {
     authorOrganizationOptions: BasicOrganization[] | undefined | null;
     // eslint-disable-next-line max-len
     onAuthorOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
-    leadGroupOptions: BasicLeadGroup[] | undefined | null;
+    // leadGroupOptions: BasicLeadGroup[] | undefined | null;
     // eslint-disable-next-line max-len
-    onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
+    // onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
     assigneeOptions: BasicProjectUser[] | undefined | null;
     // eslint-disable-next-line max-len
     onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
@@ -238,8 +238,8 @@ function LeadsPane(props: Props) {
         onSourceOrganizationOptionsChange,
         authorOrganizationOptions,
         onAuthorOrganizationOptionsChange,
-        leadGroupOptions,
-        onLeadGroupOptionsChange,
+        // leadGroupOptions,
+        // onLeadGroupOptionsChange,
         assigneeOptions,
         onAssigneeOptionChange,
 
@@ -767,8 +767,8 @@ function LeadsPane(props: Props) {
                             onSourceOrganizationOptionsChange={onSourceOrganizationOptionsChange}
                             authorOrganizationOptions={authorOrganizationOptions}
                             onAuthorOrganizationOptionsChange={onAuthorOrganizationOptionsChange}
-                            leadGroupOptions={leadGroupOptions}
-                            onLeadGroupOptionsChange={onLeadGroupOptionsChange}
+                            // leadGroupOptions={leadGroupOptions}
+                            // onLeadGroupOptionsChange={onLeadGroupOptionsChange}
                             assigneeOptions={assigneeOptions}
                             onAssigneeOptionChange={onAssigneeOptionChange}
                             hasAssessment={connectorDetailsData?.project?.hasAssessmentTemplate}

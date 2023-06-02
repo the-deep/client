@@ -69,7 +69,7 @@ import {
 } from '#generated/types';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
-import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+// import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import EntryInput from '#components/entry/EntryInput';
 import Section from '#components/entry/Section';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
@@ -198,10 +198,12 @@ function EntryEdit(props: Props) {
         setAuthorOrganizationOptions,
     ] = useState<BasicOrganization[] | undefined | null>();
 
+    /*
     const [
         leadGroupOptions,
         setLeadGroupOptions,
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
+     */
 
     const shouldFinalizeRef = useRef<boolean | undefined>(undefined);
 
@@ -1162,17 +1164,19 @@ function EntryEdit(props: Props) {
                         authors: leadData.authors?.map((author) => author.id),
                     });
                     const {
-                        leadGroup,
+                        // leadGroup,
                         assignee,
                         authors,
                         source,
                     } = leadData;
 
+                    /*
                     if (leadGroup) {
                         setLeadGroupOptions((oldVal) => (
                             oldVal ? [...oldVal, leadGroup] : [leadGroup]
                         ));
                     }
+                    */
                     if (assignee) {
                         setProjectUserOptions((oldVal) => (
                             oldVal ? [...oldVal, assignee] : [assignee]
@@ -1525,8 +1529,8 @@ function EntryEdit(props: Props) {
                                     onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
                                     authorOrganizationOptions={authorOrganizationOptions}
                                     onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
-                                    leadGroupOptions={leadGroupOptions}
-                                    onLeadGroupOptionsChange={setLeadGroupOptions}
+                                    // leadGroupOptions={leadGroupOptions}
+                                    // onLeadGroupOptionsChange={setLeadGroupOptions}
                                     assigneeOptions={projectUserOptions}
                                     onAssigneeOptionChange={setProjectUserOptions}
                                     attachment={lead?.attachment}

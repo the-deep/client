@@ -18,7 +18,7 @@ import LeadInput from '#components/lead/LeadInput';
 import { PartialFormType } from '#components/lead/LeadInput/schema';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
-import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+// import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 
 import styles from './styles.css';
 
@@ -53,9 +53,9 @@ interface Props {
     authorOrganizationOptions: BasicOrganization[] | undefined | null;
     // eslint-disable-next-line max-len
     onAuthorOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
-    leadGroupOptions: BasicLeadGroup[] | undefined | null;
+    // leadGroupOptions: BasicLeadGroup[] | undefined | null;
     // eslint-disable-next-line max-len
-    onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
+    // onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
     assigneeOptions: BasicProjectUser[] | undefined | null;
     // eslint-disable-next-line max-len
     onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
@@ -76,8 +76,8 @@ function SourceDetails(props: Props) {
         onSourceOrganizationOptionsChange,
         authorOrganizationOptions,
         onAuthorOrganizationOptionsChange,
-        leadGroupOptions,
-        onLeadGroupOptionsChange,
+        // leadGroupOptions,
+        // onLeadGroupOptionsChange,
         assigneeOptions,
         onAssigneeOptionChange,
     } = props;
@@ -117,8 +117,8 @@ function SourceDetails(props: Props) {
                     onSourceOrganizationOptionsChange={onSourceOrganizationOptionsChange}
                     authorOrganizationOptions={authorOrganizationOptions}
                     onAuthorOrganizationOptionsChange={onAuthorOrganizationOptionsChange}
-                    leadGroupOptions={leadGroupOptions}
-                    onLeadGroupOptionsChange={onLeadGroupOptionsChange}
+                    // leadGroupOptions={leadGroupOptions}
+                    // onLeadGroupOptionsChange={onLeadGroupOptionsChange}
                     assigneeOptions={assigneeOptions}
                     onAssigneeOptionChange={onAssigneeOptionChange}
                     attachment={attachment}
