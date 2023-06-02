@@ -37,6 +37,7 @@ const LEAD_ENTRIES_FOR_ARY = gql`
             id
             lead (id: $leadId){
                 id
+                assessmentId
                 title
                 leadGroup {
                     id
@@ -98,7 +99,7 @@ interface Props {
 function EditAry(props: Props) {
     const { className } = props;
 
-    const { leadId = '32' } = useParams<{ leadId: string }>();
+    const leadId = new URL(window.location.href).searchParams.get('source') ?? undefined;
     const { project } = useContext(ProjectContext);
 
     const projectId = project ? project.id : undefined;
