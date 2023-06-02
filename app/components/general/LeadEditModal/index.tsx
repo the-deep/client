@@ -310,12 +310,13 @@ function LeadEditModal(props: Props) {
                         authors: leadData?.authors?.map((author) => author.id),
                     });
                     const {
-                        leadGroup,
+                        // leadGroup,
                         assignee,
                         authors,
                         source,
                     } = leadData;
 
+                    /*
                     if (leadGroup) {
                         /*
                         setLeadGroupOptions((oldVal) => (
@@ -323,6 +324,7 @@ function LeadEditModal(props: Props) {
                         ));
                          */
                     }
+                     */
                     if (assignee) {
                         setProjectUserOptions((oldVal) => (
                             oldVal ? [...oldVal, assignee] : [assignee]

@@ -69,7 +69,7 @@ const ASSESSMENT_LIST = gql`
     }
 `;
 
-export type Assessment = NonNullable<NonNullable<NonNullable<NonNullable<AssessmentListQuery['project']>['assessments']>['results']>[number]>;
+export type Assessment = NonNullable<NonNullable<NonNullable<NonNullable<AssessmentListQuery['project']>['assessmentRegistries']>['results']>[number]>;
 const assessmentKeySelector = (assessment: Assessment) => assessment.id;
 
 interface Props {
@@ -182,7 +182,7 @@ function Assessments(props: Props) {
             footerActions={(
                 <Pager
                     activePage={page}
-                    itemsCount={(data?.project?.assessments?.totalCount) ?? 0}
+                    itemsCount={(data?.project?.assessmentRegistries?.totalCount) ?? 0}
                     maxItemsPerPage={pageSize}
                     onActivePageChange={setPage}
                     onItemsPerPageChange={setPageSize}
@@ -193,7 +193,7 @@ function Assessments(props: Props) {
                 className={styles.table}
                 columns={columns}
                 keySelector={assessmentKeySelector}
-                data={data?.project?.assessments?.results}
+                data={data?.project?.assessmentRegistries?.results}
                 pending={loading}
                 filtered={isFiltered(filters)}
                 errored={false}
