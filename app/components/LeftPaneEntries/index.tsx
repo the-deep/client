@@ -413,7 +413,7 @@ function LeftPane(props: Props) {
             )}
             headerActions={(
                 <>
-                    {!fullScreenMode && (
+                    {!fullScreenMode && isDefined(onEntryCreate) && (
                         <QuickActionDropdownMenu
                             label={<IoAdd />}
                             variant="primary"
@@ -436,42 +436,46 @@ function LeftPane(props: Props) {
                     >
                         <IoOpenOutline />
                     </QuickActionLink>
-                    {showScreenshot ? (
-                        <>
+                    {isDefined(onEntryCreate) && (
+                        showScreenshot ? (
+                            <>
+                                <QuickActionButton
+                                    name={undefined}
+                                    title="Close"
+                                    onClick={setShowScreenshotFalse}
+                                >
+                                    <IoClose />
+                                </QuickActionButton>
+                                {capturedImageUrl && (
+                                    <>
+                                        <QuickActionButton
+                                            title="Draw over screenshot"
+                                            name={undefined}
+                                            onClick={handleCanvasDrawClick}
+                                        >
+                                            <IoBrush />
+                                        </QuickActionButton>
+                                        {isDefined(onEntryCreate) && (
+                                            <QuickActionButton
+                                                name={undefined}
+                                                title="Finalize screenshot"
+                                                onClick={handleCreateEntryButtonClick}
+                                            >
+                                                <IoCheckmark />
+                                            </QuickActionButton>
+                                        )}
+                                    </>
+                                )}
+                            </>
+                        ) : (
                             <QuickActionButton
                                 name={undefined}
-                                title="Close"
-                                onClick={setShowScreenshotFalse}
+                                onClick={setShowScreenshotTrue}
+                                disabled={isEntrySelectionActive}
                             >
-                                <IoClose />
+                                <IoCameraOutline />
                             </QuickActionButton>
-                            { capturedImageUrl && (
-                                <>
-                                    <QuickActionButton
-                                        title="Draw over screenshot"
-                                        name={undefined}
-                                        onClick={handleCanvasDrawClick}
-                                    >
-                                        <IoBrush />
-                                    </QuickActionButton>
-                                    <QuickActionButton
-                                        name={undefined}
-                                        title="Finalize screenshot"
-                                        onClick={handleCreateEntryButtonClick}
-                                    >
-                                        <IoCheckmark />
-                                    </QuickActionButton>
-                                </>
-                            )}
-                        </>
-                    ) : (
-                        <QuickActionButton
-                            name={undefined}
-                            onClick={setShowScreenshotTrue}
-                            disabled={isEntrySelectionActive}
-                        >
-                            <IoCameraOutline />
-                        </QuickActionButton>
+                        )
                     )}
                     <QuickActionButton
                         title={fullScreenMode ? 'Exit fullscreen' : 'Enter fullscreen'}
@@ -674,7 +678,9 @@ function LeftPane(props: Props) {
                                     projectId={projectId}
                                     onExcerptClick={onEntryClick}
                                     entries={entries}
-                                    onAddButtonClick={handleExcerptAddFromSimplified}
+                                    onAddButtonClick={onEntryCreate
+                                        ? handleExcerptAddFromSimplified
+                                        : undefined}
                                     onAssistedEntryAdd={onAssistedEntryAdd}
                                     text={leadPreview?.textExtract}
                                     onExcerptChange={onExcerptChange}

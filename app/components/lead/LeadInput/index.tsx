@@ -396,17 +396,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         onAuthorOrganizationOptionsChange,
     ]);
 
-    /*
-    const handleAddLeadGroupClick = useCallback(() => {
-        setShowAddLeadAddGroupModal();
-    }, [setShowAddLeadAddGroupModal]);
-
-    const handleLeadGroupAdd = useCallback((val: BasicLeadGroup) => {
-        setFieldValue(val.id, 'leadGroup');
-        onLeadGroupOptionsChange((oldVal) => [...oldVal ?? [], val]);
-    }, [setFieldValue]);
-     */
-
     const pending = pendingFromProps || pendingUserToken || webInfoPending || rawWebInfoPending;
 
     return (
@@ -648,14 +637,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     onOrganizationAdd={handleOrganizationAdd}
                 />
             )}
-            {/*
-            {showAddLeadGroupModal && (
-                <AddLeadGroupModal
-                    onModalClose={setShowAddLeadGroupModalFalse}
-                    onLeadGroupAdd={handleLeadGroupAdd}
-                />
-            )}
-              */}
         </div>
     );
 }
