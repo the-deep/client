@@ -119,7 +119,7 @@ interface Props {
     hideOriginalPreview?: boolean;
     entryImagesMap: EntryImagesMap | undefined;
     isEntrySelectionActive?: boolean;
-    entriesError: Partial<Record<string, boolean>> | undefined;
+    entriesError?: Partial<Record<string, boolean>> | undefined;
     projectId: string | undefined;
     defaultTab?: 'entries' | 'simplified' | 'original';
     frameworkDetails?: Framework;
