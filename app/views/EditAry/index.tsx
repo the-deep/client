@@ -1,5 +1,4 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
 import {
     _cs,
@@ -7,12 +6,13 @@ import {
     isDefined,
     isNotDefined,
 } from '@togglecorp/fujs';
+import { removeNull } from '@togglecorp/toggle-form';
 
 import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
 import LeftPaneEntries from '#components/LeftPaneEntries';
-import { Entry } from '#components/entry/types';
+import { Entry, EntryInput as EntryInputType } from '#components/entry/types';
 
 import {
     LeadEntriesForAryQuery,
@@ -92,6 +92,20 @@ const LEAD_ENTRIES_FOR_ARY = gql`
 
 export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 
+function transformEntry(entry: Entry): EntryInputType {
+    // FIXME: make this re-usable
+    return removeNull({
+        ...entry,
+        lead: entry.lead.id,
+        image: entry.image?.id,
+        attributes: entry.attributes?.map((attribute) => ({
+            ...attribute,
+            // NOTE: we don't need this on form
+            geoSelectedOptions: undefined,
+        })),
+    });
+}
+
 interface Props {
     className?: string;
 }
@@ -139,6 +153,10 @@ function EditAry(props: Props) {
         },
     );
 
+    const entries = entriesForLead?.project?.lead?.entries;
+
+    const transformedEntries = entries?.map((entry) => transformEntry(entry as Entry));
+
     return (
         <div className={_cs(className, styles.editAssessment)}>
             <SubNavbar
@@ -152,15 +170,16 @@ function EditAry(props: Props) {
                 )}
             />
             <div className={styles.container}>
-                <LeftPaneEntries
-                    className={styles.leftPane}
-                    entries={entriesForLead?.project?.lead?.entries ?? undefined}
-                    projectId={projectId}
-                    leadId={leadId}
-                    lead={entriesForLead?.project?.lead}
-                    entryImagesMap={entryImagesMap}
-                    Entry
-                />
+                {isDefined(leadId) && (
+                    <LeftPaneEntries
+                        className={styles.leftPane}
+                        entries={transformedEntries}
+                        projectId={projectId}
+                        leadId={leadId}
+                        lead={entriesForLead?.project?.lead}
+                        entryImagesMap={entryImagesMap}
+                    />
+                )}
                 <div className={styles.form}>
                     Assessment form goes here
                 </div>
