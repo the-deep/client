@@ -1,17 +1,18 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { useQuery, gql, useMutation } from '@apollo/client';
 import {
     useParams,
     useHistory,
     generatePath,
 } from 'react-router-dom';
-import { useQuery, gql } from '@apollo/client';
 import {
     _cs,
     listToMap,
     isDefined,
     isNotDefined,
 } from '@togglecorp/fujs';
-import { removeNull } from '@togglecorp/toggle-form';
+import { Button } from '@the-deep/deep-ui';
+import { createSubmitHandler, removeNull, useForm } from '@togglecorp/toggle-form';
 
 import routes from '#base/configs/routes';
 import BackLink from '#components/BackLink';
@@ -20,18 +21,17 @@ import ProjectContext from '#base/context/ProjectContext';
 import LeftPaneEntries from '#components/LeftPaneEntries';
 import AssessmentRegistryForm from '#components/AssessmentRegistryForm';
 import { Entry, EntryInput as EntryInputType } from '#components/entry/types';
-
+import { ORGANIZATION_FRAGMENT, ENTRY_FRAGMENT } from '#gqlFragments';
+import { initialValue, schema } from '#components/AssessmentRegistryForm/useFormOptions';
 import {
+    AssessmentRegistryCreateInputType,
+    CreateAssessmentRegistryMutation,
+    CreateAssessmentRegistryMutationVariables,
     LeadEntriesForAryQuery,
     LeadEntriesForAryQueryVariables,
     EntriesFromAssessmentQuery,
     EntriesFromAssessmentQueryVariables,
 } from '#generated/types';
-
-import {
-    ORGANIZATION_FRAGMENT,
-    ENTRY_FRAGMENT,
-} from '#gqlFragments';
 
 import styles from './styles.css';
 
@@ -166,6 +166,20 @@ const ENTRIES_FROM_ASSESSMENT = gql`
     }
 `;
 
+const CREATE_ASSESEMENT_REGISTRY = gql`
+    mutation CreateAssessmentRegistry($projectId:ID!, $data: AssessmentRegistryCreateInputType!) {
+        project(id: $projectId) {
+            createAssessmentRegistry( data: $data) {
+                ok
+                errors
+                result {
+                    id
+                }
+            }
+        }
+    }
+`;
+
 export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 
 function transformEntry(entry: Entry): EntryInputType {
@@ -188,14 +202,21 @@ interface Props {
 
 function EditAry(props: Props) {
     const { className } = props;
+    const {
+        value,
+        setValue,
+        setFieldValue,
+        error,
+        setError,
+        validate,
+    } = useForm(schema, initialValue);
 
     const { assessmentId } = useParams<{ assessmentId: string }>();
     const leadId = new URL(window.location.href).searchParams.get('source') ?? undefined;
     const { project } = useContext(ProjectContext);
-
-    const isNewAssessment = isDefined(leadId);
-
+    const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
     const history = useHistory();
+    const isNewAssessment = isDefined(leadId);
 
     const projectId = project ? project.id : undefined;
     const variablesForLeadEntries = useMemo(
@@ -206,8 +227,6 @@ function EditAry(props: Props) {
             projectId,
         ],
     );
-
-    const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
 
     const {
         data: entriesForLead,
@@ -288,7 +307,40 @@ function EditAry(props: Props) {
         ? entriesForLead?.project?.lead?.entries
         : entriesFromAssessment?.project?.assessmentRegistry?.lead?.entries;
 
+    const [
+        createAssessmentRegistry,
+        {
+            loading: createAssessmentRegistryPending,
+        },
+    ] = useMutation<CreateAssessmentRegistryMutation, CreateAssessmentRegistryMutationVariables>(
+        CREATE_ASSESEMENT_REGISTRY,
+    );
+
     const transformedEntries = entries?.map((entry) => transformEntry(entry as Entry));
+
+    const handleSubmit = useCallback(
+        () => {
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => {
+                    createAssessmentRegistry({
+                        variables: {
+                            projectId,
+                            data: val as AssessmentRegistryCreateInputType,
+                        },
+                    });
+                },
+            );
+            submit();
+        },
+        [
+            createAssessmentRegistry,
+            projectId,
+            setError,
+            validate,
+        ],
+    );
 
     return (
         <div className={_cs(className, styles.editAssessment)}>
@@ -297,9 +349,19 @@ function EditAry(props: Props) {
                 heading="Assessment"
                 homeLinkShown
                 defaultActions={(
-                    <BackLink defaultLink="/">
-                        Close
-                    </BackLink>
+                    <>
+                        <BackLink defaultLink="/">
+                            Close
+                        </BackLink>
+                        <Button
+                            name="save"
+                            type="submit"
+                            onClick={handleSubmit}
+                            disabled={createAssessmentRegistryPending}
+                        >
+                            Save
+                        </Button>
+                    </>
                 )}
             />
             <div className={styles.container}>
@@ -314,7 +376,12 @@ function EditAry(props: Props) {
                     />
                 )}
                 <div className={styles.form}>
-                    <AssessmentRegistryForm projectId={projectId} />
+                    <AssessmentRegistryForm
+                        value={value}
+                        setFieldValue={setFieldValue}
+                        setValue={setValue}
+                        error={error}
+                    />
                 </div>
             </div>
         </div>

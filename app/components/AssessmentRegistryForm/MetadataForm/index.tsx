@@ -1,15 +1,20 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { DateInput, MultiSelectInput, SelectInput } from '@the-deep/deep-ui';
+import React, { useMemo, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import {
-    createSubmitHandler,
-    getErrorObject,
-    useForm,
-} from '@togglecorp/toggle-form';
 import { listToGroupList } from '@togglecorp/fujs';
+import {
+    DateInput,
+    MultiSelectInput,
+    NumberInput,
+    SelectInput,
+} from '@the-deep/deep-ui';
+import {
+    EntriesAsList,
+    Error,
+    getErrorObject,
+    SetBaseValueArg,
+} from '@togglecorp/toggle-form';
 
 import { enumKeySelector, enumLabelSelector } from '#utils/common';
-import _ts from '#ts';
 import {
     GetOptionsQuery,
     GetOptionsQueryVariables,
@@ -17,25 +22,10 @@ import {
 import RegionMultiSelectInput, {
     BasicRegion,
 } from '#components/selections/RegionMultiSelectInput';
+
 import StakeholderForm from './StakeholderForm';
-import { BasicProjectOrganization, initialValue, schema } from '../useFormOptions';
-
+import { BasicProjectOrganization, PartialFormType } from '../useFormOptions';
 import styles from './styles.css';
-
-const CREATE_ASSESEMENT_REGISTRY = gql`
-    mutation CreateAssessmentRegistry($projectId:ID!, $data: AssessmentRegistryCreateInputType!) {
-        project(id: $projectId) {
-            createAssessmentRegistry( data: $data) {
-                ok
-                errors
-                result {
-                    clientId
-                    id
-                }
-            }
-        }
-    }
-`;
 
 const GET_OPTIONS = gql`
     query GetOptions {
@@ -96,15 +86,20 @@ const GET_OPTIONS = gql`
     }
 `;
 
-function MetadataForm() {
+type Value = PartialFormType;
+interface Props {
+    value: Value;
+    setFieldValue: (...entries: EntriesAsList<Value>) => void;
+    setValue: (value: SetBaseValueArg<Value>) => void;
+    error: Error<Value>;
+}
+function MetadataForm(props: Props) {
     const {
         value,
-        setValue,
         setFieldValue,
+        setValue,
         error: riskyError,
-        setError,
-        validate,
-    } = useForm(schema, initialValue);
+    } = props;
     const error = getErrorObject(riskyError);
 
     const [
@@ -143,10 +138,6 @@ function MetadataForm() {
             data?.languageOptions?.enumValues,
         ]), [data]);
 
-    const handleSubmit = useCallback(() => {
-        console.log('submit handler');
-    }, []);
-
     useMemo(
         () => {
             const groupStakeholder = listToGroupList(
@@ -156,6 +147,7 @@ function MetadataForm() {
             );
 
             setValue({
+                ...value,
                 donors: groupStakeholder.DONOR,
                 leadOrganizations: groupStakeholder.LEAD_ORGANIZATION,
                 nationalPartners: groupStakeholder.NATIONAL_PARTNER,
@@ -163,16 +155,11 @@ function MetadataForm() {
                 governments: groupStakeholder.GOVERNMENT,
             });
         },
-        [organizations],
+        [organizations, setValue, value],
     );
 
-    console.log('form value', value);
-
     return (
-        <form
-            className={styles.metadataForm}
-            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
-        >
+        <div className={styles.metadataForm}>
             <div className={styles.formElement}>
                 Background
                 <RegionMultiSelectInput
@@ -283,6 +270,13 @@ function MetadataForm() {
                     labelSelector={enumLabelSelector}
                     options={languageOptions}
                 />
+                <NumberInput
+                    label="No. of Pages"
+                    name="noOfPages"
+                    value={value.noOfPages}
+                    onChange={setFieldValue}
+                    error={error?.noOfPages}
+                />
             </div>
             <div className={styles.formElement}>
                 Key Dates
@@ -314,7 +308,7 @@ function MetadataForm() {
                 onChangeOrganizations={setOrganizations}
                 loading={loading}
             />
-        </form>
+        </div>
     );
 }
 
