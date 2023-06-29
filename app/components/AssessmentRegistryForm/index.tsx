@@ -5,20 +5,32 @@ import {
     TabPanel,
     Tabs,
 } from '@the-deep/deep-ui';
+import { EntriesAsList, Error, SetBaseValueArg } from '@togglecorp/toggle-form';
 
 import MetadataForm from './MetadataForm';
+import { PartialFormType } from './useFormOptions';
 import styles from './styles.css';
 
 type TabOptions = 'metadata' | 'documents' | 'focus' | 'methodology' | 'summary' | 'score' | 'cna' | undefined;
 
+type Value = PartialFormType;
 interface Props {
-    projectId?: string;
+    value: Value;
+    setFieldValue: (...entries: EntriesAsList<Value>) => void;
+    setValue: (value: SetBaseValueArg<Value>) => void;
+    error: Error<Value>;
 }
 
 function AssessmentRegistyForm(props: Props) {
-    const { projectId } = props;
-    console.log(projectId);
+    const {
+        value,
+        setFieldValue,
+        setValue,
+        error,
+    } = props;
+
     const [activeTab, setActiveTab] = useState<TabOptions>('metadata');
+
     return (
         <Tabs
             value={activeTab}
@@ -37,7 +49,12 @@ function AssessmentRegistyForm(props: Props) {
             <TabPanel
                 name="metadata"
             >
-                <MetadataForm />
+                <MetadataForm
+                    value={value}
+                    setFieldValue={setFieldValue}
+                    setValue={setValue}
+                    error={error}
+                />
             </TabPanel>
             <TabPanel
                 name="documents"
