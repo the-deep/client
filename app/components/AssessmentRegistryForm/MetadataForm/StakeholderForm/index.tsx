@@ -1,24 +1,24 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { isDefined, listToGroupList, _cs } from '@togglecorp/fujs';
 import { ContainerCard, ListView } from '@the-deep/deep-ui';
-import { PurgeNull, SetValueArg } from '@togglecorp/toggle-form';
+import { SetValueArg } from '@togglecorp/toggle-form';
 
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import StakeholderList from '#components/StakeholderList';
-import { ProjectOrganizationTypeEnum, ProjectOrganizationGqInputType } from '#generated/types';
+import { ProjectOrganizationTypeEnum } from '#generated/types';
 import _ts from '#ts';
 import { BasicOrganization } from '#types';
+import { BasicProjectOrganization } from '#components/AssessmentRegistryForm/useFormOptions';
 
 import styles from './styles.css';
 
-type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
 interface Props {
     className: string;
+    loading: boolean;
     organizations?: BasicProjectOrganization[] | null;
     onChangeOrganizations: (
             value: SetValueArg<BasicProjectOrganization[] | undefined>,
             name: string | number) => void;
-    loading: boolean;
 }
 
 interface StakeholderType {

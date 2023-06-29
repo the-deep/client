@@ -4,26 +4,21 @@ import { gql, useQuery } from '@apollo/client';
 import {
     createSubmitHandler,
     getErrorObject,
-    ObjectSchema,
-    PartialForm,
-    PurgeNull,
     useForm,
 } from '@togglecorp/toggle-form';
 import { listToGroupList } from '@togglecorp/fujs';
 
-import { EnumFix } from '#utils/types';
 import { enumKeySelector, enumLabelSelector } from '#utils/common';
 import _ts from '#ts';
 import {
-    AssessmentRegistryCreateInputType,
     GetOptionsQuery,
     GetOptionsQueryVariables,
-    ProjectOrganizationGqInputType,
 } from '#generated/types';
 import RegionMultiSelectInput, {
     BasicRegion,
 } from '#components/selections/RegionMultiSelectInput';
 import StakeholderForm from './StakeholderForm';
+import { BasicProjectOrganization, initialValue, schema } from '../useFormOptions';
 
 import styles from './styles.css';
 
@@ -100,45 +95,6 @@ const GET_OPTIONS = gql`
         }
     }
 `;
-
-type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
-type PartialFormType = PartialForm<EnumFix<AssessmentRegistryCreateInputType,
-'bgCrisisType'| 'bgPreparedness' | 'externalSupport' | 'coordinatedJoint' | 'detailsType' | 'family' | 'frequency' | 'confidentiality' | 'language'
->>;
-type FormSchema = ObjectSchema<PartialFormType>;
-type FormSchemaFields = ReturnType<FormSchema['fields']>;
-
-const initialValue: PartialFormType = {};
-const schema: FormSchema = {
-    fields: (): FormSchemaFields => ({
-        bgCountries: [],
-        bgCrisisType: [],
-        bgCrisisStartDate: [],
-        bgPreparedness: [],
-        externalSupport: [],
-        coordinatedJoint: [],
-        detailsType: [],
-        family: [],
-        frequency: [],
-        confidentiality: [],
-        language: [],
-        noOfPages: [],
-        dataCollectionStartDate: [],
-        dataCollectionEndDate: [],
-        publicationDate: [],
-        leadOrganizations: [],
-        internationalPartners: [],
-        donors: [],
-        nationalPartners: [],
-        governments: [],
-        // NOTE: uncomment on other form
-        // locations: [],
-        // focuses: [],
-        // sectors: [],
-        // protectionInfoMgmts: [],
-    }),
-    validation: () => undefined,
-};
 
 function MetadataForm() {
     const {
