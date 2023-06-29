@@ -4,7 +4,7 @@ import { ContainerCard, ListView } from '@the-deep/deep-ui';
 import { SetValueArg } from '@togglecorp/toggle-form';
 
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
-import StakeholderList from '#components/StakeholderList';
+import StakeholderList from '#views/ProjectEdit/ProjectDetailsForm/StakeholderList';
 import { ProjectOrganizationTypeEnum } from '#generated/types';
 import _ts from '#ts';
 import { BasicOrganization } from '#types';
