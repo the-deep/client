@@ -18,6 +18,7 @@ import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
 import LeftPaneEntries from '#components/LeftPaneEntries';
+import AssessmentRegistryForm from '#components/AssessmentRegistryForm';
 import { Entry, EntryInput as EntryInputType } from '#components/entry/types';
 
 import {
@@ -313,7 +314,7 @@ function EditAry(props: Props) {
                     />
                 )}
                 <div className={styles.form}>
-                    Assessment form goes here
+                    <AssessmentRegistryForm projectId={projectId} />
                 </div>
             </div>
         </div>

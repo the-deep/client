@@ -1,0 +1,17 @@
+.metadata-form {
+    display: grid;
+    grid-column: auto;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--dui-spacing-super-large);
+    padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+
+    .form-element {
+        grid-row: 1;
+        gap: var(--dui-spacing-medium);
+    }
+
+    .stakeholder-form {
+        grid-column: 1 /5;
+        grid-row: 2;
+    }
+}
