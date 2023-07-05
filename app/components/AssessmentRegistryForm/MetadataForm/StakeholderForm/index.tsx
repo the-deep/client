@@ -1,51 +1,57 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { isDefined, listToGroupList, _cs } from '@togglecorp/fujs';
+import { listToGroupList, _cs } from '@togglecorp/fujs';
 import { ContainerCard, ListView } from '@the-deep/deep-ui';
-import { SetValueArg } from '@togglecorp/toggle-form';
+import { SetBaseValueArg, Error, getErrorString } from '@togglecorp/toggle-form';
 
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import StakeholderList from '#views/ProjectEdit/ProjectDetailsForm/StakeholderList';
 import { ProjectOrganizationTypeEnum } from '#generated/types';
-import _ts from '#ts';
 import { BasicOrganization } from '#types';
-import { BasicProjectOrganization } from '#components/AssessmentRegistryForm/useFormOptions';
+import { BasicProjectOrganization, PartialFormType } from '#components/AssessmentRegistryForm/useFormOptions';
+import { getErrorObject } from '#components/framework/AttributeInput';
 
 import styles from './styles.css';
 
+type Value = PartialFormType;
 interface Props {
     className: string;
+    value: Value;
+    error: Error<Value>;
+    setValue: (value: SetBaseValueArg<Value>) => void;
     loading: boolean;
-    organizations?: BasicProjectOrganization[] | null;
-    onChangeOrganizations: (
-            value: SetValueArg<BasicProjectOrganization[] | undefined>,
-            name: string | number) => void;
 }
 
 interface StakeholderType {
     id: ProjectOrganizationTypeEnum;
     label: string;
+    formId: keyof Pick<PartialFormType, 'leadOrganizations' | 'donors' | 'nationalPartners' | 'governments' | 'internationalPartners'>;
 }
 
 const stakeholderTypes: StakeholderType[] = [
     {
-        label: _ts('project.detail.stakeholders', 'leadOrganization'),
+        label: 'Lead Organizations',
         id: 'LEAD_ORGANIZATION',
+        formId: 'leadOrganizations',
     },
     {
-        label: _ts('project.detail.stakeholders', 'internationalPartner'),
+        label: 'International Partners',
         id: 'INTERNATIONAL_PARTNER',
+        formId: 'internationalPartners',
     },
     {
-        label: _ts('project.detail.stakeholders', 'nationalPartner'),
+        label: 'National Partners',
         id: 'NATIONAL_PARTNER',
+        formId: 'nationalPartners',
     },
     {
-        label: _ts('project.detail.stakeholders', 'donor'),
+        label: 'Donors',
         id: 'DONOR',
+        formId: 'donors',
     },
     {
-        label: _ts('project.detail.stakeholders', 'government'),
+        label: 'Governments',
         id: 'GOVERNMENT',
+        formId: 'governments',
     },
 ];
 
@@ -54,33 +60,54 @@ const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 function StakeholderForm(props: Props) {
     const {
         className,
-        organizations,
-        onChangeOrganizations,
+        value,
+        setValue,
         loading,
+        error: riskyError,
     } = props;
+    const [organizations, setOrganizations] = useState<BasicProjectOrganization[] | undefined>([]);
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
 
-    const groupedStakeholders = useMemo(
-        () => listToGroupList(
-            (organizations ?? []).filter((org) => org.organizationType),
-            (o) => o.organizationType ?? '',
-            (o) => o.organization,
-        ),
-        [organizations],
+    const error = getErrorObject(riskyError);
+    const errorMap = useMemo(
+        () => ({
+            LEAD_ORGANIZATION: getErrorString(error?.leadOrganizations),
+            DONOR: getErrorString(error?.donors),
+            INTERNATIONAL_PARTNER: getErrorString(error?.internationalPartners),
+            NATIONAL_PARTNER: getErrorString(error?.nationalPartners),
+            GOVERNMENT: getErrorString(error?.governments),
+        }),
+        [error],
     );
 
     const organizationListRendererParams = useCallback(
-        (key: ProjectOrganizationTypeEnum, v: StakeholderType) => {
-            const groupedOrganization = groupedStakeholders[key];
-            return {
-                data: groupedOrganization
-                    ?.map((o) => stakeholderOptions.find((option) => option.id === o))
-                    .filter(isDefined),
-                title: v.label,
-                dataPending: loading,
-            };
-        },
-        [groupedStakeholders, stakeholderOptions, loading],
+        (key: ProjectOrganizationTypeEnum, v: StakeholderType) => ({
+            data: stakeholderOptions.filter((org) => value[v.formId]?.includes(org.id)),
+            title: v.label,
+            dataPending: loading,
+            error: errorMap[key],
+        }),
+        [loading, errorMap, value, stakeholderOptions],
+    );
+
+    const handleOrganizationChange = useCallback(
+        (values: BasicProjectOrganization[] | undefined) => {
+            setOrganizations(values);
+            const groupedStakeholders = listToGroupList(
+                (values ?? []).filter((org) => org.organizationType),
+                (o) => o.organizationType,
+                (o) => o.organization,
+            );
+
+            setValue({
+                ...value,
+                donors: groupedStakeholders.DONOR ?? undefined,
+                leadOrganizations: groupedStakeholders.LEAD_ORGANIZATION ?? undefined,
+                nationalPartners: groupedStakeholders.NATIONAL_PARTNER ?? undefined,
+                internationalPartners: groupedStakeholders.INTERNATIONAL_PARTNER ?? undefined,
+                governments: groupedStakeholders.GOVERNMENT ?? undefined,
+            });
+        }, [value, setValue],
     );
 
     return (
@@ -90,7 +117,7 @@ function StakeholderForm(props: Props) {
                 <AddStakeholderButton
                     name="organizations"
                     value={organizations}
-                    onChange={onChangeOrganizations}
+                    onChange={handleOrganizationChange}
                     onOptionsChange={setStakeholderOptions}
                     options={stakeholderOptions}
                 />
