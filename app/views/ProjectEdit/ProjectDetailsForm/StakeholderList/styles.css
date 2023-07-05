@@ -39,4 +39,10 @@
             }
         }
     }
+
+    .error {
+        text-align: center;
+        color: var(--dui-color-negative);
+        font-size: var(---dui-font-size-small);
+    }
 }
