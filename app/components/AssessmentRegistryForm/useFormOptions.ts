@@ -38,11 +38,12 @@ export const schema: FormSchema = {
         dataCollectionStartDate: [],
         dataCollectionEndDate: [],
         publicationDate: [requiredCondition],
-        leadOrganizations: [requiredCondition, defaultEmptyArrayType],
-        internationalPartners: [requiredCondition, defaultEmptyArrayType],
-        donors: [requiredCondition, defaultEmptyArrayType],
-        nationalPartners: [requiredCondition, defaultEmptyArrayType],
-        governments: [requiredCondition, defaultEmptyArrayType],
+        leadOrganizations: [requiredCondition],
+        internationalPartners: [requiredCondition],
+        donors: [requiredCondition],
+        nationalPartners: [requiredCondition],
+        governments: [requiredCondition],
+
         // NOTE: uncomment on other form
         locations: [defaultEmptyArrayType],
         focuses: [defaultEmptyArrayType],

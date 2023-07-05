@@ -8,7 +8,6 @@ import {
     useForm,
     ObjectSchema,
     defaultEmptyArrayType,
-    SetValueArg,
     PurgeNull,
 } from '@togglecorp/toggle-form';
 import {
@@ -47,7 +46,7 @@ export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>
 
 export interface Props<T> {
     name: T;
-    onChange: (value: SetValueArg<BasicProjectOrganization[] | undefined>, name: T) => void;
+    onChange: (value: BasicProjectOrganization[] | undefined, name: T) => void;
     options: BasicOrganization[];
     onOptionsChange: (value: BasicOrganization[]) => void;
     value?: BasicProjectOrganization[] | null;
