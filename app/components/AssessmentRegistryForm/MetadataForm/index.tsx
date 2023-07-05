@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { listToGroupList } from '@togglecorp/fujs';
 import {
     DateInput,
     MultiSelectInput,
@@ -11,6 +10,7 @@ import {
     EntriesAsList,
     Error,
     getErrorObject,
+    getErrorString,
     SetBaseValueArg,
 } from '@togglecorp/toggle-form';
 
@@ -23,11 +23,11 @@ import RegionMultiSelectInput, {
     BasicRegion,
 } from '#components/selections/RegionMultiSelectInput';
 
+import { PartialFormType } from '../useFormOptions';
 import StakeholderForm from './StakeholderForm';
-import { BasicProjectOrganization, PartialFormType } from '../useFormOptions';
 import styles from './styles.css';
 
-const GET_OPTIONS = gql`
+const GET_METADATA_OPTIONS = gql`
     query GetOptions {
         crisisOptions: __type(name: "AssessmentRegistryCrisisTypeEnum") {
             enumValues {
@@ -65,7 +65,7 @@ const GET_OPTIONS = gql`
                 description
             }
         }
-        FrequencyOptions: __type(name: "AssessmentRegistryFrequencyTypeEnum") {
+        frequencyOptions: __type(name: "AssessmentRegistryFrequencyTypeEnum") {
             enumValues {
                 name
                 description
@@ -93,6 +93,7 @@ interface Props {
     setValue: (value: SetBaseValueArg<Value>) => void;
     error: Error<Value>;
 }
+
 function MetadataForm(props: Props) {
     const {
         value,
@@ -106,13 +107,12 @@ function MetadataForm(props: Props) {
         regionOptions,
         setRegionOptions,
     ] = useState<BasicRegion[] | undefined | null>();
-    const [organizations, setOrganizations] = useState<BasicProjectOrganization[] | undefined>([]);
 
     const {
         data,
         loading,
     } = useQuery<GetOptionsQuery, GetOptionsQueryVariables>(
-        GET_OPTIONS,
+        GET_METADATA_OPTIONS,
     );
 
     const [
@@ -125,38 +125,17 @@ function MetadataForm(props: Props) {
         frequencyOptions,
         confidentialityOptions,
         languageOptions,
-    ] = useMemo(() => (
-        [
-            data?.crisisOptions?.enumValues,
-            data?.preparednessOptions?.enumValues,
-            data?.externalOptions?.enumValues,
-            data?.coordinationJointOptions?.enumValues,
-            data?.detailOptions?.enumValues,
-            data?.familyOptions?.enumValues,
-            data?.FrequencyOptions?.enumValues,
-            data?.confidentialityOptions?.enumValues,
-            data?.languageOptions?.enumValues,
-        ]), [data]);
-
-    useMemo(
-        () => {
-            const groupStakeholder = listToGroupList(
-                organizations ?? [],
-                (o) => o.organizationType,
-                (o) => o.organization,
-            );
-
-            setValue({
-                ...value,
-                donors: groupStakeholder.DONOR,
-                leadOrganizations: groupStakeholder.LEAD_ORGANIZATION,
-                nationalPartners: groupStakeholder.NATIONAL_PARTNER,
-                internationalPartners: groupStakeholder.INTERNATIONAL_PARTNER,
-                governments: groupStakeholder.GOVERNMENT,
-            });
-        },
-        [organizations, setValue, value],
-    );
+    ] = useMemo(() => ([
+        data?.crisisOptions?.enumValues,
+        data?.preparednessOptions?.enumValues,
+        data?.externalOptions?.enumValues,
+        data?.coordinationJointOptions?.enumValues,
+        data?.detailOptions?.enumValues,
+        data?.familyOptions?.enumValues,
+        data?.frequencyOptions?.enumValues,
+        data?.confidentialityOptions?.enumValues,
+        data?.languageOptions?.enumValues,
+    ]), [data]);
 
     return (
         <div className={styles.metadataForm}>
@@ -165,11 +144,12 @@ function MetadataForm(props: Props) {
                 <RegionMultiSelectInput
                     label="Country"
                     name="bgCountries"
-                    value={value?.bgCountries}
+                    value={value.bgCountries}
                     onChange={setFieldValue}
                     options={regionOptions}
                     onOptionsChange={setRegionOptions}
                     publicRegions
+                    error={getErrorString(error?.bgCountries)}
                 />
                 <SelectInput
                     label="Crisis Type"
@@ -224,7 +204,7 @@ function MetadataForm(props: Props) {
                 <SelectInput
                     label="Type"
                     name="detailsType"
-                    value={value?.detailsType}
+                    value={value.detailsType}
                     onChange={setFieldValue}
                     error={error?.detailsType}
                     keySelector={enumKeySelector}
@@ -234,7 +214,7 @@ function MetadataForm(props: Props) {
                 <SelectInput
                     label="Family"
                     name="family"
-                    value={value?.family}
+                    value={value.family}
                     onChange={setFieldValue}
                     error={error?.family}
                     keySelector={enumKeySelector}
@@ -244,7 +224,7 @@ function MetadataForm(props: Props) {
                 <SelectInput
                     label="Frequency"
                     name="frequency"
-                    value={value?.frequency}
+                    value={value.frequency}
                     onChange={setFieldValue}
                     error={error?.frequency}
                     keySelector={enumKeySelector}
@@ -254,7 +234,7 @@ function MetadataForm(props: Props) {
                 <SelectInput
                     label="Confidentiality"
                     name="confidentiality"
-                    value={value?.confidentiality}
+                    value={value.confidentiality}
                     onChange={setFieldValue}
                     error={error?.confidentiality}
                     keySelector={enumKeySelector}
@@ -264,7 +244,7 @@ function MetadataForm(props: Props) {
                 <MultiSelectInput
                     label="Language"
                     name="language"
-                    value={value?.language}
+                    value={value.language}
                     onChange={setFieldValue}
                     keySelector={enumKeySelector}
                     labelSelector={enumLabelSelector}
@@ -304,9 +284,10 @@ function MetadataForm(props: Props) {
             </div>
             <StakeholderForm
                 className={styles.stakeholderForm}
-                organizations={organizations}
-                onChangeOrganizations={setOrganizations}
+                value={value}
+                setValue={setValue}
                 loading={loading}
+                error={error}
             />
         </div>
     );

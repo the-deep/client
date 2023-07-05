@@ -342,6 +342,33 @@ function EditAry(props: Props) {
         ],
     );
 
+<<<<<<< HEAD
+=======
+    // NOTE: Remove after handel empty list by server side
+    // React.useMemo(() => (
+    //     setValue({
+    //         ...value,
+    //         locations: ['1'],
+    //         focuses: ['IMPACT'],
+    //         sectors: ['F00D'],
+    //         protectionInfoMgmts: ['CASE_MANAGEMENT'],
+    //         methodologyAttributes: [{
+    //             dataCollectionTechnique: 'SATELLITE_IMAGERY',
+    //             proximity: 'FACE_TO_FACE',
+    //             samplingApproach: 'FULL_ENUMERATION',
+    //             samplingSize: 10,
+    //             unitOfAnalysis: 'CRISIS',
+    //             unitOfReporting: 'CRISIS',
+    //         }],
+    //         additionalDocuments: [{
+    //             documentType: 'EXECUTIVE_SUMMARY',
+    //             externalLink: '',
+    //             file: '1',
+    //         }],
+    //     })
+    // ), [setValue, value]);
+
+>>>>>>> 7dfdd7db7 (Add stakeholder validation error)
     return (
         <div className={_cs(className, styles.editAssessment)}>
             <SubNavbar
@@ -365,6 +392,7 @@ function EditAry(props: Props) {
                 )}
             />
             <div className={styles.container}>
+<<<<<<< HEAD
                 {isDefined(leadIdSafe) && (
                     <LeftPaneEntries
                         className={styles.leftPane}
@@ -374,15 +402,28 @@ function EditAry(props: Props) {
                         lead={entriesForLead?.project?.lead}
                         entryImagesMap={entryImagesMap}
                     />
+=======
+                {isDefined(leadId) && (
+                    <>
+                        <LeftPaneEntries
+                            className={styles.leftPane}
+                            entries={transformedEntries}
+                            projectId={projectId}
+                            leadId={leadId}
+                            lead={entriesForLead?.project?.lead}
+                            entryImagesMap={entryImagesMap}
+                        />
+                        <div className={styles.form}>
+                            <AssessmentRegistryForm
+                                value={value}
+                                setFieldValue={setFieldValue}
+                                setValue={setValue}
+                                error={error}
+                            />
+                        </div>
+                    </>
+>>>>>>> 7dfdd7db7 (Add stakeholder validation error)
                 )}
-                <div className={styles.form}>
-                    <AssessmentRegistryForm
-                        value={value}
-                        setFieldValue={setFieldValue}
-                        setValue={setValue}
-                        error={error}
-                    />
-                </div>
             </div>
         </div>
     );
