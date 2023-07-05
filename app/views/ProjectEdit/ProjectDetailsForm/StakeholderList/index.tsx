@@ -106,7 +106,7 @@ function StakeholderList(props: Props) {
                 emptyMessage="No organizations were added"
                 messageShown
             />
-            <div>{error}</div>
+            <div className={styles.error}>{error}</div>
         </ContainerCard>
     );
 }
