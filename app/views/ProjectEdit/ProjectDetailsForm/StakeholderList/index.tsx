@@ -75,6 +75,7 @@ interface Props {
     data?: BasicOrganization[];
     dataPending: boolean;
     title: string;
+    error?: string;
 }
 function StakeholderList(props: Props) {
     const {
@@ -82,6 +83,7 @@ function StakeholderList(props: Props) {
         title,
         dataPending,
         className,
+        error,
     } = props;
 
     return (
@@ -104,6 +106,7 @@ function StakeholderList(props: Props) {
                 emptyMessage="No organizations were added"
                 messageShown
             />
+            <div>{error}</div>
         </ContainerCard>
     );
 }
