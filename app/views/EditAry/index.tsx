@@ -342,36 +342,6 @@ function EditAry(props: Props) {
         ],
     );
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    // NOTE: Remove after handel empty list by server side
-    // React.useMemo(() => (
-    //     setValue({
-    //         ...value,
-    //         locations: ['1'],
-    //         focuses: ['IMPACT'],
-    //         sectors: ['F00D'],
-    //         protectionInfoMgmts: ['CASE_MANAGEMENT'],
-    //         methodologyAttributes: [{
-    //             dataCollectionTechnique: 'SATELLITE_IMAGERY',
-    //             proximity: 'FACE_TO_FACE',
-    //             samplingApproach: 'FULL_ENUMERATION',
-    //             samplingSize: 10,
-    //             unitOfAnalysis: 'CRISIS',
-    //             unitOfReporting: 'CRISIS',
-    //         }],
-    //         additionalDocuments: [{
-    //             documentType: 'EXECUTIVE_SUMMARY',
-    //             externalLink: '',
-    //             file: '1',
-    //         }],
-    //     })
-    // ), [setValue, value]);
-
->>>>>>> 7dfdd7db7 (Add stakeholder validation error)
-=======
->>>>>>> 813a87cc4 (Move interface and and rename file name)
     return (
         <div className={_cs(className, styles.editAssessment)}>
             <SubNavbar
@@ -395,24 +365,13 @@ function EditAry(props: Props) {
                 )}
             />
             <div className={styles.container}>
-<<<<<<< HEAD
                 {isDefined(leadIdSafe) && (
-                    <LeftPaneEntries
-                        className={styles.leftPane}
-                        entries={transformedEntries}
-                        projectId={projectId}
-                        leadId={leadIdSafe}
-                        lead={entriesForLead?.project?.lead}
-                        entryImagesMap={entryImagesMap}
-                    />
-=======
-                {isDefined(leadId) && (
                     <>
                         <LeftPaneEntries
                             className={styles.leftPane}
                             entries={transformedEntries}
                             projectId={projectId}
-                            leadId={leadId}
+                            leadId={leadIdSafe}
                             lead={entriesForLead?.project?.lead}
                             entryImagesMap={entryImagesMap}
                         />
@@ -425,7 +384,6 @@ function EditAry(props: Props) {
                             />
                         </div>
                     </>
->>>>>>> 7dfdd7db7 (Add stakeholder validation error)
                 )}
             </div>
         </div>
