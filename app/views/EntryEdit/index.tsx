@@ -94,7 +94,7 @@ import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 
 import getSchema, { defaultFormValues, PartialEntryType, PartialFormType } from '#components/entry/schema';
 import { Entry, EntryInput as EntryInputType, Framework } from '#components/entry/types';
-import { createDefaultAttributes } from './utils';
+import { createDefaultAttributes } from '#components/LeftPaneEntries/utils';
 
 import styles from './styles.css';
 
