@@ -1,25 +1,16 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { listToGroupList, _cs } from '@togglecorp/fujs';
 import { ContainerCard, ListView } from '@the-deep/deep-ui';
-import { SetBaseValueArg, Error, getErrorString } from '@togglecorp/toggle-form';
+import { Error, getErrorString, SetBaseValueArg } from '@togglecorp/toggle-form';
 
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import StakeholderList from '#views/ProjectEdit/ProjectDetailsForm/StakeholderList';
 import { ProjectOrganizationTypeEnum } from '#generated/types';
 import { BasicOrganization } from '#types';
-import { BasicProjectOrganization, PartialFormType } from '#components/AssessmentRegistryForm/useFormOptions';
+import { BasicProjectOrganization, PartialFormType } from '#components/AssessmentRegistryForm/formSchema';
 import { getErrorObject } from '#components/framework/AttributeInput';
 
 import styles from './styles.css';
-
-type Value = PartialFormType;
-interface Props {
-    className: string;
-    value: Value;
-    error: Error<Value>;
-    setValue: (value: SetBaseValueArg<Value>) => void;
-    loading: boolean;
-}
 
 interface StakeholderType {
     id: ProjectOrganizationTypeEnum;
@@ -56,6 +47,14 @@ const stakeholderTypes: StakeholderType[] = [
 ];
 
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
+
+interface Props {
+    className: string;
+    value: PartialFormType;
+    error: Error<PartialFormType>;
+    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
+    loading: boolean;
+}
 
 function StakeholderForm(props: Props) {
     const {
