@@ -22,7 +22,7 @@ import LeftPaneEntries from '#components/LeftPaneEntries';
 import AssessmentRegistryForm from '#components/AssessmentRegistryForm';
 import { Entry, EntryInput as EntryInputType } from '#components/entry/types';
 import { ORGANIZATION_FRAGMENT, ENTRY_FRAGMENT } from '#gqlFragments';
-import { initialValue, schema } from '#components/AssessmentRegistryForm/useFormOptions';
+import { initialValue, schema } from '#components/AssessmentRegistryForm/formSchema';
 import {
     AssessmentRegistryCreateInputType,
     CreateAssessmentRegistryMutation,
@@ -343,6 +343,7 @@ function EditAry(props: Props) {
     );
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     // NOTE: Remove after handel empty list by server side
     // React.useMemo(() => (
@@ -369,6 +370,8 @@ function EditAry(props: Props) {
     // ), [setValue, value]);
 
 >>>>>>> 7dfdd7db7 (Add stakeholder validation error)
+=======
+>>>>>>> 813a87cc4 (Move interface and and rename file name)
     return (
         <div className={_cs(className, styles.editAssessment)}>
             <SubNavbar
