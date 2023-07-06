@@ -19,10 +19,10 @@ import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
 import LeftPaneEntries from '#components/LeftPaneEntries';
-import AssessmentRegistryForm from '#components/AssessmentRegistryForm';
+import AssessmentRegistryForm from '#views/AssessmentRegistryForm';
 import { Entry, EntryInput as EntryInputType } from '#components/entry/types';
 import { ORGANIZATION_FRAGMENT, ENTRY_FRAGMENT } from '#gqlFragments';
-import { initialValue, schema } from '#components/AssessmentRegistryForm/formSchema';
+import { initialValue, schema } from '#views/AssessmentRegistryForm/formSchema';
 import {
     AssessmentRegistryCreateInputType,
     CreateAssessmentRegistryMutation,
