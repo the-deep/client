@@ -7,7 +7,7 @@ import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import StakeholderList from '#views/ProjectEdit/ProjectDetailsForm/StakeholderList';
 import { ProjectOrganizationTypeEnum } from '#generated/types';
 import { BasicOrganization } from '#types';
-import { BasicProjectOrganization, PartialFormType } from '#components/AssessmentRegistryForm/formSchema';
+import { BasicProjectOrganization, PartialFormType } from '#views/AssessmentRegistryForm/formSchema';
 import { getErrorObject } from '#components/framework/AttributeInput';
 
 import styles from './styles.css';
