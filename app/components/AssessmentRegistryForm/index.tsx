@@ -8,7 +8,7 @@ import {
 import { EntriesAsList, Error, SetBaseValueArg } from '@togglecorp/toggle-form';
 
 import MetadataForm from './MetadataForm';
-import { PartialFormType } from './useFormOptions';
+import { PartialFormType } from './formSchema';
 import styles from './styles.css';
 
 type TabOptions = 'metadata' | 'documents' | 'focus' | 'methodology' | 'summary' | 'score' | 'cna' | undefined;

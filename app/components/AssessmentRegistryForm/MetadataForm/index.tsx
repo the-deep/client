@@ -23,7 +23,7 @@ import RegionMultiSelectInput, {
     BasicRegion,
 } from '#components/selections/RegionMultiSelectInput';
 
-import { PartialFormType } from '../useFormOptions';
+import { PartialFormType } from '../formSchema';
 import StakeholderForm from './StakeholderForm';
 import styles from './styles.css';
 
@@ -86,12 +86,11 @@ const GET_METADATA_OPTIONS = gql`
     }
 `;
 
-type Value = PartialFormType;
 interface Props {
-    value: Value;
-    setFieldValue: (...entries: EntriesAsList<Value>) => void;
-    setValue: (value: SetBaseValueArg<Value>) => void;
-    error: Error<Value>;
+    value: PartialFormType;
+    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
+    error: Error<PartialFormType>;
 }
 
 function MetadataForm(props: Props) {

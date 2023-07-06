@@ -8,7 +8,7 @@ import {
 
 import { IoIosContacts } from 'react-icons/io';
 import Avatar from '#components/Avatar';
-
+import NonFieldError from '#components/NonFieldError';
 import { BasicOrganization } from '#types';
 
 import styles from './styles.css';
@@ -106,7 +106,7 @@ function StakeholderList(props: Props) {
                 emptyMessage="No organizations were added"
                 messageShown
             />
-            <div className={styles.error}>{error}</div>
+            <NonFieldError className={styles.error} error={error} />
         </ContainerCard>
     );
 }
