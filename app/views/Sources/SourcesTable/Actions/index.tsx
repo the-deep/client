@@ -276,7 +276,7 @@ function Actions<T extends string>(props: Props<T>) {
                     <SmartButtonLikeLink
                         className={styles.button}
                         variant="secondary"
-                        title={hasAssessment ? 'Edit assessment' : 'Add assessment'}
+                        title="Edit assessment"
                         disabled={disabled}
                         route={routes.newAssessmentEdit}
                         attrs={{

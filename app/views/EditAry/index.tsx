@@ -192,6 +192,8 @@ function EditAry(props: Props) {
     const leadId = new URL(window.location.href).searchParams.get('source') ?? undefined;
     const { project } = useContext(ProjectContext);
 
+    const isNewAssessment = isDefined(leadId);
+
     const history = useHistory();
 
     const projectId = project ? project.id : undefined;
@@ -218,6 +220,20 @@ function EditAry(props: Props) {
                 if (!leadFromResponse) {
                     return;
                 }
+                const assessmentIdFromLead = leadFromResponse.assessmentId;
+
+                // NOTE: If there is already an assessment associated with the
+                // lead, we redirect to its appropriate edit page
+                if (isDefined(assessmentIdFromLead)) {
+                    const path = generatePath(
+                        routes.newAssessmentEdit.path,
+                        {
+                            assessmentId: assessmentIdFromLead,
+                            projectId,
+                        },
+                    );
+                    history.push(path);
+                }
                 const imagesMap = listToMap(
                     leadFromResponse.entries
                         ?.map((entry) => entry.image)
@@ -230,27 +246,6 @@ function EditAry(props: Props) {
         },
     );
 
-    const isNewAssessment = useMemo(() => {
-        if (isDefined(leadId)) {
-            const assessmentIdFromLead = entriesForLead?.project?.lead?.assessmentId;
-
-            if (isDefined(assessmentIdFromLead)) {
-                const path = generatePath(
-                    routes.newAssessmentEdit.path,
-                    { assessmentId: assessmentIdFromLead },
-                );
-                history.push(path);
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }, [
-        entriesForLead?.project?.lead?.assessmentId,
-        history,
-        leadId,
-    ]);
-
     const variablesForAssessmentEntries = useMemo(
         (): EntriesFromAssessmentQueryVariables | undefined => (
             (assessmentId && projectId) ? { projectId, assessmentId } : undefined
@@ -259,12 +254,13 @@ function EditAry(props: Props) {
             assessmentId,
         ],
     );
+
     const {
         data: entriesFromAssessment,
     } = useQuery<EntriesFromAssessmentQuery, EntriesFromAssessmentQueryVariables>(
         ENTRIES_FROM_ASSESSMENT,
         {
-            skip: isNewAssessment || isNotDefined(variablesForAssessmentEntries),
+            skip: isNotDefined(variablesForAssessmentEntries),
             variables: variablesForAssessmentEntries,
             onCompleted: (response) => {
                 const leadFromResponse = response?.project?.assessmentRegistry?.lead;
@@ -286,7 +282,7 @@ function EditAry(props: Props) {
     );
 
     const leadIdFromAssessment = entriesFromAssessment?.project?.assessmentRegistry?.lead?.id;
-    const leadIdSafe = isNewAssessment ? leadId : leadIdFromAssessment;
+    const leadIdSafe = leadIdFromAssessment ?? leadId;
     const entries = isNewAssessment
         ? entriesForLead?.project?.lead?.entries
         : entriesFromAssessment?.project?.assessmentRegistry?.lead?.entries;
