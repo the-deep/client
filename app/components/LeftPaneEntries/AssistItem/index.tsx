@@ -59,8 +59,10 @@ import {
     createSelectAttr,
     createMultiSelectAttr,
     createGeoAttr,
-    createDefaultAttributes,
 } from './utils';
+import {
+    createDefaultAttributes,
+} from '../utils';
 
 import styles from './styles.css';
 
