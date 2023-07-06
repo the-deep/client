@@ -218,7 +218,7 @@ function EditAry(props: Props) {
     const history = useHistory();
     const isNewAssessment = isDefined(leadId);
 
-    const projectId = project ? project.id : undefined;
+    const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo(
         (): LeadEntriesForAryQueryVariables | undefined => (
             (leadId && projectId) ? { projectId, leadId } : undefined
