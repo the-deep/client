@@ -1,8 +1,8 @@
 .metadata-form {
     display: grid;
     grid-column: auto;
-    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-    gap: var(--dui-spacing-super-large);
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--dui-spacing-extra-large);
     padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
 
     .form-element {
