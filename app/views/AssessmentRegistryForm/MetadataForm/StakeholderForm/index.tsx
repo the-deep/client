@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { isDefined, listToGroupList, mapToList, _cs } from '@togglecorp/fujs';
+import { listToGroupList, _cs } from '@togglecorp/fujs';
 import { ContainerCard, ListView } from '@the-deep/deep-ui';
 import { Error, getErrorString, SetBaseValueArg } from '@togglecorp/toggle-form';
 
@@ -129,7 +129,7 @@ function StakeholderForm(props: Props) {
                 return [];
             });
         },
-        [value, stakeholderTypes],
+        [value],
     );
 
     return (
