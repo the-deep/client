@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { listToGroupList, _cs } from '@togglecorp/fujs';
+import { isDefined, listToGroupList, mapToList, _cs } from '@togglecorp/fujs';
 import { ContainerCard, ListView } from '@the-deep/deep-ui';
 import { Error, getErrorString, SetBaseValueArg } from '@togglecorp/toggle-form';
 
@@ -64,7 +64,6 @@ function StakeholderForm(props: Props) {
         loading,
         error: riskyError,
     } = props;
-    const [organizations, setOrganizations] = useState<BasicProjectOrganization[] | undefined>([]);
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
 
     const error = getErrorObject(riskyError);
@@ -91,7 +90,6 @@ function StakeholderForm(props: Props) {
 
     const handleOrganizationChange = useCallback(
         (values: BasicProjectOrganization[] | undefined) => {
-            setOrganizations(values);
             const groupedStakeholders = listToGroupList(
                 (values ?? []).filter((org) => org.organizationType),
                 (o) => o.organizationType,
@@ -107,6 +105,31 @@ function StakeholderForm(props: Props) {
                 governments: groupedStakeholders.GOVERNMENT ?? undefined,
             });
         }, [value, setValue],
+    );
+
+    const organizations = useMemo(
+        () => {
+            const stakeholderValueOnly = {
+                leadOrganizations: value.leadOrganizations,
+                internationalPartners: value.internationalPartners,
+                nationalPartners: value.nationalPartners,
+                donors: value.donors,
+                governments: value.governments,
+            };
+            return Object.entries(stakeholderValueOnly).flatMap(([key, val]) => {
+                if (val) {
+                    const matchedOrganizationData = stakeholderTypes.find((d) => d.formId === key);
+                    if (matchedOrganizationData) {
+                        return val.map((organization) => ({
+                            organization,
+                            organizationType: matchedOrganizationData.id,
+                        }));
+                    }
+                }
+                return [];
+            });
+        },
+        [value, stakeholderTypes],
     );
 
     return (
