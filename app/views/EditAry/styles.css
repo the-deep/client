@@ -11,13 +11,16 @@
     .container {
         display: flex;
         flex-grow: 1;
+        overflow: auto;
 
         .left-pane {
             flex-shrink: 0;
             width: calc(16rem + 16vw);
         }
+
         .form {
             flex-grow: 1;
+            border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         }
     }
 }
