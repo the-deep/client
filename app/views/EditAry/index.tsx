@@ -327,7 +327,10 @@ function EditAry(props: Props) {
                     createAssessmentRegistry({
                         variables: {
                             projectId,
-                            data: val as AssessmentRegistryCreateInputType,
+                            data: {
+                                ...val,
+                                lead: leadId,
+                            } as AssessmentRegistryCreateInputType,
                         },
                     });
                 },
@@ -339,6 +342,7 @@ function EditAry(props: Props) {
             projectId,
             setError,
             validate,
+            leadId,
         ],
     );
 
