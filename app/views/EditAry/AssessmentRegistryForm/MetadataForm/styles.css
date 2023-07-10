@@ -6,8 +6,10 @@
     padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
 
     .form-element {
+        display: flex;
+        flex-direction: column;
         grid-row: 1;
-        gap: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-extra-small);
     }
 
     .stakeholder-form {
