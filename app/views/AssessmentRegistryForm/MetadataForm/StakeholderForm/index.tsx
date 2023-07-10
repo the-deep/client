@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { listToGroupList, _cs } from '@togglecorp/fujs';
+import { isDefined, listToGroupList, _cs } from '@togglecorp/fujs';
 import { ContainerCard, ListView } from '@the-deep/deep-ui';
 import { Error, getErrorString, SetBaseValueArg } from '@togglecorp/toggle-form';
 
@@ -98,37 +98,38 @@ function StakeholderForm(props: Props) {
 
             setValue({
                 ...value,
-                donors: groupedStakeholders.DONOR ?? undefined,
-                leadOrganizations: groupedStakeholders.LEAD_ORGANIZATION ?? undefined,
-                nationalPartners: groupedStakeholders.NATIONAL_PARTNER ?? undefined,
-                internationalPartners: groupedStakeholders.INTERNATIONAL_PARTNER ?? undefined,
-                governments: groupedStakeholders.GOVERNMENT ?? undefined,
+                donors: groupedStakeholders.DONOR,
+                leadOrganizations: groupedStakeholders.LEAD_ORGANIZATION,
+                nationalPartners: groupedStakeholders.NATIONAL_PARTNER,
+                internationalPartners: groupedStakeholders.INTERNATIONAL_PARTNER,
+                governments: groupedStakeholders.GOVERNMENT,
             });
         }, [value, setValue],
     );
 
     const organizations = useMemo(
-        () => {
-            const stakeholderValueOnly = {
-                leadOrganizations: value.leadOrganizations,
-                internationalPartners: value.internationalPartners,
-                nationalPartners: value.nationalPartners,
-                donors: value.donors,
-                governments: value.governments,
-            };
-            return Object.entries(stakeholderValueOnly).flatMap(([key, val]) => {
-                if (val) {
-                    const matchedOrganizationData = stakeholderTypes.find((d) => d.formId === key);
-                    if (matchedOrganizationData) {
-                        return val.map((organization) => ({
-                            organization,
-                            organizationType: matchedOrganizationData.id,
-                        }));
-                    }
-                }
-                return [];
-            });
-        },
+        () => ([
+            value.leadOrganizations?.map((id) => ({
+                organizationType: 'LEAD_ORGANIZATION' as const,
+                organization: id,
+            })),
+            value.internationalPartners?.map((id) => ({
+                organizationType: 'INTERNATIONAL_PARTNER' as const,
+                organization: id,
+            })),
+            value.nationalPartners?.map((id) => ({
+                organizationType: 'NATIONAL_PARTNER' as const,
+                organization: id,
+            })),
+            value.donors?.map((id) => ({
+                organizationType: 'DONOR' as const,
+                organization: id,
+            })),
+            value.governments?.map((id) => ({
+                organizationType: 'GOVERNMENT' as const,
+                organization: id,
+            })),
+        ]).filter(isDefined).flat(),
         [value],
     );
 
