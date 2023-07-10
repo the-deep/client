@@ -109,25 +109,25 @@ function StakeholderForm(props: Props) {
 
     const organizations = useMemo(
         () => ([
-            value.leadOrganizations?.map((id) => ({
+            value.leadOrganizations?.map((orgId) => ({
                 organizationType: 'LEAD_ORGANIZATION' as const,
-                organization: id,
+                organization: orgId,
             })),
-            value.internationalPartners?.map((id) => ({
+            value.internationalPartners?.map((orgId) => ({
                 organizationType: 'INTERNATIONAL_PARTNER' as const,
-                organization: id,
+                organization: orgId,
             })),
-            value.nationalPartners?.map((id) => ({
+            value.nationalPartners?.map((orgId) => ({
                 organizationType: 'NATIONAL_PARTNER' as const,
-                organization: id,
+                organization: orgId,
             })),
-            value.donors?.map((id) => ({
+            value.donors?.map((orgId) => ({
                 organizationType: 'DONOR' as const,
-                organization: id,
+                organization: orgId,
             })),
-            value.governments?.map((id) => ({
+            value.governments?.map((orgId) => ({
                 organizationType: 'GOVERNMENT' as const,
-                organization: id,
+                organization: orgId,
             })),
         ]).filter(isDefined).flat(),
         [value],
