@@ -46,9 +46,9 @@ export const schema: FormSchema = {
 
         // NOTE: uncomment on other form
         locations: [defaultEmptyArrayType],
-        focuses: [defaultEmptyArrayType],
-        sectors: [defaultEmptyArrayType],
-        protectionInfoMgmts: [defaultEmptyArrayType],
+        // focuses: [defaultEmptyArrayType],
+        // sectors: [defaultEmptyArrayType],
+        // protectionInfoMgmts: [defaultEmptyArrayType],
         methodologyAttributes: [defaultEmptyArrayType],
         additionalDocuments: [defaultEmptyArrayType],
         scoreRatings: [defaultEmptyArrayType],
