@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { isDefined, listToGroupList, _cs } from '@togglecorp/fujs';
 import { ContainerCard, ListView } from '@the-deep/deep-ui';
 import { Error, getErrorString, SetBaseValueArg } from '@togglecorp/toggle-form';
@@ -9,7 +9,7 @@ import { ProjectOrganizationTypeEnum } from '#generated/types';
 import { BasicOrganization } from '#types';
 import { getErrorObject } from '#components/framework/AttributeInput';
 
-import { BasicProjectOrganization, PartialFormType } from '../../../AssessmentRegistryForm/formSchema';
+import { BasicProjectOrganization, PartialFormType } from '../../formSchema';
 
 import styles from './styles.css';
 
@@ -55,6 +55,8 @@ interface Props {
     error: Error<PartialFormType>;
     setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     loading: boolean;
+    setStakeholderOptions: React.Dispatch<React.SetStateAction<BasicOrganization[]>>;
+    stakeholderOptions: BasicOrganization[];
 }
 
 function StakeholderForm(props: Props) {
@@ -64,8 +66,9 @@ function StakeholderForm(props: Props) {
         setValue,
         loading,
         error: riskyError,
+        stakeholderOptions,
+        setStakeholderOptions,
     } = props;
-    const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
 
     const error = getErrorObject(riskyError);
     const errorMap = useMemo(

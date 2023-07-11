@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import {
     DateInput,
@@ -26,6 +26,7 @@ import RegionMultiSelectInput, {
 import { PartialFormType } from '../formSchema';
 import StakeholderForm from './StakeholderForm';
 import styles from './styles.css';
+import { BasicOrganization } from '#types';
 
 const GET_METADATA_OPTIONS = gql`
     query GetOptions {
@@ -91,6 +92,10 @@ interface Props {
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     error: Error<PartialFormType>;
+    setRegionOptions?: React.Dispatch<React.SetStateAction<BasicRegion[] | null | undefined>>;
+    regionOptions?: BasicRegion[] | null;
+    setStakeholderOptions: React.Dispatch<React.SetStateAction<BasicOrganization[]>>;
+    stakeholderOptions: BasicOrganization[];
 }
 
 function MetadataForm(props: Props) {
@@ -99,13 +104,12 @@ function MetadataForm(props: Props) {
         setFieldValue,
         setValue,
         error: riskyError,
-    } = props;
-    const error = getErrorObject(riskyError);
-
-    const [
         regionOptions,
         setRegionOptions,
-    ] = useState<BasicRegion[] | undefined | null>();
+        stakeholderOptions,
+        setStakeholderOptions,
+    } = props;
+    const error = getErrorObject(riskyError);
 
     const {
         data,
@@ -287,6 +291,8 @@ function MetadataForm(props: Props) {
                 setValue={setValue}
                 loading={loading}
                 error={error}
+                stakeholderOptions={stakeholderOptions}
+                setStakeholderOptions={setStakeholderOptions}
             />
         </div>
     );
