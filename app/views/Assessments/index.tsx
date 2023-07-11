@@ -54,10 +54,6 @@ const ASSESSMENT_LIST = gql`
                         id
                         title
                     }
-                    leadGroup {
-                        id
-                        title
-                    }
                     createdAt
                     createdBy {
                         displayName
@@ -132,7 +128,6 @@ function Assessments(props: Props) {
                 assessmentId,
                 projectId: project?.id,
                 leadId: assessment.lead?.id,
-                leadGroupId: assessment.leadGroup?.id,
                 onDeleteSuccess: refetch,
                 disabled: !canEditEntry,
             }),
@@ -142,7 +137,7 @@ function Assessments(props: Props) {
             createStringColumn<Assessment, string>(
                 'title',
                 'Title',
-                (item) => item?.lead?.title ?? item?.leadGroup?.title,
+                (item) => item?.lead?.title,
             ),
             createStringColumn<Assessment, string>(
                 'type',

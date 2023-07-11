@@ -10,6 +10,8 @@ import { EntriesAsList, Error, SetBaseValueArg } from '@togglecorp/toggle-form';
 import MetadataForm from './MetadataForm';
 import { PartialFormType } from './formSchema';
 import styles from './styles.css';
+import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
+import { BasicOrganization } from '#types';
 
 type TabOptions = 'metadata' | 'documents' | 'focus' | 'methodology' | 'summary' | 'score' | 'cna' | undefined;
 
@@ -19,6 +21,10 @@ interface Props {
     setFieldValue: (...entries: EntriesAsList<Value>) => void;
     setValue: (value: SetBaseValueArg<Value>) => void;
     error: Error<Value>;
+    setRegionOptions?: React.Dispatch<React.SetStateAction<BasicRegion[] | null | undefined>>;
+    regionOptions?: BasicRegion[] | null;
+    setStakeholderOptions: React.Dispatch<React.SetStateAction<BasicOrganization[]>>;
+    stakeholderOptions: BasicOrganization[];
 }
 
 function AssessmentRegistyForm(props: Props) {
@@ -27,6 +33,10 @@ function AssessmentRegistyForm(props: Props) {
         setFieldValue,
         setValue,
         error,
+        regionOptions,
+        setRegionOptions,
+        stakeholderOptions,
+        setStakeholderOptions,
     } = props;
 
     const [activeTab, setActiveTab] = useState<TabOptions>('metadata');
@@ -56,6 +66,10 @@ function AssessmentRegistyForm(props: Props) {
                         setFieldValue={setFieldValue}
                         setValue={setValue}
                         error={error}
+                        regionOptions={regionOptions}
+                        setRegionOptions={setRegionOptions}
+                        stakeholderOptions={stakeholderOptions}
+                        setStakeholderOptions={setStakeholderOptions}
                     />
                 </TabPanel>
                 <TabPanel
