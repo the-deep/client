@@ -11,8 +11,12 @@ import {
     isDefined,
     isNotDefined,
 } from '@togglecorp/fujs';
-import { Button } from '@the-deep/deep-ui';
-import { createSubmitHandler, removeNull, useForm } from '@togglecorp/toggle-form';
+import { Button, useAlert } from '@the-deep/deep-ui';
+import {
+    createSubmitHandler,
+    removeNull,
+    useForm,
+} from '@togglecorp/toggle-form';
 
 import routes from '#base/configs/routes';
 import BackLink from '#components/BackLink';
@@ -29,12 +33,19 @@ import {
     LeadEntriesForAryQueryVariables,
     EntriesFromAssessmentQuery,
     EntriesFromAssessmentQueryVariables,
+    AssessmentDetailQuery,
+    AssessmentDetailQueryVariables,
 } from '#generated/types';
+import {
+    BasicRegion,
+} from '#components/selections/RegionMultiSelectInput';
 
 import AssessmentRegistryForm from './AssessmentRegistryForm';
 import { initialValue, schema } from './AssessmentRegistryForm/formSchema';
 
 import styles from './styles.css';
+import { ObjectError, transformToFormError } from '#base/utils/errorTransform';
+import { BasicOrganization } from '#types';
 
 const LEAD_ENTRIES_FOR_ARY = gql`
     ${ORGANIZATION_FRAGMENT}
@@ -48,11 +59,6 @@ const LEAD_ENTRIES_FOR_ARY = gql`
             lead (id: $leadId){
                 id
                 assessmentId
-                title
-                leadGroup {
-                    id
-                    title
-                }
                 title
                 clientId
                 assignee {
@@ -115,10 +121,6 @@ const ENTRIES_FROM_ASSESSMENT = gql`
                     id
                     assessmentId
                     title
-                    leadGroup {
-                        id
-                        title
-                    }
                     title
                     clientId
                     assignee {
@@ -167,6 +169,79 @@ const ENTRIES_FROM_ASSESSMENT = gql`
     }
 `;
 
+const ASSESSMENT_REGISTRY_DETAIL = gql`
+    query AssessmentDetail (
+        $projectId: ID!,
+        $assessmentId: ID!,
+    ) {
+        project(id: $projectId) {
+            assessmentRegistry(id: $assessmentId) {
+                bgCountries {
+                    id
+                    title
+                }
+                bgCrisisStartDate
+                bgCrisisType
+                bgCrisisTypeDisplay
+                bgPreparedness
+                clientId
+                confidentiality
+                coordinatedJoint
+                dataCollectionEndDate
+                dataCollectionStartDate
+                detailsType
+                family
+                externalSupport
+                frequency
+                id
+                leadOrganizations {
+                    id
+                    title
+                    verified
+                    mergedAs {
+                        title
+                    }
+                }
+                internationalPartners {
+                    id
+                    title
+                    verified
+                    mergedAs {
+                        title
+                    }
+                }
+                nationalPartners {
+                    id
+                    title
+                    verified
+                    mergedAs {
+                        title
+                    }
+                }
+                donors {
+                    id
+                    title
+                    verified
+                    mergedAs {
+                        title
+                    }
+                }
+                governments {
+                    id
+                    title
+                    verified
+                    mergedAs {
+                        title
+                    }
+                }
+                noOfPages
+                publicationDate
+                language
+            }
+        }
+    }
+`;
+
 const CREATE_ASSESEMENT_REGISTRY = gql`
     mutation CreateAssessmentRegistry($projectId:ID!, $data: AssessmentRegistryCreateInputType!) {
         project(id: $projectId) {
@@ -210,6 +285,7 @@ function EditAry(props: Props) {
         error,
         setError,
         validate,
+        setPristine,
     } = useForm(schema, initialValue);
 
     const { assessmentId } = useParams<{ assessmentId: string }>();
@@ -218,6 +294,9 @@ function EditAry(props: Props) {
     const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
     const history = useHistory();
     const isNewAssessment = isDefined(leadId);
+    const alert = useAlert();
+    const [regionOptions, setRegionOptions] = useState<BasicRegion[] | undefined | null>();
+    const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
 
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo(
@@ -302,6 +381,50 @@ function EditAry(props: Props) {
         },
     );
 
+    const variablesForAssessmentDetails = useMemo(
+        (): AssessmentDetailQueryVariables | undefined => (
+            (assessmentId && projectId) ? { projectId, assessmentId } : undefined
+        ), [
+            projectId,
+            assessmentId,
+        ],
+    );
+
+    const {
+        loading: assessmentRegistryDetailLoading,
+    } = useQuery<AssessmentDetailQuery, AssessmentDetailQueryVariables>(
+        ASSESSMENT_REGISTRY_DETAIL,
+        {
+            skip: isNotDefined(variablesForAssessmentDetails),
+            variables: variablesForAssessmentDetails,
+            onCompleted: (response) => {
+                if (response?.project?.assessmentRegistry) {
+                    const result = (response?.project?.assessmentRegistry);
+
+                    setValue({
+                        ...result,
+                        bgCountries: result?.bgCountries?.map((country) => country.id),
+                        leadOrganizations: result?.leadOrganizations.map((leadOrg) => leadOrg.id),
+                        internationalPartners: result.internationalPartners?.map(
+                            (intPartner) => intPartner.id,
+                        ),
+                        nationalPartners: result.nationalPartners?.map((nPartner) => nPartner.id),
+                        donors: result.donors?.map((donor) => donor.id),
+                        governments: result.governments?.map((gov) => gov.id),
+                    });
+                    setRegionOptions(result.bgCountries);
+                    setStakeholderOptions([
+                        ...result.leadOrganizations,
+                        ...result.internationalPartners,
+                        ...result.nationalPartners,
+                        ...result.donors,
+                        ...result.governments,
+                    ]);
+                }
+            },
+        },
+    );
+
     const leadIdFromAssessment = entriesFromAssessment?.project?.assessmentRegistry?.lead?.id;
     const leadIdSafe = leadIdFromAssessment ?? leadId;
     const entries = isNewAssessment
@@ -315,6 +438,51 @@ function EditAry(props: Props) {
         },
     ] = useMutation<CreateAssessmentRegistryMutation, CreateAssessmentRegistryMutationVariables>(
         CREATE_ASSESEMENT_REGISTRY,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.project?.createAssessmentRegistry) {
+                    return;
+                }
+
+                const {
+                    ok,
+                    result,
+                    errors,
+                } = response.project.createAssessmentRegistry;
+
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                    alert.show(
+                        'Failed to create assessment registry.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    if (result?.id) {
+                        setPristine(true);
+                        const editPath = generatePath(
+                            routes.newAssessmentEdit.path,
+                            {
+                                projectId,
+                                assessmentId: result.id,
+                            },
+                        );
+                        history.replace(editPath);
+                    }
+
+                    alert.show(
+                        'Successfully created assessment registry!',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to create assessment registry.',
+                    { variant: 'error' },
+                );
+            },
+        },
     );
 
     const transformedEntries = entries?.map((entry) => transformEntry(entry as Entry));
@@ -362,7 +530,8 @@ function EditAry(props: Props) {
                             name="save"
                             type="submit"
                             onClick={handleSubmit}
-                            disabled={createAssessmentRegistryPending}
+                            disabled={createAssessmentRegistryPending
+                                || assessmentRegistryDetailLoading}
                         >
                             Save
                         </Button>
@@ -386,6 +555,10 @@ function EditAry(props: Props) {
                                 setFieldValue={setFieldValue}
                                 setValue={setValue}
                                 error={error}
+                                regionOptions={regionOptions}
+                                setRegionOptions={setRegionOptions}
+                                stakeholderOptions={stakeholderOptions}
+                                setStakeholderOptions={setStakeholderOptions}
                             />
                         </div>
                     </>

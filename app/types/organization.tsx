@@ -9,7 +9,7 @@ export interface BasicOrganization {
         // NOTE: not extending BasicElement as id can be either string or
         // number depending on where it's used
         title: string;
-    };
+    } | null;
 }
 
 export interface OrganizationType {
