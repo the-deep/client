@@ -394,7 +394,7 @@ function EditAry(props: Props) {
                     ];
 
                     setRegionOptions(result.bgCountries);
-                    setStakeholderOptions(unique(stakeholders));
+                    setStakeholderOptions(unique(stakeholders, (d) => d.id));
                 }
             },
         },
@@ -518,7 +518,10 @@ function EditAry(props: Props) {
                             variables: {
                                 projectId,
                                 id: assessmentRegistryData?.project?.assessmentRegistry.id,
-                                data: val as AssessmentRegistryCreateInputType,
+                                data: {
+                                    ...val,
+                                    lead: assessmentRegistryData.project.assessmentRegistry.lead.id,
+                                } as AssessmentRegistryCreateInputType,
                             },
                         });
                     } else {
@@ -538,6 +541,7 @@ function EditAry(props: Props) {
         },
         [
             assessmentRegistryData?.project?.assessmentRegistry?.id,
+            assessmentRegistryData?.project?.assessmentRegistry?.lead.id,
             updateAssessmentRegistry,
             createAssessmentRegistry,
             projectId,
