@@ -1,0 +1,14 @@
+.statistics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-extra-small);
+
+    .row {
+        display: flex;
+        gap: var(--dui-spacing-extra-small);
+
+        >* {
+            flex-grow: 1;
+        }
+    }
+}
