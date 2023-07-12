@@ -1,24 +1,40 @@
 .dashboard {
     background-color: var(--dui-color-foreground);
-    padding: 0;
+    padding: var(--dui-spacing-extra-large) 0 0;
+
+    .header {
+        padding-right: var(--dui-spacing-super-large);
+        padding-left: var(--dui-spacing-super-large);
+
+        .heading-description {
+            display: flex;
+            align-items: center;
+            gap: var(--dui-spacing-small);
+
+            .date-range-output {
+                flex-grow: 1;
+            }
+        }
+
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(359deg);
+            }
+        }
+
+        .loading {
+            animation: rotation 500ms infinite linear;
+        }
+    }
 
     .content {
         display: flex;
-        flex-grow: 1;
-        padding: 0;
-
-        .iframe {
-            flex-grow: 1;
-            border: 0;
-            object-fit: contain;
-            object-position: center center;
-        }
-
-        .message {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-            justify-content: center;
-        }
+        flex-direction: column;
+        padding-right: var(--dui-spacing-super-large);
+        padding-left: var(--dui-spacing-super-large);
+        gap: var(--dui-spacing-large);
     }
 }
