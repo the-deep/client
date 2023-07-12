@@ -24,7 +24,11 @@ import SubNavbar from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
 import LeftPaneEntries from '#components/LeftPaneEntries';
 import { Entry, EntryInput as EntryInputType } from '#components/entry/types';
-import { ORGANIZATION_FRAGMENT, ENTRY_FRAGMENT } from '#gqlFragments';
+import {
+    ORGANIZATION_FRAGMENT,
+    ENTRY_FRAGMENT,
+    ASSESSMENT_REGISTRY_FRAGMENT,
+} from '#gqlFragments';
 import {
     AssessmentRegistryCreateInputType,
     CreateAssessmentRegistryMutation,
@@ -35,17 +39,17 @@ import {
     EntriesFromAssessmentQueryVariables,
     AssessmentDetailQuery,
     AssessmentDetailQueryVariables,
+    UpdateAssessmentRegistryMutation,
+    UpdateAssessmentRegistryMutationVariables,
 } from '#generated/types';
-import {
-    BasicRegion,
-} from '#components/selections/RegionMultiSelectInput';
+import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
+import { ObjectError, transformToFormError } from '#base/utils/errorTransform';
+import { BasicOrganization } from '#types';
 
 import AssessmentRegistryForm from './AssessmentRegistryForm';
 import { initialValue, schema } from './AssessmentRegistryForm/formSchema';
 
 import styles from './styles.css';
-import { ObjectError, transformToFormError } from '#base/utils/errorTransform';
-import { BasicOrganization } from '#types';
 
 const LEAD_ENTRIES_FOR_ARY = gql`
     ${ORGANIZATION_FRAGMENT}
@@ -170,92 +174,52 @@ const ENTRIES_FROM_ASSESSMENT = gql`
 `;
 
 const ASSESSMENT_REGISTRY_DETAIL = gql`
+    ${ASSESSMENT_REGISTRY_FRAGMENT}
     query AssessmentDetail (
         $projectId: ID!,
         $assessmentId: ID!,
     ) {
         project(id: $projectId) {
             assessmentRegistry(id: $assessmentId) {
-                bgCountries {
-                    id
-                    title
-                }
-                bgCrisisStartDate
-                bgCrisisType
-                bgCrisisTypeDisplay
-                bgPreparedness
-                clientId
-                confidentiality
-                coordinatedJoint
-                dataCollectionEndDate
-                dataCollectionStartDate
-                detailsType
-                family
-                externalSupport
-                frequency
-                id
-                leadOrganizations {
-                    id
-                    title
-                    verified
-                    mergedAs {
-                        title
-                    }
-                }
-                internationalPartners {
-                    id
-                    title
-                    verified
-                    mergedAs {
-                        title
-                    }
-                }
-                nationalPartners {
-                    id
-                    title
-                    verified
-                    mergedAs {
-                        title
-                    }
-                }
-                donors {
-                    id
-                    title
-                    verified
-                    mergedAs {
-                        title
-                    }
-                }
-                governments {
-                    id
-                    title
-                    verified
-                    mergedAs {
-                        title
-                    }
-                }
-                noOfPages
-                publicationDate
-                language
+            ...AssessmentRegistryResponse,
             }
         }
     }
 `;
 
 const CREATE_ASSESEMENT_REGISTRY = gql`
+    ${ASSESSMENT_REGISTRY_FRAGMENT}
     mutation CreateAssessmentRegistry($projectId:ID!, $data: AssessmentRegistryCreateInputType!) {
         project(id: $projectId) {
             createAssessmentRegistry( data: $data) {
                 ok
                 errors
                 result {
-                    id
+                    ...AssessmentRegistryResponse,
                 }
             }
         }
     }
 `;
 
+const UPDATE_ASSESEMENT_REGISTRY = gql`
+    ${ASSESSMENT_REGISTRY_FRAGMENT}
+    mutation UpdateAssessmentRegistry(
+        $projectId:ID!,
+        $data: AssessmentRegistryCreateInputType!,
+        $id: ID!
+    ) {
+        project(id: $projectId) {
+            updateAssessmentRegistry(data: $data, id: $id) {
+                ok
+                errors
+                result {
+                    ...AssessmentRegistryResponse,
+                }
+            }
+        }
+    }
+`;
 export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 
 function transformEntry(entry: Entry): EntryInputType {
@@ -391,7 +355,8 @@ function EditAry(props: Props) {
     );
 
     const {
-        loading: assessmentRegistryDetailLoading,
+        data: assessmentRegistryData,
+        loading: assessmentRegistryDataLoading,
     } = useQuery<AssessmentDetailQuery, AssessmentDetailQueryVariables>(
         ASSESSMENT_REGISTRY_DETAIL,
         {
@@ -403,15 +368,17 @@ function EditAry(props: Props) {
 
                     setValue({
                         ...result,
+                        lead: result?.lead?.id,
                         bgCountries: result?.bgCountries?.map((country) => country.id),
-                        leadOrganizations: result?.leadOrganizations.map((leadOrg) => leadOrg.id),
-                        internationalPartners: result.internationalPartners?.map(
+                        leadOrganizations: result?.leadOrganizations?.map((leadOrg) => leadOrg.id),
+                        internationalPartners: result?.internationalPartners?.map(
                             (intPartner) => intPartner.id,
                         ),
-                        nationalPartners: result.nationalPartners?.map((nPartner) => nPartner.id),
-                        donors: result.donors?.map((donor) => donor.id),
-                        governments: result.governments?.map((gov) => gov.id),
+                        nationalPartners: result?.nationalPartners?.map((nPartner) => nPartner.id),
+                        donors: result?.donors?.map((donor) => donor.id),
+                        governments: result?.governments?.map((gov) => gov.id),
                     });
+
                     setRegionOptions(result.bgCountries);
                     setStakeholderOptions([
                         ...result.leadOrganizations,
@@ -484,6 +451,51 @@ function EditAry(props: Props) {
             },
         },
     );
+    const [
+        updateAssessmentRegistry,
+        {
+            loading: updateAssessmentRegistryPending,
+        },
+    ] = useMutation<UpdateAssessmentRegistryMutation, UpdateAssessmentRegistryMutationVariables>(
+        UPDATE_ASSESEMENT_REGISTRY,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.project?.updateAssessmentRegistry) {
+                    return;
+                }
+
+                const {
+                    ok,
+                    result,
+                    errors,
+                } = response.project.updateAssessmentRegistry;
+
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                    alert.show(
+                        'Failed to update assessment registry.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    if (result?.id) {
+                        setPristine(true);
+                    }
+
+                    alert.show(
+                        'Successfully updated assessment registry!',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to update assessment registry.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const transformedEntries = entries?.map((entry) => transformEntry(entry as Entry));
 
@@ -493,20 +505,32 @@ function EditAry(props: Props) {
                 validate,
                 setError,
                 (val) => {
-                    createAssessmentRegistry({
-                        variables: {
-                            projectId,
-                            data: {
-                                ...val,
-                                lead: leadId,
-                            } as AssessmentRegistryCreateInputType,
-                        },
-                    });
+                    if (assessmentRegistryData?.project?.assessmentRegistry?.id) {
+                        updateAssessmentRegistry({
+                            variables: {
+                                projectId,
+                                id: assessmentRegistryData?.project?.assessmentRegistry.id,
+                                data: val as AssessmentRegistryCreateInputType,
+                            },
+                        });
+                    } else {
+                        createAssessmentRegistry({
+                            variables: {
+                                projectId,
+                                data: {
+                                    ...val,
+                                    lead: leadId,
+                                } as AssessmentRegistryCreateInputType,
+                            },
+                        });
+                    }
                 },
             );
             submit();
         },
         [
+            assessmentRegistryData?.project?.assessmentRegistry?.id,
+            updateAssessmentRegistry,
             createAssessmentRegistry,
             projectId,
             setError,
@@ -531,7 +555,8 @@ function EditAry(props: Props) {
                             type="submit"
                             onClick={handleSubmit}
                             disabled={createAssessmentRegistryPending
-                                || assessmentRegistryDetailLoading}
+                                || assessmentRegistryDataLoading
+                                || updateAssessmentRegistryPending}
                         >
                             Save
                         </Button>

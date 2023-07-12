@@ -328,3 +328,72 @@ export const BORDER_STYLE_FRAGMENT = gql`
         width
     }
 `;
+
+export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
+    fragment AssessmentRegistryResponse on AssessmentRegistryType {
+        bgCountries {
+            id
+            title
+        }
+        bgCrisisStartDate
+        bgCrisisType
+        bgCrisisTypeDisplay
+        bgPreparedness
+        clientId
+        confidentiality
+        coordinatedJoint
+        dataCollectionEndDate
+        dataCollectionStartDate
+        detailsType
+        family
+        externalSupport
+        frequency
+        id
+        lead {
+            id
+        }
+        leadOrganizations {
+            id
+            title
+            verified
+            mergedAs {
+                title
+            }
+        }
+        internationalPartners {
+            id
+            title
+            verified
+            mergedAs {
+                title
+            }
+        }
+        nationalPartners {
+            id
+            title
+            verified
+            mergedAs {
+                title
+            }
+        }
+        donors {
+            id
+            title
+            verified
+            mergedAs {
+                title
+            }
+        }
+        governments {
+            id
+            title
+            verified
+            mergedAs {
+                title
+            }
+        }
+        noOfPages
+        publicationDate
+        language
+    }
+`;
