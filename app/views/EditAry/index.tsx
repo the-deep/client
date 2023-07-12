@@ -10,6 +10,7 @@ import {
     listToMap,
     isDefined,
     isNotDefined,
+    unique,
 } from '@togglecorp/fujs';
 import { Button, useAlert } from '@the-deep/deep-ui';
 import {
@@ -180,6 +181,7 @@ const ASSESSMENT_REGISTRY_DETAIL = gql`
         $assessmentId: ID!,
     ) {
         project(id: $projectId) {
+            id,
             assessmentRegistry(id: $assessmentId) {
             ...AssessmentRegistryResponse,
             }
@@ -253,7 +255,7 @@ function EditAry(props: Props) {
     } = useForm(schema, initialValue);
 
     const { assessmentId } = useParams<{ assessmentId: string }>();
-    const leadId = new URL(window.location.href).searchParams.get('source') ?? undefined;
+    const leadId = new URL(window.location.href).searchParams.get('source');
     const { project } = useContext(ProjectContext);
     const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
     const history = useHistory();
@@ -347,7 +349,8 @@ function EditAry(props: Props) {
 
     const variablesForAssessmentDetails = useMemo(
         (): AssessmentDetailQueryVariables | undefined => (
-            (assessmentId && projectId) ? { projectId, assessmentId } : undefined
+            (isDefined(assessmentId) && isDefined(projectId))
+                ? { projectId, assessmentId } : undefined
         ), [
             projectId,
             assessmentId,
@@ -367,12 +370,11 @@ function EditAry(props: Props) {
                     return;
                 }
 
-                const { assessmentRegistry: result } = response.project;
-
+                const result = removeNull(response?.project?.assessmentRegistry);
                 if (isDefined(result)) {
                     setValue({
                         ...result,
-                        lead: result.lead?.id,
+                        lead: result.lead.id,
                         bgCountries: result.bgCountries.map((country) => country.id),
                         leadOrganizations: result.leadOrganizations.map((leadOrg) => leadOrg.id),
                         internationalPartners: result.internationalPartners.map(
@@ -383,14 +385,16 @@ function EditAry(props: Props) {
                         governments: result.governments.map((gov) => gov.id),
                     });
 
-                    setRegionOptions(result.bgCountries);
-                    setStakeholderOptions([
+                    const stakeholders = [
                         ...result.leadOrganizations,
                         ...result.internationalPartners,
                         ...result.nationalPartners,
                         ...result.donors,
                         ...result.governments,
-                    ]);
+                    ];
+
+                    setRegionOptions(result.bgCountries);
+                    setStakeholderOptions(unique(stakeholders));
                 }
             },
         },
