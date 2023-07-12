@@ -327,9 +327,6 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         governments {
             ...OrganizationGeneralResponse,
         }
-        project {
-            id
-        }
         noOfPages
         publicationDate
         language

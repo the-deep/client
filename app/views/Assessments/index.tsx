@@ -140,11 +140,6 @@ function Assessments(props: Props) {
                 (item) => item.lead.title,
             ),
             createStringColumn<Assessment, string>(
-                'type',
-                'Type',
-                (item) => (item.lead.id ? 'Source' : 'Source Group'),
-            ),
-            createStringColumn<Assessment, string>(
                 'created_by',
                 'Created By',
                 (item) => item?.createdBy?.displayName,
