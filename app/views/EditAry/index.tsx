@@ -363,20 +363,24 @@ function EditAry(props: Props) {
             skip: isNotDefined(variablesForAssessmentDetails),
             variables: variablesForAssessmentDetails,
             onCompleted: (response) => {
-                if (response?.project?.assessmentRegistry) {
-                    const result = (response?.project?.assessmentRegistry);
+                if (!response || !response.project?.assessmentRegistry) {
+                    return;
+                }
 
+                const { assessmentRegistry: result } = response.project;
+
+                if (isDefined(result)) {
                     setValue({
                         ...result,
-                        lead: result?.lead?.id,
-                        bgCountries: result?.bgCountries?.map((country) => country.id),
-                        leadOrganizations: result?.leadOrganizations?.map((leadOrg) => leadOrg.id),
-                        internationalPartners: result?.internationalPartners?.map(
+                        lead: result.lead?.id,
+                        bgCountries: result.bgCountries.map((country) => country.id),
+                        leadOrganizations: result.leadOrganizations.map((leadOrg) => leadOrg.id),
+                        internationalPartners: result.internationalPartners.map(
                             (intPartner) => intPartner.id,
                         ),
-                        nationalPartners: result?.nationalPartners?.map((nPartner) => nPartner.id),
-                        donors: result?.donors?.map((donor) => donor.id),
-                        governments: result?.governments?.map((gov) => gov.id),
+                        nationalPartners: result.nationalPartners.map((nPartner) => nPartner.id),
+                        donors: result.donors.map((donor) => donor.id),
+                        governments: result.governments.map((gov) => gov.id),
                     });
 
                     setRegionOptions(result.bgCountries);
