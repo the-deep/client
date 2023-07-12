@@ -289,6 +289,7 @@ export const LAST_ACTIVE_PROJECT_FRAGMENT = gql`
 `;
 
 export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
+    ${ORGANIZATION_FRAGMENT}
     fragment AssessmentRegistryResponse on AssessmentRegistryType {
         bgCountries {
             id
@@ -312,44 +313,22 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             id
         }
         leadOrganizations {
-            id
-            title
-            verified
-            mergedAs {
-                title
-            }
+            ...OrganizationGeneralResponse,
         }
         internationalPartners {
-            id
-            title
-            verified
-            mergedAs {
-                title
-            }
+            ...OrganizationGeneralResponse,
         }
         nationalPartners {
-            id
-            title
-            verified
-            mergedAs {
-                title
-            }
+            ...OrganizationGeneralResponse,
         }
         donors {
-            id
-            title
-            verified
-            mergedAs {
-                title
-            }
+            ...OrganizationGeneralResponse,
         }
         governments {
+            ...OrganizationGeneralResponse,
+        }
+        project {
             id
-            title
-            verified
-            mergedAs {
-                title
-            }
         }
         noOfPages
         publicationDate

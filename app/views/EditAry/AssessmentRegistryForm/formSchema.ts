@@ -23,6 +23,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 export const initialValue: PartialFormType = {};
 export const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
+        lead: [],
         bgCountries: [requiredCondition],
         bgCrisisType: [requiredCondition],
         bgCrisisStartDate: [requiredCondition],
@@ -43,7 +44,6 @@ export const schema: FormSchema = {
         donors: [defaultEmptyArrayType],
         nationalPartners: [defaultEmptyArrayType],
         governments: [defaultEmptyArrayType],
-        lead: [],
 
         // NOTE: uncomment on other form
         locations: [defaultEmptyArrayType],

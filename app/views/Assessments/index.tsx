@@ -127,7 +127,7 @@ function Assessments(props: Props) {
             cellRendererParams: (assessmentId, assessment) => ({
                 assessmentId,
                 projectId: project?.id,
-                leadId: assessment.lead?.id,
+                leadId: assessment.lead.id,
                 onDeleteSuccess: refetch,
                 disabled: !canEditEntry,
             }),
@@ -137,12 +137,12 @@ function Assessments(props: Props) {
             createStringColumn<Assessment, string>(
                 'title',
                 'Title',
-                (item) => item?.lead?.title,
+                (item) => item.lead.title,
             ),
             createStringColumn<Assessment, string>(
                 'type',
                 'Type',
-                (item) => (item?.lead?.id ? 'Source' : 'Source Group'),
+                (item) => (item.lead.id ? 'Source' : 'Source Group'),
             ),
             createStringColumn<Assessment, string>(
                 'created_by',
