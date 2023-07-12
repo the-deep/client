@@ -22,11 +22,11 @@ import {
 import RegionMultiSelectInput, {
     BasicRegion,
 } from '#components/selections/RegionMultiSelectInput';
+import { BasicOrganization } from '#types';
 
 import { PartialFormType } from '../formSchema';
 import StakeholderForm from './StakeholderForm';
 import styles from './styles.css';
-import { BasicOrganization } from '#types';
 
 const GET_METADATA_OPTIONS = gql`
     query GetOptions {

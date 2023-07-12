@@ -6,12 +6,12 @@ import {
     Tabs,
 } from '@the-deep/deep-ui';
 import { EntriesAsList, Error, SetBaseValueArg } from '@togglecorp/toggle-form';
+import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
+import { BasicOrganization } from '#types';
 
 import MetadataForm from './MetadataForm';
 import { PartialFormType } from './formSchema';
 import styles from './styles.css';
-import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
-import { BasicOrganization } from '#types';
 
 type TabOptions = 'metadata' | 'documents' | 'focus' | 'methodology' | 'summary' | 'score' | 'cna' | undefined;
 
