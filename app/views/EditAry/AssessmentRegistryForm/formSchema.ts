@@ -43,6 +43,7 @@ export const schema: FormSchema = {
         donors: [defaultEmptyArrayType],
         nationalPartners: [defaultEmptyArrayType],
         governments: [defaultEmptyArrayType],
+        lead: [],
 
         // NOTE: uncomment on other form
         locations: [defaultEmptyArrayType],
