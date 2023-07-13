@@ -10,6 +10,7 @@ import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
 
 import MetadataForm from './MetadataForm';
+import FocusForm from './FocusForm';
 import { PartialFormType } from './formSchema';
 import styles from './styles.css';
 
@@ -82,7 +83,12 @@ function AssessmentRegistyForm(props: Props) {
                     name="focus"
                     activeClassName={styles.tabPanel}
                 >
-                    Focus form
+                    <FocusForm
+                        value={value}
+                        setFieldValue={setFieldValue}
+                        setValue={setValue}
+                        error={error}
+                    />
                 </TabPanel>
                 <TabPanel
                     name="methodology"

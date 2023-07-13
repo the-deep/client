@@ -44,6 +44,8 @@ export const schema: FormSchema = {
         nationalPartners: [defaultEmptyArrayType],
         governments: [defaultEmptyArrayType],
 
+        affectedGroups: [],
+
         // NOTE: uncomment on other form
         locations: [defaultEmptyArrayType],
         methodologyAttributes: [defaultEmptyArrayType],
