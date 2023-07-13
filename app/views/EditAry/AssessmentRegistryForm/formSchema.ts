@@ -84,6 +84,7 @@ export const schema: FormSchema = {
             additionalDocuments: [defaultEmptyArrayType],
             scoreRatings: [defaultEmptyArrayType],
             scoreAnalyticalDensity: [defaultEmptyArrayType],
+            affectedGroups: [],
         };
 
         return baseSchema;
