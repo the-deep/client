@@ -1,0 +1,9 @@
+.attributes-form {
+    display: flex;
+    gap: var(--dui-spacing-large);
+
+    .sampling-input {
+        display: flex;
+        gap: var(--dui-spacing-medium);
+    }
+}
