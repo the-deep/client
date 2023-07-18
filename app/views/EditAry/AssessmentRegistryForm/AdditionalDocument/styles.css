@@ -1,0 +1,4 @@
+.additional-document {
+    display: flex;
+    gap: var(--dui-spacing-large);
+}
