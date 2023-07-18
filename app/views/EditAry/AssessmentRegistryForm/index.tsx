@@ -20,6 +20,7 @@ import MethodologyForm from './MethodologyForm';
 import FocusForm from './FocusForm';
 import CnaForm from './CnaForm';
 import { PartialFormType } from './formSchema';
+import AdditionalDocument from './AdditionalDocument';
 
 import styles from './styles.css';
 
@@ -245,7 +246,10 @@ function AssessmentRegistryForm(props: Props) {
                     name="documents"
                     activeClassName={styles.tabPanel}
                 >
-                    Additional Documents form
+                    <AdditionalDocument
+                        value={value}
+                        setFieldValue={setFieldValue}
+                    />
                 </TabPanel>
                 <TabPanel
                     name="focus"
