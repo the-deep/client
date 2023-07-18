@@ -27,6 +27,7 @@ export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
     | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
 >, 'clientId' | 'question'>;
 
+export type PartialAdditonalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -34,7 +35,6 @@ export type MethodologyAttributesType = NonNullable<PartialFormType['methodology
 export type CnaType = NonNullable<PartialFormType['cna']>[number];
 type MethodologyAttributesSchema = ObjectSchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesSchemaFields = ReturnType<MethodologyAttributesSchema['fields']>;
-
 type MethodologyAttributesFormSchema = ArraySchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesFormSchemaMember = ReturnType<MethodologyAttributesFormSchema['member']>;
 
