@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { generatePath } from 'react-router-dom';
 import {
     _cs,
@@ -114,7 +114,6 @@ function SourceEntryItem(props: Props) {
 
     const value = useMemo(() => ({ entryId }), [entryId]);
     const alert = useAlert();
-    const [selectedDiscardType, setSelectedDiscardType] = useState<string | undefined>();
     const [
         entryCardFlipped,
         , , ,
@@ -135,18 +134,6 @@ function SourceEntryItem(props: Props) {
     ), [entry?.lead]);
 
     const entryDate = entry?.createdAt;
-
-    const discardedEntriesVariables = useMemo(() => ({
-        projectId,
-        entryId,
-        pillarId,
-        tag: selectedDiscardType as DiscardedEntryTagTypeEnum,
-    }), [
-        projectId,
-        entryId,
-        pillarId,
-        selectedDiscardType,
-    ]);
 
     const [
         createDiscardedEntry,
@@ -187,17 +174,26 @@ function SourceEntryItem(props: Props) {
                     { variant: 'error' },
                 );
             },
-            variables: discardedEntriesVariables,
         },
     );
 
-    const handleDiscardButtonClick = useCallback((tagKey: string) => {
-        setSelectedDiscardType(tagKey);
-        if (isDefined(selectedDiscardType)) {
-            createDiscardedEntry();
-            setSelectedDiscardType(undefined);
+    const handleDiscardButtonClick = useCallback((tagKey: DiscardedEntryTagTypeEnum) => {
+        if (isDefined(tagKey)) {
+            createDiscardedEntry({
+                variables: {
+                    projectId,
+                    entryId,
+                    pillarId,
+                    tag: tagKey,
+                },
+            });
         }
-    }, [createDiscardedEntry, selectedDiscardType]);
+    }, [
+        createDiscardedEntry,
+        projectId,
+        entryId,
+        pillarId,
+    ]);
 
     const editEntryLink = useMemo(() => ({
         pathname: generatePath(routes.entryEdit.path, {
@@ -279,7 +275,7 @@ function SourceEntryItem(props: Props) {
                         {discardedTags && discardedTags.map((tag) => (
                             <DropdownMenuItem
                                 key={tag.name}
-                                name={tag.name}
+                                name={tag.name as DiscardedEntryTagTypeEnum}
                                 onClick={handleDiscardButtonClick}
                             >
                                 {tag.description ?? ''}
