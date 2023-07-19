@@ -41,8 +41,6 @@ function AryFileUpload(props: Props) {
     return (
         <FileInput
             className={styles.fileInput}
-            inputSectionClassName={styles.inputSection}
-            inputContainerClassName={styles.inputContainer}
             name={name}
             value={null}
             onChange={handleFileInputChange}
