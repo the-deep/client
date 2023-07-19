@@ -40,6 +40,7 @@ function AdditionalDocument(props: Props) {
                 clientId: key,
                 file: val.id,
                 documentType: val.documentType as AssessmentRegistryDocumentTypeEnum,
+                externalLink: val.externalLink,
             };
 
             setFieldValue(
@@ -116,6 +117,7 @@ function AdditionalDocument(props: Props) {
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
+                showLink
             />
             {isModalVisible && (
                 <Modal onCloseButtonClick={handleModalClose}>
