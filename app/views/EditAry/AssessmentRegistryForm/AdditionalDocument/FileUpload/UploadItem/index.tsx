@@ -6,7 +6,6 @@ import {
     Spinner,
 } from '@the-deep/deep-ui';
 import { AiOutlineRedo } from 'react-icons/ai';
-import { FaGoogleDrive } from 'react-icons/fa';
 import {
     IoDocumentOutline,
     IoEyeOutline,
@@ -35,8 +34,30 @@ interface Props {
 
 const iconMap = {
     disk: <IoDocumentOutline className={styles.icon} />,
-    'google-drive': <FaGoogleDrive className={styles.icon} />,
     dropbox: <IoLogoDropbox className={styles.icon} />,
+};
+
+const getRequestParams = (data: FileLike) => {
+    if (data.fileType === 'disk') {
+        return {
+            url: 'server://files/',
+            body: {
+                file: data.file,
+                title: data.name,
+                isPublic: true,
+            },
+        };
+    }
+    if (data.fileType === 'dropbox') {
+        return {
+            url: 'server://files-dropbox/',
+            body: {
+                title: data.name,
+                fileUrl: data.link,
+            },
+        };
+    }
+    return null;
 };
 
 function UploadItem(props: Props) {
@@ -53,18 +74,15 @@ function UploadItem(props: Props) {
         onChangeSelectedDocument,
     } = props;
 
+    const params = getRequestParams(data);
     const {
         pending,
         trigger,
     } = useLazyRequest<FileUploadResponse, FileLike>({
-        url: 'server://files/',
+        url: params?.url,
         method: 'POST',
-        formData: true,
-        body: (ctx) => ({
-            file: ctx.file,
-            title: ctx.name,
-            isPublic: true,
-        }),
+        formData: data.fileType === 'disk',
+        body: params?.body,
         onSuccess: (response) => {
             onSuccess(data.key, {
                 ...response,
