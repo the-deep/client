@@ -6,6 +6,15 @@
     .upload-header {
         display: flex;
         justify-content: space-between;
+
+        .link-content {
+            display: flex;
+            gap: var(--dui-spacing-extra-large);
+
+            .link-input {
+                display: flex;
+            }
+        }
     }
 
     .files {

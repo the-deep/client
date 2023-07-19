@@ -4,10 +4,11 @@ import {
     LeadSourceTypeEnum,
 } from '#generated/types';
 
-export type SourceFileType = 'disk';
+export type SourceFileType = 'disk' | 'dropbox';
 
 export const sourceTypeMap: { [key in SourceFileType]: LeadSourceTypeEnum } = {
     disk: 'DISK',
+    dropbox: 'DROPBOX',
 };
 
 export interface FileUploadResponse {
@@ -27,7 +28,8 @@ export interface FileUploadResponse {
     projects: number[];
     metadata: unknown;
     sourceType: SourceFileType;
-    documentType: AssessmentRegistryDocumentTypeEnum,
+    documentType: AssessmentRegistryDocumentTypeEnum;
+    externalLink?: string;
 }
 
 export type FileLike = {
@@ -35,8 +37,12 @@ export type FileLike = {
     key: string;
     id: string;
     name: string;
-    documentType: AssessmentRegistryDocumentTypeEnum,
-    file: File;
+    documentType: AssessmentRegistryDocumentTypeEnum;
+    fileType: SourceFileType;
+} & ({
     fileType: 'disk';
+    file: File;
+} | {
+    fileType: 'dropbox',
     link: string;
-}
+})
