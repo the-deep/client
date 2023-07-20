@@ -1,10 +1,6 @@
 import React from 'react';
 import { IoTrash } from 'react-icons/io5';
 import {
-    gql,
-    useQuery,
-} from '@apollo/client';
-import {
     NumberInput,
     QuickActionButton,
     SelectInput,
@@ -15,9 +11,9 @@ import {
     useFormObject,
     getErrorObject,
 } from '@togglecorp/toggle-form';
+import { randomString } from '@togglecorp/fujs';
 import {
     GetAttributesOptionsQuery,
-    GetAttributesOptionsQueryVariables,
 } from '#generated/types';
 import {
     enumKeySelector,
@@ -28,43 +24,9 @@ import { MethodologyAttributesType } from '../../formSchema';
 
 import styles from './styles.css';
 
-const GET_ATTRIBUTES_OPTIONS = gql`
-    query GetAttributesOptions {
-        dataCollectionTechniqueOptions: __type(name: "AssessmentRegistryDataCollectionTechniqueTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-        samplingApproach: __type(name: "AssessmentRegistrySamplingApproachTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-        proximity: __type(name: "AssessmentRegistryProximityTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-        unitOfAnanlysis: __type(name: "AssessmentRegistryUnitOfAnalysisTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-        unitOfReporting: __type(name: "AssessmentRegistryUnitOfReportingTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-    }
-`;
-const defaultMethodologyAttributeValue: MethodologyAttributesType = {
-    clientId: '',
-};
+const defaultMethodologyAttributeValue = (): MethodologyAttributesType => ({
+    clientId: randomString(),
+});
 
 interface Props {
     value: MethodologyAttributesType;
@@ -75,15 +37,21 @@ interface Props {
     onRemove: (index: number) => void;
     index: number;
     error: Error<MethodologyAttributesType> | undefined;
+    options: GetAttributesOptionsQuery | undefined;
+    disabled?: boolean;
+    readonly?: boolean;
 }
 
-function MethodologyAttributesForm(props: Props) {
+function MethodologyAttributesInput(props: Props) {
     const {
         value,
         onChange,
         index,
         error: riskyError,
         onRemove,
+        options,
+        disabled,
+        readonly,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -94,12 +62,6 @@ function MethodologyAttributesForm(props: Props) {
         defaultMethodologyAttributeValue,
     );
 
-    const {
-        data,
-    } = useQuery<GetAttributesOptionsQuery, GetAttributesOptionsQueryVariables>(
-        GET_ATTRIBUTES_OPTIONS,
-    );
-
     return (
         <div className={styles.attributesForm}>
             <SelectInput
@@ -107,12 +69,14 @@ function MethodologyAttributesForm(props: Props) {
                 label="Data collection technique"
                 placeholder="Select an option"
                 name="dataCollectionTechnique"
-                options={data?.dataCollectionTechniqueOptions?.enumValues}
+                options={options?.dataCollectionTechniqueOptions?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
                 value={value.dataCollectionTechnique}
                 error={error?.dataCollectionTechnique}
+                disabled={disabled}
+                readOnly={readonly}
             />
             <div className={styles.samplingInput}>
                 <NumberInput
@@ -122,18 +86,22 @@ function MethodologyAttributesForm(props: Props) {
                     onChange={onAttributeChange}
                     value={value.samplingSize}
                     error={error?.samplingSize}
+                    disabled={disabled}
+                    readOnly={readonly}
                 />
                 <SelectInput
                     className={styles.attributeInput}
                     label="Sampling approach"
                     placeholder="Select an option"
                     name="samplingApproach"
-                    options={data?.samplingApproach?.enumValues}
+                    options={options?.samplingApproach?.enumValues}
                     keySelector={enumKeySelector}
                     labelSelector={enumLabelSelector}
                     onChange={onAttributeChange}
                     value={value.samplingApproach}
                     error={error?.samplingApproach}
+                    disabled={disabled}
+                    readOnly={readonly}
                 />
             </div>
             <SelectInput
@@ -141,38 +109,45 @@ function MethodologyAttributesForm(props: Props) {
                 label="Proximity"
                 placeholder="Select an option"
                 name="proximity"
-                options={data?.proximity?.enumValues}
+                options={options?.proximity?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
                 value={value.proximity}
                 error={error?.proximity}
+                disabled={disabled}
+                readOnly={readonly}
             />
             <SelectInput
                 className={styles.attributeInput}
                 label="Unit of analysis"
                 placeholder="Select an option"
                 name="unitOfAnalysis"
-                options={data?.unitOfAnanlysis?.enumValues}
+                options={options?.unitOfAnanlysis?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
                 value={value.unitOfAnalysis}
                 error={error?.unitOfAnalysis}
+                disabled={disabled}
+                readOnly={readonly}
             />
             <SelectInput
                 className={styles.attributeInput}
                 label="Unit of reporting"
                 placeholder="Select an option"
                 name="unitOfReporting"
-                options={data?.unitOfReporting?.enumValues}
+                options={options?.unitOfReporting?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
                 value={value.unitOfReporting}
                 error={error?.unitOfReporting}
+                disabled={disabled}
+                readOnly={readonly}
             />
             <QuickActionButton
+                title="Remove Attributes"
                 name={index}
                 onClick={onRemove}
                 className={styles.removeButton}
@@ -183,4 +158,4 @@ function MethodologyAttributesForm(props: Props) {
     );
 }
 
-export default MethodologyAttributesForm;
+export default MethodologyAttributesInput;
