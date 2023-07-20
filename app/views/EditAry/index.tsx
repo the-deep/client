@@ -1,5 +1,14 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react';
-import { useQuery, gql, useMutation } from '@apollo/client';
+import React, {
+    useCallback,
+    useContext,
+    useMemo,
+    useState,
+} from 'react';
+import {
+    useQuery,
+    gql,
+    useMutation,
+} from '@apollo/client';
 import {
     useParams,
     useHistory,
@@ -12,7 +21,10 @@ import {
     isNotDefined,
     unique,
 } from '@togglecorp/fujs';
-import { Button, useAlert } from '@the-deep/deep-ui';
+import {
+    Button,
+    useAlert,
+} from '@the-deep/deep-ui';
 import {
     createSubmitHandler,
     removeNull,
@@ -24,7 +36,10 @@ import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
 import LeftPaneEntries from '#components/LeftPaneEntries';
-import { Entry, EntryInput as EntryInputType } from '#components/entry/types';
+import {
+    Entry,
+    EntryInput as EntryInputType,
+} from '#components/entry/types';
 import {
     ORGANIZATION_FRAGMENT,
     ENTRY_FRAGMENT,
@@ -44,7 +59,10 @@ import {
     UpdateAssessmentRegistryMutationVariables,
 } from '#generated/types';
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
-import { ObjectError, transformToFormError } from '#base/utils/errorTransform';
+import {
+    ObjectError,
+    transformToFormError,
+} from '#base/utils/errorTransform';
 import { BasicOrganization } from '#types';
 
 import AssessmentRegistryForm from './AssessmentRegistryForm';
