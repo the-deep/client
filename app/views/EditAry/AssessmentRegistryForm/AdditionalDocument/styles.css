@@ -1,4 +1,12 @@
 .additional-document {
-    display: flex;
-    gap: var(--dui-spacing-large);
+    display: grid;
+    grid-template-rows: repeat(2, 50%);
+    grid-template-columns: 1fr 1fr;
+    gap: var(--dui-spacing-extra-large);
+
+    .label-container {
+        color: var(--dui-color-black);
+        font: var(--dui-font-size-medium);
+        font-weight: var(--dui-font-weight-regular);
+    }
 }
