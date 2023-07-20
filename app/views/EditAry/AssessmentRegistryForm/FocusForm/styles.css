@@ -1,0 +1,20 @@
+.card-collection {
+    display: grid;
+    grid-column: auto;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--dui-spacing-extra-large);
+    padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+
+    .focus-card {
+        display: flex;
+        flex-direction: column;
+        grid-row: 1;
+        gap: var(--dui-spacing-extra-small);
+        border: var(--dui-width-separator-thin) solid gray;
+
+        .focus-options {
+            display: flex;
+            padding: var(--dui-spacing-extra-small);
+        }
+    }
+}
