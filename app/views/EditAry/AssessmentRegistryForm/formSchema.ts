@@ -6,6 +6,7 @@ import {
     PurgeNull,
     requiredCondition,
 } from '@togglecorp/toggle-form';
+import { randomString } from '@togglecorp/fujs';
 import {
     AssessmentRegistryCreateInputType,
     ProjectOrganizationGqInputType,
@@ -16,13 +17,13 @@ import {
 } from '#utils/types';
 
 export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
-type AssessmentRegistryType = PurgeNull<AssessmentRegistryCreateInputType>;
+type AssessmentRegistryType = DeepMandatory<PurgeNull<AssessmentRegistryCreateInputType>, 'clientId'>;
 
-export type PartialFormType = DeepMandatory<PartialForm<EnumFix<AssessmentRegistryType,
+export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
     'bgCrisisType' | 'bgPreparedness' | 'externalSupport' | 'coordinatedJoint'
     | 'detailsType' | 'family' | 'frequency' | 'confidentiality' | 'language'
     | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
->>, 'clientId'>;
+>, 'clientId'>;
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -33,7 +34,11 @@ type MethodologyAttributesSchemaFields = ReturnType<MethodologyAttributesSchema[
 type MethodologyAttributesFormSchema = ArraySchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesFormSchemaMember = ReturnType<MethodologyAttributesFormSchema['member']>;
 
-export const initialValue: PartialFormType = {};
+export const initialValue: PartialFormType = {
+    methodologyAttributes: [
+        { clientId: randomString() },
+    ],
+};
 export const schema: FormSchema = {
     fields: (): FormSchemaFields => {
         const baseSchema: FormSchemaFields = {
