@@ -67,7 +67,7 @@ const defaultMethodologyAttributeValue: MethodologyAttributesType = {
 };
 
 interface Props {
-    value: MethodologyAttributesType,
+    value: MethodologyAttributesType;
     onChange: (
         value: SetValueArg<MethodologyAttributesType>,
         index: number,
@@ -104,7 +104,7 @@ function MethodologyAttributesForm(props: Props) {
         <div className={styles.attributesForm}>
             <SelectInput
                 className={styles.attributeInput}
-                label="DATA COLLECTION TECHNIQUE"
+                label="Data collection technique"
                 placeholder="Select an option"
                 name="dataCollectionTechnique"
                 options={data?.dataCollectionTechniqueOptions?.enumValues}
@@ -117,7 +117,7 @@ function MethodologyAttributesForm(props: Props) {
             <div className={styles.samplingInput}>
                 <NumberInput
                     className={styles.attributeInput}
-                    label="SAMPLING SIZE"
+                    label="Sampling size"
                     name="samplingSize"
                     onChange={onAttributeChange}
                     value={value.samplingSize}
@@ -125,7 +125,7 @@ function MethodologyAttributesForm(props: Props) {
                 />
                 <SelectInput
                     className={styles.attributeInput}
-                    label="SAMPLING APPROACH"
+                    label="Sampling approach"
                     placeholder="Select an option"
                     name="samplingApproach"
                     options={data?.samplingApproach?.enumValues}
@@ -138,7 +138,7 @@ function MethodologyAttributesForm(props: Props) {
             </div>
             <SelectInput
                 className={styles.attributeInput}
-                label="PROXIMITY"
+                label="Proximity"
                 placeholder="Select an option"
                 name="proximity"
                 options={data?.proximity?.enumValues}
@@ -150,7 +150,7 @@ function MethodologyAttributesForm(props: Props) {
             />
             <SelectInput
                 className={styles.attributeInput}
-                label="UNIT OF ANALYSIS"
+                label="Unit of analysis"
                 placeholder="Select an option"
                 name="unitOfAnalysis"
                 options={data?.unitOfAnanlysis?.enumValues}
@@ -162,7 +162,7 @@ function MethodologyAttributesForm(props: Props) {
             />
             <SelectInput
                 className={styles.attributeInput}
-                label="UNIT OF REPORTING"
+                label="Unit of reporting"
                 placeholder="Select an option"
                 name="unitOfReporting"
                 options={data?.unitOfReporting?.enumValues}

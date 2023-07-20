@@ -75,27 +75,27 @@ function MethodologyForm(props: Props) {
                 size="extraSmall"
                 className={styles.methodologyHeading}
             >
-                Methodlogy content
+                Methodlogy
             </Heading>
             <div className={styles.methodologyContent}>
                 <TextArea
                     className={styles.methodologyInput}
-                    label="OBJECTIVES"
+                    label="Objectives"
                     name="objectives"
                     placeholder="If available, copy paste here the objectives of the needs assessment"
                     onChange={setFieldValue}
-                    value={value?.objectives}
+                    value={value.objectives}
                     error={error?.objectives}
                     rows={15}
                 />
 
                 <TextArea
                     className={styles.methodologyInput}
-                    label="LIMITATIONS"
+                    label="Limitations"
                     name="limitations"
                     placeholder="If available, copy paste here the limitations reported for the needs assessment"
                     onChange={setFieldValue}
-                    value={value?.limitations}
+                    value={value.limitations}
                     error={error?.limitations}
                     rows={15}
                 />
@@ -141,6 +141,7 @@ function MethodologyForm(props: Props) {
             </div>
             {value.methodologyAttributes?.map((attribute, index) => (
                 <MethodologyAttributesForm
+                    key={attribute.clientId}
                     onChange={setMethodologyAttributesValue}
                     value={attribute}
                     index={index}
