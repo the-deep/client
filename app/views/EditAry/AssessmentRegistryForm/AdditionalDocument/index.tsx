@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { EntriesAsList } from '@togglecorp/toggle-form';
-import { Modal } from '@the-deep/deep-ui';
+import { Modal, TextArea } from '@the-deep/deep-ui';
 
 import LeadPreview from '#components/lead/LeadPreview';
 import { useModalState } from '#hooks/stateManagement';
@@ -103,13 +103,31 @@ function AdditionalDocument(props: Props) {
 
     return (
         <div className={styles.additionalDocument}>
+            <TextArea
+                labelContainerClassName={styles.labelContainer}
+                label="Executive Summary"
+                name="executive_summary"
+                value={undefined}
+                // onChange={setFieldValue}
+                // error={error.executive_summary}
+                autoSize
+            />
             <FileUpload
-                title="Questionare"
-                name="QUESTIONNAIRE"
-                acceptFileType=".pdf"
+                title="Assessment Dataset"
+                name="ASSESSMENT_DATABASE"
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
+                acceptFileType=".pdf"
+                showLink
+            />
+            <FileUpload
+                title="Questionare"
+                name="QUESTIONNAIRE"
+                onSuccess={handleFileUploadSuccess}
+                handleFileRemove={handleFileRemove}
+                onChangeSelectedDocument={setSelectedDocument}
+                acceptFileType=".pdf"
             />
             <FileUpload
                 title="Miscellaneous"
@@ -117,7 +135,6 @@ function AdditionalDocument(props: Props) {
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
-                showLink
             />
             {isModalVisible && (
                 <Modal onCloseButtonClick={handleModalClose}>
