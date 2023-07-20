@@ -1,15 +1,39 @@
-.methodlogy-form {
+.methodology-form {
     display: flex;
     flex-direction: column;
     gap: var(--dui-spacing-extra-large);
 
-    .methodlogy-content {
-        display: flex;
-        gap: var(--dui-spacing-extra-large);
+    .methodology-heading {
+        color: var(--dui-color-accent);
     }
 
-    .attributes-heading {
+    .methodology-content {
         display: flex;
-        gap: var(--dui-spacing-ultra-large);
+        gap: var(--dui-spacing-extra-large);
+        
+        .methodology-input {
+            display: flex;
+            flex-basis: 50%;
+        }
+    }
+
+    .attributes-content {
+        display: flex;
+        gap: var(--dui-spacing-large);
+
+        .sampling-heading {
+            width: calc(24rem + var(--dui-spacing-large));
+            color: var(--dui-color-accent);
+        }
+
+        .attribute-heading {
+            width: 12rem;
+            color: var(--dui-color-accent);
+        }
+
+        .add-button {
+            background-color: transparent;
+            font-size: var(--dui-font-size-large);
+        }
     }
 }
