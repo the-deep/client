@@ -6,6 +6,10 @@ import React,
 import { IoAddCircle } from 'react-icons/io5';
 import { randomString } from '@togglecorp/fujs';
 import {
+    gql,
+    useQuery,
+} from '@apollo/client';
+import {
     Heading,
     QuickActionButton,
     TextArea,
@@ -16,8 +20,12 @@ import {
     getErrorObject,
     useFormArray,
 } from '@togglecorp/toggle-form';
+import {
+    GetAttributesOptionsQuery,
+    GetAttributesOptionsQueryVariables,
+} from '#generated/types';
 
-import MethodologyAttributesForm from './MethodologyAttributesForm';
+import MethodologyAttributesInput from './MethodologyAttributesInput';
 import {
     PartialFormType,
     MethodologyAttributesType,
@@ -25,10 +33,47 @@ import {
 
 import styles from './styles.css';
 
+const GET_ATTRIBUTES_OPTIONS = gql`
+    query GetAttributesOptions {
+        dataCollectionTechniqueOptions: __type(name: "AssessmentRegistryDataCollectionTechniqueTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        samplingApproach: __type(name: "AssessmentRegistrySamplingApproachTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        proximity: __type(name: "AssessmentRegistryProximityTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        unitOfAnanlysis: __type(name: "AssessmentRegistryUnitOfAnalysisTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        unitOfReporting: __type(name: "AssessmentRegistryUnitOfReportingTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+    }
+`;
+
 interface Props {
     value: PartialFormType,
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>;
+    disabled?: boolean;
+    readonly?: boolean;
 }
 
 type PartialMethodologyAttributesType = PartialFormType['methodologyAttributes'];
@@ -38,9 +83,17 @@ function MethodologyForm(props: Props) {
         value,
         setFieldValue,
         error: riskyError,
+        disabled,
+        readonly,
     } = props;
 
     const error = getErrorObject(riskyError);
+
+    const {
+        data: options,
+    } = useQuery<GetAttributesOptionsQuery, GetAttributesOptionsQueryVariables>(
+        GET_ATTRIBUTES_OPTIONS,
+    );
 
     const {
         setValue: setMethodologyAttributesValue,
@@ -67,7 +120,7 @@ function MethodologyForm(props: Props) {
             },
             'methodologyAttributes',
         );
-    }, []);
+    }, [setFieldValue]);
 
     return (
         <div className={styles.methodologyForm}>
@@ -87,6 +140,8 @@ function MethodologyForm(props: Props) {
                     value={value.objectives}
                     error={error?.objectives}
                     rows={15}
+                    disabled={disabled}
+                    readOnly={readonly}
                 />
 
                 <TextArea
@@ -98,6 +153,8 @@ function MethodologyForm(props: Props) {
                     value={value.limitations}
                     error={error?.limitations}
                     rows={15}
+                    disabled={disabled}
+                    readOnly={readonly}
                 />
             </div>
             <div className={styles.attributesContent}>
@@ -132,6 +189,7 @@ function MethodologyForm(props: Props) {
                     Unit of Reporting
                 </Heading>
                 <QuickActionButton
+                    title="Add attributes"
                     name="addAttributes"
                     onClick={handleAddMethodologyAttributes}
                     className={styles.addButton}
@@ -140,11 +198,12 @@ function MethodologyForm(props: Props) {
                 </QuickActionButton>
             </div>
             {value.methodologyAttributes?.map((attribute, index) => (
-                <MethodologyAttributesForm
+                <MethodologyAttributesInput
                     key={attribute.clientId}
-                    onChange={setMethodologyAttributesValue}
                     value={attribute}
                     index={index}
+                    options={options}
+                    onChange={setMethodologyAttributesValue}
                     error={methodologyAttributesError?.[attribute.clientId]}
                     onRemove={onMethodologyAttributesRemove}
                 />
