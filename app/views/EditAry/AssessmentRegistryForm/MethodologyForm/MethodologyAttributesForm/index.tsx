@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { IoTrash } from 'react-icons/io5';
 import {
     gql,
@@ -18,9 +18,13 @@ import {
 import {
     GetAttributesOptionsQuery,
     GetAttributesOptionsQueryVariables,
-    MethodologyAttributeInputType,
 } from '#generated/types';
-import { enumKeySelector, enumLabelSelector } from '#utils/common';
+import {
+    enumKeySelector,
+    enumLabelSelector,
+} from '#utils/common';
+
+import { MethodologyAttributesType } from '../../formSchema';
 
 import styles from './styles.css';
 
@@ -58,22 +62,22 @@ const GET_ATTRIBUTES_OPTIONS = gql`
         }
     }
 `;
-const defaultMethodologyAttributeValue: MethodologyAttributeInputType = {
+const defaultMethodologyAttributeValue: MethodologyAttributesType = {
     clientId: '',
 };
 
 interface Props {
-    value: MethodologyAttributeInputType,
+    value: MethodologyAttributesType,
     onChange: (
-        value: SetValueArg<MethodologyAttributeInputType>,
+        value: SetValueArg<MethodologyAttributesType>,
         index: number,
     ) => void | undefined;
     onRemove: (index: number) => void;
     index: number;
-    error: Error<MethodologyAttributeInputType> | undefined;
+    error: Error<MethodologyAttributesType> | undefined;
 }
 
-function MethodlogyAttributesForm(props: Props) {
+function MethodologyAttributesForm(props: Props) {
     const {
         value,
         onChange,
@@ -84,26 +88,17 @@ function MethodlogyAttributesForm(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const onAttributeChange = useFormObject(index, onChange, defaultMethodologyAttributeValue);
+    const onAttributeChange = useFormObject(
+        index,
+        onChange,
+        defaultMethodologyAttributeValue,
+    );
+
     const {
         data,
     } = useQuery<GetAttributesOptionsQuery, GetAttributesOptionsQueryVariables>(
         GET_ATTRIBUTES_OPTIONS,
     );
-
-    const [
-        dataCollectionOptions,
-        proximityOptions,
-        samplingApproachOptions,
-        unitOfAnalysisOptions,
-        unitOfReportingOptions,
-    ] = useMemo(() => ([
-        data?.dataCollectionTechniqueOptions?.enumValues,
-        data?.proximity?.enumValues,
-        data?.samplingApproach?.enumValues,
-        data?.unitOfAnanlysis?.enumValues,
-        data?.unitOfReporting?.enumValues,
-    ]), [data]);
 
     return (
         <div className={styles.attributesForm}>
@@ -112,7 +107,7 @@ function MethodlogyAttributesForm(props: Props) {
                 label="DATA COLLECTION TECHNIQUE"
                 placeholder="Select an option"
                 name="dataCollectionTechnique"
-                options={dataCollectionOptions}
+                options={data?.dataCollectionTechniqueOptions?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
@@ -132,7 +127,7 @@ function MethodlogyAttributesForm(props: Props) {
                     label="SAMPLING APPROACH"
                     placeholder="Select an option"
                     name="samplingApproach"
-                    options={samplingApproachOptions}
+                    options={data?.samplingApproach?.enumValues}
                     keySelector={enumKeySelector}
                     labelSelector={enumLabelSelector}
                     onChange={onAttributeChange}
@@ -145,7 +140,7 @@ function MethodlogyAttributesForm(props: Props) {
                 label="PROXIMITY"
                 placeholder="Select an option"
                 name="proximity"
-                options={proximityOptions}
+                options={data?.proximity?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
@@ -157,7 +152,7 @@ function MethodlogyAttributesForm(props: Props) {
                 label="UNIT OF ANALYSIS"
                 placeholder="Select an option"
                 name="unitOfAnalysis"
-                options={unitOfAnalysisOptions}
+                options={data?.unitOfAnanlysis?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
@@ -169,7 +164,7 @@ function MethodlogyAttributesForm(props: Props) {
                 label="UNIT OF REPORTING"
                 placeholder="Select an option"
                 name="unitOfReporting"
-                options={unitOfReportingOptions}
+                options={data?.unitOfReporting?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
@@ -186,4 +181,4 @@ function MethodlogyAttributesForm(props: Props) {
     );
 }
 
-export default MethodlogyAttributesForm;
+export default MethodologyAttributesForm;

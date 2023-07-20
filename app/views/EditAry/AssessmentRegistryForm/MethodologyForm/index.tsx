@@ -1,4 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
+import React,
+{
+    useCallback,
+    useMemo,
+} from 'react';
 import { IoAddCircle } from 'react-icons/io5';
 import { randomString } from '@togglecorp/fujs';
 import {
@@ -12,12 +16,12 @@ import {
     getErrorObject,
     useFormArray,
 } from '@togglecorp/toggle-form';
+
+import MethodologyAttributesForm from './MethodologyAttributesForm';
 import {
     PartialFormType,
     MethodologyAttributesType,
-} from '#views/EditAry/AssessmentRegistryForm/formSchema';
-
-import MethodlogyAttributesForm from './MethodlogyAttributesForm';
+} from '../formSchema';
 
 import styles from './styles.css';
 
@@ -29,7 +33,7 @@ interface Props {
 
 type PartialMethodologyAttributesType = PartialFormType['methodologyAttributes'];
 
-function MethodlogyForm(props: Props) {
+function MethodologyForm(props: Props) {
     const {
         value,
         setFieldValue,
@@ -41,7 +45,10 @@ function MethodlogyForm(props: Props) {
     const {
         setValue: setMethodologyAttributesValue,
         removeValue: onMethodologyAttributesRemove,
-    } = useFormArray('methodologyAttributes', setFieldValue);
+    } = useFormArray<
+        'methodologyAttributes',
+        MethodologyAttributesType
+    >('methodologyAttributes', setFieldValue);
 
     const methodologyAttributesError = useMemo(
         () => getErrorObject(error?.methodologyAttributes),
@@ -108,7 +115,7 @@ function MethodlogyForm(props: Props) {
                 </QuickActionButton>
             </div>
             {value.methodologyAttributes?.map((attribute, index) => (
-                <MethodlogyAttributesForm
+                <MethodologyAttributesForm
                     onChange={setMethodologyAttributesValue}
                     value={attribute}
                     index={index}
@@ -120,4 +127,4 @@ function MethodlogyForm(props: Props) {
     );
 }
 
-export default MethodlogyForm;
+export default MethodologyForm;

@@ -10,15 +10,19 @@ import {
     AssessmentRegistryCreateInputType,
     ProjectOrganizationGqInputType,
 } from '#generated/types';
-import { EnumFix } from '#utils/types';
+import {
+    DeepMandatory,
+    EnumFix,
+} from '#utils/types';
 
 export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
-type AssesmentRegistryType = PurgeNull<AssessmentRegistryCreateInputType>;
+type AssessmentRegistryType = PurgeNull<AssessmentRegistryCreateInputType>;
 
-export type PartialFormType = PartialForm<EnumFix<AssesmentRegistryType,
+export type PartialFormType = DeepMandatory<PartialForm<EnumFix<AssessmentRegistryType,
     'bgCrisisType' | 'bgPreparedness' | 'externalSupport' | 'coordinatedJoint'
     | 'detailsType' | 'family' | 'frequency' | 'confidentiality' | 'language'
->>;
+    | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
+>>, 'clientId'>;
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
