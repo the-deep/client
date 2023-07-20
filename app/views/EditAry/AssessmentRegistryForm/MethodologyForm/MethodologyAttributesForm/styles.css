@@ -2,8 +2,18 @@
     display: flex;
     gap: var(--dui-spacing-large);
 
+    .attribute-input {
+        width: 12rem;
+    }
+
     .sampling-input {
         display: flex;
-        gap: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-large);
+    }
+
+    .remove-button {
+        background-color: transparent;
+        color: var(--dui-color-danger);
+        font-size: var(--dui-font-size-large);
     }
 }

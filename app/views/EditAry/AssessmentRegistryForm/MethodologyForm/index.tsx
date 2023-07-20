@@ -70,46 +70,71 @@ function MethodologyForm(props: Props) {
     }, []);
 
     return (
-        <div className={styles.methodlogyForm}>
-            <Heading size="extraSmall">
+        <div className={styles.methodologyForm}>
+            <Heading
+                size="extraSmall"
+                className={styles.methodologyHeading}
+            >
                 Methodlogy content
             </Heading>
-            <div className={styles.methodlogyContent}>
+            <div className={styles.methodologyContent}>
                 <TextArea
+                    className={styles.methodologyInput}
                     label="OBJECTIVES"
                     name="objectives"
+                    placeholder="If available, copy paste here the objectives of the needs assessment"
                     onChange={setFieldValue}
                     value={value?.objectives}
                     error={error?.objectives}
+                    rows={15}
                 />
 
                 <TextArea
+                    className={styles.methodologyInput}
                     label="LIMITATIONS"
                     name="limitations"
+                    placeholder="If available, copy paste here the limitations reported for the needs assessment"
                     onChange={setFieldValue}
                     value={value?.limitations}
                     error={error?.limitations}
+                    rows={15}
                 />
             </div>
-            <div className={styles.attributesHeading}>
-                <Heading size="extraSmall">
+            <div className={styles.attributesContent}>
+                <Heading
+                    size="extraSmall"
+                    className={styles.attributeHeading}
+                >
                     Collection Technique
                 </Heading>
-                <Heading size="extraSmall">
+                <Heading
+                    size="extraSmall"
+                    className={styles.samplingHeading}
+                >
                     Sampling
                 </Heading>
-                <Heading size="extraSmall">
+                <Heading
+                    size="extraSmall"
+                    className={styles.attributeHeading}
+                >
                     Proximity
                 </Heading>
-                <Heading size="extraSmall">
+                <Heading
+                    size="extraSmall"
+                    className={styles.attributeHeading}
+                >
                     Unit of Analysis
                 </Heading>
-                <Heading size="extraSmall">
+                <Heading
+                    size="extraSmall"
+                    className={styles.attributeHeading}
+                >
                     Unit of Reporting
                 </Heading>
                 <QuickActionButton
                     name="addAttributes"
                     onClick={handleAddMethodologyAttributes}
+                    className={styles.addButton}
                 >
                     <IoAddCircle />
                 </QuickActionButton>

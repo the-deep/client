@@ -103,7 +103,7 @@ function MethodologyAttributesForm(props: Props) {
     return (
         <div className={styles.attributesForm}>
             <SelectInput
-                className={styles.attributesSelectInput}
+                className={styles.attributeInput}
                 label="DATA COLLECTION TECHNIQUE"
                 placeholder="Select an option"
                 name="dataCollectionTechnique"
@@ -116,6 +116,7 @@ function MethodologyAttributesForm(props: Props) {
             />
             <div className={styles.samplingInput}>
                 <NumberInput
+                    className={styles.attributeInput}
                     label="SAMPLING SIZE"
                     name="samplingSize"
                     onChange={onAttributeChange}
@@ -123,7 +124,7 @@ function MethodologyAttributesForm(props: Props) {
                     error={error?.samplingSize}
                 />
                 <SelectInput
-                    className={styles.attributesSelectInput}
+                    className={styles.attributeInput}
                     label="SAMPLING APPROACH"
                     placeholder="Select an option"
                     name="samplingApproach"
@@ -136,7 +137,7 @@ function MethodologyAttributesForm(props: Props) {
                 />
             </div>
             <SelectInput
-                className={styles.attributesSelectInput}
+                className={styles.attributeInput}
                 label="PROXIMITY"
                 placeholder="Select an option"
                 name="proximity"
@@ -148,7 +149,7 @@ function MethodologyAttributesForm(props: Props) {
                 error={error?.proximity}
             />
             <SelectInput
-                className={styles.attributesSelectInput}
+                className={styles.attributeInput}
                 label="UNIT OF ANALYSIS"
                 placeholder="Select an option"
                 name="unitOfAnalysis"
@@ -160,7 +161,7 @@ function MethodologyAttributesForm(props: Props) {
                 error={error?.unitOfAnalysis}
             />
             <SelectInput
-                className={styles.attributesSelectInput}
+                className={styles.attributeInput}
                 label="UNIT OF REPORTING"
                 placeholder="Select an option"
                 name="unitOfReporting"
@@ -174,6 +175,7 @@ function MethodologyAttributesForm(props: Props) {
             <QuickActionButton
                 name={index}
                 onClick={onRemove}
+                className={styles.removeButton}
             >
                 <IoTrash />
             </QuickActionButton>
