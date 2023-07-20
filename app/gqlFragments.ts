@@ -325,6 +325,17 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         }
         noOfPages
         publicationDate
+        objectives
+        limitations
         language
+        methodologyAttributes {
+            clientId
+            samplingSize
+            dataCollectionTechnique
+            proximity
+            samplingApproach
+            unitOfAnalysis
+            unitOfReporting
+        }
     }
 `;
