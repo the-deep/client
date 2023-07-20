@@ -31,12 +31,39 @@ export type PartialAdditonalDocument = NonNullable<PartialFormType['additionalDo
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
+<<<<<<< HEAD
 export type MethodologyAttributesType = NonNullable<PartialFormType['methodologyAttributes']>[number];
 export type CnaType = NonNullable<PartialFormType['cna']>[number];
 type MethodologyAttributesSchema = ObjectSchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesSchemaFields = ReturnType<MethodologyAttributesSchema['fields']>;
 type MethodologyAttributesFormSchema = ArraySchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesFormSchemaMember = ReturnType<MethodologyAttributesFormSchema['member']>;
+=======
+export const initialValue: PartialFormType = {};
+export const schema: FormSchema = {
+    fields: (): FormSchemaFields => ({
+        bgCountries: [requiredCondition],
+        bgCrisisType: [requiredCondition],
+        bgCrisisStartDate: [requiredCondition],
+        bgPreparedness: [requiredCondition],
+        externalSupport: [requiredCondition],
+        coordinatedJoint: [requiredCondition],
+        detailsType: [requiredCondition],
+        family: [requiredCondition],
+        frequency: [requiredCondition],
+        confidentiality: [requiredCondition],
+        language: [requiredCondition],
+        noOfPages: [],
+        dataCollectionStartDate: [],
+        dataCollectionEndDate: [],
+        publicationDate: [],
+        leadOrganizations: [defaultEmptyArrayType],
+        internationalPartners: [defaultEmptyArrayType],
+        donors: [defaultEmptyArrayType],
+        nationalPartners: [defaultEmptyArrayType],
+        governments: [defaultEmptyArrayType],
+        executive_summary: [],
+>>>>>>> becde54c5 (Add excutive summary textarea)
 
 export const initialValue: PartialFormType = {
     methodologyAttributes: [
