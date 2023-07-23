@@ -32,12 +32,5 @@
             background-color: var(--dui-color-deep6);
             padding: var(--dui-spacing-small) 0;
         }
-
-        .file-item-failed {
-            display: flex;
-            background-color: var(--dui-color-deep6);
-            padding: var(--dui-spacing-small) 0;
-            color: var(--dui-color-danger);
-        }
     }
 }

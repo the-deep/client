@@ -24,8 +24,6 @@ export interface FileUploadResponse {
     uuid: string;
     title: string;
     mimeType: MimeTypes;
-    isPublic: boolean;
-    projects: number[];
     metadata: unknown;
     sourceType: SourceFileType;
     documentType: AssessmentRegistryDocumentTypeEnum;
@@ -34,15 +32,9 @@ export interface FileUploadResponse {
 
 export type FileLike = {
     clientId: string;
-    key: string;
-    id: string;
-    name: string;
+    key?: string;
+    id?: string;
     documentType: AssessmentRegistryDocumentTypeEnum;
-    fileType: SourceFileType;
-} & ({
-    fileType: 'disk';
-    file: File;
-} | {
-    fileType: 'dropbox',
-    link: string;
-})
+    file?: File | null;
+    externalLink?: string;
+}

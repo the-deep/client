@@ -1,53 +1,38 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { EntriesAsList } from '@togglecorp/toggle-form';
-import { Modal, TextArea } from '@the-deep/deep-ui';
+import { EntriesAsList, Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
+import { TextArea } from '@the-deep/deep-ui';
+import { isDefined } from '@togglecorp/fujs';
 
-import LeadPreview from '#components/lead/LeadPreview';
-import { useModalState } from '#hooks/stateManagement';
-import { AssessmentRegistryDocumentTypeEnum } from '#generated/types';
+import { AdditionalDocumentInputType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
 
 import FileUpload from './FileUpload';
-import { FileUploadResponse } from './types';
 import { PartialAdditonalDocument, PartialFormType } from '../formSchema';
+import Preview from './Preview';
 import styles from './styles.css';
 
 interface Props {
     value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    error: Error<PartialFormType>;
 }
 
 function AdditionalDocument(props: Props) {
     const {
         value: formValue,
         setFieldValue,
+        error: riskyError,
     } = props;
 
-    const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
+    const error = getErrorObject(riskyError);
     const [selectedDocument, setSelectedDocument] = useState<string | undefined>();
-    const [
-        isModalVisible,,,
-        setModalVisbility,
-    ] = useModalState(false);
 
     const handleFileUploadSuccess = useCallback(
-        (key: string, val: FileUploadResponse) => {
-            setUploadedFiles((oldUploadedFiles) => ([
-                val,
-                ...oldUploadedFiles,
-            ]));
-
-            const newDocument: PartialAdditonalDocument = {
-                clientId: key,
-                file: val.id,
-                documentType: val.documentType as AssessmentRegistryDocumentTypeEnum,
-                externalLink: val.externalLink,
-            };
-
+        (val: AdditionalDocumentInputType) => {
             setFieldValue(
-                (oldVal: PartialFormType['additionalDocuments']) => [
+                (oldVal?: AdditionalDocumentInputType[]) => ([
                     ...(oldVal ?? []),
-                    newDocument,
-                ],
+                    val,
+                ]),
                 'additionalDocuments',
             );
         },
@@ -65,51 +50,39 @@ function AdditionalDocument(props: Props) {
         }, [setFieldValue],
     );
 
-    const selectedAttachment = useMemo(
-        () => {
-            if (!selectedDocument) {
-                return undefined;
-            }
-            const selectedData = formValue.additionalDocuments?.find(
-                (doc) => doc.clientId === selectedDocument,
-            );
-            if (!selectedData) {
-                return undefined;
-            }
-            const selectedFile = uploadedFiles.find(
-                (doc) => doc.id === selectedData.file,
-            );
-            if (!selectedFile) {
-                return undefined;
-            }
-            if (selectedFile || selectedData) {
-                setModalVisbility(true);
-            }
+    const [
+        assessmentFiles,
+        questionareFiles,
+        miscellaneousFiles,
+    ] = useMemo(() => {
+        const dataset = formValue.additionalDocuments?.filter(
+            (doc) => doc.documentType === 'ASSESSMENT_DATABASE',
+        ).filter(isDefined);
 
-            return ({
-                id: selectedFile.id,
-                title: selectedFile.title,
-                mimeType: selectedFile.mimeType,
-                file: selectedFile.file ? { url: selectedFile.file } : undefined,
-            });
-        },
-        [uploadedFiles, selectedDocument, formValue, setModalVisbility],
-    );
+        const questionare = formValue.additionalDocuments?.filter(
+            (doc) => doc.documentType === 'QUESTIONNAIRE',
+        ).filter(isDefined);
 
-    const handleModalClose = useCallback(() => {
-        setSelectedDocument(undefined);
-        setModalVisbility(false);
-    }, [setSelectedDocument, setModalVisbility]);
+        const miscellaneous = formValue.additionalDocuments?.filter(
+            (doc) => doc.documentType === 'MISCELLANEOUS',
+        ).filter(isDefined);
+
+        return [
+            dataset,
+            questionare,
+            miscellaneous,
+        ];
+    }, [formValue]);
 
     return (
         <div className={styles.additionalDocument}>
             <TextArea
                 labelContainerClassName={styles.labelContainer}
                 label="Executive Summary"
-                name="executive_summary"
-                value={undefined}
-                // onChange={setFieldValue}
-                // error={error.executive_summary}
+                name="executiveSummary"
+                value={formValue.executiveSummary}
+                onChange={setFieldValue}
+                error={getErrorString(error?.executiveSummary)}
                 autoSize
             />
             <FileUpload
@@ -120,6 +93,7 @@ function AdditionalDocument(props: Props) {
                 onChangeSelectedDocument={setSelectedDocument}
                 acceptFileType=".pdf"
                 showLink
+                files={assessmentFiles}
             />
             <FileUpload
                 title="Questionare"
@@ -128,6 +102,7 @@ function AdditionalDocument(props: Props) {
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
                 acceptFileType=".pdf"
+                files={questionareFiles}
             />
             <FileUpload
                 title="Miscellaneous"
@@ -135,11 +110,13 @@ function AdditionalDocument(props: Props) {
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
+                files={miscellaneousFiles}
             />
-            {isModalVisible && (
-                <Modal onCloseButtonClick={handleModalClose}>
-                    <LeadPreview attachment={selectedAttachment} />
-                </Modal>
+            {selectedDocument && (
+                <Preview
+                    attachmentId={selectedDocument}
+                    onChangeSelectedAttachment={setSelectedDocument}
+                />
             )}
         </div>
     );

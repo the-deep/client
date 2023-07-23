@@ -361,5 +361,21 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
                 question
             }
         }
+        executiveSummary
+        additionalDocuments {
+            clientId
+            documentType
+            externalLink
+            id
+            file {
+                title
+                mimeType
+                id
+                file {
+                    url
+                    name
+                }
+            }
+        }
     }
 `;
