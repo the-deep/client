@@ -249,6 +249,7 @@ function AssessmentRegistryForm(props: Props) {
                     <AdditionalDocument
                         value={value}
                         setFieldValue={setFieldValue}
+                        error={error}
                     />
                 </TabPanel>
                 <TabPanel
