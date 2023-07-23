@@ -27,49 +27,23 @@ export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
     | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
 >, 'clientId' | 'question'>;
 
-export type PartialAdditonalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
+export type PartialAdditonalDocument = NonNullable<AssessmentRegistryCreateInputType['additionalDocuments']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-<<<<<<< HEAD
 export type MethodologyAttributesType = NonNullable<PartialFormType['methodologyAttributes']>[number];
 export type CnaType = NonNullable<PartialFormType['cna']>[number];
 type MethodologyAttributesSchema = ObjectSchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesSchemaFields = ReturnType<MethodologyAttributesSchema['fields']>;
 type MethodologyAttributesFormSchema = ArraySchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesFormSchemaMember = ReturnType<MethodologyAttributesFormSchema['member']>;
-=======
-export const initialValue: PartialFormType = {};
-export const schema: FormSchema = {
-    fields: (): FormSchemaFields => ({
-        bgCountries: [requiredCondition],
-        bgCrisisType: [requiredCondition],
-        bgCrisisStartDate: [requiredCondition],
-        bgPreparedness: [requiredCondition],
-        externalSupport: [requiredCondition],
-        coordinatedJoint: [requiredCondition],
-        detailsType: [requiredCondition],
-        family: [requiredCondition],
-        frequency: [requiredCondition],
-        confidentiality: [requiredCondition],
-        language: [requiredCondition],
-        noOfPages: [],
-        dataCollectionStartDate: [],
-        dataCollectionEndDate: [],
-        publicationDate: [],
-        leadOrganizations: [defaultEmptyArrayType],
-        internationalPartners: [defaultEmptyArrayType],
-        donors: [defaultEmptyArrayType],
-        nationalPartners: [defaultEmptyArrayType],
-        governments: [defaultEmptyArrayType],
-        executive_summary: [],
->>>>>>> becde54c5 (Add excutive summary textarea)
 
 export const initialValue: PartialFormType = {
     methodologyAttributes: [
         { clientId: randomString() },
     ],
 };
+
 export const schema: FormSchema = {
     fields: (value): FormSchemaFields => {
         let baseSchema: FormSchemaFields = {
@@ -117,6 +91,7 @@ export const schema: FormSchema = {
                     }),
                 }),
             },
+            executiveSummary: [],
             additionalDocuments: [defaultEmptyArrayType],
             scoreRatings: [defaultEmptyArrayType],
             scoreAnalyticalDensity: [defaultEmptyArrayType],
