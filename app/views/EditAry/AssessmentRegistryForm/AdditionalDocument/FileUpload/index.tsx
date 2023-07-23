@@ -2,26 +2,25 @@ import React, { useState, useCallback } from 'react';
 import { Button, List, TextInput } from '@the-deep/deep-ui';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { randomString } from '@togglecorp/fujs';
-import { produce } from 'immer';
 
 import { AssessmentRegistryDocumentTypeEnum } from '#generated/types';
 
-import { FileLike, FileUploadResponse } from '../types';
 import AryFileUpload from './AryFileUpload';
 import UploadItem from './UploadItem';
 import styles from './styles.css';
+import { PartialAdditonalDocument } from '../../formSchema';
 
-const noOfParallelUploads = 3;
-const fileKeySelector = (d: FileLike): string => d.key;
+const fileKeySelector = (d: PartialAdditonalDocument): string => d.clientId;
 
 interface Props {
     name: AssessmentRegistryDocumentTypeEnum;
     title: string;
     acceptFileType?: string;
-    onSuccess: (key: string, item: FileUploadResponse) => void;
+    onSuccess: (item: PartialAdditonalDocument) => void;
     handleFileRemove: (key: string) => void;
     onChangeSelectedDocument: (key: string) => void;
     showLink?: boolean;
+    files?: PartialAdditonalDocument[];
 }
 
 function FileUpload(props: Props) {
@@ -33,109 +32,43 @@ function FileUpload(props: Props) {
         handleFileRemove,
         onChangeSelectedDocument,
         showLink,
+        files,
     } = props;
-    const [files, setFiles] = useState<FileLike[]>([]);
-    const [failedFiles, setFailedFiles] = useState<FileLike[]>([]);
-    const [link, setLink] = useState<string>();
+    const [externalLink, setExternalLink] = useState<string>();
 
-    const handleAddFiles = useCallback((values: FileLike[]) => {
-        setFiles((oldFiles: FileLike[]) => ([
-            ...oldFiles,
-            ...values,
-        ]));
-    }, [setFiles]);
+    const handleAddFiles = useCallback(
+        (value: PartialAdditonalDocument) => {
+            onSuccess(value);
+        }, [onSuccess],
+    );
+
+    const removeFile = useCallback((key: string) => {
+        handleFileRemove(key);
+    }, [handleFileRemove]);
 
     const handleExternalLinkAdd = useCallback(() => {
         const obj = {
-            id: link,
-            key: randomString(),
-            name: link,
-            fileType: 'dropbox',
-            file: '',
-            link,
+            clientId: randomString(),
+            documentType: name as AssessmentRegistryDocumentTypeEnum,
+            file: undefined,
+            externalLink,
         };
-        handleAddFiles([obj]);
-        setLink(undefined);
+        handleAddFiles(obj);
+        setExternalLink(undefined);
     }, [
-        link,
-        setLink,
+        name,
+        externalLink,
+        setExternalLink,
         handleAddFiles,
     ]);
 
-    const removeFile = useCallback((key: string) => {
-        setFiles((oldState: FileLike[]) => {
-            const updatedState = produce(oldState, (safeState) => {
-                const index = safeState.findIndex((file: FileLike) => file.key === key);
-                if (index !== -1) {
-                    safeState.splice(index, 1);
-                }
-            });
-            return updatedState;
-        });
-        handleFileRemove(key);
-    }, [setFiles, handleFileRemove]);
-
-    const handleRetry = useCallback((key: string) => {
-        const failedFile = failedFiles.find((v) => v.key === key);
-        if (failedFile) {
-            handleAddFiles([failedFile]);
-        }
-        setFailedFiles((oldState: FileLike[]) => {
-            const updatedState = produce(oldState, (safeState) => {
-                const index = safeState.findIndex((file: FileLike) => file.key === key);
-                if (index !== -1) {
-                    safeState.splice(index, 1);
-                }
-            });
-            return updatedState;
-        });
-    }, [handleAddFiles, failedFiles]);
-
-    const handleFailure = useCallback((key: string) => {
-        const failedFile = files.find((v) => v.key === key);
-        if (failedFile) {
-            setFailedFiles((oldFiles) => ([
-                ...oldFiles,
-                failedFile,
-            ]));
-        }
-        removeFile(key);
-    }, [files, removeFile]);
-
-    const handleSuccess = useCallback((key:string, response: FileUploadResponse) => {
-        onSuccess(key, response);
-    }, [onSuccess]);
-
-    const fileRendererParams = useCallback((_: string, data: FileLike, index: number) => ({
-        data,
-        link,
-        active: index < noOfParallelUploads,
-        onSuccess: handleSuccess,
-        onFailure: handleFailure,
-        onRemoveFile: removeFile,
-        onChangeSelectedDocument,
-        documentType: name,
-    }), [
-        handleSuccess,
-        handleFailure,
-        removeFile,
-        onChangeSelectedDocument,
-        name,
-        link,
-    ]);
-
-    const failedFileRendererParams = useCallback((_: string, data: FileLike) => ({
-        data,
-        active: false,
-        hasFailed: true,
-        onRetry: handleRetry,
-        onSuccess: handleSuccess,
-        documentType: name,
-    }), [
-        handleSuccess,
-        handleRetry,
-        name,
-    ]);
+    const fileRendererParams = useCallback(
+        (_: string, data: PartialAdditonalDocument) => ({
+            data,
+            onRemoveFile: removeFile,
+            onChangeSelectedDocument,
+        }), [removeFile, onChangeSelectedDocument],
+    );
 
     return (
         <div className={styles.uploadPane}>
@@ -146,9 +79,9 @@ function FileUpload(props: Props) {
                         <div className={styles.linkInput}>
                             <TextInput
                                 placeholder="External Link"
-                                name="link"
-                                value={link}
-                                onChange={setLink}
+                                name="externalLink"
+                                value={externalLink}
+                                onChange={setExternalLink}
                             />
                             <Button
                                 variant="transparent"
@@ -163,7 +96,7 @@ function FileUpload(props: Props) {
                 <AryFileUpload
                     acceptFileType={acceptFileType}
                     name={name}
-                    onAdd={handleAddFiles}
+                    onSuccess={handleAddFiles}
                 />
             </div>
             <div className={styles.files}>
@@ -173,13 +106,6 @@ function FileUpload(props: Props) {
                     renderer={UploadItem}
                     keySelector={fileKeySelector}
                     rendererParams={fileRendererParams}
-                />
-                <List
-                    data={failedFiles}
-                    rendererClassName={styles.fileItemFailed}
-                    renderer={UploadItem}
-                    keySelector={fileKeySelector}
-                    rendererParams={failedFileRendererParams}
                 />
             </div>
         </div>

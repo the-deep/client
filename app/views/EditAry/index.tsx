@@ -415,6 +415,12 @@ function EditAry(props: Props) {
                         donors: result.donors.map((donor) => donor.id),
                         governments: result.governments.map((gov) => gov.id),
                         locations: result.locations?.map((location) => location.id),
+                        additionalDocuments: result.additionalDocuments?.map((doc) => ({
+                            clientId: doc.clientId,
+                            file: doc.file?.id,
+                            documentType: doc.documentType,
+                            externalLink: doc.externalLink,
+                        })),
                     });
 
                     const stakeholders = [
