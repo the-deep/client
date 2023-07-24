@@ -52,6 +52,7 @@ interface Props<T extends Option, K extends string | undefined> {
     readOnly?: boolean;
     type?: 'select' | 'segment';
     variant?: 'form' | 'general';
+    spacing?: 'compact' | 'none' | 'comfortable' | 'loose';
 }
 
 function BooleanInput<T extends Option, K extends string | undefined>(props: Props<T, K>) {
@@ -63,6 +64,7 @@ function BooleanInput<T extends Option, K extends string | undefined>(props: Pro
         options,
         type = 'select',
         variant,
+        spacing,
         ...otherProps
     } = props;
 
@@ -100,6 +102,7 @@ function BooleanInput<T extends Option, K extends string | undefined>(props: Pro
             value={currentValue}
             onChange={handleChange}
             name={name}
+            spacing={spacing}
             {...otherProps}
         />
     );
