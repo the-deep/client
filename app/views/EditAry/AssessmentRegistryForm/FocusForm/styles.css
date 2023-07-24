@@ -10,10 +10,11 @@
         padding: var(--dui-spacing-large);
     }
 
-    .label {
-        color: var(--dui-color-accent);
-        font-size: var(--dui-font-size-large);
-        font-weight: var(--dui-font-weight-bold);
+    .geo {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: var(--dui-spacing-large);
     }
 }
 
