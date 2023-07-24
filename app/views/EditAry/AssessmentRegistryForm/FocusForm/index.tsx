@@ -2,11 +2,13 @@ import React, { useMemo } from 'react';
 import { EntriesAsList, Error, SetBaseValueArg } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import { CheckListInput } from '@the-deep/deep-ui';
+import { IoPeopleSharp } from 'react-icons/io5';
 
 import { enumKeySelector, enumLabelSelector } from '#utils/common';
 import { GetFocusOptionsQuery, GetFocusOptionsQueryVariables } from '#generated/types';
 
 import { PartialFormType } from '../formSchema';
+import Header from '../Header';
 import styles from './styles.css';
 
 const GET_FOCUS_OPTIONS = gql`
@@ -76,7 +78,7 @@ function FocusForm(props: Props) {
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
                 labelContainerClassName={styles.label}
-                label="Framewok Pillars"
+                label={(<Header title="Framewok Pillars" />)}
                 name="focuses"
                 direction="vertical"
                 keySelector={enumKeySelector}
@@ -88,7 +90,7 @@ function FocusForm(props: Props) {
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
                 labelContainerClassName={styles.label}
-                label="Humanitarian Sectors"
+                label={(<Header title="Humanitarian Sectors" />)}
                 name="sectors"
                 direction="vertical"
                 keySelector={enumKeySelector}
@@ -100,7 +102,7 @@ function FocusForm(props: Props) {
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
                 labelContainerClassName={styles.label}
-                label="Protection Information Management Systems"
+                label={(<Header title="Protection Information Management Systems" />)}
                 name="protectionInfoMgmts"
                 direction="vertical"
                 keySelector={enumKeySelector}
@@ -112,7 +114,12 @@ function FocusForm(props: Props) {
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
                 labelContainerClassName={styles.label}
-                label="Affected Groups"
+                label={(
+                    <Header
+                        title="Affected Groups"
+                        icons={<IoPeopleSharp />}
+                    />
+                )}
                 name="affectedGroups"
                 direction="vertical"
                 keySelector={enumKeySelector}
