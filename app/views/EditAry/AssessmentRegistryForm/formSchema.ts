@@ -22,8 +22,10 @@ type AssessmentRegistryType = DeepMandatory<PurgeNull<AssessmentRegistryCreateIn
 export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
     'bgCrisisType' | 'bgPreparedness' | 'externalSupport' | 'coordinatedJoint'
     | 'detailsType' | 'family' | 'frequency' | 'confidentiality' | 'language'
+    | 'affectedGroups' | 'sectors' | 'protectionInfoMgmts' | 'focuses'
     | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
 >, 'clientId'>;
+
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
