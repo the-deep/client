@@ -18,6 +18,7 @@ import { GeoArea } from '#components/GeoMultiSelectInput';
 import MetadataForm from './MetadataForm';
 import MethodologyForm from './MethodologyForm';
 import FocusForm from './FocusForm';
+import CnaForm from './CnaForm';
 import { PartialFormType } from './formSchema';
 
 import styles from './styles.css';
@@ -75,6 +76,7 @@ const fieldsInCna: { [key in keyof PartialFormType]?: true } = {
 
 type Value = PartialFormType;
 interface Props {
+    projectId: string;
     value: Value;
     className?: string;
     setFieldValue: (...entries: EntriesAsList<Value>) => void;
@@ -90,6 +92,7 @@ interface Props {
 
 function AssessmentRegistryForm(props: Props) {
     const {
+        projectId,
         value,
         setFieldValue,
         setValue,
@@ -286,7 +289,9 @@ function AssessmentRegistryForm(props: Props) {
                     name="cna"
                     activeClassName={styles.tabPanel}
                 >
-                    CNA form
+                    <CnaForm
+                        projectId={projectId}
+                    />
                 </TabPanel>
             </Tabs>
         </div>

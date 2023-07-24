@@ -609,19 +609,21 @@ function EditAry(props: Props) {
                             lead={entriesForLead?.project?.lead}
                             entryImagesMap={entryImagesMap}
                         />
-                        <AssessmentRegistryForm
-                            className={styles.form}
-                            value={value}
-                            setFieldValue={setFieldValue}
-                            setValue={setValue}
-                            error={error}
-                            regionOptions={regionOptions}
-                            setRegionOptions={setRegionOptions}
-                            stakeholderOptions={stakeholderOptions}
-                            setStakeholderOptions={setStakeholderOptions}
-                            geoAreaOptions={geoAreaOptions}
-                            setGeoAreaOptions={setGeoAreaOptions}
-                        />
+                        <div className={styles.form}>
+                            <AssessmentRegistryForm
+                                className={styles.form}
+                                value={value}
+                                setFieldValue={setFieldValue}
+                                setValue={setValue}
+                                error={error}
+                                regionOptions={regionOptions}
+                                setRegionOptions={setRegionOptions}
+                                stakeholderOptions={stakeholderOptions}
+                                setStakeholderOptions={setStakeholderOptions}
+                                geoAreaOptions={geoAreaOptions}
+                                setGeoAreaOptions={setGeoAreaOptions}
+                            />
+                        </div>
                     </>
                 )}
             </div>
