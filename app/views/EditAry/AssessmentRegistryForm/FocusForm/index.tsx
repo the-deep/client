@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import { EntriesAsList, Error, SetBaseValueArg } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import { CheckListInput } from '@the-deep/deep-ui';
-import { IoPeopleSharp } from 'react-icons/io5';
+import { IoGlobeOutline, IoPeopleSharp } from 'react-icons/io5';
+import { noOp } from '@togglecorp/fujs';
 
 import { enumKeySelector, enumLabelSelector } from '#utils/common';
 import { GetFocusOptionsQuery, GetFocusOptionsQueryVariables } from '#generated/types';
@@ -10,6 +11,7 @@ import { GetFocusOptionsQuery, GetFocusOptionsQueryVariables } from '#generated/
 import { PartialFormType } from '../formSchema';
 import Header from '../Header';
 import styles from './styles.css';
+import GeoMultiSelectInput from '#components/GeoMultiSelectInput';
 
 const GET_FOCUS_OPTIONS = gql`
     query GetFocusOptions {
@@ -77,7 +79,6 @@ function FocusForm(props: Props) {
         <div className={styles.focus}>
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
-                labelContainerClassName={styles.label}
                 label={(<Header title="Framewok Pillars" />)}
                 name="focuses"
                 direction="vertical"
@@ -89,7 +90,6 @@ function FocusForm(props: Props) {
             />
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
-                labelContainerClassName={styles.label}
                 label={(<Header title="Humanitarian Sectors" />)}
                 name="sectors"
                 direction="vertical"
@@ -113,7 +113,6 @@ function FocusForm(props: Props) {
             />
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
-                labelContainerClassName={styles.label}
                 label={(
                     <Header
                         title="Affected Groups"
@@ -128,6 +127,17 @@ function FocusForm(props: Props) {
                 options={affectedOptions}
                 onChange={setFieldValue}
             />
+            <div className={styles.geo}>
+                <Header title="Geographic Locations" icons={<IoGlobeOutline />} />
+                <GeoMultiSelectInput
+                    className={styles.inputContainer}
+                    placeholder="Select option(s)"
+                    name="geo"
+                    title="Geo Areas"
+                    value={undefined}
+                    onchange={noOp}
+                />
+            </div>
         </div>
     );
 }

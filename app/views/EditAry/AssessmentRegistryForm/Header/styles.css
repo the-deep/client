@@ -5,5 +5,6 @@
 
     .icons {
         color: var(--dui-color-accent);
+        font-size: var(--dui-font-size-large);
     }
 }
