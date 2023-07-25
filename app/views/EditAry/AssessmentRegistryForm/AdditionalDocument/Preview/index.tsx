@@ -32,22 +32,24 @@ function Preview(props: Props) {
     });
 
     const attachmentData = useMemo(
-        () => ({
-            id: response?.id,
-            title: response?.title,
-            mimeType: response?.mimeType,
-            file: response?.file ? { url: response?.file } : undefined,
-        }), [response],
+        () => {
+            if (isNotDefined(response)) return undefined;
+            return {
+                id: response?.id,
+                title: response?.title,
+                mimeType: response?.mimeType,
+                file: { url: response?.file },
+            };
+        }, [response],
     );
 
     const linkData = useMemo(
         () => {
-            if (isNotDefined(link)) return null;
-            const linkValue = {
+            if (isNotDefined(link)) return undefined;
+            return {
                 title: link,
                 file: link ? { url: link } : undefined,
             };
-            return linkValue;
         }, [link],
     );
 
