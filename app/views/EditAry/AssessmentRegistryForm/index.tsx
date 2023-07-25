@@ -290,6 +290,9 @@ function AssessmentRegistryForm(props: Props) {
                     activeClassName={styles.tabPanel}
                 >
                     <CnaForm
+                        value={value}
+                        setFieldValue={setFieldValue}
+                        error={error}
                         projectId={projectId}
                     />
                 </TabPanel>
