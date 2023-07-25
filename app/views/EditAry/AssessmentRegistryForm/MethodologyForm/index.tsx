@@ -73,7 +73,7 @@ interface Props {
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>;
     disabled?: boolean;
-    readonly?: boolean;
+    readOnly?: boolean;
 }
 
 type PartialMethodologyAttributesType = PartialFormType['methodologyAttributes'];
@@ -84,7 +84,7 @@ function MethodologyForm(props: Props) {
         setFieldValue,
         error: riskyError,
         disabled,
-        readonly,
+        readOnly,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -111,12 +111,12 @@ function MethodologyForm(props: Props) {
     const handleAddMethodologyAttributes = useCallback(() => {
         setFieldValue(
             (oldValue: PartialMethodologyAttributesType) => {
-                const newOldValue = oldValue ?? [];
+                const safeOldValue = oldValue ?? [];
                 const newClientId = randomString();
                 const newMethodologyAttributes: MethodologyAttributesType = {
                     clientId: newClientId,
                 };
-                return [...newOldValue, newMethodologyAttributes];
+                return [...safeOldValue, newMethodologyAttributes];
             },
             'methodologyAttributes',
         );
@@ -141,7 +141,7 @@ function MethodologyForm(props: Props) {
                     error={error?.objectives}
                     rows={15}
                     disabled={disabled}
-                    readOnly={readonly}
+                    readOnly={readOnly}
                 />
 
                 <TextArea
@@ -154,7 +154,7 @@ function MethodologyForm(props: Props) {
                     error={error?.limitations}
                     rows={15}
                     disabled={disabled}
-                    readOnly={readonly}
+                    readOnly={readOnly}
                 />
             </div>
             <div className={styles.attributesContent}>
