@@ -1,5 +1,5 @@
 import React from 'react';
-import { isNotDefined, _cs } from '@togglecorp/fujs';
+import { isDefined, isNotDefined, _cs } from '@togglecorp/fujs';
 import {
     ElementFragments,
     QuickActionButton,
@@ -12,14 +12,13 @@ import {
 } from 'react-icons/io5';
 
 import { useRequest } from '#base/utils/restRequest';
-import { PartialAdditonalDocument } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
-import { FileUploadResponse } from '../../types';
 import styles from './styles.css';
+import { FileUploadResponse } from '../../types';
 
 interface Props {
     className?: string;
-    data: PartialAdditonalDocument;
+    data?: string;
     onRemoveFile?: (key: string) => void;
     onChangeSelectedDocument?: (key: string) => void;
 }
@@ -36,12 +35,13 @@ function UploadItem(props: Props) {
         pending,
         response,
     } = useRequest<FileUploadResponse>({
-        skip: isNotDefined(data?.file),
-        url: `server://files/${data?.file}`,
+        skip: isNotDefined(data),
+        url: `server://files/${data}`,
     });
 
-    const attachmentTitle = response?.title ?? data.externalLink;
-    return (
+    const attachmentTitle = response?.title;
+
+    return (isDefined(response) ? (
         <div className={_cs(className, styles.uploadItem)}>
             <ElementFragments
                 icons={pending
@@ -50,7 +50,7 @@ function UploadItem(props: Props) {
                 iconsContainerClassName={styles.icons}
                 actions={(
                     <QuickActionButton
-                        name={data.clientId}
+                        name={response?.id}
                         onClick={onRemoveFile}
                         title="delete"
                     >
@@ -62,7 +62,7 @@ function UploadItem(props: Props) {
             >
                 {attachmentTitle}
                 <QuickActionButton
-                    name={data.file}
+                    name={response.id}
                     onClick={onChangeSelectedDocument}
                     title="preview"
                 >
@@ -71,7 +71,7 @@ function UploadItem(props: Props) {
 
             </ElementFragments>
         </div>
-    );
+    ) : null);
 }
 
 export default UploadItem;
