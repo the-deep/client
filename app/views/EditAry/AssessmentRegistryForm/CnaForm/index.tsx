@@ -1,8 +1,28 @@
-import React from 'react';
-import { gql, useQuery } from '@apollo/client';
+import React,
+{
+    useMemo,
+} from 'react';
+import {
+    gql,
+    useQuery,
+} from '@apollo/client';
+import {
+    listToGroupList,
+    mapToList,
+    mapToMap,
+} from '@togglecorp/fujs';
+import {
+    EntriesAsList,
+    Error,
+} from '@togglecorp/toggle-form';
 import BooleanInput from '#components/selections/BooleanInput';
+import {
+    CnaQuestionsQuery,
+    CnaQuestionsQueryVariables,
+} from '#generated/types';
 
 import styles from './styles.css';
+import { PartialFormType } from '../formSchema';
 
 const CNA_QUESTIONS = gql`
     query CnaQuestions (
@@ -25,6 +45,9 @@ const CNA_QUESTIONS = gql`
 
 interface Props {
     projectId: string;
+    value: PartialFormType,
+    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    error: Error<PartialFormType>;
 }
 
 interface BooleanOption {
@@ -40,13 +63,16 @@ const answerOptions: BooleanOption[] = [
 function CnaForm(props: Props) {
     const {
         projectId,
+        value,
+        setFieldValue,
+        error,
     } = props;
 
     const [answer, setAnswer] = React.useState<boolean>();
 
     const {
         data: cnaResponse,
-    } = useQuery(
+    } = useQuery<CnaQuestionsQuery, CnaQuestionsQueryVariables>(
         CNA_QUESTIONS,
         {
             variables: {
@@ -55,82 +81,64 @@ function CnaForm(props: Props) {
         },
     );
 
-    console.log('CNA', cnaResponse);
+    const cnaQuestions = useMemo(() => {
+        const sectorList = listToGroupList(
+            cnaResponse?.project?.assessmentRegistryOptions?.cnaQuestions,
+            (cna) => cna?.sectorDisplay ?? '',
+        );
+        const subSectorList = mapToMap(
+            sectorList,
+            (d) => d,
+            (k) => listToGroupList(
+                k,
+                (d) => (d.subSectorDisplay ?? ''),
+            ),
+        );
+        const finalList = mapToList(subSectorList, (d, key) => ({
+            sector: key,
+            subSector: mapToList(
+                d,
+                (v, k) => ({
+                    subSector: k,
+                    questions: v,
+                }),
+            ),
+        }));
+
+        return finalList;
+    }, [cnaResponse]);
 
     return (
         <div className={styles.cnaForm}>
-            <div className={styles.sectorWrapper}>
-                <div className={styles.sectorHeading}>
-                    Sector
-                </div>
-                <div className={styles.subSectorWrapper}>
-                    <div className={styles.subSectorHeading}>
-                        Sub Sector
+            {cnaQuestions?.map((cna) => (
+                <div className={styles.sectorWrapper}>
+                    <div className={styles.sectorHeading}>
+                        {cna.sector}
                     </div>
-                    <div className={styles.question}>
-                        <BooleanInput
-                            name="answer"
-                            type="segment"
-                            options={answerOptions}
-                            onChange={setAnswer}
-                            value={answer}
-                            spacing="compact"
-                        />
-                        <div>
-                            This is the text output for test cna question
+                    {cna.subSector.map((subSector) => (
+                        <div className={styles.subSectorWrapper}>
+                            <div className={styles.subSectorHeading}>
+                                {subSector.subSector}
+                            </div>
+                            {subSector.questions.map((question) => (
+                                <div className={styles.question}>
+                                    <BooleanInput
+                                        name="answer"
+                                        type="segment"
+                                        options={answerOptions}
+                                        onChange={setAnswer}
+                                        value={answer}
+                                        spacing="compact"
+                                    />
+                                    <div>
+                                        {question.question}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    </div>
-                    <div className={styles.question}>
-                        <BooleanInput
-                            name="answer"
-                            type="segment"
-                            options={answerOptions}
-                            onChange={setAnswer}
-                            value={answer}
-                            spacing="compact"
-                        />
-                        <div>
-                            This is the text output for test cna question 2
-                        </div>
-                    </div>
+                    ))}
                 </div>
-            </div>
-            <div className={styles.sectorWrapper}>
-                <div className={styles.sectorHeading}>
-                    Sector 2
-                </div>
-                <div className={styles.subSectorWrapper}>
-                    <div className={styles.subSectorHeading}>
-                        Sub Sector 2
-                    </div>
-                    <div className={styles.question}>
-                        <BooleanInput
-                            name="answer"
-                            type="segment"
-                            options={answerOptions}
-                            onChange={setAnswer}
-                            value={answer}
-                            spacing="compact"
-                        />
-                        <div>
-                            This is the text output for sub sector 2 test cna question
-                        </div>
-                    </div>
-                    <div className={styles.question}>
-                        <BooleanInput
-                            name="answer"
-                            type="segment"
-                            options={answerOptions}
-                            onChange={setAnswer}
-                            value={answer}
-                            spacing="compact"
-                        />
-                        <div>
-                            This is the text output for sub sector 2 test cna question 2
-                        </div>
-                    </div>
-                </div>
-            </div>
+            ))}
         </div>
     );
 }

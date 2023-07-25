@@ -351,5 +351,14 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             regionTitle
             title
         }
+        cna {
+            id
+            question {
+                id
+                question
+                sectorDisplay
+                subSectorDisplay
+            }
+        }
     }
 `;
