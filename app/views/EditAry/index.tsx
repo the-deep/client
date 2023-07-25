@@ -418,9 +418,9 @@ function EditAry(props: Props) {
                         additionalDocuments: result.additionalDocuments?.map((doc) => ({
                             ...doc,
                             clientId: doc.clientId,
-                            file: doc.file?.id,
                             documentType: doc.documentType,
                             externalLink: doc.externalLink,
+                            file: doc.file?.id,
                         })),
                     });
 
