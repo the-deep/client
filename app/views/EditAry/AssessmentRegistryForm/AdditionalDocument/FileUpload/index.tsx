@@ -3,24 +3,26 @@ import { Button, List, TextInput } from '@the-deep/deep-ui';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { randomString } from '@togglecorp/fujs';
 
-import { AssessmentRegistryDocumentTypeEnum } from '#generated/types';
+import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
 
 import AryFileUpload from './AryFileUpload';
 import UploadItem from './UploadItem';
 import styles from './styles.css';
-import { PartialAdditonalDocument } from '../../formSchema';
 
-const fileKeySelector = (d: PartialAdditonalDocument): string => d.clientId;
+const fileKeySelector = (d: string): string => d;
 
 interface Props {
     name: AssessmentRegistryDocumentTypeEnum;
     title: string;
     acceptFileType?: string;
-    onSuccess: (item: PartialAdditonalDocument) => void;
+    onSuccess: (
+        v: AdditionalDocumentType,
+        documentType: AssessmentRegistryDocumentTypeEnum,
+    ) => void;
     handleFileRemove: (key: string) => void;
     onChangeSelectedDocument: (key: string) => void;
     showLink?: boolean;
-    files?: PartialAdditonalDocument[];
+    files?: string[];
 }
 
 function FileUpload(props: Props) {
@@ -36,12 +38,6 @@ function FileUpload(props: Props) {
     } = props;
     const [externalLink, setExternalLink] = useState<string>();
 
-    const handleAddFiles = useCallback(
-        (value: PartialAdditonalDocument) => {
-            onSuccess(value);
-        }, [onSuccess],
-    );
-
     const removeFile = useCallback((key: string) => {
         handleFileRemove(key);
     }, [handleFileRemove]);
@@ -52,18 +48,18 @@ function FileUpload(props: Props) {
             documentType: name as AssessmentRegistryDocumentTypeEnum,
             file: undefined,
             externalLink,
-        };
-        handleAddFiles(obj);
+        } as AdditionalDocumentType;
+        onSuccess(obj, name);
         setExternalLink(undefined);
     }, [
         name,
         externalLink,
         setExternalLink,
-        handleAddFiles,
+        onSuccess,
     ]);
 
     const fileRendererParams = useCallback(
-        (_: string, data: PartialAdditonalDocument) => ({
+        (_: string, data: string) => ({
             data,
             onRemoveFile: removeFile,
             onChangeSelectedDocument,
@@ -96,7 +92,7 @@ function FileUpload(props: Props) {
                 <AryFileUpload
                     acceptFileType={acceptFileType}
                     name={name}
-                    onSuccess={handleAddFiles}
+                    onSuccess={onSuccess}
                 />
             </div>
             <div className={styles.files}>

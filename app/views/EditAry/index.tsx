@@ -416,6 +416,7 @@ function EditAry(props: Props) {
                         governments: result.governments.map((gov) => gov.id),
                         locations: result.locations?.map((location) => location.id),
                         additionalDocuments: result.additionalDocuments?.map((doc) => ({
+                            ...doc,
                             clientId: doc.clientId,
                             file: doc.file?.id,
                             documentType: doc.documentType,
