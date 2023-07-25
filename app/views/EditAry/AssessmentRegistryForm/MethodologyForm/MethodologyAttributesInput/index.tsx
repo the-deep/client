@@ -39,7 +39,7 @@ interface Props {
     error: Error<MethodologyAttributesType> | undefined;
     options: GetAttributesOptionsQuery | undefined;
     disabled?: boolean;
-    readonly?: boolean;
+    readOnly?: boolean;
 }
 
 function MethodologyAttributesInput(props: Props) {
@@ -51,7 +51,7 @@ function MethodologyAttributesInput(props: Props) {
         onRemove,
         options,
         disabled,
-        readonly,
+        readOnly,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -76,7 +76,7 @@ function MethodologyAttributesInput(props: Props) {
                 value={value.dataCollectionTechnique}
                 error={error?.dataCollectionTechnique}
                 disabled={disabled}
-                readOnly={readonly}
+                readOnly={readOnly}
             />
             <div className={styles.samplingInput}>
                 <NumberInput
@@ -87,7 +87,7 @@ function MethodologyAttributesInput(props: Props) {
                     value={value.samplingSize}
                     error={error?.samplingSize}
                     disabled={disabled}
-                    readOnly={readonly}
+                    readOnly={readOnly}
                 />
                 <SelectInput
                     className={styles.attributeInput}
@@ -101,7 +101,7 @@ function MethodologyAttributesInput(props: Props) {
                     value={value.samplingApproach}
                     error={error?.samplingApproach}
                     disabled={disabled}
-                    readOnly={readonly}
+                    readOnly={readOnly}
                 />
             </div>
             <SelectInput
@@ -116,7 +116,7 @@ function MethodologyAttributesInput(props: Props) {
                 value={value.proximity}
                 error={error?.proximity}
                 disabled={disabled}
-                readOnly={readonly}
+                readOnly={readOnly}
             />
             <SelectInput
                 className={styles.attributeInput}
@@ -130,7 +130,7 @@ function MethodologyAttributesInput(props: Props) {
                 value={value.unitOfAnalysis}
                 error={error?.unitOfAnalysis}
                 disabled={disabled}
-                readOnly={readonly}
+                readOnly={readOnly}
             />
             <SelectInput
                 className={styles.attributeInput}
@@ -144,7 +144,7 @@ function MethodologyAttributesInput(props: Props) {
                 value={value.unitOfReporting}
                 error={error?.unitOfReporting}
                 disabled={disabled}
-                readOnly={readonly}
+                readOnly={readOnly}
             />
             <QuickActionButton
                 title="Remove Attributes"
