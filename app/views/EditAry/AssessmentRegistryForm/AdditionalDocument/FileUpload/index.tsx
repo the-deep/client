@@ -8,8 +8,11 @@ import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum } from '#gen
 import AryFileUpload from './AryFileUpload';
 import UploadItem from './UploadItem';
 import styles from './styles.css';
+import { PartialAdditonalDocument } from '../../formSchema';
+import LinkUploadItem from './LinkUploadItem';
 
 const fileKeySelector = (d: string): string => d;
+const linkKeySelector = (d: PartialAdditonalDocument): string => d.clientId as string;
 
 interface Props {
     name: AssessmentRegistryDocumentTypeEnum;
@@ -23,6 +26,7 @@ interface Props {
     onChangeSelectedDocument: (key: string) => void;
     showLink?: boolean;
     files?: string[];
+    links?: PartialAdditonalDocument[];
 }
 
 function FileUpload(props: Props) {
@@ -35,12 +39,10 @@ function FileUpload(props: Props) {
         onChangeSelectedDocument,
         showLink,
         files,
+        links,
     } = props;
-    const [externalLink, setExternalLink] = useState<string>();
 
-    const removeFile = useCallback((key: string) => {
-        handleFileRemove(key);
-    }, [handleFileRemove]);
+    const [externalLink, setExternalLink] = useState<string>();
 
     const handleExternalLinkAdd = useCallback(() => {
         const obj = {
@@ -61,9 +63,16 @@ function FileUpload(props: Props) {
     const fileRendererParams = useCallback(
         (_: string, data: string) => ({
             data,
-            onRemoveFile: removeFile,
+            onRemoveFile: handleFileRemove,
             onChangeSelectedDocument,
-        }), [removeFile, onChangeSelectedDocument],
+        }), [handleFileRemove, onChangeSelectedDocument],
+    );
+    const linkRendererParams = useCallback(
+        (_: string, data: PartialAdditonalDocument) => ({
+            data,
+            onRemoveFile: handleFileRemove,
+            onChangeSelectedDocument,
+        }), [handleFileRemove, onChangeSelectedDocument],
     );
 
     return (
@@ -96,12 +105,22 @@ function FileUpload(props: Props) {
                 />
             </div>
             <div className={styles.files}>
+                {(files?.length === 0) && (
+                    <div className={styles.emptyMessage}>Upload files here</div>
+                )}
                 <List
                     data={files}
                     rendererClassName={styles.fileItem}
                     renderer={UploadItem}
                     keySelector={fileKeySelector}
                     rendererParams={fileRendererParams}
+                />
+                <List
+                    data={links}
+                    rendererClassName={styles.fileItem}
+                    renderer={LinkUploadItem}
+                    keySelector={linkKeySelector}
+                    rendererParams={linkRendererParams}
                 />
             </div>
         </div>

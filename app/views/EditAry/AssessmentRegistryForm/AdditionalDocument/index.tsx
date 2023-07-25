@@ -12,6 +12,8 @@ interface Props {
     value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>;
+    disabled?: boolean;
+    readOnly?: boolean;
 }
 
 function AdditionalDocument(props: Props) {
@@ -19,6 +21,8 @@ function AdditionalDocument(props: Props) {
         value: formValue,
         setFieldValue,
         error: riskyError,
+        disabled,
+        readOnly,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -26,15 +30,17 @@ function AdditionalDocument(props: Props) {
 
     const handleFileUploadSuccess = useCallback(
         (val, documentType) => {
-            const formObj = {
-                clientId: val.id,
+            const newValue = {
+                clientId: val.id ?? val.clientId,
                 file: val.id,
                 documentType,
+                externalLink: val.externalLink,
             };
+
             setFieldValue(
                 (oldVal: PartialFormType['additionalDocuments']) => ([
                     ...(oldVal ?? []),
-                    formObj,
+                    newValue,
                 ]),
                 'additionalDocuments',
             );
@@ -55,12 +61,17 @@ function AdditionalDocument(props: Props) {
 
     const [
         assessmentFiles,
+        assessmentLinks,
         questionareFiles,
         miscellaneousFiles,
     ] = useMemo(() => {
         const dataset = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'ASSESSMENT_DATABASE',
         ).map((i) => i.file)?.filter(isDefined);
+
+        const links = formValue.additionalDocuments?.filter(
+            (val) => val.documentType === 'ASSESSMENT_DATABASE' && isDefined(val.externalLink),
+        );
 
         const questionare = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'QUESTIONNAIRE',
@@ -72,12 +83,18 @@ function AdditionalDocument(props: Props) {
 
         return [
             dataset,
+            links,
             questionare,
             miscellaneous,
         ];
     }, [formValue]);
 
-    console.log('items', miscellaneousFiles);
+    const linkSelected = useMemo(
+        () => formValue.additionalDocuments?.find(
+            (i) => i.clientId === selectedDocument,
+        )?.externalLink,
+        [formValue, selectedDocument],
+    );
 
     return (
         <div className={styles.additionalDocument}>
@@ -88,7 +105,9 @@ function AdditionalDocument(props: Props) {
                 value={formValue.executiveSummary}
                 onChange={setFieldValue}
                 error={getErrorString(error?.executiveSummary)}
-                autoSize
+                rows={18}
+                disabled={disabled}
+                readOnly={readOnly}
             />
             <FileUpload
                 title="Assessment Dataset"
@@ -99,6 +118,7 @@ function AdditionalDocument(props: Props) {
                 acceptFileType=".pdf"
                 showLink
                 files={assessmentFiles}
+                links={assessmentLinks}
             />
             <FileUpload
                 title="Questionare"
@@ -119,6 +139,7 @@ function AdditionalDocument(props: Props) {
             />
             {selectedDocument && (
                 <Preview
+                    link={linkSelected}
                     attachmentId={selectedDocument}
                     onChangeSelectedAttachment={setSelectedDocument}
                 />
