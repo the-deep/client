@@ -27,7 +27,7 @@ export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
     | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
 >, 'clientId' | 'question'>;
 
-export type PartialAdditonalDocument = NonNullable<AssessmentRegistryCreateInputType['additionalDocuments']>[number];
+export type PartialAdditonalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
