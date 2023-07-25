@@ -3,9 +3,12 @@ import { EntriesAsList, Error, getErrorObject, getErrorString } from '@togglecor
 import { TextArea } from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
 
+import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
+
 import FileUpload from './FileUpload';
 import { PartialFormType } from '../formSchema';
 import Preview from './Preview';
+
 import styles from './styles.css';
 
 interface Props {
@@ -29,12 +32,12 @@ function AdditionalDocument(props: Props) {
     const [selectedDocument, setSelectedDocument] = useState<string | undefined>();
 
     const handleFileUploadSuccess = useCallback(
-        (val, documentType) => {
+        (val: AdditionalDocumentType, documentType: AssessmentRegistryDocumentTypeEnum) => {
             const newValue = {
                 clientId: val.id ?? val.clientId,
                 file: val.id,
                 documentType,
-                externalLink: val.externalLink,
+                externalLink: val?.externalLink,
             };
 
             setFieldValue(
@@ -61,29 +64,23 @@ function AdditionalDocument(props: Props) {
 
     const [
         assessmentFiles,
-        assessmentLinks,
         questionareFiles,
         miscellaneousFiles,
     ] = useMemo(() => {
         const dataset = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'ASSESSMENT_DATABASE',
-        ).map((i) => i.file)?.filter(isDefined);
-
-        const links = formValue.additionalDocuments?.filter(
-            (val) => val.documentType === 'ASSESSMENT_DATABASE' && isDefined(val.externalLink),
-        );
+        ).filter(isDefined);
 
         const questionare = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'QUESTIONNAIRE',
-        ).map((i) => i.file)?.filter(isDefined);
+        ).filter(isDefined);
 
         const miscellaneous = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'MISCELLANEOUS',
-        ).map((i) => i.file)?.filter(isDefined);
+        ).filter(isDefined);
 
         return [
             dataset,
-            links,
             questionare,
             miscellaneous,
         ];
@@ -91,7 +88,7 @@ function AdditionalDocument(props: Props) {
 
     const linkSelected = useMemo(
         () => formValue.additionalDocuments?.find(
-            (i) => i.clientId === selectedDocument,
+            (document) => document.clientId === selectedDocument,
         )?.externalLink,
         [formValue, selectedDocument],
     );
@@ -118,7 +115,6 @@ function AdditionalDocument(props: Props) {
                 acceptFileType=".pdf"
                 showLink
                 files={assessmentFiles}
-                links={assessmentLinks}
             />
             <FileUpload
                 title="Questionare"

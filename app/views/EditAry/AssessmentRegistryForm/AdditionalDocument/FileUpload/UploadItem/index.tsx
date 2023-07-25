@@ -12,13 +12,14 @@ import {
 } from 'react-icons/io5';
 
 import { useRequest } from '#base/utils/restRequest';
+import { PartialAdditonalDocument } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 import { FileUploadResponse } from '../../types';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
-    data?: string;
+    data?: PartialAdditonalDocument;
     onRemoveFile?: (key: string) => void;
     onChangeSelectedDocument?: (key: string) => void;
 }
@@ -35,15 +36,15 @@ function UploadItem(props: Props) {
         pending,
         response,
     } = useRequest<FileUploadResponse>({
-        skip: isNotDefined(data),
-        url: `server://files/${data}`,
+        skip: isNotDefined(data?.file),
+        url: `server://files/${data?.file}`,
     });
 
-    const attachmentTitle = response?.title;
+    const attachmentTitle = isDefined(data?.file) ? response?.title : data?.externalLink;
 
     return (
         <div className={_cs(className, styles.uploadItem)}>
-            {isDefined(response) ? (
+            {isDefined(data) ? (
                 <ElementFragments
                     icons={pending
                         ? <Spinner />
@@ -51,7 +52,7 @@ function UploadItem(props: Props) {
                     iconsContainerClassName={styles.icons}
                     actions={(
                         <QuickActionButton
-                            name={response.id}
+                            name={data.clientId}
                             onClick={onRemoveFile}
                             title="delete"
                         >
@@ -63,7 +64,7 @@ function UploadItem(props: Props) {
                 >
                     {attachmentTitle}
                     <QuickActionButton
-                        name={response.id}
+                        name={data.clientId}
                         onClick={onChangeSelectedDocument}
                         title="preview"
                     >

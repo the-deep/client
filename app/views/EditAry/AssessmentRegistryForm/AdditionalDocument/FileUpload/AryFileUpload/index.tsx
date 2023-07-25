@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react';
-import {
-    FileInput,
-} from '@the-deep/deep-ui';
+import { FileInput } from '@the-deep/deep-ui';
 import { IoCloudUpload } from 'react-icons/io5';
+
 import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
 import { useLazyRequest } from '#base/utils/restRequest';
 
@@ -20,7 +19,6 @@ interface Props {
 interface UploadType {
     title: string;
     file: File;
-    isPublic: boolean;
 }
 
 function AryFileUpload(props: Props) {
@@ -52,7 +50,6 @@ function AryFileUpload(props: Props) {
             const basicFile = value ? {
                 title: value.name,
                 file: value,
-                isPublic: true,
             } : undefined;
 
             trigger(basicFile);

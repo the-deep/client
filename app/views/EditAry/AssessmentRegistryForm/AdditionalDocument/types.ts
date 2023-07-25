@@ -1,15 +1,5 @@
 import { MimeTypes } from '#components/lead/LeadPreview/Preview/mimeTypes';
-import {
-    AssessmentRegistryDocumentTypeEnum,
-    LeadSourceTypeEnum,
-} from '#generated/types';
-
-export type SourceFileType = 'disk' | 'dropbox';
-
-export const sourceTypeMap: { [key in SourceFileType]: LeadSourceTypeEnum } = {
-    disk: 'DISK',
-    dropbox: 'DROPBOX',
-};
+import { AssessmentRegistryDocumentTypeEnum } from '#generated/types';
 
 export interface FileUploadResponse {
     id: string;
@@ -25,7 +15,6 @@ export interface FileUploadResponse {
     title: string;
     mimeType: MimeTypes;
     metadata: unknown;
-    sourceType: SourceFileType;
     documentType: AssessmentRegistryDocumentTypeEnum;
     externalLink?: string;
 }
