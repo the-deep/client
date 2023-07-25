@@ -1,9 +1,8 @@
 import React from 'react';
-import { isDefined, isNotDefined, _cs } from '@togglecorp/fujs';
+import { isDefined, _cs } from '@togglecorp/fujs';
 import {
     ElementFragments,
     QuickActionButton,
-    Spinner,
 } from '@the-deep/deep-ui';
 import {
     IoDocumentOutline,
@@ -11,19 +10,18 @@ import {
     IoTrashOutline,
 } from 'react-icons/io5';
 
-import { useRequest } from '#base/utils/restRequest';
+import { PartialAdditonalDocument } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
-import { FileUploadResponse } from '../../types';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
-    data?: string;
+    data: PartialAdditonalDocument;
     onRemoveFile?: (key: string) => void;
     onChangeSelectedDocument?: (key: string) => void;
 }
 
-function UploadItem(props: Props) {
+function LinkUploadItem(props: Props) {
     const {
         className,
         data,
@@ -31,27 +29,15 @@ function UploadItem(props: Props) {
         onChangeSelectedDocument,
     } = props;
 
-    const {
-        pending,
-        response,
-    } = useRequest<FileUploadResponse>({
-        skip: isNotDefined(data),
-        url: `server://files/${data}`,
-    });
-
-    const attachmentTitle = response?.title;
-
     return (
         <div className={_cs(className, styles.uploadItem)}>
-            {isDefined(response) ? (
+            {isDefined(data.clientId) ? (
                 <ElementFragments
-                    icons={pending
-                        ? <Spinner />
-                        : <IoDocumentOutline className={styles.icon} />}
+                    icons={<IoDocumentOutline className={styles.icon} />}
                     iconsContainerClassName={styles.icons}
                     actions={(
                         <QuickActionButton
-                            name={response.id}
+                            name={data.clientId}
                             onClick={onRemoveFile}
                             title="delete"
                         >
@@ -61,9 +47,9 @@ function UploadItem(props: Props) {
                     actionsContainerClassName={styles.actions}
                     childrenContainerClassName={styles.content}
                 >
-                    {attachmentTitle}
+                    {data.externalLink}
                     <QuickActionButton
-                        name={response.id}
+                        name={data.clientId}
                         onClick={onChangeSelectedDocument}
                         title="preview"
                     >
@@ -76,4 +62,4 @@ function UploadItem(props: Props) {
     );
 }
 
-export default UploadItem;
+export default LinkUploadItem;
