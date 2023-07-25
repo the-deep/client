@@ -1,18 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import { Button, List, TextInput } from '@the-deep/deep-ui';
 import { IoAddCircleOutline } from 'react-icons/io5';
-import { randomString } from '@togglecorp/fujs';
+import { isDefined, isValidUrl, randomString } from '@togglecorp/fujs';
 
 import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
 
 import AryFileUpload from './AryFileUpload';
 import UploadItem from './UploadItem';
-import styles from './styles.css';
 import { PartialAdditonalDocument } from '../../formSchema';
-import LinkUploadItem from './LinkUploadItem';
 
-const fileKeySelector = (d: string): string => d;
-const linkKeySelector = (d: PartialAdditonalDocument): string => d.clientId as string;
+import styles from './styles.css';
+
+const fileKeySelector = (d: PartialAdditonalDocument): string => d.clientId;
 
 interface Props {
     name: AssessmentRegistryDocumentTypeEnum;
@@ -25,8 +24,7 @@ interface Props {
     handleFileRemove: (key: string) => void;
     onChangeSelectedDocument: (key: string) => void;
     showLink?: boolean;
-    files?: string[];
-    links?: PartialAdditonalDocument[];
+    files?: PartialAdditonalDocument[];
 }
 
 function FileUpload(props: Props) {
@@ -39,10 +37,10 @@ function FileUpload(props: Props) {
         onChangeSelectedDocument,
         showLink,
         files,
-        links,
     } = props;
 
-    const [externalLink, setExternalLink] = useState<string>();
+    const [externalLink, setExternalLink] = useState<string>('');
+    const [checkUrl, setCheckUrl] = useState<boolean>(false);
 
     const handleExternalLinkAdd = useCallback(() => {
         const obj = {
@@ -51,8 +49,15 @@ function FileUpload(props: Props) {
             file: undefined,
             externalLink,
         } as AdditionalDocumentType;
-        onSuccess(obj, name);
-        setExternalLink(undefined);
+        const isUrl = isValidUrl(externalLink);
+
+        if (isUrl) {
+            onSuccess(obj, name);
+            setCheckUrl(false);
+            setExternalLink('');
+            return;
+        }
+        setCheckUrl(true);
     }, [
         name,
         externalLink,
@@ -61,20 +66,12 @@ function FileUpload(props: Props) {
     ]);
 
     const fileRendererParams = useCallback(
-        (_: string, data: string) => ({
-            data,
-            onRemoveFile: handleFileRemove,
-            onChangeSelectedDocument,
-        }), [handleFileRemove, onChangeSelectedDocument],
-    );
-    const linkRendererParams = useCallback(
         (_: string, data: PartialAdditonalDocument) => ({
             data,
             onRemoveFile: handleFileRemove,
             onChangeSelectedDocument,
         }), [handleFileRemove, onChangeSelectedDocument],
     );
-
     return (
         <div className={styles.uploadPane}>
             <div className={styles.uploadHeader}>
@@ -87,6 +84,7 @@ function FileUpload(props: Props) {
                                 name="externalLink"
                                 value={externalLink}
                                 onChange={setExternalLink}
+                                error={checkUrl ? 'Invalid url' : undefined}
                             />
                             <Button
                                 variant="transparent"
@@ -114,13 +112,6 @@ function FileUpload(props: Props) {
                     renderer={UploadItem}
                     keySelector={fileKeySelector}
                     rendererParams={fileRendererParams}
-                />
-                <List
-                    data={links}
-                    rendererClassName={styles.fileItem}
-                    renderer={LinkUploadItem}
-                    keySelector={linkKeySelector}
-                    rendererParams={linkRendererParams}
                 />
             </div>
         </div>
