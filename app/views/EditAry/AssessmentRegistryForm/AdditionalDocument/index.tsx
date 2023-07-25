@@ -3,10 +3,8 @@ import { EntriesAsList, Error, getErrorObject, getErrorString } from '@togglecor
 import { TextArea } from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
 
-import { AdditionalDocumentInputType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
-
 import FileUpload from './FileUpload';
-import { PartialAdditonalDocument, PartialFormType } from '../formSchema';
+import { PartialFormType } from '../formSchema';
 import Preview from './Preview';
 import styles from './styles.css';
 
@@ -27,11 +25,16 @@ function AdditionalDocument(props: Props) {
     const [selectedDocument, setSelectedDocument] = useState<string | undefined>();
 
     const handleFileUploadSuccess = useCallback(
-        (val: AdditionalDocumentInputType) => {
+        (val, documentType) => {
+            const formObj = {
+                clientId: val.id,
+                file: val.id,
+                documentType,
+            };
             setFieldValue(
-                (oldVal?: AdditionalDocumentInputType[]) => ([
+                (oldVal: PartialFormType['additionalDocuments']) => ([
                     ...(oldVal ?? []),
-                    val,
+                    formObj,
                 ]),
                 'additionalDocuments',
             );
@@ -56,16 +59,16 @@ function AdditionalDocument(props: Props) {
         miscellaneousFiles,
     ] = useMemo(() => {
         const dataset = formValue.additionalDocuments?.filter(
-            (doc) => doc.documentType === 'ASSESSMENT_DATABASE',
-        ).filter(isDefined);
+            (val) => val.documentType === 'ASSESSMENT_DATABASE',
+        ).map((i) => i.file)?.filter(isDefined);
 
         const questionare = formValue.additionalDocuments?.filter(
-            (doc) => doc.documentType === 'QUESTIONNAIRE',
-        ).filter(isDefined);
+            (val) => val.documentType === 'QUESTIONNAIRE',
+        ).map((i) => i.file)?.filter(isDefined);
 
         const miscellaneous = formValue.additionalDocuments?.filter(
-            (doc) => doc.documentType === 'MISCELLANEOUS',
-        ).filter(isDefined);
+            (val) => val.documentType === 'MISCELLANEOUS',
+        ).map((i) => i.file)?.filter(isDefined);
 
         return [
             dataset,
@@ -73,6 +76,8 @@ function AdditionalDocument(props: Props) {
             miscellaneous,
         ];
     }, [formValue]);
+
+    console.log('items', miscellaneousFiles);
 
     return (
         <div className={styles.additionalDocument}>

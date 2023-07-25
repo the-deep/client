@@ -1,19 +1,19 @@
 import React, { useCallback } from 'react';
-import { randomString } from '@togglecorp/fujs';
 import {
     FileInput,
 } from '@the-deep/deep-ui';
 import { IoCloudUpload } from 'react-icons/io5';
-import { AssessmentRegistryDocumentTypeEnum } from '#generated/types';
-import { PartialAdditonalDocument } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
 import { useLazyRequest } from '#base/utils/restRequest';
 
-import { FileUploadResponse } from '../../types';
 import styles from './styles.css';
 
 interface Props {
-    onSuccess: (v: PartialAdditonalDocument) => void;
-    name?: AssessmentRegistryDocumentTypeEnum;
+    onSuccess: (
+        v: AdditionalDocumentType,
+        documentType: AssessmentRegistryDocumentTypeEnum,
+    ) => void;
+    name: AssessmentRegistryDocumentTypeEnum;
     acceptFileType?: string;
 }
 
@@ -33,18 +33,13 @@ function AryFileUpload(props: Props) {
     const {
         pending,
         trigger,
-    } = useLazyRequest<FileUploadResponse, UploadType | undefined | null>({
+    } = useLazyRequest<AdditionalDocumentType, UploadType | undefined | null>({
         url: 'server://files/',
         method: 'POST',
         formData: true,
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            const fileResponse = {
-                clientId: randomString(),
-                file: response.id,
-                documentType: name,
-            };
-            onSuccess(fileResponse);
+            onSuccess(response, name);
         },
         onFailure: (err) => {
             console.log(err);
