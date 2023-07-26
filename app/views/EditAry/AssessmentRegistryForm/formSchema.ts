@@ -24,12 +24,13 @@ export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
     | 'detailsType' | 'family' | 'frequency' | 'confidentiality' | 'language'
     | 'affectedGroups' | 'sectors' | 'protectionInfoMgmts' | 'focuses'
     | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
->, 'clientId'>;
+>, 'clientId' | 'question'>;
 
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 export type MethodologyAttributesType = NonNullable<PartialFormType['methodologyAttributes']>[number];
+export type CnaType = NonNullable<PartialFormType['cna']>[number];
 type MethodologyAttributesSchema = ObjectSchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesSchemaFields = ReturnType<MethodologyAttributesSchema['fields']>;
 
@@ -90,6 +91,15 @@ export const schema: FormSchema = {
             additionalDocuments: [defaultEmptyArrayType],
             scoreRatings: [defaultEmptyArrayType],
             scoreAnalyticalDensity: [defaultEmptyArrayType],
+            cna: {
+                keySelector: (cna) => cna.question,
+                member: () => ({
+                    fields: () => ({
+                        question: [requiredCondition],
+                        answer: [requiredCondition],
+                    }),
+                }),
+            },
         };
         if (value?.sectors?.some((sector) => sector === 'PROTECTION')) {
             baseSchema = {
