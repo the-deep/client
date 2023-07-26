@@ -22,13 +22,6 @@
                 color: var(--dui-color-accent);
                 font-size: var(--dui-font-size-extra-large);
             }
-
-            .question {
-                display: flex;
-                gap: var(--dui-spacing-large);
-                align-items: center;
-                font-size: var(--dui-font-size-large);
-            }
         }
     }
 }

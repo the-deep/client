@@ -8,21 +8,27 @@ import {
 } from '@apollo/client';
 import {
     listToGroupList,
+    listToMap,
     mapToList,
     mapToMap,
 } from '@togglecorp/fujs';
 import {
     EntriesAsList,
     Error,
+    getErrorObject,
+    useFormArray,
 } from '@togglecorp/toggle-form';
-import BooleanInput from '#components/selections/BooleanInput';
 import {
     CnaQuestionsQuery,
     CnaQuestionsQueryVariables,
 } from '#generated/types';
+import {
+    CnaType,
+    PartialFormType,
+} from '../formSchema';
+import AnswerQuestionInput from './AnswerQuestionInput';
 
 import styles from './styles.css';
-import { PartialFormType } from '../formSchema';
 
 const CNA_QUESTIONS = gql`
     query CnaQuestions (
@@ -47,28 +53,23 @@ interface Props {
     projectId: string;
     value: PartialFormType,
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    error: Error<PartialFormType>;
+    error: Error<PartialFormType>
 }
-
-interface BooleanOption {
-    key: 'true' | 'false';
-    value: string;
-}
-
-const answerOptions: BooleanOption[] = [
-    { key: 'true', value: 'Yes' },
-    { key: 'false', value: 'No' },
-];
 
 function CnaForm(props: Props) {
     const {
         projectId,
         value,
         setFieldValue,
-        error,
+        error: riskyError,
     } = props;
 
-    const [answer, setAnswer] = React.useState<boolean>();
+    const {
+        setValue: setAnswerValue,
+    } = useFormArray<
+        'cna',
+        CnaType
+    >('cna', setFieldValue);
 
     const {
         data: cnaResponse,
@@ -80,10 +81,17 @@ function CnaForm(props: Props) {
             },
         },
     );
+    const error = getErrorObject(
+        riskyError,
+    );
+
+    const cnaError = getErrorObject(error?.cna);
+    const responseCna = cnaResponse?.project?.assessmentRegistryOptions?.cnaQuestions;
+    const cnaValue = value.cna;
 
     const cnaQuestions = useMemo(() => {
         const sectorList = listToGroupList(
-            cnaResponse?.project?.assessmentRegistryOptions?.cnaQuestions,
+            responseCna,
             (cna) => cna?.sectorDisplay ?? '',
         );
         const subSectorList = mapToMap(
@@ -108,33 +116,64 @@ function CnaForm(props: Props) {
         return finalList;
     }, [cnaResponse]);
 
+    const answerMapIndex = listToMap(
+        cnaValue,
+        (k) => k.question,
+        (_, __, index) => index,
+    ) ?? {};
+
+    const questionPercentage = useMemo(() => {
+        const sectorQuestions = listToGroupList(
+            responseCna,
+            (val) => val.sector ?? '',
+            (element) => {
+                const answer = cnaValue?.find((ans) => ans.question === element.id);
+                return {
+                    id: element.id,
+                    name: element.sectorDisplay,
+                    answer: answer?.answer,
+                };
+            },
+        );
+        return sectorQuestions;
+    }, [responseCna, cnaValue]);
+
+    console.log('questions', cnaQuestions);
+    console.log('value', cnaValue);
+    console.log('percentage', questionPercentage);
     return (
         <div className={styles.cnaForm}>
             {cnaQuestions?.map((cna) => (
-                <div className={styles.sectorWrapper}>
+                <div
+                    key={cna.sector}
+                    className={styles.sectorWrapper}
+                >
                     <div className={styles.sectorHeading}>
                         {cna.sector}
                     </div>
                     {cna.subSector.map((subSector) => (
-                        <div className={styles.subSectorWrapper}>
+                        <div
+                            key={subSector.subSector}
+                            className={styles.subSectorWrapper}
+                        >
                             <div className={styles.subSectorHeading}>
                                 {subSector.subSector}
                             </div>
-                            {subSector.questions.map((question) => (
-                                <div className={styles.question}>
-                                    <BooleanInput
-                                        name="answer"
-                                        type="segment"
-                                        options={answerOptions}
-                                        onChange={setAnswer}
-                                        value={answer}
-                                        spacing="compact"
+                            {subSector.questions.map((question) => {
+                                const answerIndex = answerMapIndex[question.id];
+                                const answerValue = cnaValue?.[answerIndex];
+                                return (
+                                    <AnswerQuestionInput
+                                        key={question.id}
+                                        question={question.question}
+                                        onChange={setAnswerValue}
+                                        value={answerValue}
+                                        name={answerIndex !== -1 ? answerIndex : undefined}
+                                        error={cnaError?.[answerIndex]}
+                                        questionId={question.id}
                                     />
-                                    <div>
-                                        {question.question}
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     ))}
                 </div>
