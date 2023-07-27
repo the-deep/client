@@ -353,11 +353,10 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         }
         cna {
             id
+            answer
             question {
                 id
-                question
-                sectorDisplay
-                subSectorDisplay
+                question 
             }
         }
     }

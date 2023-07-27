@@ -18,6 +18,7 @@ import {
     getErrorObject,
     useFormArray,
 } from '@togglecorp/toggle-form';
+import { NumberOutput } from '@the-deep/deep-ui';
 import {
     CnaQuestionsQuery,
     CnaQuestionsQueryVariables,
@@ -114,7 +115,7 @@ function CnaForm(props: Props) {
         }));
 
         return finalList;
-    }, [cnaResponse]);
+    }, [responseCna]);
 
     const answerMapIndex = listToMap(
         cnaValue,
@@ -125,7 +126,7 @@ function CnaForm(props: Props) {
     const questionPercentage = useMemo(() => {
         const sectorQuestions = listToGroupList(
             responseCna,
-            (val) => val.sector ?? '',
+            (val) => val.sectorDisplay ?? '',
             (element) => {
                 const answer = cnaValue?.find((ans) => ans.question === element.id);
                 return {
@@ -135,14 +136,37 @@ function CnaForm(props: Props) {
                 };
             },
         );
-        return sectorQuestions;
+
+        const finalList = mapToList(
+            sectorQuestions,
+            (questions, key) => ({
+                sector: key,
+                questions,
+                percentage: ((questions.filter(
+                    (question) => question.answer,
+                ).length) / questions.length) * 100,
+            }),
+        );
+        return finalList;
     }, [responseCna, cnaValue]);
 
-    console.log('questions', cnaQuestions);
-    console.log('value', cnaValue);
     console.log('percentage', questionPercentage);
     return (
         <div className={styles.cnaForm}>
+            <div className={styles.sectorStats}>
+                {questionPercentage?.map((question) => (
+                    <div className={styles.sectorStatsContent}>
+                        <NumberOutput
+                            value={question.percentage}
+                            precision={1}
+                            suffix="%"
+                        />
+                        <div className={styles.sectorLabel}>
+                            {question.sector}
+                        </div>
+                    </div>
+                ))}
+            </div>
             {cnaQuestions?.map((cna) => (
                 <div
                     key={cna.sector}

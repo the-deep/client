@@ -3,13 +3,26 @@
     flex-direction: column;
     gap: var(--dui-spacing-extra-large);
 
+    .sector-stats {
+        display: flex;
+        gap: var(--dui-spacing-medium);
+
+        .sector-stats-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-small);
+            background-color: var(--dui-color-background-information);
+            padding: var(--dui-spacing-medium);
+        }
+    }
+
     .sector-wrapper {
         display: flex;
         flex-direction: column;
         gap: var(--dui-spacing-medium);
 
         .sector-heading {
-            font-size: var(--dui-font-size-extra-large);
+            font-size: var(--dui-font-size-large);
         }
 
         .sub-sector-wrapper {
@@ -20,7 +33,7 @@
 
             .sub-sector-heading {
                 color: var(--dui-color-accent);
-                font-size: var(--dui-font-size-extra-large);
+                font-size: var(--dui-font-size-large);
             }
         }
     }
