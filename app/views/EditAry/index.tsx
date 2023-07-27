@@ -401,6 +401,7 @@ function EditAry(props: Props) {
                         nationalPartners: result.nationalPartners.map((nPartner) => nPartner.id),
                         donors: result.donors.map((donor) => donor.id),
                         governments: result.governments.map((gov) => gov.id),
+                        locations: result.locations.map((location) => location.id),
                     });
 
                     const stakeholders = [

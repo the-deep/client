@@ -341,5 +341,12 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             unitOfAnalysis
             unitOfReporting
         }
+        focuses
+        sectors
+        affectedGroups
+        protectionInfoMgmts
+        locations {
+            id
+        }
     }
 `;

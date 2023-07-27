@@ -1,17 +1,23 @@
-import React, { useMemo } from 'react';
-import { EntriesAsList, Error, SetBaseValueArg } from '@togglecorp/toggle-form';
+import React, { useMemo, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { CheckListInput } from '@the-deep/deep-ui';
 import { IoGlobeOutline, IoPeopleSharp } from 'react-icons/io5';
-import { noOp } from '@togglecorp/fujs';
+import {
+    EntriesAsList,
+    Error,
+    getErrorObject,
+    getErrorString,
+} from '@togglecorp/toggle-form';
 
 import { enumKeySelector, enumLabelSelector } from '#utils/common';
 import { GetFocusOptionsQuery, GetFocusOptionsQueryVariables } from '#generated/types';
+import GeoLocationInput from '#components/GeoLocationInput';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import { PartialFormType } from '../formSchema';
 import Header from '../Header';
+
 import styles from './styles.css';
-import GeoMultiSelectInput from '#components/GeoMultiSelectInput';
 
 const GET_FOCUS_OPTIONS = gql`
     query GetFocusOptions {
@@ -44,7 +50,6 @@ const GET_FOCUS_OPTIONS = gql`
 interface Props {
     value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     error: Error<PartialFormType>;
 }
 
@@ -52,13 +57,14 @@ function FocusForm(props: Props) {
     const {
         value,
         setFieldValue,
-        setValue,
-        error,
+        error: riskyError,
     } = props;
 
+    const error = getErrorObject(riskyError);
+    const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
     const {
         data,
-        loading,
+        loading: pending,
     } = useQuery<GetFocusOptionsQuery, GetFocusOptionsQueryVariables>(
         GET_FOCUS_OPTIONS,
     );
@@ -87,6 +93,9 @@ function FocusForm(props: Props) {
                 value={value.focuses}
                 options={frameworkOptions}
                 onChange={setFieldValue}
+                disabled={pending}
+                error={getErrorString(error?.focuses)}
+
             />
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
@@ -98,10 +107,11 @@ function FocusForm(props: Props) {
                 value={value.sectors}
                 options={sectorOptions}
                 onChange={setFieldValue}
+                disabled={pending}
+                error={getErrorString(error?.sectors)}
             />
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
-                labelContainerClassName={styles.label}
                 label={(<Header title="Protection Information Management Systems" />)}
                 name="protectionInfoMgmts"
                 direction="vertical"
@@ -110,6 +120,8 @@ function FocusForm(props: Props) {
                 value={value.protectionInfoMgmts}
                 options={protectionOptions}
                 onChange={setFieldValue}
+                disabled={pending}
+                error={getErrorString(error?.protectionInfoMgmts)}
             />
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
@@ -126,17 +138,21 @@ function FocusForm(props: Props) {
                 value={value.affectedGroups}
                 options={affectedOptions}
                 onChange={setFieldValue}
+                disabled={pending}
+                error={getErrorString(error?.affectedGroups)}
             />
-            <div className={styles.geo}>
+            <div className={styles.geoContainer}>
                 <Header title="Geographic Locations" icons={<IoGlobeOutline />} />
-                <GeoMultiSelectInput
-                    className={styles.inputContainer}
-                    placeholder="Select option(s)"
-                    name="geo"
-                    title="Geo Areas"
-                    value={undefined}
-                    onchange={noOp}
-                />
+                <div className={styles.geoInputContainer}>
+                    <GeoLocationInput
+                        name="locations"
+                        value={value.locations}
+                        onChange={setFieldValue}
+                        error={error?.locations}
+                        geoAreaOptions={geoAreaOptions}
+                        onGeoAreaOptionsChange={setGeoAreaOptions}
+                    />
+                </div>
             </div>
         </div>
     );

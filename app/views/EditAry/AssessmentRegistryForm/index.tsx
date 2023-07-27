@@ -91,7 +91,6 @@ function AssessmentRegistyForm(props: Props) {
                     <FocusForm
                         value={value}
                         setFieldValue={setFieldValue}
-                        setValue={setValue}
                         error={error}
                     />
                 </TabPanel>
