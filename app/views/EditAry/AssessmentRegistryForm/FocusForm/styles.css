@@ -1,6 +1,7 @@
 .focus {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-rows: auto auto;
     gap: var(--dui-spacing-large);
 
     .input-container {
@@ -10,11 +11,15 @@
         padding: var(--dui-spacing-large);
     }
 
-    .geo {
-        display: flex;
+    .geo-container {
         flex: 1;
-        flex-direction: column;
         gap: var(--dui-spacing-large);
+
+        .geo-input-container {
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            border-radius: var(--dui-border-radius-card);
+            padding: var(--dui-spacing-large);
+        }
     }
 }
 
