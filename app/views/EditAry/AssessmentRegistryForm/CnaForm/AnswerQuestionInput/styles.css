@@ -2,5 +2,5 @@
     display: flex;
     gap: var(--dui-spacing-large);
     align-items: center;
-    font-size: var(--dui-font-size-large);
+    font-size: var(--dui-font-size-medium);
 }

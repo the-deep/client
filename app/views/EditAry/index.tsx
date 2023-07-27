@@ -67,7 +67,10 @@ import { BasicOrganization } from '#types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import AssessmentRegistryForm from './AssessmentRegistryForm';
-import { initialValue, schema } from './AssessmentRegistryForm/formSchema';
+import {
+    initialValue,
+    schema,
+} from './AssessmentRegistryForm/formSchema';
 
 import styles from './styles.css';
 
@@ -285,14 +288,12 @@ function EditAry(props: Props) {
     const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
 
     const projectId = project ? project.id : '';
-    const variablesForLeadEntries = useMemo(
-        (): LeadEntriesForAryQueryVariables | undefined => (
-            (leadId && projectId) ? { projectId, leadId } : undefined
-        ), [
-            leadId,
-            projectId,
-        ],
-    );
+    const variablesForLeadEntries = useMemo((): LeadEntriesForAryQueryVariables | undefined => (
+        (leadId && projectId) ? { projectId, leadId } : undefined
+    ), [
+        leadId,
+        projectId,
+    ]);
 
     const {
         data: entriesForLead,
@@ -335,10 +336,7 @@ function EditAry(props: Props) {
     const variablesForAssessmentEntries = useMemo(
         (): EntriesFromAssessmentQueryVariables | undefined => (
             (assessmentId && projectId) ? { projectId, assessmentId } : undefined
-        ), [
-            projectId,
-            assessmentId,
-        ],
+        ), [projectId, assessmentId],
     );
 
     const {
@@ -371,10 +369,7 @@ function EditAry(props: Props) {
         (): AssessmentDetailQueryVariables | undefined => (
             (isDefined(assessmentId) && isDefined(projectId))
                 ? { projectId, assessmentId } : undefined
-        ), [
-            projectId,
-            assessmentId,
-        ],
+        ), [projectId, assessmentId],
     );
 
     const {
@@ -391,9 +386,14 @@ function EditAry(props: Props) {
                 }
 
                 const result = removeNull(response?.project?.assessmentRegistry);
+                console.log('result', result);
                 if (isDefined(result)) {
                     setValue({
                         ...result,
+                        cna: result.cna?.map((ques) => ({
+                            answer: ques?.answer,
+                            question: ques?.question?.id,
+                        })),
                         lead: result.lead.id,
                         bgCountries: result.bgCountries.map((country) => country.id),
                         leadOrganizations: result.leadOrganizations.map((leadOrg) => leadOrg.id),
