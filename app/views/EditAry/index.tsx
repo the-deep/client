@@ -386,13 +386,12 @@ function EditAry(props: Props) {
                 }
 
                 const result = removeNull(response?.project?.assessmentRegistry);
-                console.log('result', result);
                 if (isDefined(result)) {
                     setValue({
                         ...result,
                         cna: result.cna?.map((ques) => ({
                             answer: ques?.answer,
-                            question: ques?.question?.id,
+                            question: ques?.question.id,
                         })),
                         lead: result.lead.id,
                         bgCountries: result.bgCountries.map((country) => country.id),
