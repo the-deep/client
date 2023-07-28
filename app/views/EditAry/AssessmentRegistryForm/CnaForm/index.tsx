@@ -107,9 +107,9 @@ function CnaForm(props: Props) {
             sector: key,
             subSector: mapToList(
                 d,
-                (v, k) => ({
-                    subSector: k,
-                    questions: v,
+                (questions, subSector) => ({
+                    subSector,
+                    questions,
                 }),
             ),
         }));
@@ -150,12 +150,14 @@ function CnaForm(props: Props) {
         return finalList;
     }, [responseCna, cnaValue]);
 
-    console.log('percentage', questionPercentage);
     return (
         <div className={styles.cnaForm}>
             <div className={styles.sectorStats}>
                 {questionPercentage?.map((question) => (
-                    <div className={styles.sectorStatsContent}>
+                    <div
+                        key={question.sector}
+                        className={styles.sectorStatsContent}
+                    >
                         <NumberOutput
                             value={question.percentage}
                             precision={1}
