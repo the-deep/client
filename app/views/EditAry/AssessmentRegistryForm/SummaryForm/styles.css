@@ -1,0 +1,4 @@
+.summary {
+    display: grid;
+    gap: var(--dui-spacing-extra-large);
+}

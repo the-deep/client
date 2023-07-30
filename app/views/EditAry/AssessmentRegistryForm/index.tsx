@@ -20,6 +20,7 @@ import MethodologyForm from './MethodologyForm';
 import FocusForm from './FocusForm';
 import CnaForm from './CnaForm';
 import ScoreForm from './ScoreForm';
+import SummaryForm from './SummaryForm';
 import { PartialFormType } from './formSchema';
 import AdditionalDocument from './AdditionalDocument';
 
@@ -283,7 +284,11 @@ function AssessmentRegistryForm(props: Props) {
                     name="summary"
                     activeClassName={styles.tabPanel}
                 >
-                    Summary form
+                    <SummaryForm
+                        error={error}
+                        setFieldValue={setFieldValue}
+                        value={value}
+                    />
                 </TabPanel>
                 <TabPanel
                     name="score"
