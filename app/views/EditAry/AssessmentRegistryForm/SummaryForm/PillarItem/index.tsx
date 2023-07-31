@@ -1,48 +1,69 @@
-import React from 'react';
-import { ExpandableContainer, NumberInput } from '@the-deep/deep-ui';
-import { noOp } from '@togglecorp/fujs';
-import { useForm } from '@togglecorp/toggle-form';
+import React, { useCallback, useState } from 'react';
+import { ExpandableContainer, List, NumberInput } from '@the-deep/deep-ui';
+import { PartialForm } from '@togglecorp/toggle-form';
 
-import { schema } from '../../formSchema';
-import IssuesInput from './IssuesInput';
+import {
+    AssessmentRegistrySummarySubSectorTypeEnum,
+    SummaryOptionType,
+    SummarySubSectorIssueInputType,
+} from '#generated/types';
 
+import SubPillarItem from './SubPillarItem';
 import styles from './styles.css';
 
 interface Props {
-    name: string;
-    description?: string | null;
+    data: SummaryOptionType;
+    value: SummarySubSectorIssueInputType;
+    onValueChange: React.Dispatch<React.SetStateAction<SummarySubSectorIssueInputType>>;
+    onAdd: (summaryId: string, text: string) => void;
 }
+
+const keySelector = (d: PartialForm<SummaryOptionType['subSector']>[number]) => d;
 
 function PillarItem(props: Props) {
     const {
-        name,
-        description,
+        data,
+        value,
+        onValueChange,
+        onAdd,
     } = props;
 
-    const {
-        value,
-        setFieldValue,
-        error,
-    } = useForm(schema, {});
+    const issuesParams = useCallback(
+        (name: AssessmentRegistrySummarySubSectorTypeEnum) => ({
+            data: name,
+            value,
+            onValueChange,
+            onAdd,
+        }),
+        [],
+    );
 
     return (
         <div className={styles.pillar}>
             <ExpandableContainer
                 className={styles.expandableContainer}
-                heading={description}
+                contentClassName={styles.expandableContent}
+                heading={data.sector}
                 withoutBorder
             >
-                <IssuesInput />
+                <List
+                    data={data.subSector}
+                    keySelector={keySelector}
+                    renderer={SubPillarItem}
+                    rendererParams={issuesParams}
+                />
             </ExpandableContainer>
 
+            {/*
+            TODO: Styling fix
             <NumberInput
-                className={styles.input}
+                className={styles.inputMetadata}
                 inputSectionClassName={styles.inputSection}
                 name="totalDeath"
                 placeholder="Total people assessed"
                 value={undefined}
                 onChange={noOp}
-            />
+            /> */}
         </div>
     );
 }
