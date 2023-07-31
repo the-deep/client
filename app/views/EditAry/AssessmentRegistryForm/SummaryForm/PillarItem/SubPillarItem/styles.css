@@ -1,0 +1,7 @@
+.sub-pillar-item {
+    display: grid;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    border-radius: var(--dui-border-radius-card);
+    padding: var(--dui-spacing-medium);
+    min-width: 300px;
+}

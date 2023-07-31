@@ -658,6 +658,7 @@ function EditAry(props: Props) {
                                 setGeoAreaOptions={setGeoAreaOptions}
                                 uploadedList={uploadedList}
                                 setUploadedList={setUploadedList}
+                                projectId={projectId}
                             />
                         </div>
                     </>
