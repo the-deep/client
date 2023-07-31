@@ -64,6 +64,7 @@ import {
     transformToFormError,
 } from '#base/utils/errorTransform';
 import { BasicOrganization } from '#types';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import AssessmentRegistryForm from './AssessmentRegistryForm';
 import { initialValue, schema } from './AssessmentRegistryForm/formSchema';
@@ -281,6 +282,7 @@ function EditAry(props: Props) {
     const alert = useAlert();
     const [regionOptions, setRegionOptions] = useState<BasicRegion[] | undefined | null>();
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
+    const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
 
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo(
@@ -401,7 +403,7 @@ function EditAry(props: Props) {
                         nationalPartners: result.nationalPartners.map((nPartner) => nPartner.id),
                         donors: result.donors.map((donor) => donor.id),
                         governments: result.governments.map((gov) => gov.id),
-                        locations: result.locations.map((location) => location.id),
+                        locations: result.locations?.map((location) => location.id),
                     });
 
                     const stakeholders = [
@@ -414,6 +416,8 @@ function EditAry(props: Props) {
 
                     setRegionOptions(result.bgCountries);
                     setStakeholderOptions(unique(stakeholders, (d) => d.id));
+
+                    setGeoAreaOptions(result.locations);
                 }
             },
         },
@@ -615,6 +619,8 @@ function EditAry(props: Props) {
                                 setRegionOptions={setRegionOptions}
                                 stakeholderOptions={stakeholderOptions}
                                 setStakeholderOptions={setStakeholderOptions}
+                                geoAreaOptions={geoAreaOptions}
+                                setGeoAreaOptions={setGeoAreaOptions}
                             />
                         </div>
                     </>
