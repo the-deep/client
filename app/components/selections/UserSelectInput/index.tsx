@@ -6,8 +6,7 @@ import { useRequest } from '#base/utils/restRequest';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
 type Def = { containerClassName?: string };
-type UserSelectInputProps<K extends string> = SearchSelectInputProps<
-    number,
+type UserSelectInputProps<K extends string> = SearchSelectInputProps< number,
     K,
     BasicUser,
     Def,

@@ -285,9 +285,10 @@ function AssessmentRegistryForm(props: Props) {
                     activeClassName={styles.tabPanel}
                 >
                     <SummaryForm
-                        error={error}
                         setFieldValue={setFieldValue}
                         value={value}
+                        error={error}
+                        projectId={projectId}
                     />
                 </TabPanel>
                 <TabPanel
