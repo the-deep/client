@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { CheckListInput } from '@the-deep/deep-ui';
 import { IoGlobeOutline, IoPeopleSharp } from 'react-icons/io5';
@@ -51,6 +51,8 @@ interface Props {
     value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>;
+    setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions?: GeoArea[] | null;
 }
 
 function FocusForm(props: Props) {
@@ -58,10 +60,11 @@ function FocusForm(props: Props) {
         value,
         setFieldValue,
         error: riskyError,
+        setGeoAreaOptions,
+        geoAreaOptions,
     } = props;
 
     const error = getErrorObject(riskyError);
-    const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
     const {
         data,
         loading: pending,
@@ -148,7 +151,7 @@ function FocusForm(props: Props) {
                         name="locations"
                         value={value.locations}
                         onChange={setFieldValue}
-                        error={error?.locations}
+                        error={getErrorString(error?.locations)}
                         geoAreaOptions={geoAreaOptions}
                         onGeoAreaOptionsChange={setGeoAreaOptions}
                     />
