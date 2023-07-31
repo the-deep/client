@@ -66,6 +66,10 @@ export const schema: FormSchema = {
             governments: [defaultEmptyArrayType],
 
             // NOTE: uncomment on other form
+            sectors: [],
+            protectionInfoMgmts: [],
+            focuses: [],
+            affectedGroups: [],
             locations: [defaultEmptyArrayType],
             limitations: [requiredCondition],
             objectives: [requiredCondition],
@@ -86,7 +90,6 @@ export const schema: FormSchema = {
             additionalDocuments: [defaultEmptyArrayType],
             scoreRatings: [defaultEmptyArrayType],
             scoreAnalyticalDensity: [defaultEmptyArrayType],
-            affectedGroups: [],
         };
 
         return baseSchema;
