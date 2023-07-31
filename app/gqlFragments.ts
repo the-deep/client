@@ -388,6 +388,9 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         protectionInfoMgmts
         locations {
             id
+            adminLevelTitle
+            regionTitle
+            title
         }
     }
 `;
