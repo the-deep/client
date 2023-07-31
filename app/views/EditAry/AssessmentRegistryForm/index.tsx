@@ -12,11 +12,13 @@ import {
 } from '@togglecorp/toggle-form';
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import MetadataForm from './MetadataForm';
 import MethodologyForm from './MethodologyForm';
 import FocusForm from './FocusForm';
 import { PartialFormType } from './formSchema';
+
 import styles from './styles.css';
 
 type TabOptions = 'metadata' | 'documents' | 'focus' | 'methodology' | 'summary' | 'score' | 'cna' | undefined;
@@ -31,6 +33,8 @@ interface Props {
     regionOptions?: BasicRegion[] | null;
     setStakeholderOptions: React.Dispatch<React.SetStateAction<BasicOrganization[]>>;
     stakeholderOptions: BasicOrganization[];
+    setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions?: GeoArea[] | null;
 }
 
 function AssessmentRegistyForm(props: Props) {
@@ -43,6 +47,8 @@ function AssessmentRegistyForm(props: Props) {
         setRegionOptions,
         stakeholderOptions,
         setStakeholderOptions,
+        geoAreaOptions,
+        setGeoAreaOptions,
     } = props;
 
     const [activeTab, setActiveTab] = useState<TabOptions>('metadata');
@@ -92,6 +98,8 @@ function AssessmentRegistyForm(props: Props) {
                         value={value}
                         setFieldValue={setFieldValue}
                         error={error}
+                        geoAreaOptions={geoAreaOptions}
+                        setGeoAreaOptions={setGeoAreaOptions}
                     />
                 </TabPanel>
                 <TabPanel
