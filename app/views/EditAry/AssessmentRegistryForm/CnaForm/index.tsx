@@ -1,7 +1,4 @@
-import React,
-{
-    useMemo,
-} from 'react';
+import React, { useMemo } from 'react';
 import {
     gql,
     useQuery,
@@ -18,7 +15,10 @@ import {
     getErrorObject,
     useFormArray,
 } from '@togglecorp/toggle-form';
-import { NumberOutput } from '@the-deep/deep-ui';
+import {
+    NumberOutput,
+    Heading,
+} from '@the-deep/deep-ui';
 import {
     CnaQuestionsQuery,
     CnaQuestionsQueryVariables,
@@ -36,6 +36,7 @@ const CNA_QUESTIONS = gql`
         $projectId: ID!
     ) {
         project(id: $projectId) {
+            id
             assessmentRegistryOptions {
                 cnaQuestions {
                     id
@@ -174,17 +175,22 @@ function CnaForm(props: Props) {
                     key={cna.sector}
                     className={styles.sectorWrapper}
                 >
-                    <div className={styles.sectorHeading}>
+                    <Heading
+                        size="small"
+                    >
                         {cna.sector}
-                    </div>
+                    </Heading>
                     {cna.subSector.map((subSector) => (
                         <div
                             key={subSector.subSector}
                             className={styles.subSectorWrapper}
                         >
-                            <div className={styles.subSectorHeading}>
+                            <Heading
+                                size="extraSmall"
+                                className={styles.subSectorHeading}
+                            >
                                 {subSector.subSector}
-                            </div>
+                            </Heading>
                             {subSector.questions.map((question) => {
                                 const answerIndex = answerMapIndex[question.id];
                                 const answerValue = cnaValue?.[answerIndex];
