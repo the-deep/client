@@ -256,6 +256,7 @@ function MetadataForm(props: Props) {
                         keySelector={enumKeySelector}
                         labelSelector={enumLabelSelector}
                         options={languageOptions}
+                        error={getErrorString(error?.language)}
                     />
                     <NumberInput
                         label="No. of Pages"
