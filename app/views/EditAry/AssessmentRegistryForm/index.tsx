@@ -20,6 +20,7 @@ import MetadataForm from './MetadataForm';
 import MethodologyForm from './MethodologyForm';
 import FocusForm from './FocusForm';
 import CnaForm from './CnaForm';
+import ScoreForm from './ScoreForm';
 import { PartialFormType } from './formSchema';
 import AdditionalDocument from './AdditionalDocument';
 
@@ -291,7 +292,7 @@ function AssessmentRegistryForm(props: Props) {
                     name="score"
                     activeClassName={styles.tabPanel}
                 >
-                    Score form
+                    <ScoreForm />
                 </TabPanel>
                 <TabPanel
                     name="cna"
