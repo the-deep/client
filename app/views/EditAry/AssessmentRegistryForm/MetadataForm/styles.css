@@ -3,7 +3,7 @@
     flex-grow: 1;
     grid-column: auto;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-    gap: var(--dui-spacing-super-large);
+    gap: var(--dui-spacing-large);
     padding: var(--dui-spacing-large);
     overflow: auto;
 

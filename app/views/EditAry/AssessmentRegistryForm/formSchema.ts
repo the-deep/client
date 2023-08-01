@@ -95,8 +95,8 @@ export const schema: FormSchema = {
                 keySelector: (cna) => cna.question,
                 member: () => ({
                     fields: () => ({
-                        question: [requiredCondition],
-                        answer: [requiredCondition],
+                        question: [],
+                        answer: [],
                     }),
                 }),
             },

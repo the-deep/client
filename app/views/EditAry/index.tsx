@@ -390,8 +390,17 @@ function EditAry(props: Props) {
                     setValue({
                         ...result,
                         cna: result.cna?.map((ques) => ({
-                            answer: ques?.answer,
-                            question: ques?.question.id,
+                            answer: ques.answer,
+                            question: ques.question.id,
+                        })),
+                        methodologyAttributes: result.methodologyAttributes?.map((method) => ({
+                            clientId: method.clientId ?? '',
+                            dataCollectionTechnique: method.dataCollectionTechnique,
+                            proximity: method.proximity,
+                            samplingApproach: method.samplingApproach,
+                            samplingSize: method.samplingSize,
+                            unitOfAnalysis: method.unitOfAnalysis,
+                            unitOfReporting: method.unitOfReporting,
                         })),
                         lead: result.lead.id,
                         bgCountries: result.bgCountries.map((country) => country.id),
@@ -610,6 +619,7 @@ function EditAry(props: Props) {
                         />
                         <div className={styles.form}>
                             <AssessmentRegistryForm
+                                projectId={projectId}
                                 className={styles.form}
                                 value={value}
                                 setFieldValue={setFieldValue}

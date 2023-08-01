@@ -1,6 +1,7 @@
 .cna-form {
     display: flex;
     flex-direction: column;
+    padding: var(--dui-spacing-large);
     gap: var(--dui-spacing-extra-large);
 
     .sector-stats {
@@ -21,10 +22,6 @@
         flex-direction: column;
         gap: var(--dui-spacing-medium);
 
-        .sector-heading {
-            font-size: var(--dui-font-size-large);
-        }
-
         .sub-sector-wrapper {
             display: flex;
             flex-direction: column;
@@ -33,7 +30,6 @@
 
             .sub-sector-heading {
                 color: var(--dui-color-accent);
-                font-size: var(--dui-font-size-large);
             }
         }
     }
