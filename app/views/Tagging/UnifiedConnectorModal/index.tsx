@@ -20,7 +20,7 @@ import { getOperationName } from 'apollo-link';
 import { apolloClient } from '#base/configs/apollo';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
-import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+// import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 
 import { PartialLeadType } from '#components/general/BulkUploadModal/schema';
 import { PROJECT_SOURCES } from '#views/Sources/queries';
@@ -95,10 +95,12 @@ function UnifiedConnectorModal(props: Props) {
         setAuthorOrganizationOptions,
     ] = useState<BasicOrganization[] | undefined | null>();
 
+    /*
     const [
         leadGroupOptions,
         setLeadGroupOptions,
     ] = useState<BasicLeadGroup[] | undefined | null>();
+     */
 
     const handleBulkRequestComplete = useCallback(
         (requests: RequestItem<string, Req, Res, Err>[]) => {
@@ -220,8 +222,8 @@ function UnifiedConnectorModal(props: Props) {
                     onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
                     authorOrganizationOptions={authorOrganizationOptions}
                     onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
-                    leadGroupOptions={leadGroupOptions}
-                    onLeadGroupOptionsChange={setLeadGroupOptions}
+                    // leadGroupOptions={leadGroupOptions}
+                    // onLeadGroupOptionsChange={setLeadGroupOptions}
                     assigneeOptions={projectUserOptions}
                     onAssigneeOptionChange={setProjectUserOptions}
                     selections={selections}
@@ -243,8 +245,8 @@ function UnifiedConnectorModal(props: Props) {
                     onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
                     authorOrganizationOptions={authorOrganizationOptions}
                     onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
-                    leadGroupOptions={leadGroupOptions}
-                    onLeadGroupOptionsChange={setLeadGroupOptions}
+                    // leadGroupOptions={leadGroupOptions}
+                    // onLeadGroupOptionsChange={setLeadGroupOptions}
                     assigneeOptions={projectUserOptions}
                     onAssigneeOptionChange={setProjectUserOptions}
                     selections={selections}

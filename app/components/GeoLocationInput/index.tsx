@@ -27,6 +27,7 @@ interface Props<N extends string> {
     hint?:React.ReactNode;
 
     rightComponent?: React.ReactNode;
+    regionId?: string;
 }
 
 function GeoLocationInput<N extends string>(props: Props<N>) {
@@ -44,6 +45,7 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         hint,
 
         rightComponent,
+        regionId,
     } = props;
 
     const [
@@ -79,6 +81,7 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                         onChange={handleGeoAreasSelection}
                         // label=" Geo Locations"
                         projectId={project.id}
+                        regionId={regionId}
                         options={geoAreaOptions}
                         onOptionsChange={onGeoAreaOptionsChange}
                         disabled={disabled}

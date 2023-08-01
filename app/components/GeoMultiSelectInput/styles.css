@@ -1,0 +1,18 @@
+.area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .title {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-extra-small);
+    }
+
+    .label {
+        display: flex;
+        color: var(--dui-color-text-label);
+        font-size: var(--dui-font-size-small);
+        font-weight: var(--dui-font-weight-light);
+    }
+}

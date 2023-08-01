@@ -248,18 +248,30 @@ function RegionMap(props: Props) {
         if (!onSelectedGeoAreasChange) {
             return false;
         }
-        const { id, properties } = feature;
-        const selection = String(id);
         const selections = [...selectedGeoAreas ?? []];
+
+        const {
+            id,
+            properties,
+        } = feature;
+
+        const selection = String(id);
 
         const index = selections.indexOf(selection);
         if (index === -1 && onGeoAreaOptionsChange) {
             selections.push(selection);
+
+            const hasCachedData = (properties?.cached_data ?? '').length > 0;
+            const parentTitles = hasCachedData
+                ? (JSON.parse(properties?.cached_data)?.parent_titles ?? [])
+                : [];
+
             const selectedGeoArea = {
                 id: selection,
-                title: properties?.title as string ?? '',
+                title: properties?.title as (string | undefined | null) ?? '',
                 regionTitle: selectedRegion?.region?.title ?? '',
                 adminLevelTitle: selectedAdminLevelTitle ?? '',
+                parentTitles,
             };
             const newOptions = unique([...(geoAreaOptions ?? []), selectedGeoArea], (d) => d.id);
             onGeoAreaOptionsChange(newOptions);

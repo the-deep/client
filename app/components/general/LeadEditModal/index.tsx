@@ -39,7 +39,7 @@ import { UserContext } from '#base/context/UserContext';
 import { PROJECT_SOURCES } from '#views/Sources/queries';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
-import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+// import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import LeadInput from '#components/lead/LeadInput';
 import { ORGANIZATION_FRAGMENT } from '#gqlFragments';
@@ -259,10 +259,12 @@ function LeadEditModal(props: Props) {
         setAuthorOrganizationOptions,
     ] = useState<BasicOrganization[] | undefined | null>();
 
+    /*
     const [
         leadGroupOptions,
         setLeadGroupOptions,
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
+     */
 
     const {
         pristine,
@@ -315,9 +317,11 @@ function LeadEditModal(props: Props) {
                     } = leadData;
 
                     if (leadGroup) {
+                        /*
                         setLeadGroupOptions((oldVal) => (
                             oldVal ? [...oldVal, leadGroup] : [leadGroup]
                         ));
+                         */
                     }
                     if (assignee) {
                         setProjectUserOptions((oldVal) => (
@@ -494,8 +498,8 @@ function LeadEditModal(props: Props) {
                     onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
                     authorOrganizationOptions={authorOrganizationOptions}
                     onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
-                    leadGroupOptions={leadGroupOptions}
-                    onLeadGroupOptionsChange={setLeadGroupOptions}
+                    // leadGroupOptions={leadGroupOptions}
+                    // onLeadGroupOptionsChange={setLeadGroupOptions}
                     assigneeOptions={projectUserOptions}
                     onAssigneeOptionChange={setProjectUserOptions}
                     hasAssessment={project?.hasAssessmentTemplate}
