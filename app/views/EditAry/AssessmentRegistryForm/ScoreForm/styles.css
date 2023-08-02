@@ -1,11 +1,16 @@
 .score-form {
     display: flex;
     flex-direction: column;
+    
+    .dummy {
+        flex-grow: 1;
+        border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-separator);
+    }
 
     .tab-panel {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        padding: var(--dui-spacing-medium);
+        padding: var(--dui-spacing-extra-large);
     }
 }

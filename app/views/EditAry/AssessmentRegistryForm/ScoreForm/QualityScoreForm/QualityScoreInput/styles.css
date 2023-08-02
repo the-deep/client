@@ -1,0 +1,14 @@
+.score-input {
+    display: flex;
+    gap: var(--dui-spacing-ultra-large);
+
+    .criteria-heading {
+        width: 10rem;
+        color: var(--dui-color-input-placeholder);
+    }
+
+    .justification {
+        display: flex;
+        flex-grow: 1;
+    }
+}
