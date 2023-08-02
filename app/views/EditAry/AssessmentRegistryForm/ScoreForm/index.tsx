@@ -6,6 +6,7 @@ import {
     Tabs,
 } from '@the-deep/deep-ui';
 import QualityScoreForm from './QualityScoreForm';
+import AnalyticalDensityForm from './AnalyticalDensityForm';
 
 import styles from './styles.css';
 
@@ -23,6 +24,7 @@ function ScoreForm() {
                 <TabList>
                     <Tab name="qualityScores">Quality Scores</Tab>
                     <Tab name="analyticalDensity">Analytical Density</Tab>
+                    <div className={styles.dummy} />
                 </TabList>
                 <TabPanel
                     name="qualityScores"
@@ -34,7 +36,9 @@ function ScoreForm() {
                     name="analyticalDensity"
                     className={styles.tabPanel}
                 >
-                    Analytical Denstiy Form
+                    <AnalyticalDensityForm
+                        heading="Wash"
+                    />
                 </TabPanel>
             </Tabs>
         </div>
