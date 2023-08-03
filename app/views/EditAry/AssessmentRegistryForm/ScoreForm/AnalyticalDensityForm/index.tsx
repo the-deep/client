@@ -1,30 +1,40 @@
-import React,
-{
-    useMemo,
-    useState,
-} from 'react';
+import React from 'react';
+
 import {
     gql,
     useQuery,
 } from '@apollo/client';
-import { CheckListInput, ContainerCard } from '@the-deep/deep-ui';
+import {
+    EntriesAsList,
+    Error,
+    useFormArray,
+    getErrorObject,
+} from '@togglecorp/toggle-form';
+import { isDefined, isNotDefined, listToMap } from '@togglecorp/fujs';
 
 import {
     GetAnalyticalOptionsQuery,
     GetAnalyticalOptionsQueryVariables,
 } from '#generated/types';
-import {
-    enumKeySelector,
-    enumLabelSelector,
-} from '#utils/common';
+
+import { PartialFormType } from '../../formSchema';
+import AnalyticalDensityInput from './AnalyticalDensityInput';
 
 import styles from './styles.css';
 
 interface Props {
-    heading: string;
+    value: PartialFormType,
+    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    error: Error<PartialFormType>
 }
 const GET_ANALYTICAL_OPTIONS = gql`
     query GetAnalyticalOptions {
+        sectorsOptions: __type(name: "AssessmentRegistrySectorTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
         figureProvidedOptions: __type(name: "AssessmentRegistryAnalysisFigureTypeEnum") {
             enumValues {
                 name
@@ -42,10 +52,10 @@ const GET_ANALYTICAL_OPTIONS = gql`
 
 function AnalyticalDensityForm(props: Props) {
     const {
-        heading,
+        value,
+        setFieldValue,
+        error: riskyError,
     } = props;
-    const [checkList, setCheckList] = useState();
-    const [checkListTwo, setCheckListTwo] = useState();
 
     const {
         data: options,
@@ -53,53 +63,70 @@ function AnalyticalDensityForm(props: Props) {
         GET_ANALYTICAL_OPTIONS,
     );
 
-    const [
-        analysisLevelCoveredOptions,
-        figureProvidedOptions,
-    ] = useMemo(() => ([
-        options?.analysisLevelCoveredOptions,
-        options?.figureProvidedOptions,
-    ]), [options]);
+    const sectorsOptions = options?.sectorsOptions;
+
+    const {
+        setValue: setAnalyticalScore,
+    } = useFormArray('scoreAnalyticalDensity', setFieldValue);
+
+    const error = getErrorObject(
+        riskyError,
+    );
+
+    const analyticalDensityValue = value.scoreAnalyticalDensity;
+    const analyticalDensityError = getErrorObject(error?.scoreAnalyticalDensity);
+
+    const getDescriptions = (name: string) => {
+        if (isNotDefined(sectorsOptions?.enumValues)) {
+            return undefined;
+        }
+        return sectorsOptions?.enumValues.find(
+            (item) => item.name === name,
+        );
+    };
+
+    const sectorList = value.sectors && value.sectors.map((sector) => (
+        getDescriptions(sector)));
+
+    const analyticalDensityValueIndex = listToMap(
+        analyticalDensityValue,
+        (k) => k.sector ?? '',
+        (_, __, index) => index,
+    );
+
+    if (isNotDefined(sectorList)) {
+        return (
+            <div>
+                Please select Sector from focus form
+            </div>
+        );
+    }
 
     return (
-        <ContainerCard
-            contentClassName={styles.analyticalDensityForm}
-            heading={heading}
-            headingSize="extraSmall"
+        <div
+            className={styles.analyticalDensityForm}
         >
-            <ContainerCard
-                heading="Analysis Levels Covered by the Assessment :"
-                headingSize="extraSmall"
-                className={styles.analyticalContent}
-                borderBelowHeader
-            >
-                <CheckListInput
-                    value={checkList}
-                    onChange={setCheckList}
-                    name="analysisLevelCovered"
-                    direction="vertical"
-                    options={analysisLevelCoveredOptions?.enumValues}
-                    keySelector={enumKeySelector}
-                    labelSelector={enumLabelSelector}
-                />
-            </ContainerCard>
-            <ContainerCard
-                heading="Figures Provided by the Assessment :"
-                headingSize="extraSmall"
-                className={styles.analyticalContent}
-                borderBelowHeader
-            >
-                <CheckListInput
-                    value={checkListTwo}
-                    onChange={setCheckListTwo}
-                    name="figureProvided"
-                    direction="vertical"
-                    options={figureProvidedOptions?.enumValues}
-                    keySelector={enumKeySelector}
-                    labelSelector={enumLabelSelector}
-                />
-            </ContainerCard>
-        </ContainerCard>
+            {sectorList?.map((list) => {
+                const analyticalIndex = analyticalDensityValueIndex?.[list?.name];
+                const analyticalValue = isDefined(analyticalIndex)
+                    ? analyticalDensityValue?.[analyticalIndex]
+                    : undefined;
+                const analyticalError = isDefined(analyticalIndex)
+                    ? analyticalDensityError?.[analyticalIndex]
+                    : undefined;
+                return (
+                    <AnalyticalDensityInput
+                        name={analyticalIndex}
+                        description={list?.description}
+                        options={options}
+                        onChange={setAnalyticalScore}
+                        sector={list?.name}
+                        value={analyticalValue}
+                        error={analyticalError}
+                    />
+                );
+            })}
+        </div>
     );
 }
 

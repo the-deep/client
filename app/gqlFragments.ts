@@ -352,6 +352,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             id
             clientId
             answer
+            clientId
             question {
                 id
                 question
