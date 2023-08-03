@@ -7,6 +7,7 @@ import {
 import {
     listToGroupList,
     listToMap,
+    isDefined,
     mapToList,
 } from '@togglecorp/fujs';
 import {
@@ -136,23 +137,27 @@ function QualityScoreForm(props: Props) {
     return (
         <div className={styles.qualityScoreForm}>
             {scoreList?.map((score) => (
-                <div className={styles.qualityScoreContent}>
+                <div
+                    className={styles.qualityScoreContent}
+                    key={score.analyticalState}
+                >
                     <ScoreHeading
-                        key={score.analyticalState}
                         analyticalState={score.analyticalState}
                     />
                     {score.list.map((list) => {
                         const scoreIndex = scoreValueIndex?.[list.scoreCriteria];
-                        if (!scoreIndex) {
-                            return null;
-                        }
-                        const scoreRatingValue = scoreValue?.[scoreIndex];
+                        const scoreRatingValue = isDefined(scoreIndex)
+                            ? scoreValue?.[scoreIndex]
+                            : undefined;
+                        const scoreItemError = isDefined(scoreIndex)
+                            ? scoreError?.[scoreIndex]
+                            : undefined;
                         return (
                             <QualityScoreInput
                                 key={list.scoreCriteria}
                                 scoreType={list.scoreCriteria}
                                 scoreCriteria={list.scoreCriteriaDisplay}
-                                error={scoreError?.[scoreIndex]}
+                                error={scoreItemError}
                                 name={scoreIndex}
                                 value={scoreRatingValue}
                                 onChange={setScoreRating}
