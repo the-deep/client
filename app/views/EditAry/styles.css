@@ -19,8 +19,11 @@
         }
 
         .form {
+            display: flex;
+            flex-direction: column;
             flex-grow: 1;
             border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            overflow: auto;
         }
     }
 }

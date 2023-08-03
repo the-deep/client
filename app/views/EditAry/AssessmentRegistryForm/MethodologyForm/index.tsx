@@ -10,9 +10,9 @@ import {
     useQuery,
 } from '@apollo/client';
 import {
-    Heading,
     QuickActionButton,
     TextArea,
+    Heading,
 } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
@@ -30,6 +30,7 @@ import {
     PartialFormType,
     MethodologyAttributesType,
 } from '../formSchema';
+import Header from '../Header';
 
 import styles from './styles.css';
 
@@ -124,12 +125,9 @@ function MethodologyForm(props: Props) {
 
     return (
         <div className={styles.methodologyForm}>
-            <Heading
-                size="extraSmall"
-                className={styles.methodologyHeading}
-            >
-                Methodlogy
-            </Heading>
+            <Header
+                title="Methodology"
+            />
             <div className={styles.methodologyContent}>
                 <TextArea
                     className={styles.methodologyInput}
@@ -143,7 +141,6 @@ function MethodologyForm(props: Props) {
                     disabled={disabled}
                     readOnly={readOnly}
                 />
-
                 <TextArea
                     className={styles.methodologyInput}
                     label="Limitations"
