@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { CheckListInput } from '@the-deep/deep-ui';
-import { IoGlobeOutline, IoPeopleSharp } from 'react-icons/io5';
 import {
     EntriesAsList,
     Error,
@@ -123,7 +122,7 @@ function FocusForm(props: Props) {
                 value={value.protectionInfoMgmts}
                 options={protectionOptions}
                 onChange={setFieldValue}
-                disabled={pending}
+                disabled={pending || !value.sectors?.some((sector) => sector === 'PROTECTION')}
                 error={getErrorString(error?.protectionInfoMgmts)}
             />
             <CheckListInput
@@ -131,7 +130,6 @@ function FocusForm(props: Props) {
                 label={(
                     <Header
                         title="Affected Groups"
-                        icons={<IoPeopleSharp />}
                     />
                 )}
                 name="affectedGroups"
@@ -145,7 +143,7 @@ function FocusForm(props: Props) {
                 error={getErrorString(error?.affectedGroups)}
             />
             <div className={styles.geoContainer}>
-                <Header title="Geographic Locations" icons={<IoGlobeOutline />} />
+                <Header title="Geographic Locations" />
                 <div className={styles.geoInputContainer}>
                     <GeoLocationInput
                         name="locations"
@@ -154,6 +152,7 @@ function FocusForm(props: Props) {
                         error={getErrorString(error?.locations)}
                         geoAreaOptions={geoAreaOptions}
                         onGeoAreaOptionsChange={setGeoAreaOptions}
+                        showList
                     />
                 </div>
             </div>

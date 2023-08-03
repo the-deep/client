@@ -6,6 +6,12 @@
         display: flex;
         flex-shrink: 0;
 
+        .tab {
+            &.error {
+                color: var(--dui-color-danger);
+            }
+        }
+
         .dummy {
             flex-grow: 1;
             border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-separator);
@@ -16,7 +22,6 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        padding: var(--dui-spacing-large);
-
+        overflow: auto;
     }
 }
