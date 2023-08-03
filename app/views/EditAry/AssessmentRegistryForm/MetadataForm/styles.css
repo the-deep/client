@@ -1,15 +1,24 @@
 .metadata-form {
     display: grid;
+    flex-grow: 1;
     grid-column: auto;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-    gap: var(--dui-spacing-extra-large);
-    padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+    gap: var(--dui-spacing-super-large);
+    padding: var(--dui-spacing-large);
+    overflow: auto;
 
     .form-element {
         display: flex;
         flex-direction: column;
         grid-row: 1;
-        gap: var(--dui-spacing-extra-small);
+        gap: var(--dui-spacing-medium);
+        padding: var(--dui-spacing-medium);
+
+        .inputs {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-extra-small);
+        }
     }
 
     .stakeholder-form {

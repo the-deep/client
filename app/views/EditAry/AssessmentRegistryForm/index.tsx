@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     Tab,
     TabList,
@@ -23,9 +24,59 @@ import styles from './styles.css';
 
 type TabOptions = 'metadata' | 'documents' | 'focus' | 'methodology' | 'summary' | 'score' | 'cna' | undefined;
 
+const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
+    bgCountries: true,
+    bgCrisisType: true,
+    bgCrisisStartDate: true,
+    bgPreparedness: true,
+    externalSupport: true,
+    coordinatedJoint: true,
+    detailsType: true,
+    family: true,
+    frequency: true,
+    confidentiality: true,
+    language: true,
+    noOfPages: true,
+    dataCollectionStartDate: true,
+    dataCollectionEndDate: true,
+    publicationDate: true,
+    donors: true,
+    leadOrganizations: true,
+    internationalPartners: true,
+    nationalPartners: true,
+    governments: true,
+};
+
+const fieldsInAdditionalDocuments: { [key in keyof PartialFormType]?: true } = {
+};
+
+const fieldsInFocus: { [key in keyof PartialFormType]?: true } = {
+    focuses: true,
+    sectors: true,
+    protectionInfoMgmts: true,
+    affectedGroups: true,
+    locations: true,
+};
+
+const fieldsInMethodology: { [key in keyof PartialFormType]?: true } = {
+    methodologyAttributes: true,
+    objectives: true,
+    limitations: true,
+};
+
+const fieldsInSummary: { [key in keyof PartialFormType]?: true } = {
+};
+
+const fieldsInScore: { [key in keyof PartialFormType]?: true } = {
+};
+
+const fieldsInCna: { [key in keyof PartialFormType]?: true } = {
+};
+
 type Value = PartialFormType;
 interface Props {
     value: Value;
+    className?: string;
     setFieldValue: (...entries: EntriesAsList<Value>) => void;
     setValue: (value: SetBaseValueArg<Value>) => void;
     error: Error<Value>;
@@ -37,7 +88,7 @@ interface Props {
     geoAreaOptions?: GeoArea[] | null;
 }
 
-function AssessmentRegistyForm(props: Props) {
+function AssessmentRegistryForm(props: Props) {
     const {
         value,
         setFieldValue,
@@ -49,29 +100,136 @@ function AssessmentRegistyForm(props: Props) {
         setStakeholderOptions,
         geoAreaOptions,
         setGeoAreaOptions,
+        className,
     } = props;
 
     const [activeTab, setActiveTab] = useState<TabOptions>('metadata');
 
+    const errorInMetadata = useMemo(() => (
+        error
+        && Object.keys(error).some(
+            (fieldName) => fieldsInMetadata[fieldName as keyof typeof error],
+        )
+    ), [error]);
+
+    const errorInAdditionalDocuments = useMemo(() => (
+        error
+        && Object.keys(error).some(
+            (fieldName) => fieldsInAdditionalDocuments[fieldName as keyof typeof error],
+        )
+    ), [error]);
+
+    const errorInMethodology = useMemo(() => (
+        error
+        && Object.keys(error).some(
+            (fieldName) => fieldsInMethodology[fieldName as keyof typeof error],
+        )
+    ), [error]);
+
+    const errorInFocus = useMemo(() => (
+        error
+        && Object.keys(error).some(
+            (fieldName) => fieldsInFocus[fieldName as keyof typeof error],
+        )
+    ), [error]);
+
+    const errorInSummary = useMemo(() => (
+        error
+        && Object.keys(error).some(
+            (fieldName) => fieldsInSummary[fieldName as keyof typeof error],
+        )
+    ), [error]);
+
+    const errorInScore = useMemo(() => (
+        error
+        && Object.keys(error).some(
+            (fieldName) => fieldsInScore[fieldName as keyof typeof error],
+        )
+    ), [error]);
+
+    const errorInCna = useMemo(() => (
+        error
+        && Object.keys(error).some(
+            (fieldName) => fieldsInCna[fieldName as keyof typeof error],
+        )
+    ), [error]);
+
     return (
-        <div className={styles.assessmentRegistryForm}>
+        <div className={_cs(styles.assessmentRegistryForm, className)}>
             <Tabs
                 value={activeTab}
                 onChange={setActiveTab}
                 variant="primary"
             >
                 <TabList className={styles.tabList}>
-                    <Tab name="metadata">Metadata</Tab>
-                    <Tab name="documents">Additional Documents</Tab>
-                    <Tab name="focus">Focus</Tab>
-                    <Tab name="methodology">Methodology</Tab>
-                    <Tab name="summary">Summary</Tab>
-                    <Tab name="score">Score</Tab>
-                    <Tab name="cna">CNA</Tab>
+                    <Tab
+                        className={_cs(
+                            styles.tab,
+                            errorInMetadata && styles.error,
+                        )}
+                        name="metadata"
+                    >
+                        Metadata
+                    </Tab>
+                    <Tab
+                        className={_cs(
+                            styles.tab,
+                            errorInAdditionalDocuments && styles.error,
+                        )}
+                        name="documents"
+                    >
+                        Additional Documents
+                    </Tab>
+                    <Tab
+                        className={_cs(
+                            styles.tab,
+                            errorInFocus && styles.error,
+                        )}
+                        name="focus"
+                    >
+                        Focus
+                    </Tab>
+                    <Tab
+                        className={_cs(
+                            styles.tab,
+                            errorInMethodology && styles.error,
+                        )}
+                        name="methodology"
+                    >
+                        Methodology
+                    </Tab>
+                    <Tab
+                        className={_cs(
+                            styles.tab,
+                            errorInSummary && styles.error,
+                        )}
+                        name="summary"
+                    >
+                        Summary
+                    </Tab>
+                    <Tab
+                        className={_cs(
+                            styles.tab,
+                            errorInScore && styles.error,
+                        )}
+                        name="score"
+                    >
+                        Score
+                    </Tab>
+                    <Tab
+                        className={_cs(
+                            styles.tab,
+                            errorInCna && styles.error,
+                        )}
+                        name="cna"
+                    >
+                        CNA
+                    </Tab>
                     <div className={styles.dummy} />
                 </TabList>
                 <TabPanel
                     name="metadata"
+                    activeClassName={styles.tabPanel}
                 >
                     <MetadataForm
                         value={value}
@@ -135,4 +293,4 @@ function AssessmentRegistyForm(props: Props) {
     );
 }
 
-export default AssessmentRegistyForm;
+export default AssessmentRegistryForm;
