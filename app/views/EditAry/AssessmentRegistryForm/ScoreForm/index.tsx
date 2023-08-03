@@ -63,7 +63,9 @@ function ScoreForm(props: Props) {
                     className={styles.tabPanel}
                 >
                     <AnalyticalDensityForm
-                        heading="Wash"
+                        value={value}
+                        setFieldValue={setFieldValue}
+                        error={error}
                     />
                 </TabPanel>
             </Tabs>

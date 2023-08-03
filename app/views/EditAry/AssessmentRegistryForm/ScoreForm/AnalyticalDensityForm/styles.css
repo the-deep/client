@@ -1,8 +1,4 @@
 .analytical-density-form {
     display: flex;
-    justify-content: space-between;
-
-    .analytical-content {
-        width: 45%;
-    }
+    flex-direction: column;
 }
