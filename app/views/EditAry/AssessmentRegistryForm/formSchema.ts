@@ -22,6 +22,7 @@ type AssessmentRegistryType = DeepMandatory<PurgeNull<AssessmentRegistryCreateIn
 export type PartialFormType = PartialForm<AssessmentRegistryType, 'clientId' | 'question' | 'sector' | 'organization' | 'organizationType'>;
 
 export type PartialAdditionalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
+
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -51,6 +52,13 @@ type OrganizationsSchema = ObjectSchema<PartialOrganizationType, PartialFormType
 type OrganizationsSchemaFields = ReturnType<OrganizationsSchema['fields']>;
 type OrganizationsListSchema = ArraySchema<PartialOrganizationType, PartialFormType>;
 type OrganizationsListMember = ReturnType<OrganizationsListSchema['member']>;
+
+export type SubPillarIssueType = NonNullable<PartialFormType['summarySubsectorIssue']>[number];
+type SubPillarIssueSchema = ObjectSchema<SubPillarIssueType, PartialFormType>;
+type SubPillarIssueSchemaFields = ReturnType<SubPillarIssueSchema['fields']>;
+
+type SubPillarIssuesFormSchema = ArraySchema<SubPillarIssueType, PartialFormType>;
+type SubPillarIssuesFormSchemaMember = ReturnType<SubPillarIssuesFormSchema['member']>;
 
 export const initialValue: PartialFormType = {
     methodologyAttributes: [
@@ -141,6 +149,15 @@ export const schema: FormSchema = {
                         clientId: [requiredCondition],
                         question: [requiredCondition],
                         answer: [requiredCondition],
+                    }),
+                }),
+            },
+            summarySubsectorIssue: {
+                keySelector: (issue) => issue.summaryIssue,
+                member: (): SubPillarIssuesFormSchemaMember => ({
+                    fields: (): SubPillarIssueSchemaFields => ({
+                        summaryIssue: [],
+                        text: [],
                     }),
                 }),
             },

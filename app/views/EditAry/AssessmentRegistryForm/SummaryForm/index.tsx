@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Heading, List } from '@the-deep/deep-ui';
-import { EntriesAsList, Error, removeNull } from '@togglecorp/toggle-form';
+import { EntriesAsList, Error, removeNull, SetBaseValueArg } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
-import { isNotDefined } from '@togglecorp/fujs';
+import { isNotDefined, listToGroupList } from '@togglecorp/fujs';
 
 import {
     GetSummaryPillarOptionsQuery,
@@ -30,9 +30,15 @@ const GET_SUMMARY_PILLAR_OPTIONS = gql`
 
 const keySelector = (d: SummaryOptionType) => d.sector;
 
+export interface IssuesInputType {
+    issueId: string;
+    name: string;
+    order: string;
+}
 interface Props {
-    value: PartialFormType,
+    value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     error: Error<PartialFormType>;
     projectId: string;
     disabled?: boolean;
@@ -43,6 +49,7 @@ function SummaryForm(props: Props) {
     const {
         value,
         setFieldValue,
+        setValue,
         error,
         disabled,
         readOnly,
@@ -66,29 +73,30 @@ function SummaryForm(props: Props) {
 
     const options = removeNull(data?.project?.assessmentRegistryOptions?.summaryOptions);
 
-    const [issues, setIssues] = useState<SummarySubSectorIssueInputType[]>([]);
+    const [issueList, setIssueList] = useState<IssuesInputType[]>([]);
 
-    const handleSuccessIssueAdd = useCallback(
-        (id, text) => {
-            setIssues((prevVal) => ([
-                ...(prevVal ?? []),
-                {
-                    summaryIssue: id,
-                    text,
+    const handleIssueSelect = useCallback(
+        (issueId: string, subPillar: string) => {
+            setIssueList(
+                (prev: IssuesInputType[]) => {
+                    const safeOldValue = prev?.filter((item) => item.name !== subPillar);
+                    const newValue = {
+                        issueId,
+                        name: subPillar,
+                        order: subPillar.split('-')[1],
+                    };
+                    return [...safeOldValue, newValue];
                 },
-            ]));
-        }, [],
+            );
+        }, [setIssueList],
     );
-
-    console.log('this are issues', issues);
 
     const pillarRenderParams = useCallback(
         (name: string, pillarData: SummaryOptionType) => ({
             data: pillarData,
-            value: value.summarySubsectorIssue,
-            onValueChange: setFieldValue,
-            onAdd: handleSuccessIssueAdd,
-        }), [],
+            value: issueList,
+            onValueChange: handleIssueSelect,
+        }), [issueList, handleIssueSelect],
     );
 
     return (
