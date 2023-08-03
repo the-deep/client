@@ -1,6 +1,14 @@
 import React from 'react';
 import { ScaleInput, TextInput } from '@the-deep/deep-ui';
-import { AssessmentRegistryRatingType } from '#generated/types';
+import { randomString } from '@togglecorp/fujs';
+import {
+    SetValueArg,
+    Error,
+    useFormObject,
+    getErrorObject,
+} from '@togglecorp/toggle-form';
+import { AssessmentRegistryRatingType, AssessmentRegistryScoreCriteriaTypeEnum } from '#generated/types';
+import { ScoreRatingsType } from '../../../formSchema';
 
 import styles from './styles.css';
 
@@ -42,76 +50,56 @@ const scaleOptions: Option[] = [
     },
 ];
 
-function QualityScoreInput() {
-    const [scaleValue, setScaleValue] = React.useState();
-    const [text, setText] = React.useState<string | undefined>('');
+interface Props {
+    scoreCriteria: string;
+    value: ScoreRatingsType | undefined;
+    name: number | undefined;
+    onChange: (value: SetValueArg<ScoreRatingsType>, name: number | undefined) => void;
+    error: Error<ScoreRatingsType>;
+    scoreType: AssessmentRegistryScoreCriteriaTypeEnum;
+}
+
+function QualityScoreInput(props: Props) {
+    const {
+        scoreCriteria,
+        value,
+        onChange,
+        name,
+        scoreType,
+        error: riskyError,
+    } = props;
+
+    const onScoreRatingChange = useFormObject(name, onChange, {
+        clientId: randomString(),
+        scoreType,
+    });
+    const error = getErrorObject(riskyError);
 
     return (
-        <>
-            <div className={styles.scoreInput}>
-                <div className={styles.criteriaHeading}>
-                    Relavance
-                </div>
-                <ScaleInput
-                    className={styles.criteriaHeading}
-                    name={undefined}
-                    value={scaleValue}
-                    onChange={setScaleValue}
-                    options={scaleOptions}
-                    keySelector={optionKeySelector}
-                    labelSelector={optionLabelSelector}
-                    colorSelector={optionColorSelector}
-                />
-                <TextInput
-                    className={styles.justification}
-                    name=""
-                    value={text}
-                    onChange={setText}
-                />
+        <div className={styles.scoreInput}>
+            <div className={styles.criteriaHeading}>
+                {scoreCriteria}
             </div>
-            <div className={styles.scoreInput}>
-                <div className={styles.criteriaHeading}>
-                    Relavance
-                </div>
-                <ScaleInput
-                    className={styles.criteriaHeading}
-                    name={undefined}
-                    value={scaleValue}
-                    onChange={setScaleValue}
-                    options={scaleOptions}
-                    keySelector={optionKeySelector}
-                    labelSelector={optionLabelSelector}
-                    colorSelector={optionColorSelector}
-                />
-                <TextInput
-                    className={styles.justification}
-                    name=""
-                    value={text}
-                    onChange={setText}
-                />
-            </div>
-            <div className={styles.scoreInput}>
-                <div className={styles.criteriaHeading}>
-                    Relavance
-                </div>
-                <ScaleInput
-                    className={styles.criteriaHeading}
-                    name={undefined}
-                    value={scaleValue}
-                    onChange={setScaleValue}
-                    options={scaleOptions}
-                    keySelector={optionKeySelector}
-                    labelSelector={optionLabelSelector}
-                    colorSelector={optionColorSelector}
-                />
-                <TextInput
-                    className={styles.justification}
-                    name=""
-                    value={text}
-                    onChange={setText}
-                />
-            </div>
-        </>
+            <ScaleInput
+                className={styles.criteriaHeading}
+                name="rating"
+                value={value?.rating}
+                spacing="comfortable"
+                onChange={onScoreRatingChange}
+                options={scaleOptions}
+                keySelector={optionKeySelector}
+                labelSelector={optionLabelSelector}
+                colorSelector={optionColorSelector}
+                error={error?.rating}
+            />
+            <TextInput
+                className={styles.justification}
+                name="reason"
+                value={value?.reason}
+                onChange={onScoreRatingChange}
+                error={error?.reason}
+            />
+        </div>
     );
 }
 

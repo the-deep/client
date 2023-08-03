@@ -1,15 +1,21 @@
 .quality-score-form {
     display: flex;
     flex-direction: column;
-    gap: var(--dui-spacing-large);
+    gap: var(--dui-spacing-extra-large);
 
-    .score-content {
+    .quality-score-content {
         display: flex;
-        gap: var(--dui-spacing-ultra-large);
-
-        .score-heading{
-            width: 10rem;
-            color: var(--dui-color-accent);
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+        
+        .heading-content {
+            display: flex;
+            gap: var(--dui-spacing-ultra-large);
+            
+            .score-heading{
+                width: 10rem;
+                color: var(--dui-color-accent);
+            }
         }
     }
 }
