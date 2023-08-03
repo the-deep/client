@@ -418,5 +418,19 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
                 }
             }
         }
+        scoreRatings {
+            id
+            scoreType
+            rating
+            reason
+            clientId
+        }
+        scoreAnalyticalDensity {
+            id
+            analysisLevelCovered
+            clientId
+            figureProvided
+            sector
+        }
     }
 `;

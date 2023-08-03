@@ -292,7 +292,12 @@ function AssessmentRegistryForm(props: Props) {
                     name="score"
                     activeClassName={styles.tabPanel}
                 >
-                    <ScoreForm />
+                    <ScoreForm
+                        projectId={projectId}
+                        value={value}
+                        setFieldValue={setFieldValue}
+                        error={error}
+                    />
                 </TabPanel>
                 <TabPanel
                     name="cna"
