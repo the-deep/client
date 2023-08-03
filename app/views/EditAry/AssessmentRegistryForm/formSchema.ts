@@ -33,6 +33,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 export type MethodologyAttributesType = NonNullable<PartialFormType['methodologyAttributes']>[number];
 export type CnaType = NonNullable<PartialFormType['cna']>[number];
+export type ScoreRatingsType = NonNullable<PartialFormType['scoreRatings']>[number];
 type MethodologyAttributesSchema = ObjectSchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesSchemaFields = ReturnType<MethodologyAttributesSchema['fields']>;
 type MethodologyAttributesFormSchema = ArraySchema<MethodologyAttributesType, PartialFormType>;

@@ -5,14 +5,35 @@ import {
     TabPanel,
     Tabs,
 } from '@the-deep/deep-ui';
+import {
+    EntriesAsList,
+    Error,
+} from '@togglecorp/toggle-form';
 import QualityScoreForm from './QualityScoreForm';
 import AnalyticalDensityForm from './AnalyticalDensityForm';
+import {
+    PartialFormType,
+} from '../formSchema';
 
 import styles from './styles.css';
 
 type TabOptions = 'qualityScores' | 'analyticalDensity' | undefined;
 
-function ScoreForm() {
+interface Props {
+    projectId: string;
+    value: PartialFormType,
+    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    error: Error<PartialFormType>
+}
+
+function ScoreForm(props: Props) {
+    const {
+        projectId,
+        value,
+        setFieldValue,
+        error,
+    } = props;
+
     const [activeTab, setActiveTab] = useState<TabOptions>('qualityScores');
     return (
         <div className={styles.scoreForm}>
@@ -30,7 +51,12 @@ function ScoreForm() {
                     name="qualityScores"
                     className={styles.tabPanel}
                 >
-                    <QualityScoreForm />
+                    <QualityScoreForm
+                        projectId={projectId}
+                        value={value}
+                        setFieldValue={setFieldValue}
+                        error={error}
+                    />
                 </TabPanel>
                 <TabPanel
                     name="analyticalDensity"
