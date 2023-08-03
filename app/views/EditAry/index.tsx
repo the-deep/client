@@ -421,6 +421,18 @@ function EditAry(props: Props) {
                             ...doc,
                             file: doc.file?.id,
                         })),
+                        scoreRatings: result.scoreRatings.map((rating) => ({
+                            clientId: rating.clientId,
+                            rating: rating.rating,
+                            reason: rating.reason,
+                            scoreType: rating.scoreType,
+                        })),
+                        scoreAnalyticalDensity: result.scoreAnalyticalDensity.map((density) => ({
+                            clientId: density.clientId,
+                            analysisLevelCovered: density.analysisLevelCovered,
+                            figureProvided: density.figureProvided,
+                            sector: density.sector,
+                        })),
                     });
 
                     const stakeholders = [
