@@ -1,11 +1,13 @@
-import React, { useCallback, useState } from 'react';
-import { DropContainer, SelectInput } from '@the-deep/deep-ui';
+import React, { useCallback, useMemo } from 'react';
+import { listToMap } from '@togglecorp/fujs';
 
 import {
     AssessmentRegistrySummarySubSectorTypeEnum,
-    SummarySubSectorIssueInputType,
 } from '#generated/types';
 
+import SelectIssueInput from './SelectIssueInput';
+
+import { IssuesInputType } from '../../..';
 import styles from './styles.css';
 
 interface Option {
@@ -17,18 +19,13 @@ interface Props {
     name?: AssessmentRegistrySummarySubSectorTypeEnum;
     pending?: boolean;
     options?: Option[] | null;
-    value: SummarySubSectorIssueInputType;
-    onValueChange: React.Dispatch<React.SetStateAction<SummarySubSectorIssueInputType>>;
-    onAdd: (summaryId: string) => void;
+    value: IssuesInputType[];
+    onValueChange: (id: string, name: string) => void;
 }
 
-interface InputType {
-    id: string;
-    name:string;
-    text: string;
-}
 const keySelector = (d: Option) => d.id;
 const labelSelector = (d: Option) => d.label;
+
 function IssueInput(props: Props) {
     const {
         name,
@@ -36,85 +33,57 @@ function IssueInput(props: Props) {
         pending,
         value,
         onValueChange,
-        onAdd,
     } = props;
 
-    const [description, setDescription] = useState<string>();
-    const [issueValues, setIssuesValues] = useState<InputType>();
-
-    const handleIssueSelect = useCallback(
-        (val, n) => {
-            console.log('issue selected', val, n);
-        }, [],
-    );
-
     const handleDrop = useCallback(
-        (v) => {
+        (v?: string) => {
             console.log('drop container', v);
         }, [],
     );
 
+    const mapData = useMemo(
+        () => listToMap(
+            value,
+            (d) => d.name,
+            (d) => d.issueId,
+        ), [value],
+    );
     return (
         <div className={styles.input}>
-            <SelectInput
-                name="1"
+            <SelectIssueInput
+                name={`${name}-1`}
                 placeholder="1. Field Name"
+                onChangeIssue={onValueChange}
+                onDropChange={handleDrop}
+                options={options}
+                value={mapData[`${name}-1`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                options={options}
-                optionsPending={pending}
-                onChange={handleIssueSelect}
-                value={undefined}
+                disabled={pending}
             />
-            <DropContainer
-                name="1"
-                onDrop={handleDrop}
-            >
-                {description}
-            </DropContainer>
-
-            <SelectInput
-                name="2"
-                placeholder="1. Field Name"
+            <SelectIssueInput
+                name={`${name}-2`}
+                placeholder="2. Field Name"
+                onChangeIssue={onValueChange}
+                onDropChange={handleDrop}
+                options={options}
+                value={mapData[`${name}-2`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                options={options}
-                optionsPending={pending}
-                onChange={handleIssueSelect}
-                value={undefined}
+                disabled={pending}
             />
-            <SelectInput
-                name="3"
-                placeholder="1. Field Name"
+            <SelectIssueInput
+                name={`${name}-3`}
+                placeholder="3. Field Name"
+                onChangeIssue={onValueChange}
+                onDropChange={handleDrop}
+                options={options}
+                value={mapData[`${name}-3`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                options={options}
-                onChange={onAdd}
-                value={undefined}
-                optionsPending={pending}
-            />
-            <SelectInput
-                name="4"
-                placeholder="1. Field Name"
-                keySelector={keySelector}
-                labelSelector={labelSelector}
-                options={options}
-                onChange={onAdd}
-                value={undefined}
-                optionsPending={pending}
-            />
-            <SelectInput
-                name="5"
-                placeholder="1. Field Name"
-                keySelector={keySelector}
-                labelSelector={labelSelector}
-                options={options}
-                onChange={onAdd}
-                value={undefined}
-                optionsPending={pending}
+                disabled={pending}
             />
         </div>
     );
 }
-
 export default IssueInput;
