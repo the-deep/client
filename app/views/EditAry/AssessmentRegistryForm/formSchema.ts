@@ -42,8 +42,8 @@ export const initialValue: PartialFormType = {
     ],
 };
 export const schema: FormSchema = {
-    fields: (): FormSchemaFields => {
-        const baseSchema: FormSchemaFields = {
+    fields: (value): FormSchemaFields => {
+        let baseSchema: FormSchemaFields = {
             bgCountries: [requiredCondition],
             bgCrisisType: [requiredCondition],
             bgCrisisStartDate: [requiredCondition],
@@ -67,7 +67,7 @@ export const schema: FormSchema = {
 
             // NOTE: uncomment on other form
             sectors: [],
-            protectionInfoMgmts: [],
+            protectionInfoMgmts: [defaultEmptyArrayType],
             focuses: [],
             affectedGroups: [],
             locations: [defaultEmptyArrayType],
@@ -91,6 +91,12 @@ export const schema: FormSchema = {
             scoreRatings: [defaultEmptyArrayType],
             scoreAnalyticalDensity: [defaultEmptyArrayType],
         };
+        if (value?.sectors?.some((sector) => sector === 'PROTECTION')) {
+            baseSchema = {
+                ...baseSchema,
+                protectionInfoMgmts: [],
+            };
+        }
 
         return baseSchema;
     },
