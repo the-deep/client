@@ -5,7 +5,10 @@ import {
     getErrorObject,
     useFormObject,
 } from '@togglecorp/toggle-form';
+import { randomString } from '@togglecorp/fujs';
+
 import BooleanInput from '#components/selections/BooleanInput';
+
 import { CnaType } from '../../formSchema';
 
 import styles from './styles.css';
@@ -39,7 +42,10 @@ function AnswerQuestionInput(props: Props) {
         questionId,
     } = props;
 
-    const onAnswerChange = useFormObject(name, onChange, { question: questionId });
+    const onAnswerChange = useFormObject(name, onChange, {
+        question: questionId,
+        clientId: randomString(),
+    });
     const error = getErrorObject(riskyError);
     return (
         <div className={styles.question}>

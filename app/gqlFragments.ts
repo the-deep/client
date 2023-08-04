@@ -329,6 +329,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         limitations
         language
         methodologyAttributes {
+            id
             clientId
             samplingSize
             dataCollectionTechnique
@@ -349,10 +350,11 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         }
         cna {
             id
+            clientId
             answer
             question {
                 id
-                question 
+                question
             }
         }
     }

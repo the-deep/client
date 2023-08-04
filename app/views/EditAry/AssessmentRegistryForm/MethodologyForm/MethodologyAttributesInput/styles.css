@@ -3,12 +3,12 @@
     gap: var(--dui-spacing-large);
 
     .attribute-input {
-        width: 12rem;
+        display: block;
     }
 
     .sampling-input {
         display: flex;
-        gap: var(--dui-spacing-large);
+        gap: var(--dui-spacing-extra-small);
     }
 
     .remove-button {
