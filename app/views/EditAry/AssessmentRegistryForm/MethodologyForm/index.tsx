@@ -154,57 +154,61 @@ function MethodologyForm(props: Props) {
                     readOnly={readOnly}
                 />
             </div>
-            <div className={styles.attributesContent}>
-                <Heading
-                    size="extraSmall"
-                    className={styles.attributeHeading}
-                >
-                    Collection Technique
-                </Heading>
-                <Heading
-                    size="extraSmall"
-                    className={styles.samplingHeading}
-                >
-                    Sampling
-                </Heading>
-                <Heading
-                    size="extraSmall"
-                    className={styles.attributeHeading}
-                >
-                    Proximity
-                </Heading>
-                <Heading
-                    size="extraSmall"
-                    className={styles.attributeHeading}
-                >
-                    Unit of Analysis
-                </Heading>
-                <Heading
-                    size="extraSmall"
-                    className={styles.attributeHeading}
-                >
-                    Unit of Reporting
-                </Heading>
-                <QuickActionButton
-                    title="Add attributes"
-                    name="addAttributes"
-                    onClick={handleAddMethodologyAttributes}
-                    className={styles.addButton}
-                >
-                    <IoAddCircle />
-                </QuickActionButton>
+            <div className={styles.table}>
+                <div className={styles.attributesContent}>
+                    <Heading
+                        size="extraSmall"
+                        className={styles.attributeHeading}
+                    >
+                        Collection Technique
+                    </Heading>
+                    <Heading
+                        size="extraSmall"
+                        className={styles.samplingHeading}
+                    >
+                        Sampling
+                    </Heading>
+                    <Heading
+                        size="extraSmall"
+                        className={styles.attributeHeading}
+                    >
+                        Proximity
+                    </Heading>
+                    <Heading
+                        size="extraSmall"
+                        className={styles.attributeHeading}
+                    >
+                        Unit of Analysis
+                    </Heading>
+                    <Heading
+                        size="extraSmall"
+                        className={styles.attributeHeading}
+                    >
+                        Unit of Reporting
+                    </Heading>
+                    <QuickActionButton
+                        title="Add attributes"
+                        name="addAttributes"
+                        onClick={handleAddMethodologyAttributes}
+                        className={styles.addButton}
+                    >
+                        <IoAddCircle />
+                    </QuickActionButton>
+                </div>
+                {value.methodologyAttributes?.map((attribute, index) => (
+                    <MethodologyAttributesInput
+                        className={styles.attributeRow}
+                        itemClassName={styles.attributeInputGroup}
+                        key={attribute.clientId}
+                        value={attribute}
+                        index={index}
+                        options={options}
+                        onChange={setMethodologyAttributesValue}
+                        error={methodologyAttributesError?.[attribute.clientId]}
+                        onRemove={onMethodologyAttributesRemove}
+                    />
+                ))}
             </div>
-            {value.methodologyAttributes?.map((attribute, index) => (
-                <MethodologyAttributesInput
-                    key={attribute.clientId}
-                    value={attribute}
-                    index={index}
-                    options={options}
-                    onChange={setMethodologyAttributesValue}
-                    error={methodologyAttributesError?.[attribute.clientId]}
-                    onRemove={onMethodologyAttributesRemove}
-                />
-            ))}
         </div>
     );
 }

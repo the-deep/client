@@ -390,10 +390,13 @@ function EditAry(props: Props) {
                     setValue({
                         ...result,
                         cna: result.cna?.map((ques) => ({
+                            id: ques.id,
+                            clientId: ques.clientId,
                             answer: ques.answer,
                             question: ques.question.id,
                         })),
                         methodologyAttributes: result.methodologyAttributes?.map((method) => ({
+                            id: method.id,
                             clientId: method.clientId ?? '',
                             dataCollectionTechnique: method.dataCollectionTechnique,
                             proximity: method.proximity,
