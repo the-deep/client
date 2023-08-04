@@ -389,6 +389,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             id
             analysisLevelCovered
             clientId
+            id
             figureProvided
             sector
         }

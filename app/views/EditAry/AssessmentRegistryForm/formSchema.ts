@@ -25,6 +25,7 @@ export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
     | 'detailsType' | 'family' | 'frequency' | 'confidentiality' | 'language'
     | 'affectedGroups' | 'sectors' | 'protectionInfoMgmts' | 'focuses'
     | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
+    | 'figureProvided' | 'analysisLevelCovered'
 >, 'clientId' | 'question'>;
 
 export type PartialAdditionalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
