@@ -22,7 +22,10 @@ import {
 } from '#generated/types';
 
 import QualityScoreInput from './QualityScoreInput';
-import { PartialFormType } from '../../formSchema';
+import {
+    PartialFormType,
+    ScoreRatingsType,
+} from '../../formSchema';
 
 import styles from './styles.css';
 
@@ -69,6 +72,7 @@ const GET_QUALITY_SCORE_LIST = gql`
         $projectId: ID!,
     ) {
         project(id: $projectId) {
+            id
             assessmentRegistryOptions {
                 scoreOptions {
                     scoreCriteriaDisplay
@@ -91,7 +95,10 @@ function QualityScoreForm(props: Props) {
 
     const {
         setValue: setScoreRating,
-    } = useFormArray('scoreRatings', setFieldValue);
+    } = useFormArray<
+        'scoreRatings',
+        ScoreRatingsType
+    >('scoreRatings', setFieldValue);
 
     const error = getErrorObject(
         riskyError,

@@ -13,11 +13,15 @@ import {
 import { isDefined, isNotDefined, listToMap } from '@togglecorp/fujs';
 
 import {
+    AssessmentRegistrySectorTypeEnum,
     GetAnalyticalOptionsQuery,
     GetAnalyticalOptionsQueryVariables,
 } from '#generated/types';
 
-import { PartialFormType } from '../../formSchema';
+import {
+    PartialFormType,
+    ScoreAnalyticalDensityType,
+} from '../../formSchema';
 import AnalyticalDensityInput from './AnalyticalDensityInput';
 
 import styles from './styles.css';
@@ -67,7 +71,10 @@ function AnalyticalDensityForm(props: Props) {
 
     const {
         setValue: setAnalyticalScore,
-    } = useFormArray('scoreAnalyticalDensity', setFieldValue);
+    } = useFormArray<
+        'scoreAnalyticalDensity',
+        ScoreAnalyticalDensityType
+    >('scoreAnalyticalDensity', setFieldValue);
 
     const error = getErrorObject(
         riskyError,
@@ -76,17 +83,11 @@ function AnalyticalDensityForm(props: Props) {
     const analyticalDensityValue = value.scoreAnalyticalDensity;
     const analyticalDensityError = getErrorObject(error?.scoreAnalyticalDensity);
 
-    const getDescriptions = (name: string) => {
-        if (isNotDefined(sectorsOptions?.enumValues)) {
-            return undefined;
-        }
-        return sectorsOptions?.enumValues.find(
-            (item) => item.name === name,
-        );
-    };
-
-    const sectorList = value.sectors && value.sectors.map((sector) => (
-        getDescriptions(sector)));
+    const sectorNameMapping = listToMap(
+        sectorsOptions?.enumValues,
+        (k) => k.name,
+        (item) => item.description ?? item.name,
+    );
 
     const analyticalDensityValueIndex = listToMap(
         analyticalDensityValue,
@@ -94,10 +95,10 @@ function AnalyticalDensityForm(props: Props) {
         (_, __, index) => index,
     );
 
-    if (isNotDefined(sectorList)) {
+    if (isNotDefined(value.sectors) || value.sectors.length <= 0) {
         return (
             <div>
-                Please select Sector from focus form
+                Please select Sector from Focus tab
             </div>
         );
     }
@@ -106,8 +107,10 @@ function AnalyticalDensityForm(props: Props) {
         <div
             className={styles.analyticalDensityForm}
         >
-            {sectorList?.map((list) => {
-                const analyticalIndex = analyticalDensityValueIndex?.[list?.name];
+            {value.sectors?.map((sector) => {
+                const analyticalIndex = analyticalDensityValueIndex?.[
+                    sector as AssessmentRegistrySectorTypeEnum
+                ];
                 const analyticalValue = isDefined(analyticalIndex)
                     ? analyticalDensityValue?.[analyticalIndex]
                     : undefined;
@@ -116,11 +119,12 @@ function AnalyticalDensityForm(props: Props) {
                     : undefined;
                 return (
                     <AnalyticalDensityInput
+                        key={sector}
                         name={analyticalIndex}
-                        description={list?.description}
+                        description={sectorNameMapping?.[sector] ?? sector}
                         options={options}
                         onChange={setAnalyticalScore}
-                        sector={list?.name}
+                        sector={sector}
                         value={analyticalValue}
                         error={analyticalError}
                     />

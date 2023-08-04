@@ -12,16 +12,15 @@ import {
     Error,
     useFormObject,
     getErrorObject,
+    getErrorString,
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
 import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
-import {
-    GetAnalyticalOptionsQuery,
-    ScoreAnalyticalDensityInputType,
-} from '#generated/types';
+import { AssessmentRegistrySectorTypeEnum, GetAnalyticalOptionsQuery } from '#generated/types';
+import { ScoreAnalyticalDensityType } from '../../../formSchema';
 
 import styles from './styles.css';
 
@@ -30,11 +29,11 @@ interface Props {
     sector: string | undefined;
     description: string | null | undefined;
     options: GetAnalyticalOptionsQuery | undefined
-    value: ScoreAnalyticalDensityInputType | undefined;
+    value: ScoreAnalyticalDensityType | undefined;
     onChange: (
-        value: SetValueArg<ScoreAnalyticalDensityInputType>, name: number | undefined
+        value: SetValueArg<ScoreAnalyticalDensityType>, name: number | undefined
     ) => void;
-    error: Error<ScoreAnalyticalDensityInputType>;
+    error: Error<ScoreAnalyticalDensityType>;
 }
 
 function AnalyticalDensityInput(props: Props) {
@@ -50,7 +49,7 @@ function AnalyticalDensityInput(props: Props) {
 
     const onScoreAnalyticalDensityChange = useFormObject(name, onChange, {
         clientId: randomString(),
-        sector,
+        sector: sector as AssessmentRegistrySectorTypeEnum,
     });
 
     const error = getErrorObject(riskyError);
@@ -80,10 +79,10 @@ function AnalyticalDensityInput(props: Props) {
                     onChange={onScoreAnalyticalDensityChange}
                     name="analysisLevelCovered"
                     direction="vertical"
-                    options={analysisLevelCoveredOptions?.enumValues}
+                    options={analysisLevelCoveredOptions?.enumValues ?? undefined}
                     keySelector={enumKeySelector}
                     labelSelector={enumLabelSelector}
-                    error={error?.analysisLevelCovered}
+                    error={getErrorString(error?.analysisLevelCovered)}
                 />
             </ContainerCard>
             <ContainerCard
@@ -97,10 +96,10 @@ function AnalyticalDensityInput(props: Props) {
                     onChange={onScoreAnalyticalDensityChange}
                     name="figureProvided"
                     direction="vertical"
-                    options={figureProvidedOptions?.enumValues}
+                    options={figureProvidedOptions?.enumValues ?? undefined}
                     keySelector={enumKeySelector}
                     labelSelector={enumLabelSelector}
-                    error={error?.figureProvided}
+                    error={getErrorString(error?.figureProvided)}
                 />
             </ContainerCard>
         </ContainerCard>
