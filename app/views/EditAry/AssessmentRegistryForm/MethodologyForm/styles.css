@@ -19,25 +19,44 @@
         }
     }
 
-    .attributes-content {
-        display: flex;
-        gap: var(--dui-spacing-large);
-        flex-shrink: 0;
-        overflow: auto;
+    .table {
+        display: table;
 
-        .sampling-heading {
-            width: calc(24rem + var(--dui-spacing-large));
-            color: var(--dui-color-accent);
+        .attributes-content {
+            display: table-row;
+            flex-shrink: 0;
+            overflow: auto;
+
+            .sampling-heading {
+                display: table-cell;
+                padding: var(--dui-spacing-small);
+                color: var(--dui-color-accent);
+            }
+
+            .attribute-heading {
+                display: table-cell;
+                padding: var(--dui-spacing-small);
+                color: var(--dui-color-accent);
+            }
+
+            .add-button {
+                display: table-cell;
+                background-color: transparent;
+                padding: var(--dui-spacing-small);
+                vertical-align: center;
+                font-size: var(--dui-font-size-large);
+            }
         }
 
-        .attribute-heading {
-            width: 12rem;
-            color: var(--dui-color-accent);
-        }
+        .attribute-row {
+            display: table-row;
+            vertical-align: bottom;
 
-        .add-button {
-            background-color: transparent;
-            font-size: var(--dui-font-size-large);
+            .attribute-input-group {
+                display: table-cell;
+                padding: var(--dui-spacing-small);
+                vertical-align: bottom;
+            }
         }
     }
 }
