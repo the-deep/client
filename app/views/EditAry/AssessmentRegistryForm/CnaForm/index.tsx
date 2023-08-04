@@ -8,6 +8,7 @@ import {
     listToMap,
     mapToList,
     mapToMap,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     EntriesAsList,
@@ -122,7 +123,7 @@ function CnaForm(props: Props) {
         cnaValue,
         (k) => k.question,
         (_, __, index) => index,
-    ) ?? {};
+    );
 
     const questionPercentage = useMemo(() => {
         const sectorQuestions = listToGroupList(
@@ -164,7 +165,7 @@ function CnaForm(props: Props) {
                             precision={1}
                             suffix="%"
                         />
-                        <div className={styles.sectorLabel}>
+                        <div>
                             {question.sector}
                         </div>
                     </div>
@@ -192,8 +193,14 @@ function CnaForm(props: Props) {
                                 {subSector.subSector}
                             </Heading>
                             {subSector.questions.map((question) => {
-                                const answerIndex = answerMapIndex[question.id];
-                                const answerValue = cnaValue?.[answerIndex];
+                                const answerIndex = answerMapIndex?.[question.id];
+                                const answerValue = isDefined(answerIndex)
+                                    ? cnaValue?.[answerIndex]
+                                    : undefined;
+                                const answerError = isDefined(answerIndex)
+                                    ? cnaError?.[answerIndex]
+                                    : undefined;
+
                                 return (
                                     <AnswerQuestionInput
                                         key={question.id}
@@ -201,7 +208,7 @@ function CnaForm(props: Props) {
                                         onChange={setAnswerValue}
                                         value={answerValue}
                                         name={answerIndex !== -1 ? answerIndex : undefined}
-                                        error={cnaError?.[answerIndex]}
+                                        error={answerError}
                                         questionId={question.id}
                                     />
                                 );

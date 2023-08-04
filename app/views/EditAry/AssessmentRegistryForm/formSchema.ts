@@ -3,6 +3,7 @@ import {
     defaultEmptyArrayType,
     ObjectSchema,
     PartialForm,
+    defaultUndefinedType,
     PurgeNull,
     requiredCondition,
 } from '@togglecorp/toggle-form';
@@ -78,6 +79,7 @@ export const schema: FormSchema = {
                 keySelector: (attribute) => attribute.clientId,
                 member: (): MethodologyAttributesFormSchemaMember => ({
                     fields: (): MethodologyAttributesSchemaFields => ({
+                        id: [defaultUndefinedType],
                         clientId: [requiredCondition],
                         dataCollectionTechnique: [requiredCondition],
                         samplingApproach: [requiredCondition],
@@ -92,11 +94,13 @@ export const schema: FormSchema = {
             scoreRatings: [defaultEmptyArrayType],
             scoreAnalyticalDensity: [defaultEmptyArrayType],
             cna: {
-                keySelector: (cna) => cna.question,
+                keySelector: (cna) => cna.clientId,
                 member: () => ({
                     fields: () => ({
-                        question: [],
-                        answer: [],
+                        id: [defaultUndefinedType],
+                        clientId: [requiredCondition],
+                        question: [requiredCondition],
+                        answer: [requiredCondition],
                     }),
                 }),
             },
