@@ -1,23 +1,24 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Heading, List } from '@the-deep/deep-ui';
-import { EntriesAsList, Error, removeNull, SetBaseValueArg } from '@togglecorp/toggle-form';
+import { Error, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
-import { isNotDefined, listToGroupList } from '@togglecorp/fujs';
+import { isNotDefined } from '@togglecorp/fujs';
 
 import {
     GetSummaryPillarOptionsQuery,
     GetSummaryPillarOptionsQueryVariables,
     SummaryOptionType,
-    SummarySubSectorIssueInputType,
 } from '#generated/types';
 
-import { PartialFormType } from '../formSchema';
+import { PartialFormType, SubSectorIssueInputType } from '../formSchema';
 import PillarItem from './PillarItem';
+
 import styles from './styles.css';
 
 const GET_SUMMARY_PILLAR_OPTIONS = gql`
     query GetSummaryPillarOptions($projectId: ID!) {
         project(id: $projectId) {
+            id
             assessmentRegistryOptions {
                 summaryOptions {
                     sector
@@ -30,29 +31,19 @@ const GET_SUMMARY_PILLAR_OPTIONS = gql`
 
 const keySelector = (d: SummaryOptionType) => d.sector;
 
-export interface IssuesInputType {
-    issueId: string;
-    name: string;
-    order: string;
-}
 interface Props {
-    value: PartialFormType;
-    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
-    error: Error<PartialFormType>;
+    value: SubSectorIssueInputType[];
+    onValueChange: (id: string, name: string) => void;
     projectId: string;
     disabled?: boolean;
-    readOnly?: boolean;
 }
 
 function SummaryForm(props: Props) {
     const {
         value,
-        setFieldValue,
-        setValue,
+        onValueChange,
         error,
         disabled,
-        readOnly,
         projectId,
     } = props;
 
@@ -72,31 +63,13 @@ function SummaryForm(props: Props) {
     );
 
     const options = removeNull(data?.project?.assessmentRegistryOptions?.summaryOptions);
-
-    const [issueList, setIssueList] = useState<IssuesInputType[]>([]);
-
-    const handleIssueSelect = useCallback(
-        (issueId: string, subPillar: string) => {
-            setIssueList(
-                (prev: IssuesInputType[]) => {
-                    const safeOldValue = prev?.filter((item) => item.name !== subPillar);
-                    const newValue = {
-                        issueId,
-                        name: subPillar,
-                        order: subPillar.split('-')[1],
-                    };
-                    return [...safeOldValue, newValue];
-                },
-            );
-        }, [setIssueList],
-    );
-
     const pillarRenderParams = useCallback(
-        (name: string, pillarData: SummaryOptionType) => ({
+        (_: string, pillarData: SummaryOptionType) => ({
             data: pillarData,
-            value: issueList,
-            onValueChange: handleIssueSelect,
-        }), [issueList, handleIssueSelect],
+            value,
+            onValueChange,
+            disabled: loading || disabled,
+        }), [onValueChange, value, loading, disabled],
     );
 
     return (

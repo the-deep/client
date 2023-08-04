@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo } from 'react';
-import { ExpandableContainer, List, NumberInput } from '@the-deep/deep-ui';
+import React, { useCallback } from 'react';
 import { PartialForm } from '@togglecorp/toggle-form';
-import { listToGroupList, noOp } from '@togglecorp/fujs';
+import { noOp } from '@togglecorp/fujs';
+import { ExpandableContainer, List, NumberInput } from '@the-deep/deep-ui';
 
 import {
     AssessmentRegistrySummarySubSectorTypeEnum,
@@ -9,13 +9,15 @@ import {
 } from '#generated/types';
 
 import SubPillarItem from './SubPillarItem';
-import { IssuesInputType } from '..';
+import { SubSectorIssueInputType } from '../../formSchema';
+
 import styles from './styles.css';
 
 interface Props {
     data: SummaryOptionType;
-    value: IssuesInputType[];
+    value: SubSectorIssueInputType[];
     onValueChange: (id: string, name: string) => void;
+    disabled?: boolean;
 }
 
 const keySelector = (d: PartialForm<SummaryOptionType['subSector']>[number]) => d;
@@ -25,6 +27,7 @@ function PillarItem(props: Props) {
         data,
         value,
         onValueChange,
+        disabled,
     } = props;
 
     const issuesParams = useCallback(
@@ -32,8 +35,9 @@ function PillarItem(props: Props) {
             subPillarName: name,
             value,
             onValueChange,
+            disabled,
         }),
-        [value, onValueChange],
+        [value, onValueChange, disabled],
     );
 
     return (
@@ -51,6 +55,7 @@ function PillarItem(props: Props) {
                         placeholder="Total people assessed"
                         value={undefined}
                         onChange={noOp}
+                        disabled={disabled}
                     />
                 )}
             >

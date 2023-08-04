@@ -2,15 +2,14 @@ import React, { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { isNotDefined } from '@togglecorp/fujs';
 
-import { PartialFormType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 import {
     AssessmentRegistrySummarySubSectorTypeEnum,
     GetSubPillarIssuesQuery,
     GetSubPillarIssuesQueryVariables,
 } from '#generated/types';
+import { SubSectorIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 import IssueInput from './IssueInput';
-import { IssuesInputType } from '../..';
 
 import styles from './styles.css';
 
@@ -20,6 +19,7 @@ const GET_SUBPILLAR_ISSUES = gql`
             results {
                 id
                 label
+                subSector
             }
         }
     }
@@ -27,8 +27,9 @@ const GET_SUBPILLAR_ISSUES = gql`
 
 interface Props {
     subPillarName?: AssessmentRegistrySummarySubSectorTypeEnum;
-    value: IssuesInputType[];
+    value: SubSectorIssueInputType[];
     onValueChange: (id: string, name: string) => void;
+    disabled?: boolean;
 }
 
 function SubPillarItem(props: Props) {
@@ -36,6 +37,7 @@ function SubPillarItem(props: Props) {
         subPillarName,
         value,
         onValueChange,
+        disabled,
     } = props;
 
     const variablesForSubPillarIssues = useMemo(
@@ -49,7 +51,8 @@ function SubPillarItem(props: Props) {
         GET_SUBPILLAR_ISSUES, {
             skip: isNotDefined(subPillarName),
             variables: variablesForSubPillarIssues,
-        });
+        },
+    );
 
     return (
         <div className={styles.subPillarItem}>
@@ -57,9 +60,9 @@ function SubPillarItem(props: Props) {
             <IssueInput
                 name={subPillarName}
                 options={result?.issues?.results}
-                pending={loading}
                 value={value}
                 onValueChange={onValueChange}
+                disabled={disabled || loading}
             />
         </div>
     );

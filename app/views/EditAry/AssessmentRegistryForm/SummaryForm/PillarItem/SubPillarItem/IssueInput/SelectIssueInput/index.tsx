@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { DropContainer, SelectInput } from '@the-deep/deep-ui';
-import { PartialFormType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 interface Option {
     id: string;
@@ -49,6 +48,7 @@ function SelectIssueInput(props: Props) {
                 optionsPending={disabled}
                 onChange={handleChange}
                 value={value}
+                disabled={disabled}
             />
             <DropContainer
                 name={name}
