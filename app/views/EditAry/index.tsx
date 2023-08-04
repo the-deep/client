@@ -429,6 +429,7 @@ function EditAry(props: Props) {
                         })),
                         scoreAnalyticalDensity: result.scoreAnalyticalDensity.map((density) => ({
                             clientId: density.clientId,
+                            id: density.id,
                             analysisLevelCovered: density.analysisLevelCovered,
                             figureProvided: density.figureProvided,
                             sector: density.sector,
