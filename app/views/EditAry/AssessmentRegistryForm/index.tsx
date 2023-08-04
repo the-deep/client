@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Tab,
@@ -22,8 +22,6 @@ import CnaForm from './CnaForm';
 import { PartialFormType } from './formSchema';
 
 import styles from './styles.css';
-
-type TabOptions = 'metadata' | 'documents' | 'focus' | 'methodology' | 'summary' | 'score' | 'cna' | undefined;
 
 const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
     bgCountries: true,
@@ -106,8 +104,6 @@ function AssessmentRegistryForm(props: Props) {
         className,
     } = props;
 
-    const [activeTab, setActiveTab] = useState<TabOptions>('metadata');
-
     const errorInMetadata = useMemo(() => (
         error
         && Object.keys(error).some(
@@ -160,9 +156,9 @@ function AssessmentRegistryForm(props: Props) {
     return (
         <div className={_cs(styles.assessmentRegistryForm, className)}>
             <Tabs
-                value={activeTab}
-                onChange={setActiveTab}
+                useHash
                 variant="primary"
+                defaultHash="metadata"
             >
                 <TabList className={styles.tabList}>
                     <Tab

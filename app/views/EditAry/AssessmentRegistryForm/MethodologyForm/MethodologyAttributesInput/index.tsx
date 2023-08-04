@@ -1,5 +1,4 @@
 import React from 'react';
-import { IoTrash } from 'react-icons/io5';
 import {
     NumberInput,
     QuickActionButton,
@@ -11,7 +10,9 @@ import {
     useFormObject,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { randomString } from '@togglecorp/fujs';
+import { _cs, randomString } from '@togglecorp/fujs';
+import { IoTrash } from 'react-icons/io5';
+
 import {
     GetAttributesOptionsQuery,
 } from '#generated/types';
@@ -29,6 +30,8 @@ const defaultMethodologyAttributeValue = (): MethodologyAttributesType => ({
 });
 
 interface Props {
+    className?: string;
+    itemClassName?: string;
     value: MethodologyAttributesType;
     onChange: (
         value: SetValueArg<MethodologyAttributesType>,
@@ -52,6 +55,8 @@ function MethodologyAttributesInput(props: Props) {
         options,
         disabled,
         readOnly,
+        className,
+        itemClassName,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -63,9 +68,9 @@ function MethodologyAttributesInput(props: Props) {
     );
 
     return (
-        <div className={styles.attributesForm}>
+        <div className={_cs(styles.attributesForm, className)}>
             <SelectInput
-                className={styles.attributeInput}
+                className={_cs(styles.attributeInput, itemClassName)}
                 label="Data collection technique"
                 placeholder="Select an option"
                 name="dataCollectionTechnique"
@@ -78,34 +83,36 @@ function MethodologyAttributesInput(props: Props) {
                 disabled={disabled}
                 readOnly={readOnly}
             />
-            <div className={styles.samplingInput}>
-                <NumberInput
-                    className={styles.attributeInput}
-                    label="Sampling size"
-                    name="samplingSize"
-                    onChange={onAttributeChange}
-                    value={value.samplingSize}
-                    error={error?.samplingSize}
-                    disabled={disabled}
-                    readOnly={readOnly}
-                />
-                <SelectInput
-                    className={styles.attributeInput}
-                    label="Sampling approach"
-                    placeholder="Select an option"
-                    name="samplingApproach"
-                    options={options?.samplingApproach?.enumValues}
-                    keySelector={enumKeySelector}
-                    labelSelector={enumLabelSelector}
-                    onChange={onAttributeChange}
-                    value={value.samplingApproach}
-                    error={error?.samplingApproach}
-                    disabled={disabled}
-                    readOnly={readOnly}
-                />
+            <div className={itemClassName}>
+                <div className={styles.samplingInput}>
+                    <NumberInput
+                        className={styles.attributeInput}
+                        label="Sampling size"
+                        name="samplingSize"
+                        onChange={onAttributeChange}
+                        value={value.samplingSize}
+                        error={error?.samplingSize}
+                        disabled={disabled}
+                        readOnly={readOnly}
+                    />
+                    <SelectInput
+                        className={styles.attributeInput}
+                        label="Sampling approach"
+                        placeholder="Select an option"
+                        name="samplingApproach"
+                        options={options?.samplingApproach?.enumValues}
+                        keySelector={enumKeySelector}
+                        labelSelector={enumLabelSelector}
+                        onChange={onAttributeChange}
+                        value={value.samplingApproach}
+                        error={error?.samplingApproach}
+                        disabled={disabled}
+                        readOnly={readOnly}
+                    />
+                </div>
             </div>
             <SelectInput
-                className={styles.attributeInput}
+                className={_cs(styles.attributeInput, itemClassName)}
                 label="Proximity"
                 placeholder="Select an option"
                 name="proximity"
@@ -119,7 +126,7 @@ function MethodologyAttributesInput(props: Props) {
                 readOnly={readOnly}
             />
             <SelectInput
-                className={styles.attributeInput}
+                className={_cs(styles.attributeInput, itemClassName)}
                 label="Unit of analysis"
                 placeholder="Select an option"
                 name="unitOfAnalysis"
@@ -133,7 +140,7 @@ function MethodologyAttributesInput(props: Props) {
                 readOnly={readOnly}
             />
             <SelectInput
-                className={styles.attributeInput}
+                className={_cs(styles.attributeInput, itemClassName)}
                 label="Unit of reporting"
                 placeholder="Select an option"
                 name="unitOfReporting"
@@ -150,7 +157,7 @@ function MethodologyAttributesInput(props: Props) {
                 title="Remove Attributes"
                 name={index}
                 onClick={onRemove}
-                className={styles.removeButton}
+                className={_cs(styles.removeButton, itemClassName)}
             >
                 <IoTrash />
             </QuickActionButton>
