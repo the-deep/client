@@ -5,9 +5,9 @@ import {
     AssessmentRegistrySummarySubSectorTypeEnum,
 } from '#generated/types';
 
+import { SubSectorIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 import SelectIssueInput from './SelectIssueInput';
 
-import { IssuesInputType } from '../../..';
 import styles from './styles.css';
 
 interface Option {
@@ -17,10 +17,10 @@ interface Option {
 
 interface Props {
     name?: AssessmentRegistrySummarySubSectorTypeEnum;
-    pending?: boolean;
     options?: Option[] | null;
-    value: IssuesInputType[];
+    value: SubSectorIssueInputType[];
     onValueChange: (id: string, name: string) => void;
+    disabled?: boolean;
 }
 
 const keySelector = (d: Option) => d.id;
@@ -30,9 +30,9 @@ function IssueInput(props: Props) {
     const {
         name,
         options,
-        pending,
         value,
         onValueChange,
+        disabled,
     } = props;
 
     const handleDrop = useCallback(
@@ -59,7 +59,7 @@ function IssueInput(props: Props) {
                 value={mapData[`${name}-1`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                disabled={pending}
+                disabled={disabled}
             />
             <SelectIssueInput
                 name={`${name}-2`}
@@ -70,7 +70,7 @@ function IssueInput(props: Props) {
                 value={mapData[`${name}-2`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                disabled={pending}
+                disabled={disabled}
             />
             <SelectIssueInput
                 name={`${name}-3`}
@@ -81,7 +81,51 @@ function IssueInput(props: Props) {
                 value={mapData[`${name}-3`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                disabled={pending}
+                disabled={disabled}
+            />
+            <SelectIssueInput
+                name={`${name}-4`}
+                placeholder="4. Field Name"
+                onChangeIssue={onValueChange}
+                onDropChange={handleDrop}
+                options={options}
+                value={mapData[`${name}-4`]}
+                keySelector={keySelector}
+                labelSelector={labelSelector}
+                disabled={disabled}
+            />
+            <SelectIssueInput
+                name={`${name}-5`}
+                placeholder="5. Field Name"
+                onChangeIssue={onValueChange}
+                onDropChange={handleDrop}
+                options={options}
+                value={mapData[`${name}-3`]}
+                keySelector={keySelector}
+                labelSelector={labelSelector}
+                disabled={disabled}
+            />
+            <SelectIssueInput
+                name={`${name}-6`}
+                placeholder="6. Field Name"
+                onChangeIssue={onValueChange}
+                onDropChange={handleDrop}
+                options={options}
+                value={mapData[`${name}-3`]}
+                keySelector={keySelector}
+                labelSelector={labelSelector}
+                disabled={disabled}
+            />
+            <SelectIssueInput
+                name={`${name}-7`}
+                placeholder="7. Field Name"
+                onChangeIssue={onValueChange}
+                onDropChange={handleDrop}
+                options={options}
+                value={mapData[`${name}-3`]}
+                keySelector={keySelector}
+                labelSelector={labelSelector}
+                disabled={disabled}
             />
         </div>
     );

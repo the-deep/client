@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
+=======
+import React, { useCallback, useMemo, useState } from 'react';
+>>>>>>> 1c053811f (Update and set response value in summary form)
 import {
     Tab,
     TabList,
@@ -10,6 +14,8 @@ import {
     EntriesAsList,
     Error,
 } from '@togglecorp/toggle-form';
+import { isDefined } from '@togglecorp/fujs';
+
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
@@ -21,9 +27,13 @@ import FocusForm from './FocusForm';
 import CnaForm from './CnaForm';
 import ScoreForm from './ScoreForm';
 import SummaryForm from './SummaryForm';
+<<<<<<< HEAD
 import { PartialFormType } from './formSchema';
 import AdditionalDocument from './AdditionalDocument';
 
+=======
+import { PartialFormType, SubSectorIssueInputType } from './formSchema';
+>>>>>>> 1c053811f (Update and set response value in summary form)
 import styles from './styles.css';
 
 const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
@@ -91,6 +101,8 @@ interface Props {
     geoAreaOptions?: GeoArea[] | null;
     setUploadedList: React.Dispatch<React.SetStateAction<GalleryFileType[] | undefined>>;
     uploadedList?: GalleryFileType[];
+    issueList: SubSectorIssueInputType[];
+    setIssueList: React.Dispatch<React.SetStateAction<SubSectorIssueInputType[]>>;
 }
 
 function AssessmentRegistryForm(props: Props) {
@@ -108,6 +120,8 @@ function AssessmentRegistryForm(props: Props) {
         className,
         uploadedList,
         setUploadedList,
+        issueList,
+        setIssueList,
     } = props;
 
     const errorInMetadata = useMemo(() => (
@@ -158,6 +172,40 @@ function AssessmentRegistryForm(props: Props) {
             (fieldName) => fieldsInCna[fieldName as keyof typeof error],
         )
     ), [error]);
+
+    const handleIssueSelect = useCallback(
+        (issueId: string, fieldName: string) => {
+            setIssueList(
+                (prev: SubSectorIssueInputType[]) => {
+                    const safeOldValue = prev?.filter((item) => item.name !== fieldName);
+                    const newValue = {
+                        issueId,
+                        name: fieldName,
+                        order: fieldName.split('-')[1],
+                        text: '',
+                    };
+
+                    const finalIssues = [...safeOldValue, newValue].filter(
+                        (allIssue) => isDefined(allIssue.issueId),
+                    );
+                    return finalIssues;
+                },
+            );
+        }, [setIssueList],
+    );
+
+    useMemo(
+        () => {
+            setFieldValue(() => {
+                const val = issueList?.map((issueItem) => ({
+                    summaryIssue: issueItem.issueId,
+                    order: Number(issueItem.order),
+                    text: issueItem?.text,
+                }));
+                return [val].flat();
+            }, 'summarySubsectorIssue');
+        }, [setFieldValue, issueList],
+    );
 
     return (
         <div className={_cs(styles.assessmentRegistryForm, className)}>
@@ -285,9 +333,8 @@ function AssessmentRegistryForm(props: Props) {
                     activeClassName={styles.tabPanel}
                 >
                     <SummaryForm
-                        setValue={setValue}
-                        setFieldValue={setFieldValue}
-                        value={value}
+                        onValueChange={handleIssueSelect}
+                        value={issueList}
                         error={error}
                         projectId={projectId}
                     />

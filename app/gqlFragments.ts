@@ -387,6 +387,16 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             clientId
             figureProvided
             sector
+        summarySubsectorIssue {
+            id
+            order
+            text
+            issue {
+                id
+                subSectorDisplay
+                subSector
+                label
+            }
         }
     }
 `;
