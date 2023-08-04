@@ -165,7 +165,7 @@ function CnaForm(props: Props) {
                             precision={1}
                             suffix="%"
                         />
-                        <div className={styles.sectorLabel}>
+                        <div>
                             {question.sector}
                         </div>
                     </div>
