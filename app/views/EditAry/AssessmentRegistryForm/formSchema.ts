@@ -16,6 +16,18 @@ import {
     DeepMandatory,
 } from '#utils/types';
 
+export interface SubSectorIssueInputType {
+    issueId: string;
+    name: string;
+    order: string;
+    text?: string;
+}
+
+export interface Option {
+    id: string;
+    label: string;
+}
+
 export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
 type AssessmentRegistryType = DeepMandatory<PurgeNull<AssessmentRegistryCreateInputType>, 'clientId'>;
 
@@ -153,11 +165,12 @@ export const schema: FormSchema = {
                 }),
             },
             summarySubsectorIssue: {
-                keySelector: (issue) => issue.summaryIssue,
+                keySelector: (issue) => issue?.summaryIssue,
                 member: (): SubPillarIssuesFormSchemaMember => ({
                     fields: (): SubPillarIssueSchemaFields => ({
                         summaryIssue: [],
                         text: [],
+                        order: [],
                     }),
                 }),
             },

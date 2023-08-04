@@ -70,6 +70,7 @@ import AssessmentRegistryForm from './AssessmentRegistryForm';
 import {
     initialValue,
     schema,
+    SubSectorIssueInputType,
 } from './AssessmentRegistryForm/formSchema';
 
 import styles from './styles.css';
@@ -287,6 +288,7 @@ function EditAry(props: Props) {
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
     const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
     const [uploadedList, setUploadedList] = useState<GalleryFileType[]>();
+    const [issueList, setIssueList] = useState<SubSectorIssueInputType[]>([]);
 
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo((): LeadEntriesForAryQueryVariables | undefined => (
@@ -433,6 +435,13 @@ function EditAry(props: Props) {
                             figureProvided: density.figureProvided,
                             sector: density.sector,
                         })),
+                        summarySubsectorIssue: result.summarySubsectorIssue?.map(
+                            (subIssue) => ({
+                                summaryIssue: subIssue.issue.id,
+                                order: subIssue.order,
+                                text: subIssue.text,
+                            }),
+                        ),
                     });
 
                     setRegionOptions(result.bgCountries);
@@ -451,6 +460,16 @@ function EditAry(props: Props) {
                             clientId: doc.file?.id,
                             mimeType: doc.file?.mimeType,
                         })).filter(isDefined),
+                    );
+                    setIssueList(
+                        result.summarySubsectorIssue?.map(
+                            (subIssue) => ({
+                                issueId: subIssue.issue.id,
+                                name: `${subIssue.issue?.subSector}-${subIssue.order}`,
+                                order: String(subIssue.order),
+                                text: subIssue.text,
+                            }),
+                        ) ?? [],
                     );
                 }
             },
@@ -658,7 +677,8 @@ function EditAry(props: Props) {
                                 setGeoAreaOptions={setGeoAreaOptions}
                                 uploadedList={uploadedList}
                                 setUploadedList={setUploadedList}
-                                projectId={projectId}
+                                issueList={issueList}
+                                setIssueList={setIssueList}
                             />
                         </div>
                     </>
