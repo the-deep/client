@@ -1,5 +1,7 @@
-import React, { useCallback } from 'react';
-import { DropContainer, SelectInput } from '@the-deep/deep-ui';
+import React, { useCallback, useEffect, useState } from 'react';
+import { SelectInput, TextInput } from '@the-deep/deep-ui';
+import { isNotDefined } from '@togglecorp/fujs';
+import { SubSectorIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 interface Option {
     id: string;
@@ -11,9 +13,8 @@ interface Props {
     disabled?: boolean;
     placeholder?: string;
     options?: Option[] | null;
-    value?: string;
-    onChangeIssue: (v: string, n: string) => void;
-    onDropChange: (v?: string) => void;
+    value: SubSectorIssueInputType;
+    onChangeIssue: (data: SubSectorIssueInputType) => void;
     keySelector: (d: Option) => string;
     labelSelector: (d: Option) => string;
 }
@@ -25,35 +26,66 @@ function SelectIssueInput(props: Props) {
         disabled,
         value,
         onChangeIssue,
-        onDropChange,
         options,
         keySelector,
         labelSelector,
     } = props;
 
-    const handleChange = useCallback(
-        (fValue, fName) => (
-            onChangeIssue(fValue, fName)
-        ), [onChangeIssue],
+    const [issueValue, setIssueValue] = useState<SubSectorIssueInputType>({
+        issueId: '',
+        text: undefined,
+        name: '',
+        order: '',
+    });
+
+    const handleInputChange = useCallback(
+        (fieldValue, fieldName: string) => {
+            setIssueValue(() => {
+                if (fieldName === 'issueId') {
+                    return {
+                        name,
+                        order: name.split('-')[1],
+                        text: value?.text,
+                        issueId: fieldValue,
+                    };
+                }
+                if (fieldName === 'text') {
+                    return {
+                        name,
+                        order: name.split('-')[1],
+                        text: fieldValue,
+                        issueId: value.issueId,
+                    };
+                }
+                return value;
+            });
+        }, [setIssueValue, name, value],
+    );
+
+    useEffect(
+        () => onChangeIssue(issueValue), [onChangeIssue, issueValue],
     );
 
     return (
         <>
             <SelectInput
-                name={name}
+                name="issueId"
                 placeholder={placeholder}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 options={options}
                 optionsPending={disabled}
-                onChange={handleChange}
-                value={value}
+                onChange={handleInputChange}
+                value={value?.issueId}
                 disabled={disabled}
             />
-            <DropContainer
-                name={name}
-                onDrop={onDropChange}
-                disabled={disabled}
+            <TextInput
+                placeholder="Drop text here"
+                name="text"
+                onChange={handleInputChange}
+                value={value?.text}
+                variant="general"
+                disabled={disabled || isNotDefined(value?.issueId)}
             />
         </>
 

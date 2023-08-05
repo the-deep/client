@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-=======
-import React, { useCallback, useMemo, useState } from 'react';
->>>>>>> 1c053811f (Update and set response value in summary form)
 import {
     Tab,
     TabList,
@@ -14,7 +10,7 @@ import {
     EntriesAsList,
     Error,
 } from '@togglecorp/toggle-form';
-import { isDefined } from '@togglecorp/fujs';
+import { isTruthyString } from '@togglecorp/fujs';
 
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
@@ -27,13 +23,10 @@ import FocusForm from './FocusForm';
 import CnaForm from './CnaForm';
 import ScoreForm from './ScoreForm';
 import SummaryForm from './SummaryForm';
-<<<<<<< HEAD
-import { PartialFormType } from './formSchema';
 import AdditionalDocument from './AdditionalDocument';
 
-=======
 import { PartialFormType, SubSectorIssueInputType } from './formSchema';
->>>>>>> 1c053811f (Update and set response value in summary form)
+
 import styles from './styles.css';
 
 const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
@@ -174,34 +167,26 @@ function AssessmentRegistryForm(props: Props) {
     ), [error]);
 
     const handleIssueSelect = useCallback(
-        (issueId: string, fieldName: string) => {
+        (issueVal: SubSectorIssueInputType) => {
             setIssueList(
-                (prev: SubSectorIssueInputType[]) => {
-                    const safeOldValue = prev?.filter((item) => item.name !== fieldName);
-                    const newValue = {
-                        issueId,
-                        name: fieldName,
-                        order: fieldName.split('-')[1],
-                        text: '',
-                    };
-
-                    const finalIssues = [...safeOldValue, newValue].filter(
-                        (allIssue) => isDefined(allIssue.issueId),
+                (prev) => {
+                    const filteredIssues = prev.filter(
+                        (item) => item.name !== issueVal.name,
                     );
-                    return finalIssues;
+                    return [...filteredIssues, issueVal];
                 },
             );
         }, [setIssueList],
     );
 
-    useMemo(
+    useEffect(
         () => {
             setFieldValue(() => {
                 const val = issueList?.map((issueItem) => ({
                     summaryIssue: issueItem.issueId,
                     order: Number(issueItem.order),
                     text: issueItem?.text,
-                }));
+                })).filter((item) => isTruthyString(item.summaryIssue));
                 return [val].flat();
             }, 'summarySubsectorIssue');
         }, [setFieldValue, issueList],
@@ -335,7 +320,6 @@ function AssessmentRegistryForm(props: Props) {
                     <SummaryForm
                         onValueChange={handleIssueSelect}
                         value={issueList}
-                        error={error}
                         projectId={projectId}
                     />
                 </TabPanel>
