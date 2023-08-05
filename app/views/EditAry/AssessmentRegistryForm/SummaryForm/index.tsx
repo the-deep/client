@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { Heading, List } from '@the-deep/deep-ui';
-import { Error, removeNull } from '@togglecorp/toggle-form';
+import { removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import { isNotDefined } from '@togglecorp/fujs';
 
@@ -10,7 +10,7 @@ import {
     SummaryOptionType,
 } from '#generated/types';
 
-import { PartialFormType, SubSectorIssueInputType } from '../formSchema';
+import { SubSectorIssueInputType } from '../formSchema';
 import PillarItem from './PillarItem';
 
 import styles from './styles.css';
@@ -33,7 +33,7 @@ const keySelector = (d: SummaryOptionType) => d.sector;
 
 interface Props {
     value: SubSectorIssueInputType[];
-    onValueChange: (id: string, name: string) => void;
+    onValueChange: (data: SubSectorIssueInputType) => void;
     projectId: string;
     disabled?: boolean;
 }
@@ -42,7 +42,6 @@ function SummaryForm(props: Props) {
     const {
         value,
         onValueChange,
-        error,
         disabled,
         projectId,
     } = props;
