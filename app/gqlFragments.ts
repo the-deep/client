@@ -428,14 +428,15 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             clientId
             figureProvided
             sector
-        summarySubsectorIssue {
+        }
+        summarySubPillarIssue {
             id
             order
             text
-            issue {
+            summaryIssue {
                 id
-                subSectorDisplay
-                subSector
+                subPillar
+                subPillarDisplay
                 label
             }
         }
