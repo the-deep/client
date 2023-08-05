@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { listToMap } from '@togglecorp/fujs';
 
 import {
@@ -19,7 +19,7 @@ interface Props {
     name?: AssessmentRegistrySummarySubSectorTypeEnum;
     options?: Option[] | null;
     value: SubSectorIssueInputType[];
-    onValueChange: (id: string, name: string) => void;
+    onValueChange: (data: SubSectorIssueInputType) => void;
     disabled?: boolean;
 }
 
@@ -35,28 +35,21 @@ function IssueInput(props: Props) {
         disabled,
     } = props;
 
-    const handleDrop = useCallback(
-        (v?: string) => {
-            console.log('drop container', v);
-        }, [],
-    );
-
-    const mapData = useMemo(
+    const mappedIssuesList = useMemo(
         () => listToMap(
             value,
             (d) => d.name,
-            (d) => d.issueId,
         ), [value],
     );
+
     return (
         <div className={styles.input}>
             <SelectIssueInput
                 name={`${name}-1`}
                 placeholder="1. Field Name"
                 onChangeIssue={onValueChange}
-                onDropChange={handleDrop}
                 options={options}
-                value={mapData[`${name}-1`]}
+                value={mappedIssuesList[`${name}-1`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 disabled={disabled}
@@ -65,9 +58,8 @@ function IssueInput(props: Props) {
                 name={`${name}-2`}
                 placeholder="2. Field Name"
                 onChangeIssue={onValueChange}
-                onDropChange={handleDrop}
                 options={options}
-                value={mapData[`${name}-2`]}
+                value={mappedIssuesList[`${name}-2`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 disabled={disabled}
@@ -76,9 +68,8 @@ function IssueInput(props: Props) {
                 name={`${name}-3`}
                 placeholder="3. Field Name"
                 onChangeIssue={onValueChange}
-                onDropChange={handleDrop}
                 options={options}
-                value={mapData[`${name}-3`]}
+                value={mappedIssuesList[`${name}-3`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 disabled={disabled}
@@ -87,9 +78,8 @@ function IssueInput(props: Props) {
                 name={`${name}-4`}
                 placeholder="4. Field Name"
                 onChangeIssue={onValueChange}
-                onDropChange={handleDrop}
                 options={options}
-                value={mapData[`${name}-4`]}
+                value={mappedIssuesList[`${name}-4`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 disabled={disabled}
@@ -98,9 +88,8 @@ function IssueInput(props: Props) {
                 name={`${name}-5`}
                 placeholder="5. Field Name"
                 onChangeIssue={onValueChange}
-                onDropChange={handleDrop}
                 options={options}
-                value={mapData[`${name}-3`]}
+                value={mappedIssuesList[`${name}-5`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 disabled={disabled}
@@ -109,9 +98,8 @@ function IssueInput(props: Props) {
                 name={`${name}-6`}
                 placeholder="6. Field Name"
                 onChangeIssue={onValueChange}
-                onDropChange={handleDrop}
                 options={options}
-                value={mapData[`${name}-3`]}
+                value={mappedIssuesList[`${name}-6`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 disabled={disabled}
@@ -120,9 +108,8 @@ function IssueInput(props: Props) {
                 name={`${name}-7`}
                 placeholder="7. Field Name"
                 onChangeIssue={onValueChange}
-                onDropChange={handleDrop}
                 options={options}
-                value={mapData[`${name}-3`]}
+                value={mappedIssuesList[`${name}-7`]}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 disabled={disabled}

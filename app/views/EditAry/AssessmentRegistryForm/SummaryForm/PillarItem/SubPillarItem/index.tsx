@@ -28,7 +28,7 @@ const GET_SUBPILLAR_ISSUES = gql`
 interface Props {
     subPillarName?: AssessmentRegistrySummarySubSectorTypeEnum;
     value: SubSectorIssueInputType[];
-    onValueChange: (id: string, name: string) => void;
+    onValueChange: (data: SubSectorIssueInputType) => void;
     disabled?: boolean;
 }
 

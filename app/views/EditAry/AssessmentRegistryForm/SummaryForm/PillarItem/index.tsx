@@ -16,7 +16,7 @@ import styles from './styles.css';
 interface Props {
     data: SummaryOptionType;
     value: SubSectorIssueInputType[];
-    onValueChange: (id: string, name: string) => void;
+    onValueChange: (data: SubSectorIssueInputType) => void;
     disabled?: boolean;
 }
 
