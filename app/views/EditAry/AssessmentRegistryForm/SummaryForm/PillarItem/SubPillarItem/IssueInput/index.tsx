@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { listToMap } from '@togglecorp/fujs';
 
 import {
-    AssessmentRegistrySummarySubSectorTypeEnum,
+    AssessmentRegistrySummarySubPillarTypeEnum,
 } from '#generated/types';
 
 import { SubSectorIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
@@ -16,7 +16,7 @@ interface Option {
 }
 
 interface Props {
-    name?: AssessmentRegistrySummarySubSectorTypeEnum;
+    name?: AssessmentRegistrySummarySubPillarTypeEnum;
     options?: Option[] | null;
     value: SubSectorIssueInputType[];
     onValueChange: (data: SubSectorIssueInputType) => void;
