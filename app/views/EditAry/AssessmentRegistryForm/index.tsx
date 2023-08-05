@@ -321,6 +321,9 @@ function AssessmentRegistryForm(props: Props) {
                         onValueChange={handleIssueSelect}
                         value={issueList}
                         projectId={projectId}
+                        formValue={value}
+                        setFieldValue={setFieldValue}
+                        error={error}
                     />
                 </TabPanel>
                 <TabPanel
