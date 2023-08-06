@@ -1,12 +1,30 @@
 import React, { useCallback } from 'react';
-import { FileInput } from '@the-deep/deep-ui';
+import { FileInput, useAlert } from '@the-deep/deep-ui';
 import { IoCloudUpload } from 'react-icons/io5';
+import { gql, useMutation } from '@apollo/client';
 
-import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
-import { useLazyRequest } from '#base/utils/restRequest';
+import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum, CreateAttachmentMutation, CreateAttachmentMutationVariables, FileUploadInputType } from '#generated/types';
 
 import styles from './styles.css';
 
+const CREATE_ATTACHMENT = gql`
+    mutation CreateAttachment($data: FileUploadInputType!) {
+        fileUpload(data: $data) {
+            ok
+            errors
+            result {
+                id
+                title
+                mimeType
+                metadata
+                file {
+                    url
+                    name
+                }
+            }
+        }
+    }
+`;
 interface Props {
     onSuccess: (
         v: AdditionalDocumentType,
@@ -16,60 +34,84 @@ interface Props {
     acceptFileType?: string;
 }
 
-interface UploadType {
-    title: string;
-    file: File;
-}
-
 function AryFileUpload(props: Props) {
     const {
         onSuccess,
         name,
         acceptFileType,
     } = props;
+    const alert = useAlert();
 
-    const {
-        pending,
-        trigger,
-    } = useLazyRequest<AdditionalDocumentType, UploadType | undefined | null>({
-        url: 'server://files/',
-        method: 'POST',
-        formData: true,
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
-            onSuccess(response, name);
+    const [
+        uploadAttachment,
+        {
+            loading,
         },
-        onFailure: (err) => {
-            console.log(err);
+    ] = useMutation<CreateAttachmentMutation, CreateAttachmentMutationVariables>(
+        CREATE_ATTACHMENT,
+        {
+            onCompleted: (response) => {
+                console.log('rsponse upload', response);
+                if (!response || !response.fileUpload) {
+                    return;
+                }
+
+                const {
+                    ok,
+                    result,
+                    errors,
+                } = response.fileUpload;
+
+                if (errors) {
+                    alert.show(
+                        'Failed to upload file.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    console.log('upload success');
+                    // onSuccess(response, name);
+                }
+            },
         },
-        failureMessage: 'Upload failed.',
-    });
+    );
 
     const handleFileInputChange = useCallback(
         (value: File | null | undefined) => {
-            const basicFile = value ? {
-                title: value.name,
-                file: value,
-            } : undefined;
-
-            trigger(basicFile);
-        }, [trigger],
+            if (!value) {
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', value);
+            uploadAttachment({
+                variables: {
+                    data: {
+                        title: value.name,
+                        file: formData,
+                    } as FileUploadInputType,
+                },
+                context: {
+                    formData: true,
+                },
+            });
+        }, [uploadAttachment],
     );
 
     return (
-        <FileInput
-            className={styles.fileInput}
-            name={name}
-            value={null}
-            onChange={handleFileInputChange}
-            status={undefined}
-            overrideStatus
-            maxFileSize={100}
-            accept={acceptFileType}
-            disabled={pending}
-        >
-            <IoCloudUpload />
-        </FileInput>
+        <form encType="multipart/form-data">
+            <FileInput
+                className={styles.fileInput}
+                name={name}
+                value={null}
+                onChange={handleFileInputChange}
+                status={undefined}
+                overrideStatus
+                maxFileSize={100}
+                accept={acceptFileType}
+                disabled={loading}
+            >
+                <IoCloudUpload />
+            </FileInput>
+        </form>
     );
 }
 
