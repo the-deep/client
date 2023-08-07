@@ -3,31 +3,26 @@ import { EntriesAsList, Error } from '@togglecorp/toggle-form';
 import { noOp } from '@togglecorp/fujs';
 import { ExpandableContainer, List, NumberInput } from '@the-deep/deep-ui';
 
-import {
-    AssessmentRegistrySummarySubPillarTypeEnum,
-    SummaryOptionType,
-} from '#generated/types';
-
 import SubPillarItem from './SubPillarItem';
-import { PartialFormType, SubSectorIssueInputType } from '../../formSchema';
-import { DimensionType } from '..';
+import { PartialFormType, SubPillarIssueInputType } from '../../formSchema';
+import { PillarType } from '..';
 
 import styles from './styles.css';
 
 interface Props {
-    data: DimensionType;
-    value: SubSectorIssueInputType[];
-    onValueChange: (data: SubSectorIssueInputType) => void;
+    data: PillarType;
+    value: SubPillarIssueInputType[];
+    onValueChange: (data: SubPillarIssueInputType) => void;
     disabled?: boolean;
     formValue: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>;
-    pillarName: string;
 }
 
-const keySelector = (d: NonNullable<DimensionType['subPillarInformation']>[number]) => d.subPillar;
+const keySelector = (d: NonNullable<PillarType['subPillarInformation']>[number]) => d.subPillar;
 
 function PillarItem(props: Props) {
+    // TODO: need to change in server for meta data
     const {
         data,
         value,
@@ -36,14 +31,10 @@ function PillarItem(props: Props) {
         formValue,
         setFieldValue,
         error,
-        pillarName,
     } = props;
 
-    console.log('pillar name', data);
-
     const issuesParams = useCallback(
-        (name: string, subPillarData) => ({
-            subPillarData,
+        (name: string) => ({
             subPillarName: name,
             value,
             onValueChange,
@@ -55,7 +46,7 @@ function PillarItem(props: Props) {
     const headerActions = useMemo(
         () => (
             <div>
-                {(pillarName === 'CONTEXT') && (
+                {(data.pillar === 'CONTEXT') && (
                     <NumberInput
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
@@ -66,7 +57,7 @@ function PillarItem(props: Props) {
                         disabled={disabled}
                     />
                 )}
-                {(pillarName === 'EVENT_SHOCK') && (
+                {(data.pillar === 'EVENT_SHOCK') && (
                     <div className={styles.headerActions}>
                         <NumberInput
                             className={styles.inputMetadata}
@@ -109,6 +100,7 @@ function PillarItem(props: Props) {
                 heading={data.pillarDisplay}
                 withoutBorder
                 headerActions={headerActions}
+                expansionTriggerArea="arrow"
             >
                 <List
                     data={data.subPillarInformation}

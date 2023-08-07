@@ -7,16 +7,15 @@ import {
     GetSubPillarIssuesQuery,
     GetSubPillarIssuesQueryVariables,
 } from '#generated/types';
-import { SubSectorIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import { SubPillarIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 import IssueInput from './IssueInput';
 
 import styles from './styles.css';
-import { DimensionType } from '../..';
 
 const GET_SUBPILLAR_ISSUES = gql`
     query GetSubPillarIssues ($subPillar: AssessmentRegistrySummarySubPillarTypeEnum) {
-        issues(subPillar: $subPillar) {
+        assessmentRegSummaryIssues(subPillar: $subPillar) {
             results {
                 id
                 label
@@ -28,16 +27,14 @@ const GET_SUBPILLAR_ISSUES = gql`
 `;
 
 interface Props {
-    subPillarData: NonNullable<DimensionType['subPillarInformation']>[number];
-    subPillarName: AssessmentRegistrySummarySubPillarTypeEnum;
-    value: SubSectorIssueInputType[];
-    onValueChange: (data: SubSectorIssueInputType) => void;
+    subPillarName: string;
+    value: SubPillarIssueInputType[];
+    onValueChange: (data: SubPillarIssueInputType) => void;
     disabled?: boolean;
 }
 
 function SubPillarItem(props: Props) {
     const {
-        subPillarData,
         subPillarName,
         value,
         onValueChange,
@@ -45,9 +42,10 @@ function SubPillarItem(props: Props) {
     } = props;
 
     const variablesForSubPillarIssues = useMemo(
-        (): GetSubPillarIssuesQueryVariables => ({ subPillar: subPillarName }), [subPillarName],
+        (): GetSubPillarIssuesQueryVariables => ({
+            subPillar: subPillarName as AssessmentRegistrySummarySubPillarTypeEnum,
+        }), [subPillarName],
     );
-    console.log('sub Info object', subPillarData);
 
     const {
         loading,

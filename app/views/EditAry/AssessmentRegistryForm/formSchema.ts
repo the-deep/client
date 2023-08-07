@@ -16,7 +16,7 @@ import {
     DeepMandatory,
 } from '#utils/types';
 
-export interface SubSectorIssueInputType {
+export interface SubPillarIssueInputType {
     issueId: string;
     name: string;
     order: string;
@@ -65,7 +65,7 @@ type OrganizationsSchemaFields = ReturnType<OrganizationsSchema['fields']>;
 type OrganizationsListSchema = ArraySchema<PartialOrganizationType, PartialFormType>;
 type OrganizationsListMember = ReturnType<OrganizationsListSchema['member']>;
 
-export type SubPillarIssueType = NonNullable<PartialFormType['summarySubsectorIssue']>[number];
+export type SubPillarIssueType = NonNullable<PartialFormType['summarySubPillarIssue']>[number];
 type SubPillarIssueSchema = ObjectSchema<SubPillarIssueType, PartialFormType>;
 type SubPillarIssueSchemaFields = ReturnType<SubPillarIssueSchema['fields']>;
 
@@ -164,8 +164,8 @@ export const schema: FormSchema = {
                     }),
                 }),
             },
-            summarySubsectorIssue: {
-                keySelector: (issue) => issue?.summaryIssue,
+            summarySubPillarIssue: {
+                keySelector: (issue) => issue.id as string,
                 member: (): SubPillarIssuesFormSchemaMember => ({
                     fields: (): SubPillarIssueSchemaFields => ({
                         summaryIssue: [],

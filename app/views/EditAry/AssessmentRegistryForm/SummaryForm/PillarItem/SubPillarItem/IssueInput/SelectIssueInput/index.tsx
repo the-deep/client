@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { SelectInput, TextInput } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
-import { SubSectorIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import { SubPillarIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 interface Option {
     id: string;
@@ -13,8 +13,8 @@ interface Props {
     disabled?: boolean;
     placeholder?: string;
     options?: Option[] | null;
-    value: SubSectorIssueInputType;
-    onChangeIssue: (data: SubSectorIssueInputType) => void;
+    value: SubPillarIssueInputType;
+    onChangeIssue: (data: SubPillarIssueInputType) => void;
     keySelector: (d: Option) => string;
     labelSelector: (d: Option) => string;
 }
@@ -31,7 +31,7 @@ function SelectIssueInput(props: Props) {
         labelSelector,
     } = props;
 
-    const [issueValue, setIssueValue] = useState<SubSectorIssueInputType>({
+    const [issueValue, setIssueValue] = useState<SubPillarIssueInputType>({
         issueId: '',
         text: undefined,
         name: '',
@@ -62,9 +62,7 @@ function SelectIssueInput(props: Props) {
         }, [setIssueValue, name, value],
     );
 
-    useEffect(
-        () => onChangeIssue(issueValue), [onChangeIssue, issueValue],
-    );
+    useEffect(() => onChangeIssue(issueValue), [onChangeIssue, issueValue]);
 
     return (
         <>
