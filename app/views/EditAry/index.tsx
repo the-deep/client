@@ -70,7 +70,7 @@ import AssessmentRegistryForm from './AssessmentRegistryForm';
 import {
     initialValue,
     schema,
-    SubSectorIssueInputType,
+    SubPillarIssueInputType,
 } from './AssessmentRegistryForm/formSchema';
 
 import styles from './styles.css';
@@ -288,7 +288,7 @@ function EditAry(props: Props) {
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
     const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
     const [uploadedList, setUploadedList] = useState<GalleryFileType[]>();
-    const [issueList, setIssueList] = useState<SubSectorIssueInputType[]>([]);
+    const [issueList, setIssueList] = useState<SubPillarIssueInputType[]>([]);
 
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo((): LeadEntriesForAryQueryVariables | undefined => (
@@ -435,9 +435,9 @@ function EditAry(props: Props) {
                             figureProvided: density.figureProvided,
                             sector: density.sector,
                         })),
-                        summarySubsectorIssue: result.summarySubsectorIssue?.map(
+                        summarySubPillarIssue: result.summarySubPillarIssue?.map(
                             (subIssue) => ({
-                                summaryIssue: subIssue.issue.id,
+                                summaryIssue: subIssue.summaryIssue.id,
                                 order: subIssue.order,
                                 text: subIssue.text,
                             }),
@@ -462,10 +462,10 @@ function EditAry(props: Props) {
                         })).filter(isDefined),
                     );
                     setIssueList(
-                        result.summarySubsectorIssue?.map(
+                        result.summarySubPillarIssue?.map(
                             (subIssue) => ({
-                                issueId: subIssue.issue.id,
-                                name: `${subIssue.issue?.subSector}-${subIssue.order}`,
+                                issueId: subIssue.summaryIssue.id,
+                                name: `${subIssue.summaryIssue.subPillar}-${subIssue.order}`,
                                 order: String(subIssue.order),
                                 text: subIssue.text,
                             }),

@@ -1,16 +1,15 @@
 import React, { useCallback, useMemo } from 'react';
-import { Heading, List, ListView } from '@the-deep/deep-ui';
+import { Heading, List } from '@the-deep/deep-ui';
 import { EntriesAsList, Error, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
-import { isNotDefined, listToGroupList, listToMap } from '@togglecorp/fujs';
+import { isNotDefined, listToGroupList } from '@togglecorp/fujs';
 
 import {
     GetSummaryDimensionOptionsQuery,
     GetSummaryDimensionOptionsQueryVariables,
-    SummaryOptionType,
 } from '#generated/types';
 
-import { PartialFormType, SubSectorIssueInputType } from '../formSchema';
+import { PartialFormType, SubPillarIssueInputType } from '../formSchema';
 import PillarItem from './PillarItem';
 
 import styles from './styles.css';
@@ -31,7 +30,7 @@ const GET_SUMMARY_DIMENSION_OPTIONS = gql`
     }
 `;
 
-export interface DimensionType {
+export interface PillarType {
     pillar: string;
     pillarDisplay: string;
     subPillarInformation: {
@@ -40,14 +39,14 @@ export interface DimensionType {
     }[]
 }
 
-const keySelector = (d: DimensionType) => d.pillar;
+const keySelector = (d: PillarType) => d.pillar;
 
 interface Props {
     formValue: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>;
-    value: SubSectorIssueInputType[];
-    onValueChange: (data: SubSectorIssueInputType) => void;
+    value: SubPillarIssueInputType[];
+    onValueChange: (data: SubPillarIssueInputType) => void;
     projectId: string;
     disabled?: boolean;
 }
@@ -77,39 +76,35 @@ function SummaryForm(props: Props) {
             variables: variablesForPillarOptions,
         },
     );
-
     const options = removeNull(data?.project?.assessmentRegistryOptions?.summaryOptions);
 
-    const groupData = useMemo(
+    const groupByPillar = useMemo(
         () => listToGroupList(
             options ?? [],
             (d) => d.pillar,
-            (d) => d,
         ), [options],
     );
-    //     const transformedData = Object.entries(data).map(([pillar, pillarArray]) => ({
-    //   pillar,
-    //   pillarDisplay: pillarArray[0].pillarDisplay,
-    //   pillarInfo: pillarArray.map(({ subPillarDisplay, subPillar }) => ({
-    //     subPillarDisplay,
-    //     subPillar,
-    //   })),
-    // }));
-    console.log('dimension options', options, groupData);
+
+    const transformPillarData = Object.entries(groupByPillar).map(([pillarItem, pillarArray]) => ({
+        pillar: pillarItem,
+        pillarDisplay: pillarArray[0].pillarDisplay,
+        subPillarInformation: pillarArray.map((subPillarItem) => ({
+            subPillar: subPillarItem.subPillar,
+            subPillarDisplay: subPillarItem.subPillarDisplay,
+        })),
+    }));
+
     const pillarRenderParams = useCallback(
-        (key: string, pillarData) => {
-            console.log(pillarData, 'eeeeeee');
-            return ({
-                data: pillarData,
-                pillarName: key,
-                value,
-                onValueChange,
-                disabled: loading || disabled,
-                formValue,
-                setFieldValue,
-                error,
-            });
-        }, [
+        (name: string, pillarData) => ({
+            data: pillarData,
+            pillarName: name,
+            value,
+            onValueChange,
+            disabled: loading || disabled,
+            formValue,
+            setFieldValue,
+            error,
+        }), [
             onValueChange,
             value,
             loading,
@@ -120,42 +115,11 @@ function SummaryForm(props: Props) {
         ],
     );
 
-    const testData = [
-        {
-            pillarDisplay: 'Context',
-            pillar: 'CONTEXT',
-            subPillarInformation: [
-                {
-                    subPillarDisplay: 'Politics',
-                    subPillar: 'POLITICS',
-                },
-                {
-                    subPillarDisplay: 'Demography',
-                    subPillar: 'DEMOGRAPHY',
-                },
-            ],
-        },
-        {
-            pillarDisplay: 'Shock',
-            pillar: 'SHOCK',
-            subPillarInformation: [
-                {
-                    subPillarDisplay: 'tes',
-                    subPillar: 'tes',
-                },
-                {
-                    subPillarDisplay: 'tes2',
-                    subPillar: 'tes2',
-                },
-            ],
-        },
-    ];
-
     return (
         <div className={styles.summary}>
             <Heading>Operational Heading</Heading>
             <List
-                data={testData}
+                data={transformPillarData}
                 keySelector={keySelector}
                 renderer={PillarItem}
                 rendererParams={pillarRenderParams}
