@@ -10,12 +10,17 @@ import {
 import { randomString } from '@togglecorp/fujs';
 import {
     AssessmentRegistryCreateInputType,
+    GalleryFileType,
     ProjectOrganizationGqInputType,
 } from '#generated/types';
 import {
     DeepMandatory,
     EnumFix,
 } from '#utils/types';
+
+export interface UploadAttachmentType extends GalleryFileType {
+    clientId: string;
+}
 
 export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
 type AssessmentRegistryType = DeepMandatory<PurgeNull<AssessmentRegistryCreateInputType>, 'clientId'>;

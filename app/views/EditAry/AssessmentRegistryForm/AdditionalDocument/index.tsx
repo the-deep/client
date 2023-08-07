@@ -36,21 +36,42 @@ function AdditionalDocument(props: Props) {
     const [selectedDocument, setSelectedDocument] = useState<string | undefined>();
 
     const handleFileUploadSuccess = useCallback(
-        (val: GalleryFileType, documentType: AssessmentRegistryDocumentTypeEnum) => {
-            const newValue = {
-                clientId: val.id,
-                file: val.id,
-                documentType,
-                externalLink: '',
-            };
+        (
+            val: GalleryFileType,
+            documentType: AssessmentRegistryDocumentTypeEnum,
+            externalLink?: string,
+        ) => {
+            if (isDefined(externalLink)) {
+                const newValue = {
+                    clientId: val.id,
+                    file: undefined,
+                    documentType,
+                    externalLink,
+                };
 
-            setFieldValue(
-                (oldVal: PartialFormType['additionalDocuments']) => ([
-                    ...(oldVal ?? []),
-                    newValue,
-                ]),
-                'additionalDocuments',
-            );
+                setFieldValue(
+                    (oldVal: PartialFormType['additionalDocuments']) => ([
+                        ...(oldVal ?? []),
+                        newValue,
+                    ]),
+                    'additionalDocuments',
+                );
+            } else {
+                const newValue = {
+                    clientId: val.id,
+                    file: val.id,
+                    documentType,
+                    externalLink,
+                };
+
+                setFieldValue(
+                    (oldVal: PartialFormType['additionalDocuments']) => ([
+                        ...(oldVal ?? []),
+                        newValue,
+                    ]),
+                    'additionalDocuments',
+                );
+            }
             setUploadItems((prev) => ([
                 ...(prev ?? []),
                 val,
@@ -121,9 +142,9 @@ function AdditionalDocument(props: Props) {
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
                 acceptFileType=".pdf"
-                showLink
                 files={assessmentFiles}
                 uploadItems={uploadItems}
+                showLink
             />
             <FileUpload
                 title="Questionare"

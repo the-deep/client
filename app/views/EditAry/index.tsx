@@ -419,7 +419,7 @@ function EditAry(props: Props) {
                         locations: result.locations?.map((location) => location.id),
                         additionalDocuments: result.additionalDocuments?.map((doc) => ({
                             ...doc,
-                            clientId: doc.clientId,
+                            clientId: doc.file?.id ?? doc.clientId,
                             documentType: doc.documentType,
                             externalLink: doc.externalLink,
                             file: doc.file?.id,
@@ -438,6 +438,17 @@ function EditAry(props: Props) {
                     setStakeholderOptions(unique(stakeholders, (d) => d.id));
 
                     setGeoAreaOptions(result.locations);
+                    setUploadItems(
+                        result.additionalDocuments?.map((doc) => ({
+                            // Note: need to fix on server
+                            ...doc,
+                            file: doc.file?.file,
+                            title: doc.file?.file?.name ?? '',
+                            id: doc.file?.id ?? '',
+                            clientId: doc.file?.id,
+                            mimeType: doc.file?.mimeType,
+                        })).filter(isDefined),
+                    );
                 }
             },
         },

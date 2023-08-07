@@ -3,7 +3,7 @@ import { Button, List, TextInput } from '@the-deep/deep-ui';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { isValidUrl, randomString } from '@togglecorp/fujs';
 
-import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum, GalleryFileType } from '#generated/types';
+import { AssessmentRegistryDocumentTypeEnum, GalleryFileType } from '#generated/types';
 
 import AryFileUpload from './AryFileUpload';
 import UploadItem from './UploadItem';
@@ -20,6 +20,7 @@ interface Props {
     onSuccess: (
         v: GalleryFileType,
         documentType: AssessmentRegistryDocumentTypeEnum,
+        externalLink?: string,
     ) => void;
     handleFileRemove: (key: string) => void;
     onChangeSelectedDocument: (key: string) => void;
@@ -41,22 +42,20 @@ function FileUpload(props: Props) {
         uploadItems,
     } = props;
 
-    const [externalLink, setExternalLink] = useState<string>('');
+    const [externalLink, setExternalLink] = useState<string>();
     const [checkUrl, setCheckUrl] = useState<boolean>(false);
 
     const handleExternalLinkAdd = useCallback(() => {
         const obj = {
-            clientId: randomString(),
-            documentType: name as AssessmentRegistryDocumentTypeEnum,
+            id: randomString(),
             file: undefined,
-            externalLink,
-        } as AdditionalDocumentType;
-        const isUrl = isValidUrl(externalLink);
+        } as GalleryFileType;
+        const isUrl = isValidUrl(externalLink ?? '');
 
         if (isUrl) {
-            onSuccess(obj, name);
+            onSuccess(obj, name, externalLink);
             setCheckUrl(false);
-            setExternalLink('');
+            setExternalLink(undefined);
             return;
         }
         setCheckUrl(true);

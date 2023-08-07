@@ -26,6 +26,7 @@ function Preview(props: Props) {
 
     const attachmentData = useMemo(
         () => {
+            if (isNotDefined(uploadItems)) return undefined;
             const previewItem = uploadItems?.find((item) => item.id === attachmentId);
             return {
                 id: previewItem?.id,
@@ -42,13 +43,14 @@ function Preview(props: Props) {
             return {
                 title: link,
                 file: link ? { url: link } : undefined,
+                mimeType: 'text/html',
             };
         }, [link],
     );
 
     return (
         <Modal onCloseButtonClick={handleModalClose}>
-            <LeadPreview attachment={attachmentData} />
+            <LeadPreview attachment={linkData ?? attachmentData} />
         </Modal>
     );
 }
