@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
     gql,
@@ -83,17 +83,17 @@ function AnalyticalDensityForm(props: Props) {
     const analyticalDensityValue = value.scoreAnalyticalDensity;
     const analyticalDensityError = getErrorObject(error?.scoreAnalyticalDensity);
 
-    const sectorNameMapping = listToMap(
+    const sectorNameMapping = useMemo(() => listToMap(
         sectorsOptions?.enumValues,
         (k) => k.name,
         (item) => item.description ?? item.name,
-    );
+    ), [sectorsOptions?.enumValues]);
 
-    const analyticalDensityValueIndex = listToMap(
+    const analyticalDensityValueIndex = useMemo(() => listToMap(
         analyticalDensityValue,
         (k) => k.sector ?? '',
         (_, __, index) => index,
-    );
+    ), [analyticalDensityValue]);
 
     if (isNotDefined(value.sectors) || value.sectors.length <= 0) {
         return (

@@ -1,6 +1,12 @@
+.analytical-heading {
+    display: flex;
+    gap: var(--dui-spacing-large);
+}
+
 .analytical-density-input {
     display: flex;
     justify-content: space-between;
+
 
     .analytical-content {
         width: 45%;
