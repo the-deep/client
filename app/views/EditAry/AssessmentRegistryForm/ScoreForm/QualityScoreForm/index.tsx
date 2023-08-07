@@ -1,14 +1,8 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Heading } from '@the-deep/deep-ui';
 import {
-    gql,
-    useQuery,
-} from '@apollo/client';
-import {
-    listToGroupList,
     listToMap,
     isDefined,
-    mapToList,
 } from '@togglecorp/fujs';
 import {
     EntriesAsList,
@@ -17,8 +11,8 @@ import {
     useFormArray,
 } from '@togglecorp/toggle-form';
 import {
-    GetQualityScoreListQuery,
-    GetQualityScoreListQueryVariables,
+    AssessmentRegistryScoreAnalyticalStatementTypeEnum,
+    AssessmentRegistryScoreCriteriaTypeEnum,
 } from '#generated/types';
 
 import QualityScoreInput from './QualityScoreInput';
@@ -62,35 +56,26 @@ function ScoreHeading(props: ScoreHeadingProps) {
     );
 }
 interface Props {
-    projectId: string;
     value: PartialFormType,
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>
+    scoreList: {
+        analyticalState: string;
+        list: {
+            scoreCriteriaDisplay: string;
+            scoreCriteria: AssessmentRegistryScoreCriteriaTypeEnum;
+            analyticalStatementDisplay: string;
+            analyticalStatement: AssessmentRegistryScoreAnalyticalStatementTypeEnum;
+        }[];
+    }[] | undefined
 }
-const GET_QUALITY_SCORE_LIST = gql`
-    query GetQualityScoreList(
-        $projectId: ID!,
-    ) {
-        project(id: $projectId) {
-            id
-            assessmentRegistryOptions {
-                scoreOptions {
-                    scoreCriteriaDisplay
-                    scoreCriteria
-                    analyticalStatementDisplay
-                    analyticalStatement
-                }
-            }
-        }
-    }
-`;
 
 function QualityScoreForm(props: Props) {
     const {
-        projectId,
         value,
         setFieldValue,
         error: riskyError,
+        scoreList,
     } = props;
 
     const {
@@ -106,34 +91,6 @@ function QualityScoreForm(props: Props) {
 
     const scoreValue = value.scoreRatings;
     const scoreError = getErrorObject(error?.scoreRatings);
-
-    const {
-        data: qualityScoreList,
-    } = useQuery<GetQualityScoreListQuery, GetQualityScoreListQueryVariables>(
-        GET_QUALITY_SCORE_LIST,
-        {
-            variables: {
-                projectId,
-            },
-        },
-    );
-
-    const scoreList = useMemo(() => {
-        const scoreOptions = qualityScoreList?.project?.assessmentRegistryOptions?.scoreOptions;
-        const analyticalList = listToGroupList(
-            scoreOptions,
-            (score) => score.analyticalStatementDisplay,
-        );
-
-        const finalAnalyticalList = mapToList(
-            analyticalList,
-            (list, key) => ({
-                analyticalState: key,
-                list,
-            }),
-        );
-        return finalAnalyticalList;
-    }, [qualityScoreList]);
 
     const scoreValueIndex = listToMap(
         scoreValue,
