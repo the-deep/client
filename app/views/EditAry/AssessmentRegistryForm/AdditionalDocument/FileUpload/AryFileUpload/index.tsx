@@ -2,8 +2,15 @@ import React, { useCallback } from 'react';
 import { FileInput, useAlert } from '@the-deep/deep-ui';
 import { IoCloudUpload } from 'react-icons/io5';
 import { gql, useMutation } from '@apollo/client';
+import { removeNull } from '@togglecorp/toggle-form';
 
-import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum, CreateAttachmentMutation, CreateAttachmentMutationVariables, FileUploadInputType } from '#generated/types';
+import {
+    AssessmentRegistryDocumentTypeEnum,
+    CreateAttachmentMutation,
+    CreateAttachmentMutationVariables,
+    FileUploadInputType,
+    GalleryFileType,
+} from '#generated/types';
 
 import styles from './styles.css';
 
@@ -11,8 +18,7 @@ const CREATE_ATTACHMENT = gql`
     mutation CreateAttachment($data: FileUploadInputType!) {
         fileUpload(data: $data) {
             ok
-            errors
-            result {
+            errors result {
                 id
                 title
                 mimeType
@@ -27,7 +33,7 @@ const CREATE_ATTACHMENT = gql`
 `;
 interface Props {
     onSuccess: (
-        v: AdditionalDocumentType,
+        v: GalleryFileType,
         documentType: AssessmentRegistryDocumentTypeEnum,
     ) => void;
     name: AssessmentRegistryDocumentTypeEnum;
@@ -51,7 +57,6 @@ function AryFileUpload(props: Props) {
         CREATE_ATTACHMENT,
         {
             onCompleted: (response) => {
-                console.log('rsponse upload', response);
                 if (!response || !response.fileUpload) {
                     return;
                 }
@@ -68,8 +73,8 @@ function AryFileUpload(props: Props) {
                         { variant: 'error' },
                     );
                 } else if (ok) {
-                    console.log('upload success');
-                    // onSuccess(response, name);
+                    const resultRemoveNull = removeNull(result);
+                    onSuccess(resultRemoveNull, name);
                 }
             },
         },
@@ -80,17 +85,16 @@ function AryFileUpload(props: Props) {
             if (!value) {
                 return;
             }
-            const formData = new FormData();
-            formData.append('file', value);
+
             uploadAttachment({
                 variables: {
                     data: {
                         title: value.name,
-                        file: formData,
+                        file: value,
                     } as FileUploadInputType,
                 },
                 context: {
-                    formData: true,
+                    hasUpload: true,
                 },
             });
         }, [uploadAttachment],

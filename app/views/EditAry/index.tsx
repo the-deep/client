@@ -57,6 +57,7 @@ import {
     AssessmentDetailQueryVariables,
     UpdateAssessmentRegistryMutation,
     UpdateAssessmentRegistryMutationVariables,
+    GalleryFileType,
 } from '#generated/types';
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import {
@@ -286,6 +287,7 @@ function EditAry(props: Props) {
     const [regionOptions, setRegionOptions] = useState<BasicRegion[] | undefined | null>();
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
     const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
+    const [uploadItems, setUploadItems] = useState<GalleryFileType[]>();
 
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo((): LeadEntriesForAryQueryVariables | undefined => (
@@ -641,6 +643,8 @@ function EditAry(props: Props) {
                                 setStakeholderOptions={setStakeholderOptions}
                                 geoAreaOptions={geoAreaOptions}
                                 setGeoAreaOptions={setGeoAreaOptions}
+                                uploadItems={uploadItems}
+                                setUploadItems={setUploadItems}
                             />
                         </div>
                     </>
