@@ -1,5 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import {
     Tab,
     TabList,
@@ -10,7 +9,7 @@ import {
     EntriesAsList,
     Error,
 } from '@togglecorp/toggle-form';
-import { isTruthyString } from '@togglecorp/fujs';
+import { _cs, isTruthyString } from '@togglecorp/fujs';
 
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
@@ -25,7 +24,7 @@ import ScoreForm from './ScoreForm';
 import SummaryForm from './SummaryForm';
 import AdditionalDocument from './AdditionalDocument';
 
-import { PartialFormType, SubSectorIssueInputType } from './formSchema';
+import { PartialFormType, SubPillarIssueInputType } from './formSchema';
 
 import styles from './styles.css';
 
@@ -94,8 +93,8 @@ interface Props {
     geoAreaOptions?: GeoArea[] | null;
     setUploadedList: React.Dispatch<React.SetStateAction<GalleryFileType[] | undefined>>;
     uploadedList?: GalleryFileType[];
-    issueList: SubSectorIssueInputType[];
-    setIssueList: React.Dispatch<React.SetStateAction<SubSectorIssueInputType[]>>;
+    issueList: SubPillarIssueInputType[];
+    setIssueList: React.Dispatch<React.SetStateAction<SubPillarIssueInputType[]>>;
 }
 
 function AssessmentRegistryForm(props: Props) {
@@ -167,7 +166,7 @@ function AssessmentRegistryForm(props: Props) {
     ), [error]);
 
     const handleIssueSelect = useCallback(
-        (issueVal: SubSectorIssueInputType) => {
+        (issueVal: SubPillarIssueInputType) => {
             setIssueList(
                 (prev) => {
                     const filteredIssues = prev.filter(
@@ -185,10 +184,10 @@ function AssessmentRegistryForm(props: Props) {
                 const val = issueList?.map((issueItem) => ({
                     summaryIssue: issueItem.issueId,
                     order: Number(issueItem.order),
-                    text: issueItem?.text,
+                    text: issueItem?.text ?? '',
                 })).filter((item) => isTruthyString(item.summaryIssue));
                 return [val].flat();
-            }, 'summarySubsectorIssue');
+            }, 'summarySubPillarIssue');
         }, [setFieldValue, issueList],
     );
 
