@@ -95,10 +95,12 @@ const CREATE_DRAFT_ENTRY = gql`
                             value
                         }
                         relatedGeoareas {
+                            adminLevelLevel
+                            adminLevelTitle
                             id
                             regionTitle
-                            adminLevelTitle
                             title
+                            parentTitles
                         }
                     }
                 }
@@ -133,10 +135,12 @@ const PROJECT_DRAFT_ENTRY = gql`
                         value
                     }
                     relatedGeoareas {
+                        adminLevelLevel
+                        adminLevelTitle
                         id
                         regionTitle
-                        adminLevelTitle
                         title
+                        parentTitles
                     }
                 }
             }

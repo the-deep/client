@@ -31,7 +31,7 @@ import {
     ProjectFrameworkForCardsQueryVariables,
 } from '#generated/types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
-import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
+import { FRAMEWORK_FRAGMENT, ENTRY_FRAGMENT } from '#gqlFragments';
 
 import {
     Framework,
@@ -55,6 +55,7 @@ function transformEntry(entry: Entry): EntryInputType {
 }
 
 export const LEAD_ENTRIES = gql`
+    ${ENTRY_FRAGMENT}
     query EntriesByLead(
         $projectId: ID!,
         $leadId: ID!,
@@ -86,12 +87,7 @@ export const LEAD_ENTRIES = gql`
             ) {
                 totalCount
                 results {
-                    clientId
-                    id
-                    entryType
-                    reviewCommentsCount
-                    droppedExcerpt
-                    excerpt
+                    ...EntryResponse
                     lead {
                         id
                         title
@@ -108,34 +104,6 @@ export const LEAD_ENTRIES = gql`
                         createdBy {
                             displayName
                         }
-                    }
-                    attributes {
-                        clientId
-                        data
-                        id
-                        widget
-                        widgetType
-                        widgetVersion
-                        geoSelectedOptions {
-                            id
-                            adminLevelTitle
-                            regionTitle
-                            title
-                        }
-                    }
-                    image {
-                        id
-                        metadata
-                        mimeType
-                        title
-                        file {
-                            name
-                            url
-                        }
-                    }
-                    controlled
-                    verifiedBy {
-                        id
                     }
                 }
             }

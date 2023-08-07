@@ -39,7 +39,7 @@ import { transformSourcesFilterToEntriesFilter } from '#components/leadFilters/S
 import {
     isFiltered,
 } from '#utils/common';
-import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
+import { ENTRY_FRAGMENT, FRAMEWORK_FRAGMENT } from '#gqlFragments';
 
 import EntryCard from './EntryCard';
 import styles from './styles.css';
@@ -54,6 +54,7 @@ const itemsPerPageOptions = [
 const entryKeySelector = (entry: Entry) => entry.id;
 
 export const PROJECT_ENTRIES = gql`
+    ${ENTRY_FRAGMENT}
     query ProjectEntries(
         $projectId: ID!,
         $page: Int,
@@ -105,12 +106,7 @@ export const PROJECT_ENTRIES = gql`
             ) {
                 totalCount
                 results {
-                    clientId
-                    id
-                    entryType
-                    droppedExcerpt
-                    excerpt
-                    reviewCommentsCount
+                    ...EntryResponse
                     lead {
                         id
                         title
@@ -136,34 +132,6 @@ export const PROJECT_ENTRIES = gql`
                                 url
                             }
                         }
-                    }
-                    attributes {
-                        clientId
-                        data
-                        id
-                        widget
-                        widgetType
-                        widgetVersion
-                        geoSelectedOptions {
-                            id
-                            adminLevelTitle
-                            regionTitle
-                            title
-                        }
-                    }
-                    image {
-                        id
-                        metadata
-                        mimeType
-                        title
-                        file {
-                            name
-                            url
-                        }
-                    }
-                    controlled
-                    verifiedBy {
-                        id
                     }
                 }
             }

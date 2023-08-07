@@ -92,7 +92,7 @@ import {
     WidgetType as WidgetRaw,
     AttributeType as WidgetAttributeRaw,
 } from '#generated/types';
-import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
+import { ENTRY_FRAGMENT, FRAMEWORK_FRAGMENT } from '#gqlFragments';
 
 import _ts from '#ts';
 
@@ -143,35 +143,14 @@ const hasAssessmentOptions: BooleanOption[] = [
 ];
 
 export const ENTRY_DETAILS = gql`
+    ${ENTRY_FRAGMENT}
     fragment EntryDetails on EntryType {
-        id
-        excerpt
-        entryType
-        clientId
-        createdAt
-        controlled
-        verifiedBy {
-            id
-        }
+        ...EntryResponse
         createdBy {
+            id
             displayName
         }
         modifiedAt
-        droppedExcerpt
-        attributes {
-            clientId
-            data
-            id
-            widget
-            widgetType
-            widgetVersion
-            geoSelectedOptions {
-                id
-                adminLevelTitle
-                regionTitle
-                title
-            }
-        }
         lead {
             id
             authors {
@@ -201,13 +180,6 @@ export const ENTRY_DETAILS = gql`
             }
             url
             shareViewUrl
-        }
-        image {
-            id
-            title
-            file {
-                url
-            }
         }
     }
 `;

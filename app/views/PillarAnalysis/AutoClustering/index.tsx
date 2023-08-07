@@ -27,6 +27,7 @@ import {
     PillarAutoClusteringMutation,
     PillarAutoClusteringMutationVariables,
 } from '#generated/types';
+import { ENTRY_FRAGMENT } from '#gqlFragments';
 
 import {
     Entry,
@@ -39,73 +40,8 @@ import styles from './styles.css';
 
 const MIN_ENTRIES = 25;
 
-const ENTRY_DETAILS = gql`
-    fragment EntryDetail on EntryType {
-        id
-        excerpt
-        entryType
-        clientId
-        createdAt
-        controlled
-        verifiedBy {
-            id
-        }
-        createdBy {
-            displayName
-        }
-        modifiedAt
-        droppedExcerpt
-        attributes {
-            clientId
-            data
-            id
-            widget
-            widgetType
-            widgetVersion
-            geoSelectedOptions {
-                id
-                adminLevelTitle
-                regionTitle
-                title
-            }
-        }
-        lead {
-            id
-            authors {
-                id
-                title
-                shortName
-                mergedAs {
-                    id
-                    title
-                    shortName
-                }
-            }
-            source {
-                id
-                title
-                shortName
-                mergedAs {
-                    id
-                    title
-                    shortName
-                }
-            }
-            url
-            shareViewUrl
-        }
-        image {
-            id
-            title
-            file {
-                url
-            }
-        }
-    }
-`;
-
 const PILLAR_AUTO_CLUSTERING_RESULTS = gql`
-    ${ENTRY_DETAILS}
+    ${ENTRY_FRAGMENT}
     query PillarAutoClusteringResults(
         $projectId: ID!,
         $topicModelingId: ID!,
@@ -118,7 +54,37 @@ const PILLAR_AUTO_CLUSTERING_RESULTS = gql`
                 clusters {
                     id
                     entries {
-                        ...EntryDetail
+                        ...EntryResponse
+                        createdBy {
+                            id
+                            displayName
+                        }
+                        modifiedAt
+                        lead {
+                            id
+                            authors {
+                                id
+                                title
+                                shortName
+                                mergedAs {
+                                    id
+                                    title
+                                    shortName
+                                }
+                            }
+                            source {
+                                id
+                                title
+                                shortName
+                                mergedAs {
+                                    id
+                                    title
+                                    shortName
+                                }
+                            }
+                            url
+                            shareViewUrl
+                        }
                     }
                 }
             }

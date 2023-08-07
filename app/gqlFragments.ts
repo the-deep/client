@@ -22,10 +22,12 @@ export const ENTRY_FRAGMENT = gql`
             widgetType
             widgetVersion
             geoSelectedOptions {
-                id
                 adminLevelTitle
+                id
                 regionTitle
                 title
+                adminLevelLevel
+                parentTitles
             }
         }
         lead {
@@ -128,10 +130,12 @@ export const SOURCE_FILTER_DATA_FRAGMENT = gql`
             emailDisplay
         }
         entryFilterGeoAreaOptions {
+            adminLevelLevel
+            adminLevelTitle
             id
             regionTitle
-            adminLevelTitle
             title
+            parentTitles
         }
         entryFilterLeadAssigneeOptions {
             id

@@ -143,12 +143,10 @@ function GeoLocationMapInput(props: Props) {
     ), [projectRegions?.project?.regions]);
 
     const geoAreasRendererParams = useCallback((_: string, geoArea: GeoArea) => {
+        const area = [...(geoArea.parentTitles ?? []), geoArea.title];
+
         const label = breadcrumb(
-            [
-                (filteredProjectRegions?.length ?? 0) > 1 ? geoArea.regionTitle : undefined,
-                geoArea.adminLevelTitle,
-                geoArea.title,
-            ].filter(isDefined),
+            area.filter(isDefined),
         );
 
         return {
@@ -158,7 +156,6 @@ function GeoLocationMapInput(props: Props) {
         };
     }, [
         handleRemoveItem,
-        filteredProjectRegions,
     ]);
 
     const geoAreaGroupKeySelector = useCallback((geoArea: GeoArea) => {
@@ -168,6 +165,7 @@ function GeoLocationMapInput(props: Props) {
                 geoArea.adminLevelTitle,
             ].filter(isDefined),
         );
+
         return label;
     }, [
         filteredProjectRegions,
@@ -197,6 +195,7 @@ function GeoLocationMapInput(props: Props) {
                         onChange={onChange}
                         label=" Geo Locations"
                         projectId={projectId}
+                        regionId={selectedRegion}
                         options={geoAreaOptions}
                         onOptionsChange={onGeoAreaOptionsChange}
                         placeholder="Select geo locations"

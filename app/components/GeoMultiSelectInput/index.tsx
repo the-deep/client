@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { isDefined } from '@togglecorp/fujs';
 import { SearchMultiSelectInput, SearchMultiSelectInputProps } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 
@@ -9,12 +10,15 @@ import {
 } from '#generated/types';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
+import styles from './styles.css';
+
 const GEOAREAS = gql`
     query GeoAreaOptions(
         $projectId: ID!,
         $search: String,
         $page: Int,
         $pageSize: Int,
+        $regionIds: [ID!],
     ) {
         project(id: $projectId) {
             id
@@ -22,13 +26,16 @@ const GEOAREAS = gql`
                 search: $search,
                 page: $page,
                 pageSize: $pageSize,
+                regionIds: $regionIds,
             ) {
                 page
                 results {
                     adminLevelTitle
+                    adminLevelLevel
                     id
                     regionTitle
                     title
+                    parentTitles
                 }
                 totalCount
             }
@@ -39,7 +46,11 @@ const GEOAREAS = gql`
 export type GeoArea = NonNullable<NonNullable<NonNullable<NonNullable<GeoAreaOptionsQuery['project']>>['geoAreas']>['results']>[number];
 
 export const keySelector = (d: GeoArea) => d.id;
-export const labelSelector = (d: GeoArea) => breadcrumb([d.adminLevelTitle, d.title]);
+export const labelSelector = (geoArea: GeoArea) => {
+    const title = [...(geoArea.parentTitles ?? []), geoArea.title];
+    return breadcrumb(title);
+};
+
 type Def = { containerClassName?: string };
 type GeoSelectInputProps<K extends string, GK extends string> = SearchMultiSelectInputProps<
     string,
@@ -56,6 +67,7 @@ type GeoSelectInputProps<K extends string, GK extends string> = SearchMultiSelec
     | 'onShowDropdownChange'
 > & {
     projectId: string;
+    regionId?: string | undefined;
 };
 
 function GeoMultiSelectInput<K extends string, GK extends string>(
@@ -64,6 +76,7 @@ function GeoMultiSelectInput<K extends string, GK extends string>(
     const {
         className,
         projectId,
+        regionId,
         ...otherProps
     } = props;
 
@@ -71,12 +84,17 @@ function GeoMultiSelectInput<K extends string, GK extends string>(
     const [searchText, setSearchText] = useState<string>('');
     const debouncedSearchText = useDebouncedValue(searchText);
 
-    const variables = useMemo(() => ({
+    const variables = useMemo((): GeoAreaOptionsQueryVariables => ({
         projectId,
+        regionIds: isDefined(regionId) ? [regionId] : undefined,
         search: debouncedSearchText,
         page: 1,
         pageSize: 10,
-    }), [debouncedSearchText, projectId]);
+    }), [
+        debouncedSearchText,
+        projectId,
+        regionId,
+    ]);
 
     const {
         data,
@@ -89,6 +107,22 @@ function GeoMultiSelectInput<K extends string, GK extends string>(
             skip: !opened,
         },
     );
+
+    const geoAreaTitlesWithAdminLevels = useCallback((geoArea: GeoArea) => {
+        const title = breadcrumb([...(geoArea.parentTitles ?? []), geoArea.title]);
+        const label = geoArea.adminLevelTitle;
+
+        return (
+            <div className={styles.area}>
+                <div className={styles.title}>
+                    {title}
+                </div>
+                <div className={styles.label}>
+                    {label}
+                </div>
+            </div>
+        );
+    }, []);
 
     const handleShowMoreClick = useCallback(() => {
         fetchMore({
@@ -135,6 +169,7 @@ function GeoMultiSelectInput<K extends string, GK extends string>(
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
+            optionLabelSelector={geoAreaTitlesWithAdminLevels}
             onSearchValueChange={setSearchText}
             searchOptions={data?.project?.geoAreas?.results}
             optionsPending={loading}
