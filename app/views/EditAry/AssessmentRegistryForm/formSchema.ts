@@ -26,7 +26,7 @@ export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
     | 'affectedGroups' | 'sectors' | 'protectionInfoMgmts' | 'focuses'
     | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
     | 'figureProvided' | 'analysisLevelCovered'
->, 'clientId' | 'question'>;
+>, 'clientId' | 'question' | 'sector' | 'scoreType'>;
 
 export type PartialAdditionalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
@@ -96,8 +96,28 @@ export const schema: FormSchema = {
             },
             executiveSummary: [],
             additionalDocuments: [defaultEmptyArrayType],
-            scoreRatings: [defaultEmptyArrayType],
-            scoreAnalyticalDensity: [defaultEmptyArrayType],
+            scoreRatings: {
+                keySelector: (score) => score.scoreType,
+                member: () => ({
+                    fields: () => ({
+                        clientId: [],
+                        rating: [],
+                        reason: [],
+                        scoreType: [defaultEmptyArrayType],
+                    })
+                })
+            },
+            scoreAnalyticalDensity: {
+                keySelector: (density) => density.sector,
+                member: () => ({
+                    fields: () => ({
+                        clientId: [],
+                        analysisLevelCovered: [defaultEmptyArrayType],
+                        figureProvided: [defaultEmptyArrayType],
+                        sector: [],
+                    }),
+                }),
+            },
             cna: {
                 keySelector: (cna) => cna.clientId,
                 member: () => ({
