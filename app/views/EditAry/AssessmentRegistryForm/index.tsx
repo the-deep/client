@@ -23,6 +23,7 @@ import { PartialFormType } from './formSchema';
 import AdditionalDocument from './AdditionalDocument';
 
 import styles from './styles.css';
+import { GalleryFileType } from '#generated/types';
 
 const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
     bgCountries: true,
@@ -87,6 +88,8 @@ interface Props {
     stakeholderOptions: BasicOrganization[];
     setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     geoAreaOptions?: GeoArea[] | null;
+    setUploadItems: React.Dispatch<React.SetStateAction<GalleryFileType[] | undefined>>;
+    uploadItems?: GalleryFileType[];
 }
 
 function AssessmentRegistryForm(props: Props) {
@@ -103,6 +106,8 @@ function AssessmentRegistryForm(props: Props) {
         geoAreaOptions,
         setGeoAreaOptions,
         className,
+        uploadItems,
+        setUploadItems,
     } = props;
 
     const errorInMetadata = useMemo(() => (
@@ -250,6 +255,8 @@ function AssessmentRegistryForm(props: Props) {
                         value={value}
                         setFieldValue={setFieldValue}
                         error={error}
+                        uploadItems={uploadItems}
+                        setUploadItems={setUploadItems}
                     />
                 </TabPanel>
                 <TabPanel

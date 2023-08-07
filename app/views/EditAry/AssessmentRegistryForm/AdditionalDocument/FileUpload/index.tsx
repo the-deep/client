@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { Button, List, TextInput } from '@the-deep/deep-ui';
 import { IoAddCircleOutline } from 'react-icons/io5';
-import { isDefined, isValidUrl, randomString } from '@togglecorp/fujs';
+import { isValidUrl, randomString } from '@togglecorp/fujs';
 
-import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
+import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum, GalleryFileType } from '#generated/types';
 
 import AryFileUpload from './AryFileUpload';
 import UploadItem from './UploadItem';
@@ -18,13 +18,14 @@ interface Props {
     title: string;
     acceptFileType?: string;
     onSuccess: (
-        v: AdditionalDocumentType,
+        v: GalleryFileType,
         documentType: AssessmentRegistryDocumentTypeEnum,
     ) => void;
     handleFileRemove: (key: string) => void;
     onChangeSelectedDocument: (key: string) => void;
     showLink?: boolean;
     files?: PartialAdditonalDocument[];
+    uploadItems?: GalleryFileType[];
 }
 
 function FileUpload(props: Props) {
@@ -37,6 +38,7 @@ function FileUpload(props: Props) {
         onChangeSelectedDocument,
         showLink,
         files,
+        uploadItems,
     } = props;
 
     const [externalLink, setExternalLink] = useState<string>('');
@@ -70,7 +72,8 @@ function FileUpload(props: Props) {
             data,
             onRemoveFile: handleFileRemove,
             onChangeSelectedDocument,
-        }), [handleFileRemove, onChangeSelectedDocument],
+            uploadItems,
+        }), [handleFileRemove, onChangeSelectedDocument, uploadItems],
     );
     return (
         <div className={styles.uploadPane}>
