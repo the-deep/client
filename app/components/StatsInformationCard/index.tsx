@@ -17,7 +17,7 @@ export interface Props {
     label: string;
     totalValue?: number | null;
     filteredValue?: number;
-    variant: InformationVariant;
+    variant?: InformationVariant;
     valuePrecision?: number;
     coloredBackground?: boolean;
     emptyContent?: React.ReactNode;

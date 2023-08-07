@@ -52,6 +52,10 @@ function AnalyticalDensityInput(props: Props) {
         sector: sector as AssessmentRegistrySectorTypeEnum,
     });
 
+    const figureProvidedValue = value?.figureProvided?.length ?? 0;
+    const analysisLevelValue = value?.analysisLevelCovered?.length ?? 0;
+    const sectorWiseDensityValue = (figureProvidedValue * analysisLevelValue) / 10;
+
     const error = getErrorObject(riskyError);
 
     const [
@@ -65,11 +69,32 @@ function AnalyticalDensityInput(props: Props) {
     return (
         <ContainerCard
             contentClassName={styles.analyticalDensityInput}
-            heading={description}
+            headingClassName={styles.analyticalHeading}
+            heading={(
+                <>
+                    <div>
+                        {description}
+                    </div>
+                    <div>
+                        {sectorWiseDensityValue}
+                    </div>
+                </>
+            )}
+            headerActionsContainerClassName={styles.headerAction}
             headingSize="extraSmall"
         >
             <ContainerCard
-                heading="Analysis Levels Covered by the Assessment :"
+                heading={(
+                    <>
+                        <div>
+                            Analysis Levels Covered by the Assessment:
+                        </div>
+                        <div>
+                            {analysisLevelValue}
+                        </div>
+                    </>
+                )}
+                headingClassName={styles.analyticalHeading}
                 headingSize="extraSmall"
                 className={styles.analyticalContent}
                 borderBelowHeader
@@ -86,7 +111,17 @@ function AnalyticalDensityInput(props: Props) {
                 />
             </ContainerCard>
             <ContainerCard
-                heading="Figures Provided by the Assessment :"
+                heading={(
+                    <>
+                        <div>
+                            Figures Provided by the Assessment:
+                        </div>
+                        <div>
+                            {figureProvidedValue}
+                        </div>
+                    </>
+                )}
+                headingClassName={styles.analyticalHeading}
                 headingSize="extraSmall"
                 className={styles.analyticalContent}
                 borderBelowHeader
