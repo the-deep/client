@@ -3,7 +3,7 @@ import { EntriesAsList, Error, getErrorObject, getErrorString } from '@togglecor
 import { TextArea } from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
 
-import { AdditionalDocumentType, AssessmentRegistryDocumentTypeEnum } from '#generated/types';
+import { AssessmentRegistryDocumentTypeEnum, GalleryFileType } from '#generated/types';
 
 import FileUpload from './FileUpload';
 import { PartialFormType } from '../formSchema';
@@ -17,6 +17,8 @@ interface Props {
     error: Error<PartialFormType>;
     disabled?: boolean;
     readOnly?: boolean;
+    setUploadItems: React.Dispatch<React.SetStateAction<GalleryFileType[] | undefined>>;
+    uploadItems?: GalleryFileType[];
 }
 
 function AdditionalDocument(props: Props) {
@@ -26,18 +28,20 @@ function AdditionalDocument(props: Props) {
         error: riskyError,
         disabled,
         readOnly,
+        uploadItems,
+        setUploadItems,
     } = props;
 
     const error = getErrorObject(riskyError);
     const [selectedDocument, setSelectedDocument] = useState<string | undefined>();
 
     const handleFileUploadSuccess = useCallback(
-        (val: AdditionalDocumentType, documentType: AssessmentRegistryDocumentTypeEnum) => {
+        (val: GalleryFileType, documentType: AssessmentRegistryDocumentTypeEnum) => {
             const newValue = {
-                clientId: val.id ?? val.clientId,
+                clientId: val.id,
                 file: val.id,
                 documentType,
-                externalLink: val?.externalLink,
+                externalLink: '',
             };
 
             setFieldValue(
@@ -47,8 +51,12 @@ function AdditionalDocument(props: Props) {
                 ]),
                 'additionalDocuments',
             );
+            setUploadItems((prev) => ([
+                ...(prev ?? []),
+                val,
+            ]));
         },
-        [setFieldValue],
+        [setFieldValue, setUploadItems],
     );
 
     const handleFileRemove = useCallback(
@@ -115,6 +123,7 @@ function AdditionalDocument(props: Props) {
                 acceptFileType=".pdf"
                 showLink
                 files={assessmentFiles}
+                uploadItems={uploadItems}
             />
             <FileUpload
                 title="Questionare"
@@ -124,6 +133,7 @@ function AdditionalDocument(props: Props) {
                 onChangeSelectedDocument={setSelectedDocument}
                 acceptFileType=".pdf"
                 files={questionareFiles}
+                uploadItems={uploadItems}
             />
             <FileUpload
                 title="Miscellaneous"
@@ -132,12 +142,14 @@ function AdditionalDocument(props: Props) {
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
                 files={miscellaneousFiles}
+                uploadItems={uploadItems}
             />
             {selectedDocument && (
                 <Preview
                     link={linkSelected}
                     attachmentId={selectedDocument}
                     onChangeSelectedAttachment={setSelectedDocument}
+                    uploadItems={uploadItems}
                 />
             )}
         </div>
