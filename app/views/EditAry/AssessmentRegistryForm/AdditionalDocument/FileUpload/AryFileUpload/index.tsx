@@ -5,7 +5,6 @@ import { gql, useMutation } from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
 
 import {
-    AssessmentRegistryDocumentTypeEnum,
     CreateAttachmentMutation,
     CreateAttachmentMutationVariables,
     FileUploadInputType,
@@ -32,18 +31,13 @@ const CREATE_ATTACHMENT = gql`
     }
 `;
 interface Props {
-    onSuccess: (
-        v: GalleryFileType,
-        documentType: AssessmentRegistryDocumentTypeEnum,
-    ) => void;
-    name: AssessmentRegistryDocumentTypeEnum;
-    acceptFileType?: string;
+    onSuccess: (file: GalleryFileType) => void;
+    acceptFileType?: '.pdf' | 'image/*';
 }
 
 function AryFileUpload(props: Props) {
     const {
         onSuccess,
-        name,
         acceptFileType,
     } = props;
     const alert = useAlert();
@@ -76,9 +70,11 @@ function AryFileUpload(props: Props) {
                     const resultRemoveNull = removeNull(result);
                     onSuccess(
                         resultRemoveNull,
-                        name,
                     );
                 }
+            },
+            onError: (err) => {
+                console.log(err);
             },
         },
     );
@@ -107,7 +103,7 @@ function AryFileUpload(props: Props) {
         <form encType="multipart/form-data">
             <FileInput
                 className={styles.fileInput}
-                name={name}
+                name={undefined}
                 value={null}
                 onChange={handleFileInputChange}
                 status={undefined}

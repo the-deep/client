@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { isDefined, _cs } from '@togglecorp/fujs';
 import {
     ElementFragments,
@@ -10,17 +10,17 @@ import {
     IoTrashOutline,
 } from 'react-icons/io5';
 
-import { PartialAdditonalDocument } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import { PartialAdditionalDocument } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 import { GalleryFileType } from '#generated/types';
 
 import styles from './styles.css';
 
 interface Props {
     className?: string;
-    data?: PartialAdditonalDocument;
+    data?: PartialAdditionalDocument;
     onRemoveFile?: (key: string) => void;
     onChangeSelectedDocument?: (key: string) => void;
-    uploadItems?: GalleryFileType[];
+    uploadedList?: GalleryFileType[];
 }
 
 function UploadItem(props: Props) {
@@ -29,11 +29,17 @@ function UploadItem(props: Props) {
         data,
         onRemoveFile,
         onChangeSelectedDocument,
-        uploadItems,
+        uploadedList,
     } = props;
 
-    const listAttachment = uploadItems?.find((item) => item.id === data?.file);
-    const attachmentTitle = isDefined(data?.file) ? listAttachment?.title : data?.externalLink;
+    const listAttachment = useMemo(
+        () => uploadedList?.find((item) => item.id === data?.file),
+        [data?.file, uploadedList],
+    );
+    const attachmentTitle = useMemo(
+        () => listAttachment?.title ?? data?.externalLink,
+        [listAttachment, data?.externalLink],
+    );
 
     return (
         <div className={_cs(className, styles.uploadItem)}>
@@ -42,26 +48,27 @@ function UploadItem(props: Props) {
                     icons={<IoDocumentOutline className={styles.icon} />}
                     iconsContainerClassName={styles.icons}
                     actions={(
-                        <QuickActionButton
-                            name={data.clientId}
-                            onClick={onRemoveFile}
-                            title="delete"
-                        >
-                            <IoTrashOutline />
-                        </QuickActionButton>
+                        <>
+                            <QuickActionButton
+                                name={data.clientId}
+                                onClick={onChangeSelectedDocument}
+                                title="preview"
+                            >
+                                <IoEyeOutline />
+                            </QuickActionButton>
+                            <QuickActionButton
+                                name={data.clientId}
+                                onClick={onRemoveFile}
+                                title="delete"
+                            >
+                                <IoTrashOutline />
+                            </QuickActionButton>
+                        </>
                     )}
                     actionsContainerClassName={styles.actions}
                     childrenContainerClassName={styles.content}
                 >
                     {attachmentTitle}
-                    <QuickActionButton
-                        name={data.clientId}
-                        onClick={onChangeSelectedDocument}
-                        title="preview"
-                    >
-                        <IoEyeOutline />
-                    </QuickActionButton>
-
                 </ElementFragments>
             ) : null}
         </div>

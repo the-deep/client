@@ -9,7 +9,7 @@ interface Props {
     attachmentId?: string;
     onChangeSelectedAttachment: React.Dispatch<React.SetStateAction<string | undefined>>;
     link?: string;
-    uploadItems?: GalleryFileType[];
+    uploadedList?: GalleryFileType[];
 }
 
 function Preview(props: Props) {
@@ -17,7 +17,7 @@ function Preview(props: Props) {
         attachmentId,
         onChangeSelectedAttachment,
         link,
-        uploadItems,
+        uploadedList,
     } = props;
 
     const handleModalClose = useCallback(() => {
@@ -26,15 +26,15 @@ function Preview(props: Props) {
 
     const attachmentData = useMemo(
         () => {
-            if (isNotDefined(uploadItems)) return undefined;
-            const previewItem = uploadItems?.find((item) => item.id === attachmentId);
+            if (isNotDefined(uploadedList)) return undefined;
+            const previewItem = uploadedList?.find((item) => item.id === attachmentId);
             return {
                 id: previewItem?.id,
                 title: previewItem?.title,
                 mimeType: previewItem?.mimeType,
                 file: previewItem ? { url: previewItem?.file?.url } : undefined,
             };
-        }, [uploadItems, attachmentId],
+        }, [uploadedList, attachmentId],
     );
 
     const linkData = useMemo(
@@ -49,7 +49,10 @@ function Preview(props: Props) {
     );
 
     return (
-        <Modal onCloseButtonClick={handleModalClose}>
+        <Modal
+            heading={linkData?.title ?? attachmentData?.title}
+            onCloseButtonClick={handleModalClose}
+        >
             <LeadPreview attachment={linkData ?? attachmentData} />
         </Modal>
     );
