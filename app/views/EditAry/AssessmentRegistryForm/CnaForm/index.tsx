@@ -197,8 +197,9 @@ function CnaForm(props: Props) {
                                 const answerValue = isDefined(answerIndex)
                                     ? cnaValue?.[answerIndex]
                                     : undefined;
-                                const answerError = isDefined(answerIndex)
-                                    ? cnaError?.[answerIndex]
+
+                                const answerItemError = isDefined(answerValue)
+                                    ? cnaError?.[answerValue.clientId]
                                     : undefined;
 
                                 return (
@@ -208,7 +209,7 @@ function CnaForm(props: Props) {
                                         onChange={setAnswerValue}
                                         value={answerValue}
                                         name={answerIndex !== -1 ? answerIndex : undefined}
-                                        error={answerError}
+                                        error={answerItemError}
                                         questionId={question.id}
                                     />
                                 );
