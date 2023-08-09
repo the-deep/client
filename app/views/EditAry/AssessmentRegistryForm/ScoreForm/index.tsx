@@ -21,10 +21,9 @@ import {
     isDefined,
     isNotDefined,
     sum,
-    listToGroupList,
     listToMap,
-    mapToList,
     median,
+    compareString,
 } from '@togglecorp/fujs';
 
 import {
@@ -104,22 +103,6 @@ function ScoreForm(props: Props) {
         (d) => d.analyticalStatement,
     );
 
-    const scoreList = useMemo(() => {
-        const analyticalList = listToGroupList(
-            scoreOptions,
-            (score) => score.analyticalStatementDisplay,
-        );
-
-        const finalAnalyticalList = mapToList(
-            analyticalList,
-            (list, key) => ({
-                analyticalState: key,
-                list,
-            }),
-        );
-        return finalAnalyticalList;
-    }, [scoreOptions]);
-
     const scoreStatsValue = useMemo(() => {
         // NOTE: Analytical Density Value
         const sectorWiseDensityValue = value.scoreAnalyticalDensity?.map(
@@ -182,7 +165,9 @@ function ScoreForm(props: Props) {
             {},
         );
 
-        const scoreGroupScores = Object.values(scoreStatsList ?? []);
+        const scoreGroupScores = Object.values(scoreStatsList ?? []).sort(
+            (a, b) => (compareString(a.label, b.label)),
+        );
 
         return [
             ...scoreGroupScores,
@@ -197,6 +182,7 @@ function ScoreForm(props: Props) {
         ];
     }, [
         scoreOptions,
+        scoreToScoreGroupMap,
         value.scoreRatings,
         value.scoreAnalyticalDensity,
     ]);
@@ -228,7 +214,7 @@ function ScoreForm(props: Props) {
                 >
                     <QualityScoreForm
                         value={value}
-                        scoreList={scoreList}
+                        scoreOptions={scoreOptions}
                         setFieldValue={setFieldValue}
                         error={error}
                     />

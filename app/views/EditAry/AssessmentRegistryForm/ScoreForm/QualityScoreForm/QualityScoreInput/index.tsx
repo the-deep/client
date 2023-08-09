@@ -50,7 +50,7 @@ const scaleOptions: Option[] = [
     },
 ];
 
-interface Props {
+export interface Props {
     scoreCriteria: string;
     value: ScoreRatingsType | undefined;
     name: number | undefined;
