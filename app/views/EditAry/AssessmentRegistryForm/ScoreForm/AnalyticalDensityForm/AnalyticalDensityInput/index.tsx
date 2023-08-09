@@ -80,7 +80,6 @@ function AnalyticalDensityInput(props: Props) {
                     </div>
                 </>
             )}
-            headerActionsContainerClassName={styles.headerAction}
             headingSize="extraSmall"
         >
             <ContainerCard
@@ -110,6 +109,7 @@ function AnalyticalDensityInput(props: Props) {
                     error={getErrorString(error?.analysisLevelCovered)}
                 />
             </ContainerCard>
+            <div className={styles.seperator} />
             <ContainerCard
                 heading={(
                     <>
