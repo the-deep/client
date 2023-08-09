@@ -4,10 +4,4 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--dui-spacing-extra-large);
     padding: var(--dui-spacing-large);
-
-    .label-container {
-        color: var(--dui-color-black);
-        font: var(--dui-font-size-medium);
-        font-weight: var(--dui-font-weight-regular);
-    }
 }

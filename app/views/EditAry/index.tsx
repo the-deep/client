@@ -287,7 +287,7 @@ function EditAry(props: Props) {
     const [regionOptions, setRegionOptions] = useState<BasicRegion[] | undefined | null>();
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
     const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
-    const [uploadItems, setUploadItems] = useState<GalleryFileType[]>();
+    const [uploadedList, setUploadedList] = useState<GalleryFileType[]>();
 
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo((): LeadEntriesForAryQueryVariables | undefined => (
@@ -438,7 +438,7 @@ function EditAry(props: Props) {
                     setStakeholderOptions(unique(stakeholders, (d) => d.id));
 
                     setGeoAreaOptions(result.locations);
-                    setUploadItems(
+                    setUploadedList(
                         result.additionalDocuments?.map((doc) => ({
                             // Note: need to fix on server
                             ...doc,
@@ -654,8 +654,8 @@ function EditAry(props: Props) {
                                 setStakeholderOptions={setStakeholderOptions}
                                 geoAreaOptions={geoAreaOptions}
                                 setGeoAreaOptions={setGeoAreaOptions}
-                                uploadItems={uploadItems}
-                                setUploadItems={setUploadItems}
+                                uploadedList={uploadedList}
+                                setUploadedList={setUploadedList}
                             />
                         </div>
                     </>
