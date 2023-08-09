@@ -30,7 +30,7 @@ import styles from './styles.css';
 
 type ScoreOptions = NonNullable<NonNullable<NonNullable<GetQualityScoreListQuery>['project']>['assessmentRegistryOptions']>['scoreOptions'][number]
 
-const keySelector = (d: ScoreOptions) => d.analyticalStatement;
+const keySelector = (d: ScoreOptions) => d.scoreCriteria;
 const groupKeySelector = (g: ScoreOptions) => g.analyticalStatementDisplay;
 
 interface Props {
@@ -96,7 +96,7 @@ function QualityScoreForm(props: Props) {
     );
 
     const groupScoreInputParams = useCallback(
-        (key: string): ScoreHeadingProps => ({
+        (key: string): Omit<ScoreHeadingProps, 'children' | 'className'> => ({
             analyticalState: key,
         }),
         [],
