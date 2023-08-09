@@ -11,6 +11,12 @@
 
     .list {
         flex-shrink: 0;
+        
+        .tab {
+            &.error {
+                color: var(--dui-color-danger);
+            }
+        }
     }
 
     .scores {

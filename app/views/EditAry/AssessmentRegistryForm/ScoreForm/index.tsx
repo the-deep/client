@@ -12,6 +12,7 @@ import {
 import {
     EntriesAsList,
     Error,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     gql,
@@ -24,6 +25,7 @@ import {
     listToMap,
     median,
     compareString,
+    _cs,
 } from '@togglecorp/fujs';
 
 import {
@@ -80,8 +82,10 @@ function ScoreForm(props: Props) {
         projectId,
         value,
         setFieldValue,
-        error,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const [activeTab, setActiveTab] = useState<TabOptions>('qualityScores');
 
@@ -204,8 +208,24 @@ function ScoreForm(props: Props) {
                 variant="primary"
             >
                 <TabList className={styles.list}>
-                    <Tab name="qualityScores">Quality Scores</Tab>
-                    <Tab name="analyticalDensity">Analytical Density</Tab>
+                    <Tab
+                        name="qualityScores"
+                        className={_cs(
+                            styles.tab,
+                            error?.scoreRatings && styles.error,
+                        )}
+                    >
+                        Quality Scores
+                    </Tab>
+                    <Tab
+                        name="analyticalDensity"
+                        className={_cs(
+                            styles.tab,
+                            error?.scoreAnalyticalDensity && styles.error,
+                        )}
+                    >
+                        Analytical Density
+                    </Tab>
                     <div className={styles.dummy} />
                 </TabList>
                 <TabPanel

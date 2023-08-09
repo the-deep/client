@@ -114,8 +114,10 @@ function AnalyticalDensityForm(props: Props) {
                 const analyticalValue = isDefined(analyticalIndex)
                     ? analyticalDensityValue?.[analyticalIndex]
                     : undefined;
-                const analyticalError = isDefined(analyticalIndex)
-                    ? analyticalDensityError?.[analyticalIndex]
+                const selectedClientId = isDefined(analyticalIndex)
+                    ? analyticalDensityValue?.[analyticalIndex].clientId : undefined;
+                const analyticalError = isDefined(selectedClientId)
+                    ? analyticalDensityError?.[selectedClientId]
                     : undefined;
                 return (
                     <AnalyticalDensityInput
