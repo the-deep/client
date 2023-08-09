@@ -26,16 +26,28 @@ export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
     | 'affectedGroups' | 'sectors' | 'protectionInfoMgmts' | 'focuses'
     | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
     | 'figureProvided' | 'analysisLevelCovered'
->, 'clientId' | 'question' | 'sector' | 'scoreType'>;
+>, 'clientId' | 'question' | 'sector'>;
 
 export type PartialAdditionalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-export type MethodologyAttributesType = NonNullable<PartialFormType['methodologyAttributes']>[number];
 export type CnaType = NonNullable<PartialFormType['cna']>[number];
 export type ScoreRatingsType = NonNullable<PartialFormType['scoreRatings']>[number];
+type ScoreRatingsSchema = ObjectSchema<ScoreRatingsType, PartialFormType>;
+type ScoreRatingsSchemaFields = ReturnType<ScoreRatingsSchema['fields']>;
+
+type ScoreRatingsFormSchema = ArraySchema<ScoreRatingsType, PartialFormType>;
+type ScoreRatingsFormSchemaMember = ReturnType<ScoreRatingsFormSchema['member']>;
+
 export type ScoreAnalyticalDensityType = NonNullable<PartialFormType['scoreAnalyticalDensity']>[number];
+type ScoreAnalyticalDensitySchema = ObjectSchema<ScoreAnalyticalDensityType, PartialFormType>;
+type ScoreAnalyticalDensitySchemaFields = ReturnType<ScoreAnalyticalDensitySchema['fields']>;
+
+type ScoreAnalyticalDensityFormSchema = ArraySchema<ScoreAnalyticalDensityType, PartialFormType>;
+type ScoreAnalyticalDensityFormSchemaMember = ReturnType<ScoreAnalyticalDensityFormSchema['member']>;
+
+export type MethodologyAttributesType = NonNullable<PartialFormType['methodologyAttributes']>[number];
 type MethodologyAttributesSchema = ObjectSchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesSchemaFields = ReturnType<MethodologyAttributesSchema['fields']>;
 type MethodologyAttributesFormSchema = ArraySchema<MethodologyAttributesType, PartialFormType>;
@@ -97,20 +109,20 @@ export const schema: FormSchema = {
             executiveSummary: [],
             additionalDocuments: [defaultEmptyArrayType],
             scoreRatings: {
-                keySelector: (score) => score.scoreType,
-                member: () => ({
-                    fields: () => ({
+                keySelector: (score) => score.clientId,
+                member: (): ScoreRatingsFormSchemaMember => ({
+                    fields: (): ScoreRatingsSchemaFields => ({
                         clientId: [],
                         rating: [],
                         reason: [],
-                        scoreType: [defaultEmptyArrayType],
-                    })
-                })
+                        scoreType: [],
+                    }),
+                }),
             },
             scoreAnalyticalDensity: {
                 keySelector: (density) => density.sector,
-                member: () => ({
-                    fields: () => ({
+                member: (): ScoreAnalyticalDensityFormSchemaMember => ({
+                    fields: (): ScoreAnalyticalDensitySchemaFields => ({
                         clientId: [],
                         analysisLevelCovered: [defaultEmptyArrayType],
                         figureProvided: [defaultEmptyArrayType],
