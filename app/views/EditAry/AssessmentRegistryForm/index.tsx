@@ -70,9 +70,12 @@ const fieldsInSummary: { [key in keyof PartialFormType]?: true } = {
 };
 
 const fieldsInScore: { [key in keyof PartialFormType]?: true } = {
+    scoreRatings: true,
+    scoreAnalyticalDensity: true,
 };
 
 const fieldsInCna: { [key in keyof PartialFormType]?: true } = {
+    cna: true,
 };
 
 type Value = PartialFormType;

@@ -203,7 +203,7 @@ function ScoreForm(props: Props) {
                 onChange={setActiveTab}
                 variant="primary"
             >
-                <TabList>
+                <TabList className={styles.list}>
                     <Tab name="qualityScores">Quality Scores</Tab>
                     <Tab name="analyticalDensity">Analytical Density</Tab>
                     <div className={styles.dummy} />
