@@ -7,7 +7,10 @@ import {
     useFormObject,
     getErrorObject,
 } from '@togglecorp/toggle-form';
+
 import { AssessmentRegistryRatingType, AssessmentRegistryScoreCriteriaTypeEnum } from '#generated/types';
+import NonFieldError from '#components/NonFieldError';
+
 import { ScoreRatingsType } from '../../../formSchema';
 
 import styles from './styles.css';
@@ -77,6 +80,7 @@ function QualityScoreInput(props: Props) {
 
     return (
         <div className={styles.scoreInput}>
+            <NonFieldError error={error} />
             <div className={styles.criteriaHeading}>
                 {scoreCriteria}
             </div>

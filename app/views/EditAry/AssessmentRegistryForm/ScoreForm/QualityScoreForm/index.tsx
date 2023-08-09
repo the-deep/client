@@ -61,7 +61,6 @@ function QualityScoreForm(props: Props) {
 
     const scoreValue = value.scoreRatings;
     const scoreError = getErrorObject(error?.scoreRatings);
-
     const scoreValueIndex = listToMap(
         scoreValue,
         (k) => k.scoreType ?? '',
@@ -74,8 +73,10 @@ function QualityScoreForm(props: Props) {
             const scoreRatingValue = isDefined(scoreIndex)
                 ? scoreValue?.[scoreIndex]
                 : undefined;
-            const scoreItemError = isDefined(scoreIndex)
-                ? scoreError?.[scoreIndex]
+            const selectedClientId = isDefined(scoreIndex)
+                ? scoreValue?.[scoreIndex].clientId : undefined;
+            const scoreItemError = isDefined(selectedClientId)
+                ? scoreError?.[selectedClientId]
                 : undefined;
             return {
                 scoreType: data.scoreCriteria,
@@ -100,7 +101,6 @@ function QualityScoreForm(props: Props) {
         }),
         [],
     );
-    console.log('options', scoreOptions);
 
     return (
         <div className={styles.qualityScoreForm}>
