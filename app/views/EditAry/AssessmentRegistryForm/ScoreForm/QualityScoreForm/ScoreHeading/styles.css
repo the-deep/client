@@ -1,0 +1,21 @@
+.heading-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-large);
+
+    .heading-content {
+        display: flex;
+        gap: var(--dui-spacing-ultra-large);
+
+        .score-heading {
+            width: 10rem;
+            color: var(--dui-color-accent);
+        }
+    }
+
+    .children {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+    }
+}

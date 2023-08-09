@@ -1,5 +1,5 @@
-import React from 'react';
-import { Heading } from '@the-deep/deep-ui';
+import React, { useCallback } from 'react';
+import { ListView } from '@the-deep/deep-ui';
 import {
     listToMap,
     isDefined,
@@ -10,12 +10,17 @@ import {
     getErrorObject,
     useFormArray,
 } from '@togglecorp/toggle-form';
-import {
-    AssessmentRegistryScoreAnalyticalStatementTypeEnum,
-    AssessmentRegistryScoreCriteriaTypeEnum,
-} from '#generated/types';
+import { GetQualityScoreListQuery } from '#generated/types';
 
-import QualityScoreInput from './QualityScoreInput';
+import ScoreHeading,
+{
+    Props as ScoreHeadingProps,
+} from './ScoreHeading';
+import QualityScoreInput,
+{
+    Props as QualityScoreInputProps,
+} from './QualityScoreInput';
+
 import {
     PartialFormType,
     ScoreRatingsType,
@@ -23,51 +28,16 @@ import {
 
 import styles from './styles.css';
 
-interface ScoreHeadingProps {
-    analyticalState: string;
-}
+type ScoreOptions = NonNullable<NonNullable<NonNullable<GetQualityScoreListQuery>['project']>['assessmentRegistryOptions']>['scoreOptions'][number]
 
-function ScoreHeading(props: ScoreHeadingProps) {
-    const {
-        analyticalState,
-    } = props;
+const keySelector = (d: ScoreOptions) => d.analyticalStatement;
+const groupKeySelector = (g: ScoreOptions) => g.analyticalStatementDisplay;
 
-    return (
-        <div className={styles.headingContent}>
-            <Heading
-                size="extraSmall"
-                className={styles.scoreHeading}
-            >
-                {analyticalState}
-            </Heading>
-            <Heading
-                size="extraSmall"
-                className={styles.scoreHeading}
-            >
-                Score
-            </Heading>
-            <Heading
-                size="extraSmall"
-                className={styles.scoreHeading}
-            >
-                Justification
-            </Heading>
-        </div>
-    );
-}
 interface Props {
     value: PartialFormType,
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    error: Error<PartialFormType>
-    scoreList: {
-        analyticalState: string;
-        list: {
-            scoreCriteriaDisplay: string;
-            scoreCriteria: AssessmentRegistryScoreCriteriaTypeEnum;
-            analyticalStatementDisplay: string;
-            analyticalStatement: AssessmentRegistryScoreAnalyticalStatementTypeEnum;
-        }[];
-    }[] | undefined
+    error: Error<PartialFormType>;
+    scoreOptions: ScoreOptions[] | undefined;
 }
 
 function QualityScoreForm(props: Props) {
@@ -75,7 +45,7 @@ function QualityScoreForm(props: Props) {
         value,
         setFieldValue,
         error: riskyError,
-        scoreList,
+        scoreOptions,
     } = props;
 
     const {
@@ -98,38 +68,56 @@ function QualityScoreForm(props: Props) {
         (_, __, index) => index,
     );
 
+    const scoreInputParams = useCallback(
+        (_, data: ScoreOptions): QualityScoreInputProps => {
+            const scoreIndex = scoreValueIndex?.[data.scoreCriteria];
+            const scoreRatingValue = isDefined(scoreIndex)
+                ? scoreValue?.[scoreIndex]
+                : undefined;
+            const scoreItemError = isDefined(scoreIndex)
+                ? scoreError?.[scoreIndex]
+                : undefined;
+            return {
+                scoreType: data.scoreCriteria,
+                scoreCriteria: data.scoreCriteriaDisplay,
+                error: scoreItemError,
+                name: scoreIndex,
+                value: scoreRatingValue,
+                onChange: setScoreRating,
+            };
+        },
+        [
+            setScoreRating,
+            scoreValue,
+            scoreError,
+            scoreValueIndex,
+        ],
+    );
+
+    const groupScoreInputParams = useCallback(
+        (key: string): ScoreHeadingProps => ({
+            analyticalState: key,
+        }),
+        [],
+    );
+    console.log('options', scoreOptions);
+
     return (
         <div className={styles.qualityScoreForm}>
-            {scoreList?.map((score) => (
-                <div
-                    className={styles.qualityScoreContent}
-                    key={score.analyticalState}
-                >
-                    <ScoreHeading
-                        analyticalState={score.analyticalState}
-                    />
-                    {score.list.map((list) => {
-                        const scoreIndex = scoreValueIndex?.[list.scoreCriteria];
-                        const scoreRatingValue = isDefined(scoreIndex)
-                            ? scoreValue?.[scoreIndex]
-                            : undefined;
-                        const scoreItemError = isDefined(scoreIndex)
-                            ? scoreError?.[scoreIndex]
-                            : undefined;
-                        return (
-                            <QualityScoreInput
-                                key={list.scoreCriteria}
-                                scoreType={list.scoreCriteria}
-                                scoreCriteria={list.scoreCriteriaDisplay}
-                                error={scoreItemError}
-                                name={scoreIndex}
-                                value={scoreRatingValue}
-                                onChange={setScoreRating}
-                            />
-                        );
-                    })}
-                </div>
-            ))}
+            <ListView
+                className={styles.qualityScoreContent}
+                data={scoreOptions}
+                keySelector={keySelector}
+                renderer={QualityScoreInput}
+                rendererParams={scoreInputParams}
+                grouped
+                groupRenderer={ScoreHeading}
+                groupRendererParams={groupScoreInputParams}
+                groupKeySelector={groupKeySelector}
+                pending={false}
+                filtered={false}
+                errored={false}
+            />
         </div>
     );
 }
