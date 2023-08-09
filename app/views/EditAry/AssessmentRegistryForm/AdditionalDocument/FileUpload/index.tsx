@@ -5,28 +5,27 @@ import { isValidUrl, randomString } from '@togglecorp/fujs';
 
 import { AssessmentRegistryDocumentTypeEnum, GalleryFileType } from '#generated/types';
 
+import { PartialAdditionalDocument } from '../../formSchema';
 import AryFileUpload from './AryFileUpload';
 import UploadItem from './UploadItem';
-import { PartialAdditonalDocument } from '../../formSchema';
 
 import styles from './styles.css';
 
-const fileKeySelector = (d: PartialAdditonalDocument): string => d.clientId;
+const fileKeySelector = (d: PartialAdditionalDocument): string => d.clientId;
 
 interface Props {
     name: AssessmentRegistryDocumentTypeEnum;
     title: string;
-    acceptFileType?: string;
+    acceptFileType?: '.pdf' | 'image/*';
     onSuccess: (
-        v: GalleryFileType,
-        documentType: AssessmentRegistryDocumentTypeEnum,
-        externalLink?: string,
+        v: PartialAdditionalDocument,
+        uploadedFile: GalleryFileType | undefined,
     ) => void;
     handleFileRemove: (key: string) => void;
     onChangeSelectedDocument: (key: string) => void;
     showLink?: boolean;
-    files?: PartialAdditonalDocument[];
-    uploadItems?: GalleryFileType[];
+    value?: PartialAdditionalDocument[];
+    uploadedList?: GalleryFileType[];
 }
 
 function FileUpload(props: Props) {
@@ -38,27 +37,36 @@ function FileUpload(props: Props) {
         handleFileRemove,
         onChangeSelectedDocument,
         showLink,
-        files,
-        uploadItems,
+        value,
+        uploadedList,
     } = props;
 
     const [externalLink, setExternalLink] = useState<string>();
-    const [checkUrl, setCheckUrl] = useState<boolean>(false);
+    const [urlError, setURLError] = useState<string>();
+
+    const fileRendererParams = useCallback(
+        (_: string, data: PartialAdditionalDocument) => ({
+            data,
+            onRemoveFile: handleFileRemove,
+            onChangeSelectedDocument,
+            uploadedList,
+        }), [handleFileRemove, onChangeSelectedDocument, uploadedList],
+    );
 
     const handleExternalLinkAdd = useCallback(() => {
-        const obj = {
-            id: randomString(),
-            file: undefined,
-        } as GalleryFileType;
         const isUrl = isValidUrl(externalLink ?? '');
-
-        if (isUrl) {
-            onSuccess(obj, name, externalLink);
-            setCheckUrl(false);
-            setExternalLink(undefined);
+        if (!isUrl) {
+            setURLError('Invalid URL');
             return;
         }
-        setCheckUrl(true);
+
+        onSuccess({
+            clientId: randomString(),
+            file: randomString(),
+            documentType: name,
+            externalLink,
+        }, undefined);
+        setExternalLink(undefined);
     }, [
         name,
         externalLink,
@@ -66,14 +74,17 @@ function FileUpload(props: Props) {
         onSuccess,
     ]);
 
-    const fileRendererParams = useCallback(
-        (_: string, data: PartialAdditonalDocument) => ({
-            data,
-            onRemoveFile: handleFileRemove,
-            onChangeSelectedDocument,
-            uploadItems,
-        }), [handleFileRemove, onChangeSelectedDocument, uploadItems],
+    const handleUploadAttachment = useCallback(
+        (file: GalleryFileType) => {
+            onSuccess({
+                clientId: file.id,
+                file: file.id,
+                documentType: name,
+                externalLink: '',
+            }, file);
+        }, [onSuccess, name],
     );
+
     return (
         <div className={styles.uploadPane}>
             <div className={styles.uploadHeader}>
@@ -86,7 +97,7 @@ function FileUpload(props: Props) {
                                 name="externalLink"
                                 value={externalLink}
                                 onChange={setExternalLink}
-                                error={checkUrl ? 'Invalid url' : undefined}
+                                error={urlError}
                             />
                             <Button
                                 variant="transparent"
@@ -100,16 +111,15 @@ function FileUpload(props: Props) {
                 </div>
                 <AryFileUpload
                     acceptFileType={acceptFileType}
-                    name={name}
-                    onSuccess={onSuccess}
+                    onSuccess={handleUploadAttachment}
                 />
             </div>
             <div className={styles.files}>
-                {(files?.length === 0) && (
-                    <div className={styles.emptyMessage}>Upload files here</div>
+                {(value?.length === 0) && (
+                    <div className={styles.emptyMessage}>Upload value here</div>
                 )}
                 <List
-                    data={files}
+                    data={value}
                     rendererClassName={styles.fileItem}
                     renderer={UploadItem}
                     keySelector={fileKeySelector}
