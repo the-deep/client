@@ -112,20 +112,20 @@ export const schema: FormSchema = {
                 keySelector: (score) => score.clientId,
                 member: (): ScoreRatingsFormSchemaMember => ({
                     fields: (): ScoreRatingsSchemaFields => ({
-                        clientId: [],
-                        rating: [],
-                        reason: [],
+                        clientId: [requiredCondition],
+                        rating: [requiredCondition],
+                        reason: [requiredCondition],
                         scoreType: [],
                     }),
                 }),
             },
             scoreAnalyticalDensity: {
-                keySelector: (density) => density.sector,
+                keySelector: (density) => density.clientId,
                 member: (): ScoreAnalyticalDensityFormSchemaMember => ({
                     fields: (): ScoreAnalyticalDensitySchemaFields => ({
-                        clientId: [],
-                        analysisLevelCovered: [defaultEmptyArrayType],
-                        figureProvided: [defaultEmptyArrayType],
+                        clientId: [requiredCondition],
+                        analysisLevelCovered: [requiredCondition],
+                        figureProvided: [requiredCondition],
                         sector: [],
                     }),
                 }),

@@ -1,20 +1,23 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 import { Heading } from '@the-deep/deep-ui';
 import styles from './styles.css';
 
 export interface Props {
-    analyticalState?: string;
-    children?: React.ReactNode;
+    className?: string;
+    children: React.ReactNode;
+    analyticalState: string;
 }
 
 function ScoreHeading(props: Props) {
     const {
         analyticalState,
+        className,
         children,
     } = props;
 
     return (
-        <div className={styles.headingContainer}>
+        <div className={_cs(className, styles.headingContainer)}>
             <div className={styles.headingContent}>
                 <Heading
                     size="extraSmall"
