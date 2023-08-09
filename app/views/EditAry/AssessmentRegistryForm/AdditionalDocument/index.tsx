@@ -3,7 +3,7 @@ import { EntriesAsList, Error, getErrorObject, getErrorString } from '@togglecor
 import { TextArea } from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
 
-import { AssessmentRegistryDocumentTypeEnum, GalleryFileType } from '#generated/types';
+import { GalleryFileType } from '#generated/types';
 
 import FileUpload from './FileUpload';
 import { PartialFormType } from '../formSchema';
@@ -17,8 +17,8 @@ interface Props {
     error: Error<PartialFormType>;
     disabled?: boolean;
     readOnly?: boolean;
-    setUploadItems: React.Dispatch<React.SetStateAction<GalleryFileType[] | undefined>>;
-    uploadItems?: GalleryFileType[];
+    setUploadedList: React.Dispatch<React.SetStateAction<GalleryFileType[] | undefined>>;
+    uploadedList?: GalleryFileType[];
 }
 
 function AdditionalDocument(props: Props) {
@@ -28,56 +28,33 @@ function AdditionalDocument(props: Props) {
         error: riskyError,
         disabled,
         readOnly,
-        uploadItems,
-        setUploadItems,
+        uploadedList,
+        setUploadedList,
     } = props;
 
     const error = getErrorObject(riskyError);
-    const [selectedDocument, setSelectedDocument] = useState<string | undefined>();
+    const [selectedDocument, setSelectedDocument] = useState<string>();
 
     const handleFileUploadSuccess = useCallback(
         (
-            val: GalleryFileType,
-            documentType: AssessmentRegistryDocumentTypeEnum,
-            externalLink?: string,
+            formFile: NonNullable<PartialFormType['additionalDocuments']>[number],
+            uploadedValue?: GalleryFileType,
         ) => {
-            if (isDefined(externalLink)) {
-                const newValue = {
-                    clientId: val.id,
-                    file: undefined,
-                    documentType,
-                    externalLink,
-                };
-
-                setFieldValue(
-                    (oldVal: PartialFormType['additionalDocuments']) => ([
-                        ...(oldVal ?? []),
-                        newValue,
-                    ]),
-                    'additionalDocuments',
-                );
-            } else {
-                const newValue = {
-                    clientId: val.id,
-                    file: val.id,
-                    documentType,
-                    externalLink,
-                };
-
-                setFieldValue(
-                    (oldVal: PartialFormType['additionalDocuments']) => ([
-                        ...(oldVal ?? []),
-                        newValue,
-                    ]),
-                    'additionalDocuments',
-                );
+            setFieldValue(
+                (oldVal: PartialFormType['additionalDocuments']) => ([
+                    ...(oldVal ?? []),
+                    formFile,
+                ]),
+                'additionalDocuments',
+            );
+            if (isDefined(uploadedValue)) {
+                setUploadedList((prev) => ([
+                    ...(prev ?? []),
+                    uploadedValue,
+                ]));
             }
-            setUploadItems((prev) => ([
-                ...(prev ?? []),
-                val,
-            ]));
         },
-        [setFieldValue, setUploadItems],
+        [setFieldValue, setUploadedList],
     );
 
     const handleFileRemove = useCallback(
@@ -98,15 +75,15 @@ function AdditionalDocument(props: Props) {
     ] = useMemo(() => {
         const dataset = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'ASSESSMENT_DATABASE',
-        ).filter(isDefined);
+        );
 
         const questionare = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'QUESTIONNAIRE',
-        ).filter(isDefined);
+        );
 
         const miscellaneous = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'MISCELLANEOUS',
-        ).filter(isDefined);
+        );
 
         return [
             dataset,
@@ -125,7 +102,6 @@ function AdditionalDocument(props: Props) {
     return (
         <div className={styles.additionalDocument}>
             <TextArea
-                labelContainerClassName={styles.labelContainer}
                 label="Executive Summary"
                 name="executiveSummary"
                 value={formValue.executiveSummary}
@@ -142,8 +118,8 @@ function AdditionalDocument(props: Props) {
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
                 acceptFileType=".pdf"
-                files={assessmentFiles}
-                uploadItems={uploadItems}
+                value={assessmentFiles}
+                uploadedList={uploadedList}
                 showLink
             />
             <FileUpload
@@ -153,8 +129,8 @@ function AdditionalDocument(props: Props) {
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
                 acceptFileType=".pdf"
-                files={questionareFiles}
-                uploadItems={uploadItems}
+                value={questionareFiles}
+                uploadedList={uploadedList}
             />
             <FileUpload
                 title="Miscellaneous"
@@ -162,15 +138,15 @@ function AdditionalDocument(props: Props) {
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
                 onChangeSelectedDocument={setSelectedDocument}
-                files={miscellaneousFiles}
-                uploadItems={uploadItems}
+                value={miscellaneousFiles}
+                uploadedList={uploadedList}
             />
             {selectedDocument && (
                 <Preview
                     link={linkSelected}
                     attachmentId={selectedDocument}
                     onChangeSelectedAttachment={setSelectedDocument}
-                    uploadItems={uploadItems}
+                    uploadedList={uploadedList}
                 />
             )}
         </div>
