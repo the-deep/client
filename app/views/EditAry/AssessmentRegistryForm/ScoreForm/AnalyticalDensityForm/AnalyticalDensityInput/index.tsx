@@ -15,11 +15,17 @@ import {
     getErrorString,
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
+import { EnumOptions } from '#types/common';
 import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
-import { AssessmentRegistrySectorTypeEnum, GetAnalyticalOptionsQuery } from '#generated/types';
+import {
+    AssessmentRegistrySectorTypeEnum,
+    GetAnalyticalOptionsQuery,
+    AssessmentRegistryAnalysisFigureTypeEnum,
+    AssessmentRegistryAnalysisLevelTypeEnum,
+} from '#generated/types';
 import { ScoreAnalyticalDensityType } from '../../../formSchema';
 
 import styles from './styles.css';
@@ -103,7 +109,9 @@ function AnalyticalDensityInput(props: Props) {
                     onChange={onScoreAnalyticalDensityChange}
                     name="analysisLevelCovered"
                     direction="vertical"
-                    options={analysisLevelCoveredOptions?.enumValues ?? undefined}
+                    options={(analysisLevelCoveredOptions?.enumValues as EnumOptions<
+                        AssessmentRegistryAnalysisLevelTypeEnum
+                    >) ?? undefined}
                     keySelector={enumKeySelector}
                     labelSelector={enumLabelSelector}
                     error={getErrorString(error?.analysisLevelCovered)}
@@ -131,7 +139,9 @@ function AnalyticalDensityInput(props: Props) {
                     onChange={onScoreAnalyticalDensityChange}
                     name="figureProvided"
                     direction="vertical"
-                    options={figureProvidedOptions?.enumValues ?? undefined}
+                    options={(figureProvidedOptions?.enumValues as EnumOptions<
+                        AssessmentRegistryAnalysisFigureTypeEnum
+                    >) ?? undefined}
                     keySelector={enumKeySelector}
                     labelSelector={enumLabelSelector}
                     error={getErrorString(error?.figureProvided)}

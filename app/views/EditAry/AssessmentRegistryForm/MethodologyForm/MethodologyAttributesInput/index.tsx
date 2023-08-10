@@ -13,8 +13,14 @@ import {
 import { _cs, randomString } from '@togglecorp/fujs';
 import { IoTrash } from 'react-icons/io5';
 
+import { EnumOptions } from '#types/common';
 import {
     GetAttributesOptionsQuery,
+    AssessmentRegistryDataCollectionTechniqueTypeEnum,
+    AssessmentRegistrySamplingApproachTypeEnum,
+    AssessmentRegistryProximityTypeEnum,
+    AssessmentRegistryUnitOfAnalysisTypeEnum,
+    AssessmentRegistryUnitOfReportingTypeEnum,
 } from '#generated/types';
 import {
     enumKeySelector,
@@ -74,7 +80,9 @@ function MethodologyAttributesInput(props: Props) {
                 label="Data collection technique"
                 placeholder="Select an option"
                 name="dataCollectionTechnique"
-                options={options?.dataCollectionTechniqueOptions?.enumValues}
+                options={options?.dataCollectionTechniqueOptions?.enumValues as EnumOptions<
+                    AssessmentRegistryDataCollectionTechniqueTypeEnum
+                >}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
@@ -100,7 +108,9 @@ function MethodologyAttributesInput(props: Props) {
                         label="Sampling approach"
                         placeholder="Select an option"
                         name="samplingApproach"
-                        options={options?.samplingApproach?.enumValues}
+                        options={options?.samplingApproach?.enumValues as EnumOptions<
+                            AssessmentRegistrySamplingApproachTypeEnum
+                        >}
                         keySelector={enumKeySelector}
                         labelSelector={enumLabelSelector}
                         onChange={onAttributeChange}
@@ -116,7 +126,9 @@ function MethodologyAttributesInput(props: Props) {
                 label="Proximity"
                 placeholder="Select an option"
                 name="proximity"
-                options={options?.proximity?.enumValues}
+                options={options?.proximity?.enumValues as EnumOptions<
+                    AssessmentRegistryProximityTypeEnum
+                >}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
@@ -130,7 +142,9 @@ function MethodologyAttributesInput(props: Props) {
                 label="Unit of analysis"
                 placeholder="Select an option"
                 name="unitOfAnalysis"
-                options={options?.unitOfAnanlysis?.enumValues}
+                options={options?.unitOfAnanlysis?.enumValues as EnumOptions<
+                    AssessmentRegistryUnitOfAnalysisTypeEnum
+                >}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}
@@ -144,7 +158,9 @@ function MethodologyAttributesInput(props: Props) {
                 label="Unit of reporting"
                 placeholder="Select an option"
                 name="unitOfReporting"
-                options={options?.unitOfReporting?.enumValues}
+                options={options?.unitOfReporting?.enumValues as EnumOptions<
+                    AssessmentRegistryUnitOfReportingTypeEnum
+                >}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 onChange={onAttributeChange}

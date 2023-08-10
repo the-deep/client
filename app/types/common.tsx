@@ -26,3 +26,5 @@ export interface EnumEntity<T> {
     name: T;
     description?: string | null;
 }
+
+export type EnumOptions<T> = EnumEntity<T>[] | null | undefined;
