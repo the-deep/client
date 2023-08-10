@@ -73,8 +73,11 @@ function AryFileUpload(props: Props) {
                     );
                 }
             },
-            onError: (err) => {
-                console.log(err);
+            onError: () => {
+                alert.show(
+                    'Failed to upload file.',
+                    { variant: 'error' },
+                );
             },
         },
     );
@@ -100,21 +103,20 @@ function AryFileUpload(props: Props) {
     );
 
     return (
-        <form encType="multipart/form-data">
-            <FileInput
-                className={styles.fileInput}
-                name={undefined}
-                value={null}
-                onChange={handleFileInputChange}
-                status={undefined}
-                overrideStatus
-                maxFileSize={100}
-                accept={acceptFileType}
-                disabled={loading}
-            >
-                <IoCloudUpload />
-            </FileInput>
-        </form>
+        <FileInput
+            className={styles.fileInput}
+            name={undefined}
+            value={null}
+            onChange={handleFileInputChange}
+            inputSectionClassName={styles.inputSection}
+            status={undefined}
+            overrideStatus
+            maxFileSize={100}
+            accept={acceptFileType}
+            disabled={loading}
+        >
+            <IoCloudUpload />
+        </FileInput>
     );
 }
 

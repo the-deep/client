@@ -3,18 +3,8 @@
     flex-direction: column;
     flex-grow: 1;
 
-    .upload-header {
+    .link-input {
         display: flex;
-        justify-content: space-between;
-
-        .link-content {
-            display: flex;
-            gap: var(--dui-spacing-extra-large);
-
-            .link-input {
-                display: flex;
-            }
-        }
     }
 
     .files {
@@ -32,14 +22,6 @@
             display: flex;
             background-color: var(--dui-color-deep6);
             padding: var(--dui-spacing-small) 0;
-        }
-
-        .empty-message {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--dui-color-input-placeholder);
         }
     }
 }

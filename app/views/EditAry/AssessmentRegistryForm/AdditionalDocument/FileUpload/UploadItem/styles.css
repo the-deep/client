@@ -19,3 +19,14 @@
         display: flex;
     }
 }
+
+.modal {
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+
+        .lead-preview {
+            flex-grow: 1;
+        }
+    }
+}

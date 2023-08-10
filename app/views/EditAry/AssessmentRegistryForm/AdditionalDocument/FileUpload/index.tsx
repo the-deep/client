@@ -1,5 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { Button, List, TextInput } from '@the-deep/deep-ui';
+import {
+    Button,
+    Header,
+    ListView,
+    TextInput,
+} from '@the-deep/deep-ui';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { isValidUrl, randomString } from '@togglecorp/fujs';
 
@@ -19,11 +24,10 @@ interface Props {
     acceptFileType?: '.pdf' | 'image/*';
     onSuccess: (
         v: PartialAdditionalDocument,
-        uploadedFile: GalleryFileType | undefined,
+        uploadedFile?: GalleryFileType,
     ) => void;
     handleFileRemove: (key: string) => void;
-    onChangeSelectedDocument: (key: string) => void;
-    showLink?: boolean;
+    supportLinkAddition?: boolean;
     value?: PartialAdditionalDocument[];
     uploadedList?: GalleryFileType[];
 }
@@ -35,8 +39,7 @@ function FileUpload(props: Props) {
         acceptFileType,
         title,
         handleFileRemove,
-        onChangeSelectedDocument,
-        showLink,
+        supportLinkAddition,
         value,
         uploadedList,
     } = props;
@@ -48,9 +51,8 @@ function FileUpload(props: Props) {
         (_: string, data: PartialAdditionalDocument) => ({
             data,
             onRemoveFile: handleFileRemove,
-            onChangeSelectedDocument,
             uploadedList,
-        }), [handleFileRemove, onChangeSelectedDocument, uploadedList],
+        }), [handleFileRemove, uploadedList],
     );
 
     const handleExternalLinkAdd = useCallback(() => {
@@ -62,10 +64,10 @@ function FileUpload(props: Props) {
 
         onSuccess({
             clientId: randomString(),
-            file: randomString(),
+            file: undefined,
             documentType: name,
             externalLink,
-        }, undefined);
+        });
         setExternalLink(undefined);
     }, [
         name,
@@ -77,7 +79,7 @@ function FileUpload(props: Props) {
     const handleUploadAttachment = useCallback(
         (file: GalleryFileType) => {
             onSuccess({
-                clientId: file.id,
+                clientId: randomString(),
                 file: file.id,
                 documentType: name,
                 externalLink: '',
@@ -87,45 +89,51 @@ function FileUpload(props: Props) {
 
     return (
         <div className={styles.uploadPane}>
-            <div className={styles.uploadHeader}>
-                <div className={styles.linkContent}>
-                    {title}
-                    {showLink && (
-                        <div className={styles.linkInput}>
-                            <TextInput
-                                placeholder="External Link"
-                                name="externalLink"
-                                value={externalLink}
-                                onChange={setExternalLink}
-                                error={urlError}
-                            />
-                            <Button
-                                variant="transparent"
-                                name={name}
-                                onClick={handleExternalLinkAdd}
-                            >
-                                <IoAddCircleOutline />
-                            </Button>
-                        </div>
-                    )}
-                </div>
-                <AryFileUpload
-                    acceptFileType={acceptFileType}
-                    onSuccess={handleUploadAttachment}
-                />
-            </div>
-            <div className={styles.files}>
-                {(value?.length === 0) && (
-                    <div className={styles.emptyMessage}>Upload value here</div>
+            <Header
+                heading={title}
+                headingSize="extraSmall"
+                actions={(
+                    <>
+                        {supportLinkAddition && (
+                            <div className={styles.linkInput}>
+                                <TextInput
+                                    placeholder="External Link"
+                                    name="externalLink"
+                                    value={externalLink}
+                                    onChange={setExternalLink}
+                                    error={urlError}
+                                />
+                                <Button
+                                    variant="transparent"
+                                    name={name}
+                                    onClick={handleExternalLinkAdd}
+                                >
+                                    <IoAddCircleOutline />
+                                </Button>
+                            </div>
+                        )}
+                        <AryFileUpload
+                            acceptFileType={acceptFileType}
+                            onSuccess={handleUploadAttachment}
+                        />
+                    </>
                 )}
-                <List
-                    data={value}
-                    rendererClassName={styles.fileItem}
-                    renderer={UploadItem}
-                    keySelector={fileKeySelector}
-                    rendererParams={fileRendererParams}
-                />
-            </div>
+                inlineHeadingDescription
+            />
+            <ListView
+                className={styles.files}
+                data={value}
+                rendererClassName={styles.fileItem}
+                renderer={UploadItem}
+                keySelector={fileKeySelector}
+                rendererParams={fileRendererParams}
+                emptyMessage="You haven't uploaded anything yet."
+                filtered={false}
+                pending={false}
+                errored={false}
+                messageShown
+                messageIconShown
+            />
         </div>
     );
 }
