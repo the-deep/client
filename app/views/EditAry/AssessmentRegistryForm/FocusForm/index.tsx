@@ -9,9 +9,17 @@ import {
 } from '@togglecorp/toggle-form';
 
 import { enumKeySelector, enumLabelSelector } from '#utils/common';
-import { GetFocusOptionsQuery, GetFocusOptionsQueryVariables } from '#generated/types';
+import { EnumOptions } from '#types/common';
 import GeoLocationInput from '#components/GeoLocationInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
+import {
+    GetFocusOptionsQuery,
+    GetFocusOptionsQueryVariables,
+    AssessmentRegistryFocusTypeEnum,
+    AssessmentRegistrySectorTypeEnum,
+    AssessmentRegistryProtectionInfoTypeEnum,
+    AssessmentRegistryAffectedGroupTypeEnum,
+} from '#generated/types';
 
 import { PartialFormType } from '../formSchema';
 import Header from '../Header';
@@ -77,23 +85,27 @@ function FocusForm(props: Props) {
         protectionOptions,
         affectedOptions,
     ] = useMemo(() => ([
-        data?.frameworkOptions?.enumValues ?? undefined,
-        data?.sectorOptions?.enumValues ?? undefined,
-        data?.protectionOptions?.enumValues ?? undefined,
-        data?.affectedGroupOptions?.enumValues ?? undefined,
+        data?.frameworkOptions?.enumValues as EnumOptions<AssessmentRegistryFocusTypeEnum>,
+        data?.sectorOptions?.enumValues as EnumOptions<AssessmentRegistrySectorTypeEnum>,
+        data?.protectionOptions?.enumValues as EnumOptions<
+            AssessmentRegistryProtectionInfoTypeEnum
+        >,
+        data?.affectedGroupOptions?.enumValues as EnumOptions<
+            AssessmentRegistryAffectedGroupTypeEnum
+        >,
     ]), [data]);
 
     return (
         <div className={styles.focus}>
             <CheckListInput
                 listContainerClassName={styles.inputContainer}
-                label={(<Header title="Framewok Pillars" />)}
+                label={(<Header title="Framework Pillars" />)}
                 name="focuses"
                 direction="vertical"
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 value={value.focuses}
-                options={frameworkOptions}
+                options={frameworkOptions ?? undefined}
                 onChange={setFieldValue}
                 disabled={pending}
                 error={getErrorString(error?.focuses)}
@@ -107,7 +119,7 @@ function FocusForm(props: Props) {
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 value={value.sectors}
-                options={sectorOptions}
+                options={sectorOptions ?? undefined}
                 onChange={setFieldValue}
                 disabled={pending}
                 error={getErrorString(error?.sectors)}
@@ -120,7 +132,7 @@ function FocusForm(props: Props) {
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 value={value.protectionInfoMgmts}
-                options={protectionOptions}
+                options={protectionOptions ?? undefined}
                 onChange={setFieldValue}
                 disabled={pending || !value.sectors?.some((sector) => sector === 'PROTECTION')}
                 error={getErrorString(error?.protectionInfoMgmts)}
@@ -137,7 +149,7 @@ function FocusForm(props: Props) {
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 value={value.affectedGroups}
-                options={affectedOptions}
+                options={affectedOptions ?? undefined}
                 onChange={setFieldValue}
                 disabled={pending}
                 error={getErrorString(error?.affectedGroups)}

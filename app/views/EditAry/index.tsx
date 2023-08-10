@@ -422,6 +422,7 @@ function EditAry(props: Props) {
                             file: doc.file?.id,
                         })),
                         scoreRatings: result.scoreRatings.map((rating) => ({
+                            id: rating.id,
                             clientId: rating.clientId,
                             rating: rating.rating,
                             reason: rating.reason,

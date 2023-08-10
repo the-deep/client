@@ -14,19 +14,12 @@ import {
 } from '#generated/types';
 import {
     DeepMandatory,
-    EnumFix,
 } from '#utils/types';
 
 export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
 type AssessmentRegistryType = DeepMandatory<PurgeNull<AssessmentRegistryCreateInputType>, 'clientId'>;
 
-export type PartialFormType = PartialForm<EnumFix<AssessmentRegistryType,
-    'bgCrisisType' | 'bgPreparedness' | 'externalSupport' | 'coordinatedJoint'
-    | 'detailsType' | 'family' | 'frequency' | 'confidentiality' | 'language'
-    | 'affectedGroups' | 'sectors' | 'protectionInfoMgmts' | 'focuses'
-    | 'dataCollectionTechnique' | 'samplingApproach' | 'proximity' | 'unitOfAnalysis' | 'unitOfReporting'
-    | 'figureProvided' | 'analysisLevelCovered'
->, 'clientId' | 'question' | 'sector'>;
+export type PartialFormType = PartialForm<AssessmentRegistryType, 'clientId' | 'question' | 'sector'>;
 
 export type PartialAdditionalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
