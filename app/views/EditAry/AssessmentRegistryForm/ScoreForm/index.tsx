@@ -1,6 +1,7 @@
 import React, {
     useState,
     useMemo,
+    useCallback,
 } from 'react';
 import {
     Tab,
@@ -8,6 +9,8 @@ import {
     TabPanel,
     Tabs,
     KeyFigure,
+    KeyFigureProps,
+    ListView,
 } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
@@ -70,6 +73,14 @@ const GET_QUALITY_SCORE_LIST = gql`
     }
 `;
 
+interface ScoreStatsValue {
+    key: string;
+    label: string;
+    score: number;
+}
+
+const keySelector = (d: ScoreStatsValue) => d.key;
+
 interface Props {
     projectId: string;
     value: PartialFormType,
@@ -101,11 +112,6 @@ function ScoreForm(props: Props) {
     );
 
     const scoreOptions = qualityScoreList?.project?.assessmentRegistryOptions?.scoreOptions;
-    const scoreToScoreGroupMap = listToMap(
-        scoreOptions,
-        (k) => k.scoreCriteria,
-        (d) => d.analyticalStatement,
-    );
 
     const scoreStatsValue = useMemo(() => {
         // NOTE: Analytical Density Value
@@ -122,6 +128,12 @@ function ScoreForm(props: Props) {
             label: 'Analytical density',
             score: median(sectorWiseDensityValue ?? []) ?? 0,
         };
+
+        const scoreToScoreGroupMap = listToMap(
+            scoreOptions,
+            (k) => k.scoreCriteria,
+            (d) => d.analyticalStatement,
+        );
 
         // TODO: Replace string to enum
         interface Accumulator {
@@ -169,7 +181,7 @@ function ScoreForm(props: Props) {
             {},
         );
 
-        const scoreGroupScores = Object.values(scoreStatsList ?? []).sort(
+        const scoreGroupScores = [...Object.values(scoreStatsList ?? [])].sort(
             (a, b) => (compareString(a.label, b.label)),
         );
 
@@ -186,22 +198,29 @@ function ScoreForm(props: Props) {
         ];
     }, [
         scoreOptions,
-        scoreToScoreGroupMap,
         value.scoreRatings,
         value.scoreAnalyticalDensity,
     ]);
 
+    const scoreStatsValueParams = useCallback(
+        (_, data: ScoreStatsValue): KeyFigureProps => ({
+            label: data.label,
+            value: data.score,
+        }), [],
+    );
+
     return (
         <div className={styles.scoreForm}>
-            <div className={styles.scores}>
-                {scoreStatsValue.map((stats) => (
-                    <KeyFigure
-                        key={stats.key}
-                        label={stats.label}
-                        value={stats.score}
-                    />
-                ))}
-            </div>
+            <ListView
+                className={styles.scores}
+                data={scoreStatsValue}
+                keySelector={keySelector}
+                renderer={KeyFigure}
+                rendererParams={scoreStatsValueParams}
+                pending={false}
+                filtered={false}
+                errored={false}
+            />
             <Tabs
                 value={activeTab}
                 onChange={setActiveTab}
