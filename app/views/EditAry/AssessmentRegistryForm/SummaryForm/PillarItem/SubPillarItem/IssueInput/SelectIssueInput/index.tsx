@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { SelectInput, TextInput } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
 import { SubPillarIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
@@ -31,7 +31,7 @@ function SelectIssueInput(props: Props) {
         labelSelector,
     } = props;
 
-    const [issueValue, setIssueValue] = useState<SubPillarIssueInputType>({
+    const [issue, setIssue] = useState<SubPillarIssueInputType>({
         issueId: '',
         text: undefined,
         name: '',
@@ -40,7 +40,7 @@ function SelectIssueInput(props: Props) {
 
     const handleInputChange = useCallback(
         (fieldValue, fieldName: string) => {
-            setIssueValue(() => {
+            setIssue(() => {
                 if (fieldName === 'issueId') {
                     return {
                         name,
@@ -59,10 +59,9 @@ function SelectIssueInput(props: Props) {
                 }
                 return value;
             });
-        }, [setIssueValue, name, value],
+            onChangeIssue(issue);
+        }, [setIssue, issue, name, value, onChangeIssue],
     );
-
-    useEffect(() => onChangeIssue(issueValue), [onChangeIssue, issueValue]);
 
     return (
         <>
