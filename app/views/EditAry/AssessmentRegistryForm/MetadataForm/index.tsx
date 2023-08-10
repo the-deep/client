@@ -15,14 +15,24 @@ import {
 } from '@togglecorp/toggle-form';
 
 import { enumKeySelector, enumLabelSelector } from '#utils/common';
-import {
-    GetOptionsQuery,
-    GetOptionsQueryVariables,
-} from '#generated/types';
 import RegionMultiSelectInput, {
     BasicRegion,
 } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
+import { EnumOptions } from '#types/common';
+import {
+    GetOptionsQuery,
+    GetOptionsQueryVariables,
+    AssessmentRegistryCrisisTypeEnum,
+    AssessmentRegistryPreparednessTypeEnum,
+    AssessmentRegistryExternalTypeEnum,
+    AssessmentRegistryCoordinationTypeEnum,
+    AssessmentRegistryDetailTypeEnum,
+    AssessmentRegistryFamilyTypeEnum,
+    AssessmentRegistryFrequencyTypeEnum,
+    AssessmentRegistryConfidentialityTypeEnum,
+    AssessmentRegistryLanguageTypeEnum,
+} from '#generated/types';
 
 import { PartialFormType } from '../formSchema';
 import Header from '../Header';
@@ -130,15 +140,21 @@ function MetadataForm(props: Props) {
         confidentialityOptions,
         languageOptions,
     ] = useMemo(() => ([
-        data?.crisisOptions?.enumValues,
-        data?.preparednessOptions?.enumValues,
-        data?.externalOptions?.enumValues,
-        data?.coordinationJointOptions?.enumValues,
-        data?.detailOptions?.enumValues,
-        data?.familyOptions?.enumValues,
-        data?.frequencyOptions?.enumValues,
-        data?.confidentialityOptions?.enumValues,
-        data?.languageOptions?.enumValues,
+        data?.crisisOptions?.enumValues as EnumOptions<AssessmentRegistryCrisisTypeEnum>,
+        data?.preparednessOptions?.enumValues as EnumOptions<
+            AssessmentRegistryPreparednessTypeEnum
+        >,
+        data?.externalOptions?.enumValues as EnumOptions<AssessmentRegistryExternalTypeEnum>,
+        data?.coordinationJointOptions?.enumValues as EnumOptions<
+            AssessmentRegistryCoordinationTypeEnum
+        >,
+        data?.detailOptions?.enumValues as EnumOptions<AssessmentRegistryDetailTypeEnum>,
+        data?.familyOptions?.enumValues as EnumOptions<AssessmentRegistryFamilyTypeEnum>,
+        data?.frequencyOptions?.enumValues as EnumOptions<AssessmentRegistryFrequencyTypeEnum>,
+        data?.confidentialityOptions?.enumValues as EnumOptions<
+            AssessmentRegistryConfidentialityTypeEnum
+        >,
+        data?.languageOptions?.enumValues as EnumOptions<AssessmentRegistryLanguageTypeEnum>,
     ]), [data]);
 
     return (
