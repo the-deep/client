@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { EntriesAsList, Error } from '@togglecorp/toggle-form';
-import { noOp } from '@togglecorp/fujs';
+import { isTruthyString, noOp } from '@togglecorp/fujs';
 import { ExpandableContainer, List, NumberInput } from '@the-deep/deep-ui';
 
 import SubPillarItem from './SubPillarItem';
@@ -11,10 +11,10 @@ import styles from './styles.css';
 
 interface Props {
     data: PillarType;
-    value: SubPillarIssueInputType[];
-    onValueChange: (data: SubPillarIssueInputType) => void;
+    issueList: SubPillarIssueInputType[];
+    setIssueList: React.Dispatch<React.SetStateAction<SubPillarIssueInputType[]>>;
     disabled?: boolean;
-    formValue: PartialFormType;
+    value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>;
 }
@@ -25,22 +25,36 @@ function PillarItem(props: Props) {
     // TODO: need to change in server for meta data
     const {
         data,
-        value,
-        onValueChange,
+        issueList,
+        setIssueList,
         disabled,
-        formValue,
+        value,
         setFieldValue,
         error,
     } = props;
 
+    const handleIssueAdd = useCallback(
+        (issues: SubPillarIssueInputType[]) => {
+            setFieldValue(() => {
+                const val = issues?.map((issueItem) => ({
+                    summaryIssue: issueItem.issueId,
+                    order: Number(issueItem.order),
+                    text: issueItem?.text ?? '',
+                })).filter((item) => isTruthyString(item.summaryIssue));
+                return [val].flat();
+            }, 'summarySubPillarIssue');
+        }, [setFieldValue],
+    );
+
     const issuesParams = useCallback(
         (name: string) => ({
-            subPillarName: name,
-            value,
-            onValueChange,
+            name,
+            issueList,
+            setIssueList,
             disabled,
+            onSuccessIssueAdd: handleIssueAdd,
         }),
-        [value, onValueChange, disabled],
+        [issueList, setIssueList, disabled, handleIssueAdd],
     );
 
     const headerActions = useMemo(
@@ -50,10 +64,10 @@ function PillarItem(props: Props) {
                     <NumberInput
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        name="totalDeath"
                         placeholder="Total people assessed"
-                        value={undefined}
+                        name="totalDead"
                         onChange={noOp}
+                        value={undefined}
                         disabled={disabled}
                     />
                 )}

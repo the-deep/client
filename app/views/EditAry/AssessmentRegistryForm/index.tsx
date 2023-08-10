@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import {
     Tab,
     TabList,
@@ -9,7 +9,7 @@ import {
     EntriesAsList,
     Error,
 } from '@togglecorp/toggle-form';
-import { _cs, isTruthyString } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
@@ -165,31 +165,18 @@ function AssessmentRegistryForm(props: Props) {
         )
     ), [error]);
 
-    const handleIssueSelect = useCallback(
-        (issueVal: SubPillarIssueInputType) => {
-            setIssueList(
-                (prev) => {
-                    const filteredIssues = prev.filter(
-                        (item) => item.name !== issueVal.name,
-                    );
-                    return [...filteredIssues, issueVal];
-                },
-            );
-        }, [setIssueList],
-    );
-
-    useEffect(
-        () => {
-            setFieldValue(() => {
-                const val = issueList?.map((issueItem) => ({
-                    summaryIssue: issueItem.issueId,
-                    order: Number(issueItem.order),
-                    text: issueItem?.text ?? '',
-                })).filter((item) => isTruthyString(item.summaryIssue));
-                return [val].flat();
-            }, 'summarySubPillarIssue');
-        }, [setFieldValue, issueList],
-    );
+    // useEffect(
+    //     () => {
+    //         setFieldValue(() => {
+    //             const val = issueList?.map((issueItem) => ({
+    //                 summaryIssue: issueItem.issueId,
+    //                 order: Number(issueItem.order),
+    //                 text: issueItem?.text ?? '',
+    //             })).filter((item) => isTruthyString(item.summaryIssue));
+    //             return [val].flat();
+    //         }, 'summarySubPillarIssue');
+    //     }, [setFieldValue, issueList],
+    // );
 
     return (
         <div className={_cs(styles.assessmentRegistryForm, className)}>
@@ -317,10 +304,10 @@ function AssessmentRegistryForm(props: Props) {
                     activeClassName={styles.tabPanel}
                 >
                     <SummaryForm
-                        onValueChange={handleIssueSelect}
-                        value={issueList}
+                        setIssueList={setIssueList}
+                        issueList={issueList}
                         projectId={projectId}
-                        formValue={value}
+                        value={value}
                         setFieldValue={setFieldValue}
                         error={error}
                     />

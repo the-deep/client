@@ -19,32 +19,34 @@ const GET_SUBPILLAR_ISSUES = gql`
             results {
                 id
                 label
-                subDimmension
-                subDimmensionDisplay
+                subPillar
+                subPillarDisplay
             }
         }
     }
 `;
 
 interface Props {
-    subPillarName: string;
-    value: SubPillarIssueInputType[];
-    onValueChange: (data: SubPillarIssueInputType) => void;
+    name: string;
+    issueList: SubPillarIssueInputType[];
+    setIssueList: React.Dispatch<React.SetStateAction<SubPillarIssueInputType[]>>;
+    onSuccessIssueAdd: (issue: SubPillarIssueInputType[]) => void;
     disabled?: boolean;
 }
 
 function SubPillarItem(props: Props) {
     const {
-        subPillarName,
-        value,
-        onValueChange,
+        name,
+        issueList,
+        setIssueList,
+        onSuccessIssueAdd,
         disabled,
     } = props;
 
     const variablesForSubPillarIssues = useMemo(
         (): GetSubPillarIssuesQueryVariables => ({
-            subPillar: subPillarName as AssessmentRegistrySummarySubPillarTypeEnum,
-        }), [subPillarName],
+            subPillar: name as AssessmentRegistrySummarySubPillarTypeEnum,
+        }), [name],
     );
 
     const {
@@ -52,19 +54,20 @@ function SubPillarItem(props: Props) {
         data: result,
     } = useQuery<GetSubPillarIssuesQuery, GetSubPillarIssuesQueryVariables>(
         GET_SUBPILLAR_ISSUES, {
-            skip: isNotDefined(subPillarName),
+            skip: isNotDefined(name),
             variables: variablesForSubPillarIssues,
         },
     );
 
     return (
         <div className={styles.subPillarItem}>
-            { subPillarName }
+            { name }
             <IssueInput
-                name={subPillarName}
-                options={result?.issues?.results}
-                value={value}
-                onValueChange={onValueChange}
+                name={name}
+                options={result?.assessmentRegSummaryIssues?.results}
+                value={issueList}
+                setValue={setIssueList}
+                onSuccessIssueAdd={onSuccessIssueAdd}
                 disabled={disabled || loading}
             />
         </div>
