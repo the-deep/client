@@ -1,4 +1,8 @@
-import React, { useMemo } from 'react';
+import React,
+{
+    useCallback,
+    useMemo,
+} from 'react';
 
 import {
     gql,
@@ -10,7 +14,13 @@ import {
     useFormArray,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { isDefined, isNotDefined, listToMap } from '@togglecorp/fujs';
+import {
+    ListView,
+} from '@the-deep/deep-ui';
+import {
+    isDefined,
+    listToMap,
+} from '@togglecorp/fujs';
 
 import {
     AssessmentRegistrySectorTypeEnum,
@@ -22,15 +32,13 @@ import {
     PartialFormType,
     ScoreAnalyticalDensityType,
 } from '../../formSchema';
-import AnalyticalDensityInput from './AnalyticalDensityInput';
+import AnalyticalDensityInput,
+{
+    Props as AnalyticalDensityInputProps,
+} from './AnalyticalDensityInput';
 
 import styles from './styles.css';
 
-interface Props {
-    value: PartialFormType,
-    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    error: Error<PartialFormType>
-}
 const GET_ANALYTICAL_OPTIONS = gql`
     query GetAnalyticalOptions {
         sectorsOptions: __type(name: "AssessmentRegistrySectorTypeEnum") {
@@ -53,6 +61,15 @@ const GET_ANALYTICAL_OPTIONS = gql`
         }
     }
 `;
+type SectorType = NonNullable<PartialFormType['sectors']>[number];
+
+const keySelector = (d: SectorType) => d;
+
+interface Props {
+    value: PartialFormType,
+    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    error: Error<PartialFormType>
+}
 
 function AnalyticalDensityForm(props: Props) {
     const {
@@ -80,6 +97,7 @@ function AnalyticalDensityForm(props: Props) {
         riskyError,
     );
 
+    const sectorsValue = value.sectors;
     const analyticalDensityValue = value.scoreAnalyticalDensity;
     const analyticalDensityError = getErrorObject(error?.scoreAnalyticalDensity);
 
@@ -95,44 +113,54 @@ function AnalyticalDensityForm(props: Props) {
         (_, __, index) => index,
     ), [analyticalDensityValue]);
 
-    if (isNotDefined(value.sectors) || value.sectors.length <= 0) {
-        return (
-            <div>
-                Please select Sector from Focus tab
-            </div>
-        );
-    }
+    const analyticalInputParams = useCallback(
+        (_, data: SectorType): AnalyticalDensityInputProps => {
+            const analyticalIndex = analyticalDensityValueIndex?.[
+                data as AssessmentRegistrySectorTypeEnum
+            ];
+            const analyticalValue = isDefined(analyticalIndex)
+                ? analyticalDensityValue?.[analyticalIndex]
+                : undefined;
+            const selectedClientId = isDefined(analyticalIndex)
+                ? analyticalDensityValue?.[analyticalIndex].clientId : undefined;
+            const analyticalError = isDefined(selectedClientId)
+                ? analyticalDensityError?.[selectedClientId]
+                : undefined;
+
+            return {
+                name: analyticalIndex,
+                description: sectorNameMapping?.[data] ?? data,
+                options,
+                onChange: setAnalyticalScore,
+                sector: data,
+                value: analyticalValue,
+                error: analyticalError,
+            };
+        },
+        [
+            sectorNameMapping,
+            analyticalDensityValueIndex,
+            analyticalDensityValue,
+            analyticalDensityError,
+            options,
+            setAnalyticalScore,
+        ],
+    );
 
     return (
-        <div
+        <ListView
             className={styles.analyticalDensityForm}
-        >
-            {value.sectors?.map((sector) => {
-                const analyticalIndex = analyticalDensityValueIndex?.[
-                    sector as AssessmentRegistrySectorTypeEnum
-                ];
-                const analyticalValue = isDefined(analyticalIndex)
-                    ? analyticalDensityValue?.[analyticalIndex]
-                    : undefined;
-                const selectedClientId = isDefined(analyticalIndex)
-                    ? analyticalDensityValue?.[analyticalIndex].clientId : undefined;
-                const analyticalError = isDefined(selectedClientId)
-                    ? analyticalDensityError?.[selectedClientId]
-                    : undefined;
-                return (
-                    <AnalyticalDensityInput
-                        key={sector}
-                        name={analyticalIndex}
-                        description={sectorNameMapping?.[sector] ?? sector}
-                        options={options}
-                        onChange={setAnalyticalScore}
-                        sector={sector}
-                        value={analyticalValue}
-                        error={analyticalError}
-                    />
-                );
-            })}
-        </div>
+            data={sectorsValue}
+            keySelector={keySelector}
+            renderer={AnalyticalDensityInput}
+            rendererParams={analyticalInputParams}
+            emptyMessage="Please select sector from Focus tab"
+            messageShown
+            messageIconShown
+            pending={false}
+            filtered={false}
+            errored={false}
+        />
     );
 }
 

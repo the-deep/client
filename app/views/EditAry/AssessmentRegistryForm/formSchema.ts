@@ -106,8 +106,8 @@ export const schema: FormSchema = {
                 member: (): ScoreRatingsFormSchemaMember => ({
                     fields: (): ScoreRatingsSchemaFields => ({
                         clientId: [requiredCondition],
-                        rating: [requiredCondition],
-                        reason: [requiredCondition],
+                        rating: [],
+                        reason: [],
                         scoreType: [],
                     }),
                 }),
@@ -117,8 +117,8 @@ export const schema: FormSchema = {
                 member: (): ScoreAnalyticalDensityFormSchemaMember => ({
                     fields: (): ScoreAnalyticalDensitySchemaFields => ({
                         clientId: [requiredCondition],
-                        analysisLevelCovered: [requiredCondition],
-                        figureProvided: [requiredCondition],
+                        analysisLevelCovered: [],
+                        figureProvided: [],
                         sector: [],
                     }),
                 }),

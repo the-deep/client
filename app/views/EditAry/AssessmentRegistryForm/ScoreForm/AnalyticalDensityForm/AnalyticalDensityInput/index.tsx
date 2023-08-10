@@ -1,8 +1,4 @@
-import React,
-{
-    useMemo,
-}
-    from 'react';
+import React from 'react';
 import {
     CheckListInput,
     ContainerCard,
@@ -30,7 +26,7 @@ import { ScoreAnalyticalDensityType } from '../../../formSchema';
 
 import styles from './styles.css';
 
-interface Props {
+export interface Props {
     name: number | undefined;
     sector: string | undefined;
     description: string | null | undefined;
@@ -67,10 +63,10 @@ function AnalyticalDensityInput(props: Props) {
     const [
         analysisLevelCoveredOptions,
         figureProvidedOptions,
-    ] = useMemo(() => ([
+    ] = [
         options?.analysisLevelCoveredOptions,
         options?.figureProvidedOptions,
-    ]), [options]);
+    ];
 
     return (
         <ContainerCard
