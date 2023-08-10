@@ -24,6 +24,7 @@ import {
     AssessmentListQuery,
     AssessmentListQueryVariables,
 } from '#generated/types';
+import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import ActionCell, { Props as ActionCellProps } from './ActionCell';
 
 import AssessmentFilterForm from './AssessmentFilterForm';
@@ -48,18 +49,25 @@ const ASSESSMENT_LIST = gql`
                 page: $page,
                 pageSize: $pageSize,
             ) {
+                totalCount
                 results {
                     id
-                    lead {
-                        id
-                        title
-                    }
+                    clientId
+                    publicationDate
+                    detailsTypeDisplay
                     createdAt
                     createdBy {
                         displayName
                     }
+                    lead {
+                        title
+                        id
+                        authors {
+                            title
+                            id
+                        }
+                    }
                 }
-                totalCount
             }
         }
     }
@@ -111,6 +119,8 @@ function Assessments(props: Props) {
         },
     );
 
+    console.log('previous', data?.project?.assessmentRegistries?.results);
+
     const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
     const columns = useMemo(() => {
@@ -140,17 +150,32 @@ function Assessments(props: Props) {
                 (item) => item.lead.title,
             ),
             createStringColumn<Assessment, string>(
+                'author',
+                'Author',
+                (item) => item.lead.authors?.map(organizationTitleSelector).join(', '),
+                {
+                    sortable: false,
+                },
+            ),
+            createDateColumn<Assessment, string>(
+                'publication_date',
+                'Publication date',
+                (item) => item?.publicationDate ?? '',
+            ),
+            createDateColumn<Assessment, string>(
+                'created_at',
+                'Creation date',
+                (item) => item?.createdAt,
+            ),
+            createStringColumn<Assessment, string>(
                 'created_by',
                 'Created By',
                 (item) => item?.createdBy?.displayName,
             ),
-            createDateColumn<Assessment, string>(
-                'created_at',
-                'Created At',
-                (item) => item?.createdAt,
-                {
-                    columnWidth: 116,
-                },
+            createStringColumn<Assessment, string>(
+                'assessment_type',
+                'Assessment type',
+                (item) => item?.detailsTypeDisplay,
             ),
             actionColumn,
         ]);
