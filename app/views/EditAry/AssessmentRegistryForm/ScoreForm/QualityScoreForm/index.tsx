@@ -1,4 +1,8 @@
-import React, { useCallback } from 'react';
+import React,
+{
+    useCallback,
+    useMemo,
+} from 'react';
 import { ListView } from '@the-deep/deep-ui';
 import {
     listToMap,
@@ -61,12 +65,11 @@ function QualityScoreForm(props: Props) {
 
     const scoreValue = value.scoreRatings;
     const scoreError = getErrorObject(error?.scoreRatings);
-    const scoreValueIndex = listToMap(
+    const scoreValueIndex = useMemo(() => listToMap(
         scoreValue,
         (k) => k.scoreType ?? '',
         (_, __, index) => index,
-    );
-
+    ), [scoreValue]);
     const scoreInputParams = useCallback(
         (_, data: ScoreOptions): QualityScoreInputProps => {
             const scoreIndex = scoreValueIndex?.[data.scoreCriteria];
@@ -103,22 +106,20 @@ function QualityScoreForm(props: Props) {
     );
 
     return (
-        <div className={styles.qualityScoreForm}>
-            <ListView
-                className={styles.qualityScoreContent}
-                data={scoreOptions}
-                keySelector={keySelector}
-                renderer={QualityScoreInput}
-                rendererParams={scoreInputParams}
-                grouped
-                groupRenderer={ScoreHeading}
-                groupRendererParams={groupScoreInputParams}
-                groupKeySelector={groupKeySelector}
-                pending={false}
-                filtered={false}
-                errored={false}
-            />
-        </div>
+        <ListView
+            className={styles.qualityScoreForm}
+            data={scoreOptions}
+            keySelector={keySelector}
+            renderer={QualityScoreInput}
+            rendererParams={scoreInputParams}
+            grouped
+            groupRenderer={ScoreHeading}
+            groupRendererParams={groupScoreInputParams}
+            groupKeySelector={groupKeySelector}
+            pending={false}
+            filtered={false}
+            errored={false}
+        />
     );
 }
 
