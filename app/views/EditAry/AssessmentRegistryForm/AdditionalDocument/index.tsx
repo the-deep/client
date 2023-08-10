@@ -1,13 +1,15 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { EntriesAsList, Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
-import { TextArea } from '@the-deep/deep-ui';
+import {
+    TextArea,
+    Heading,
+} from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
 
 import { GalleryFileType } from '#generated/types';
 
 import FileUpload from './FileUpload';
 import { PartialFormType } from '../formSchema';
-import Preview from './Preview';
 
 import styles from './styles.css';
 
@@ -33,7 +35,6 @@ function AdditionalDocument(props: Props) {
     } = props;
 
     const error = getErrorObject(riskyError);
-    const [selectedDocument, setSelectedDocument] = useState<string>();
 
     const handleFileUploadSuccess = useCallback(
         (
@@ -70,14 +71,14 @@ function AdditionalDocument(props: Props) {
 
     const [
         assessmentFiles,
-        questionareFiles,
+        questionnaireFiles,
         miscellaneousFiles,
     ] = useMemo(() => {
         const dataset = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'ASSESSMENT_DATABASE',
         );
 
-        const questionare = formValue.additionalDocuments?.filter(
+        const questionnaire = formValue.additionalDocuments?.filter(
             (val) => val.documentType === 'QUESTIONNAIRE',
         );
 
@@ -87,22 +88,15 @@ function AdditionalDocument(props: Props) {
 
         return [
             dataset,
-            questionare,
+            questionnaire,
             miscellaneous,
         ];
     }, [formValue]);
 
-    const linkSelected = useMemo(
-        () => formValue.additionalDocuments?.find(
-            (document) => document.clientId === selectedDocument,
-        )?.externalLink,
-        [formValue, selectedDocument],
-    );
-
     return (
         <div className={styles.additionalDocument}>
             <TextArea
-                label="Executive Summary"
+                label={<Heading size="extraSmall">Executive Summary</Heading>}
                 name="executiveSummary"
                 value={formValue.executiveSummary}
                 onChange={setFieldValue}
@@ -116,20 +110,18 @@ function AdditionalDocument(props: Props) {
                 name="ASSESSMENT_DATABASE"
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
-                onChangeSelectedDocument={setSelectedDocument}
                 acceptFileType=".pdf"
                 value={assessmentFiles}
                 uploadedList={uploadedList}
-                showLink
+                supportLinkAddition
             />
             <FileUpload
-                title="Questionare"
+                title="Questionnaire"
                 name="QUESTIONNAIRE"
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
-                onChangeSelectedDocument={setSelectedDocument}
                 acceptFileType=".pdf"
-                value={questionareFiles}
+                value={questionnaireFiles}
                 uploadedList={uploadedList}
             />
             <FileUpload
@@ -137,18 +129,9 @@ function AdditionalDocument(props: Props) {
                 name="MISCELLANEOUS"
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
-                onChangeSelectedDocument={setSelectedDocument}
                 value={miscellaneousFiles}
                 uploadedList={uploadedList}
             />
-            {selectedDocument && (
-                <Preview
-                    link={linkSelected}
-                    attachmentId={selectedDocument}
-                    onChangeSelectedAttachment={setSelectedDocument}
-                    uploadedList={uploadedList}
-                />
-            )}
         </div>
     );
 }

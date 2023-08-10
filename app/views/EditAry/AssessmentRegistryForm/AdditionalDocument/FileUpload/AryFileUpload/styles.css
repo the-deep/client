@@ -1,5 +1,8 @@
 .file-input {
-    display: flex;
-    border: none;
+    --gap: 0;
     --height-border: 0;
+
+    .input-section {
+        gap: 0;
+    }
 }
