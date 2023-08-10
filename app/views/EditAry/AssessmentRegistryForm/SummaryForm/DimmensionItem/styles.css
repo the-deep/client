@@ -1,0 +1,33 @@
+.pillar {
+    display: grid;
+    gap: var(--dui-spacing-large);
+    grid-auto-flow: column;
+    grid-template-columns: 1fr;
+    /* grid-template-columns: 3fr 1fr; */
+
+    .expandable-container {
+        gap: var(--dui-spacing-large);
+
+        .expandable-content {
+            display: grid;
+            grid-auto-flow: column;
+            gap: var(--dui-spacing-large);
+            padding: var(--dui-spacing-large) 0;
+        }
+
+        .header-actions {
+            display: flex;
+        }
+    }
+
+    .input-metadata {
+        background: var(--dui-color-background);
+        padding: var(--dui-spacing-small);
+        /* Fixme: later remove absolut */
+        height: 50px;
+
+        .input-section {
+            height: 100%;
+        }
+    }
+}
