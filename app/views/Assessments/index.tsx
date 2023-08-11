@@ -1,5 +1,13 @@
-import React, { useMemo, useState, useContext } from 'react';
-import { useQuery, gql } from '@apollo/client';
+import React,
+{
+    useMemo,
+    useState,
+    useContext,
+} from 'react';
+import {
+    useQuery,
+    gql,
+} from '@apollo/client';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -25,7 +33,10 @@ import {
     AssessmentListQueryVariables,
 } from '#generated/types';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
-import ActionCell, { Props as ActionCellProps } from './ActionCell';
+import ActionCell,
+{
+    Props as ActionCellProps,
+} from './ActionCell';
 
 import AssessmentFilterForm from './AssessmentFilterForm';
 
@@ -34,20 +45,26 @@ import styles from './styles.css';
 const ASSESSMENT_LIST = gql`
     query AssessmentList(
         $search: String,
-        $startDate: DateTime,
-        $endDate: DateTime,
+        $createdAtGte: DateTime,
+        $createdAtLte: DateTime,
         $page: Int,
         $pageSize: Int,
         $projectId: ID!,
+        $publicationDateLte: Date,
+        $publicationDateGte: Date,
+        $createdBy: [ID],
     ) {
         project(id: $projectId) {
             id
             assessmentRegistries (
                 search: $search,
-                createdAtLte: $endDate,
-                createdAtGte: $startDate,
+                createdAtLte: $createdAtLte,
+                createdAtGte: $createdAtGte,
                 page: $page,
                 pageSize: $pageSize,
+                publicationDateLte: $publicationDateLte,
+                publicationDateGte: $publicationDateGte,
+                createdBy: $createdBy,
             ) {
                 totalCount
                 results {
@@ -90,14 +107,15 @@ function Assessments(props: Props) {
     const [pageSize, setPageSize] = useState<number>(25);
 
     const { project } = useContext(ProjectContext);
-    // FIXME: rename startDate to createdAtGte
-    // FIXME: rename endDate to createdAtLte
+
     const variables = useMemo(
         () => (
             project ? ({
                 ...filters,
-                startDate: convertDateToIsoDateTime(filters?.startDate),
-                endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
+                createdAtLte: convertDateToIsoDateTime(filters?.createdAtLte),
+                createdAtGte: convertDateToIsoDateTime(filters?.createdAtGte, { endOfDay: true }),
+                publicationDateLte: filters?.publicationDateLte,
+                publicationDateGte: filters?.publicationDateGte,
                 page,
                 pageSize,
                 projectId: project.id,
@@ -118,8 +136,6 @@ function Assessments(props: Props) {
             variables,
         },
     );
-
-    console.log('previous', data?.project?.assessmentRegistries?.results);
 
     const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
@@ -192,6 +208,7 @@ function Assessments(props: Props) {
                 <AssessmentFilterForm
                     filters={filters}
                     onFiltersChange={setFilters}
+                    projectId={project?.id}
                 />
             )}
             footerActions={(
