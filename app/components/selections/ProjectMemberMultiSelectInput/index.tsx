@@ -63,7 +63,7 @@ type ProjectUserSelectInputProps<K extends string, GK extends string> = SearchMu
     'keySelector' | 'labelSelector' | 'searchOptions' | 'onSearchValueChange' | 'optionsPending' | 'totalOptionsCount' | 'onShowDropdownChange'
 > & { projectId: string };
 
-function ProjectUserMultiSelectInput<K extends string, GK extends string>(
+function ProjectMemberMultiSelectInput<K extends string, GK extends string>(
     props: ProjectUserSelectInputProps<K, GK>,
 ) {
     const {
@@ -155,4 +155,4 @@ function ProjectUserMultiSelectInput<K extends string, GK extends string>(
     );
 }
 
-export default ProjectUserMultiSelectInput;
+export default ProjectMemberMultiSelectInput;
