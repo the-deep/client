@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     Tab,
     TabList,
@@ -8,13 +8,16 @@ import {
 import {
     EntriesAsList,
     Error,
+    removeNull,
+    SetBaseValueArg,
 } from '@togglecorp/toggle-form';
-import { _cs } from '@togglecorp/fujs';
+import { isDefined, listToMap, _cs } from '@togglecorp/fujs';
+import { gql, useQuery } from '@apollo/client';
 
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
-import { GalleryFileType } from '#generated/types';
+import { GalleryFileType, GetSubPillarIssuesQuery, GetSubPillarIssuesQueryVariables } from '#generated/types';
 
 import MetadataForm from './MetadataForm';
 import MethodologyForm from './MethodologyForm';
@@ -28,6 +31,17 @@ import { PartialFormType, SubPillarIssueInputType } from './formSchema';
 
 import styles from './styles.css';
 
+const GET_SUBPILLAR_ISSUES = gql`
+    query GetSubPillarIssues {
+        assessmentRegSummaryIssues {
+            results {
+                id
+                label
+                subPillar
+            }
+        }
+    }
+`;
 const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
     bgCountries: true,
     bgCrisisType: true,
@@ -178,6 +192,57 @@ function AssessmentRegistryForm(props: Props) {
     //     }, [setFieldValue, issueList],
     // );
 
+    const {
+        loading,
+        data: issuesResponse,
+    } = useQuery<GetSubPillarIssuesQuery, GetSubPillarIssuesQueryVariables>(
+        GET_SUBPILLAR_ISSUES,
+    );
+
+    const handleIssueAdd = useCallback(
+        (n: string, v: string) => {
+            const issueOrder = n.split('-')[1];
+            setFieldValue((prev: PartialFormType['summarySubPillarIssue']) => {
+                const safeOldValue = (prev ?? []).filter(
+                    (item) => item.summaryIssue !== v && item.order !== Number(issueOrder),
+                );
+                const newValue = {
+                    summaryIssue: v,
+                    order: Number(issueOrder),
+                    text: '',
+                };
+                return [...safeOldValue, newValue];
+            }, 'summarySubPillarIssue');
+        }, [setFieldValue],
+    );
+
+    // FIXME: subPillar type required in server
+    const generateKey = useCallback(
+        (subPillar?: string, order?: number): string => `${subPillar}-${order}`,
+        [],
+    );
+    const issueMappedData = useMemo(
+        () => {
+            const removeNullIssue = removeNull(issuesResponse?.assessmentRegSummaryIssues?.results);
+            const issueBySubPillar = listToMap(
+                removeNullIssue ?? [],
+                (d) => d.id,
+            );
+            const resultMap = (value.summarySubPillarIssue ?? []).reduce((acc, item) => {
+                const subPillarInfo = item.summaryIssue
+                    ? issueBySubPillar[item.summaryIssue] : undefined;
+                if (isDefined(subPillarInfo)) {
+                    const key = generateKey(subPillarInfo.subPillar, item.order);
+                    // FIXME: Typescript can't provide type saftely for dynamic key
+                    acc[key as string] = item;
+                }
+                return acc;
+            }, {});
+            return resultMap;
+        },
+        [value, issuesResponse],
+    );
+
     return (
         <div className={_cs(styles.assessmentRegistryForm, className)}>
             <Tabs
@@ -304,12 +369,12 @@ function AssessmentRegistryForm(props: Props) {
                     activeClassName={styles.tabPanel}
                 >
                     <SummaryForm
-                        setIssueList={setIssueList}
-                        issueList={issueList}
                         projectId={projectId}
                         value={value}
-                        setFieldValue={setFieldValue}
                         error={error}
+                        issueOptions={issuesResponse?.assessmentRegSummaryIssues?.results}
+                        issueList={issueMappedData}
+                        handleIssueAdd={handleIssueAdd}
                     />
                 </TabPanel>
                 <TabPanel
