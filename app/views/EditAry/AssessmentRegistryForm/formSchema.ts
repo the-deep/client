@@ -17,11 +17,12 @@ import {
 } from '#utils/types';
 
 export interface SubPillarIssueInputType {
-    issueId: string;
-    name: string;
+    summaryIssue: string;
     order: string;
     text?: string;
 }
+
+export type IssuesMapType = Record<string, NonNullable<PartialFormType['summarySubPillarIssue']>[number]>;
 
 export interface Option {
     id: string;

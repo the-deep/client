@@ -1,7 +1,5 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { SelectInput, TextInput } from '@the-deep/deep-ui';
-import { isNotDefined } from '@togglecorp/fujs';
-import { SubPillarIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 interface Option {
     id: string;
@@ -12,9 +10,13 @@ interface Props {
     name: string;
     disabled?: boolean;
     placeholder?: string;
-    options?: Option[] | null;
-    value: SubPillarIssueInputType;
-    onChangeIssue: (data: SubPillarIssueInputType) => void;
+    options?: Option[];
+    value?: {
+        summaryIssue?: string;
+        text?: string;
+        order?: number;
+    };
+    onChangeIssue: (name: string, value: string) => void;
     keySelector: (d: Option) => string;
     labelSelector: (d: Option) => string;
 }
@@ -31,49 +33,42 @@ function SelectIssueInput(props: Props) {
         labelSelector,
     } = props;
 
-    const [issue, setIssue] = useState<SubPillarIssueInputType>({
-        issueId: '',
-        text: undefined,
-        name: '',
-        order: '',
-    });
-
     const handleInputChange = useCallback(
         (fieldValue, fieldName: string) => {
-            setIssue(() => {
-                if (fieldName === 'issueId') {
-                    return {
-                        name,
-                        order: name.split('-')[1],
-                        text: value?.text,
-                        issueId: fieldValue,
-                    };
-                }
-                if (fieldName === 'text') {
-                    return {
-                        name,
-                        order: name.split('-')[1],
-                        text: fieldValue,
-                        issueId: value.issueId,
-                    };
-                }
-                return value;
-            });
-            onChangeIssue(issue);
-        }, [setIssue, issue, name, value, onChangeIssue],
+            // setIssue(() => {
+            //     if (fieldName === 'issueId') {
+            //         return {
+            //             name,
+            //             order: name.split('-')[1],
+            //             text: value?.text,
+            //             issueId: fieldValue,
+            //         };
+            //     }
+            //     if (fieldName === 'text') {
+            //         return {
+            //             name,
+            //             order: name.split('-')[1],
+            //             text: fieldValue,
+            //             issueId: value.issueId,
+            //         };
+            //     }
+            //     return value;
+            // });
+            onChangeIssue(fieldName, fieldValue);
+        }, [onChangeIssue],
     );
 
     return (
         <>
             <SelectInput
-                name="issueId"
+                name={name}
                 placeholder={placeholder}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 options={options}
                 optionsPending={disabled}
                 onChange={handleInputChange}
-                value={value?.issueId}
+                value={value?.summaryIssue}
                 disabled={disabled}
             />
             <TextInput
@@ -82,7 +77,7 @@ function SelectIssueInput(props: Props) {
                 onChange={handleInputChange}
                 value={value?.text}
                 variant="general"
-                disabled={disabled || isNotDefined(value?.issueId)}
+                // disabled={disabled || isNotDefined(value?.issueId)}
             />
         </>
 

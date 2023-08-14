@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
-import { listToMap } from '@togglecorp/fujs';
+import React, { useCallback } from 'react';
+import { isDefined } from '@togglecorp/fujs';
 
-import { SubPillarIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import { IssuesMapType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+
 import SelectIssueInput from './SelectIssueInput';
 
 import styles from './styles.css';
@@ -13,10 +14,9 @@ interface Option {
 
 interface Props {
     name?: string;
-    options?: Option[] | null;
-    value: SubPillarIssueInputType[];
-    setValue: React.Dispatch<React.SetStateAction<SubPillarIssueInputType[]>>;
-    onSuccessIssueAdd: (issue: SubPillarIssueInputType[]) => void;
+    options: Option[];
+    value?: IssuesMapType;
+    onSuccessIssueAdd: (name: string, value: string) => void;
     disabled?: boolean;
 }
 
@@ -26,27 +26,31 @@ const labelSelector = (d: Option) => d.label;
 function IssueInput(props: Props) {
     const {
         name,
-        options,
         value,
-        setValue,
+        options,
         onSuccessIssueAdd,
         disabled,
     } = props;
 
-    const mappedIssueItem = useMemo(
-        () => listToMap(value, (d) => d.name), [value],
-    );
+    // const handleIssueSelect = useCallback(
+    //     (issueVal: SubPillarIssueInputType) => {
+    //         setValue((prev) => {
+    //             const filteredIssues = prev.filter(
+    //                 (item) => item.name !== issueVal.name,
+    //             );
+    //             return [...filteredIssues, issueVal];
+    //         });
+    //         // onSuccessIssueAdd(value);
+    //     }, [setValue, value, onSuccessIssueAdd],
+    // );
 
-    const handleIssueSelect = useCallback(
-        (issueVal: SubPillarIssueInputType) => {
-            setValue((prev) => {
-                const filteredIssues = prev.filter(
-                    (item) => item.name !== issueVal.name,
-                );
-                return [...filteredIssues, issueVal];
-            });
-            onSuccessIssueAdd(value);
-        }, [setValue, value, onSuccessIssueAdd],
+    const getFieldValue = useCallback(
+        (n?: string) => {
+            if (isDefined(value) && isDefined(n)) {
+                return value[n];
+            }
+            return undefined;
+        }, [value],
     );
 
     return (
@@ -56,8 +60,9 @@ function IssueInput(props: Props) {
                 placeholder="1. Field Name"
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                value={mappedIssueItem[`${name}-1`]}
-                onChangeIssue={handleIssueSelect}
+                value={getFieldValue(`${name}-1`)}
+                // value={undefined}
+                onChangeIssue={onSuccessIssueAdd}
                 disabled={disabled}
                 options={options}
             />
@@ -66,8 +71,8 @@ function IssueInput(props: Props) {
                 placeholder="2. Field Name"
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                value={mappedIssueItem[`${name}-2`]}
-                onChangeIssue={handleIssueSelect}
+                value={getFieldValue(`${name}-2`)}
+                onChangeIssue={onSuccessIssueAdd}
                 options={options}
                 disabled={disabled}
             />
@@ -76,8 +81,8 @@ function IssueInput(props: Props) {
                 placeholder="3. Field Name"
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                value={mappedIssueItem[`${name}-3`]}
-                onChangeIssue={handleIssueSelect}
+                value={getFieldValue(`${name}-3`)}
+                onChangeIssue={onSuccessIssueAdd}
                 options={options}
                 disabled={disabled}
             />
@@ -86,8 +91,8 @@ function IssueInput(props: Props) {
                 placeholder="4. Field Name"
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                value={mappedIssueItem[`${name}-4`]}
-                onChangeIssue={handleIssueSelect}
+                value={getFieldValue(`${name}-4`)}
+                onChangeIssue={onSuccessIssueAdd}
                 options={options}
                 disabled={disabled}
             />
@@ -96,8 +101,8 @@ function IssueInput(props: Props) {
                 placeholder="5. Field Name"
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                value={mappedIssueItem[`${name}-5`]}
-                onChangeIssue={handleIssueSelect}
+                value={getFieldValue(`${name}-5`)}
+                onChangeIssue={onSuccessIssueAdd}
                 options={options}
                 disabled={disabled}
             />
@@ -106,8 +111,8 @@ function IssueInput(props: Props) {
                 placeholder="6. Field Name"
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                value={mappedIssueItem[`${name}-6`]}
-                onChangeIssue={handleIssueSelect}
+                value={getFieldValue(`${name}-6`)}
+                onChangeIssue={onSuccessIssueAdd}
                 options={options}
                 disabled={disabled}
             />
@@ -116,8 +121,8 @@ function IssueInput(props: Props) {
                 placeholder="7. Field Name"
                 keySelector={keySelector}
                 labelSelector={labelSelector}
-                value={mappedIssueItem[`${name}-7`]}
-                onChangeIssue={handleIssueSelect}
+                value={getFieldValue(`${name}-7`)}
+                onChangeIssue={onSuccessIssueAdd}
                 options={options}
                 disabled={disabled}
             />
