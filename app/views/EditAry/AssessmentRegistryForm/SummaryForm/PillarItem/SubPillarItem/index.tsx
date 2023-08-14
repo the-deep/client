@@ -1,62 +1,41 @@
 import React, { useMemo } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import { isNotDefined } from '@togglecorp/fujs';
+import { removeNull } from '@togglecorp/toggle-form';
 
-import {
-    AssessmentRegistrySummarySubPillarTypeEnum,
-    GetSubPillarIssuesQuery,
-    GetSubPillarIssuesQueryVariables,
-} from '#generated/types';
-import { SubPillarIssueInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import { AssessmentRegistrySummarySubPillarTypeEnum } from '#generated/types';
+import { IssuesMapType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 import IssueInput from './IssueInput';
 
 import styles from './styles.css';
 
-const GET_SUBPILLAR_ISSUES = gql`
-    query GetSubPillarIssues ($subPillar: AssessmentRegistrySummarySubPillarTypeEnum) {
-        assessmentRegSummaryIssues(subPillar: $subPillar) {
-            results {
-                id
-                label
-                subPillar
-                subPillarDisplay
-            }
-        }
-    }
-`;
+type IssueOptionsType = {
+    id: string;
+    label: string;
+    subPillar?: AssessmentRegistrySummarySubPillarTypeEnum | null;
+}
 
 interface Props {
     name: string;
-    issueList: SubPillarIssueInputType[];
-    setIssueList: React.Dispatch<React.SetStateAction<SubPillarIssueInputType[]>>;
-    onSuccessIssueAdd: (issue: SubPillarIssueInputType[]) => void;
     disabled?: boolean;
+    issueOptions?: IssueOptionsType[] | null;
+    issueList?: IssuesMapType;
+    onSuccessIssueAdd: (name: string, value: string) => void;
 }
 
 function SubPillarItem(props: Props) {
     const {
         name,
         issueList,
-        setIssueList,
         onSuccessIssueAdd,
         disabled,
+        issueOptions,
     } = props;
 
-    const variablesForSubPillarIssues = useMemo(
-        (): GetSubPillarIssuesQueryVariables => ({
-            subPillar: name as AssessmentRegistrySummarySubPillarTypeEnum,
-        }), [name],
-    );
-
-    const {
-        loading,
-        data: result,
-    } = useQuery<GetSubPillarIssuesQuery, GetSubPillarIssuesQueryVariables>(
-        GET_SUBPILLAR_ISSUES, {
-            skip: isNotDefined(name),
-            variables: variablesForSubPillarIssues,
-        },
+    const options = useMemo(
+        () => {
+            const removeNullOptions = removeNull(issueOptions);
+            return removeNullOptions.filter((issue) => issue.subPillar === name);
+        }, [issueOptions],
     );
 
     return (
@@ -64,11 +43,10 @@ function SubPillarItem(props: Props) {
             { name }
             <IssueInput
                 name={name}
-                options={result?.assessmentRegSummaryIssues?.results}
+                options={options}
                 value={issueList}
-                setValue={setIssueList}
                 onSuccessIssueAdd={onSuccessIssueAdd}
-                disabled={disabled || loading}
+                disabled={disabled}
             />
         </div>
     );

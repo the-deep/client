@@ -1,22 +1,29 @@
 import React, { useCallback, useMemo } from 'react';
-import { EntriesAsList, Error } from '@togglecorp/toggle-form';
-import { isTruthyString, noOp } from '@togglecorp/fujs';
+import { Error } from '@togglecorp/toggle-form';
+import { noOp } from '@togglecorp/fujs';
 import { ExpandableContainer, List, NumberInput } from '@the-deep/deep-ui';
 
+import { AssessmentRegistrySummarySubPillarTypeEnum } from '#generated/types';
+
 import SubPillarItem from './SubPillarItem';
-import { PartialFormType, SubPillarIssueInputType } from '../../formSchema';
+import { IssuesMapType, PartialFormType } from '../../formSchema';
 import { PillarType } from '..';
 
 import styles from './styles.css';
 
+type IssueOptionsType = {
+    id: string;
+    label: string;
+    subPillar?: AssessmentRegistrySummarySubPillarTypeEnum | null;
+}
+
 interface Props {
     data: PillarType;
-    issueList: SubPillarIssueInputType[];
-    setIssueList: React.Dispatch<React.SetStateAction<SubPillarIssueInputType[]>>;
+    issueOptions?: IssueOptionsType[] | null;
+    issueList?: IssuesMapType;
     disabled?: boolean;
-    value: PartialFormType;
-    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>;
+    handleIssueAdd: (name: string, value: string) => void;
 }
 
 const keySelector = (d: NonNullable<PillarType['subPillarInformation']>[number]) => d.subPillar;
@@ -26,35 +33,39 @@ function PillarItem(props: Props) {
     const {
         data,
         issueList,
-        setIssueList,
         disabled,
-        value,
-        setFieldValue,
         error,
+        issueOptions,
+        handleIssueAdd,
     } = props;
 
-    const handleIssueAdd = useCallback(
-        (issues: SubPillarIssueInputType[]) => {
-            setFieldValue(() => {
-                const val = issues?.map((issueItem) => ({
-                    summaryIssue: issueItem.issueId,
-                    order: Number(issueItem.order),
-                    text: issueItem?.text ?? '',
-                })).filter((item) => isTruthyString(item.summaryIssue));
-                return [val].flat();
-            }, 'summarySubPillarIssue');
-        }, [setFieldValue],
-    );
+    // const handleIssueAdd = useCallback(
+    //     (issues: SubPillarIssueInputType[]) => {
+    //         setFieldValue(() => {
+    //             const val = issues?.map((issueItem) => ({
+    //                 summaryIssue: issueItem.issueId,
+    //                 order: Number(issueItem.order),
+    //                 text: issueItem?.text ?? '',
+    //             })).filter((item) => isTruthyString(item.summaryIssue));
+    //             return [val].flat();
+    //         }, 'summarySubPillarIssue');
+    //     }, [setFieldValue],
+    // );
 
     const issuesParams = useCallback(
         (name: string) => ({
             name,
             issueList,
-            setIssueList,
+            issueOptions,
             disabled,
             onSuccessIssueAdd: handleIssueAdd,
         }),
-        [issueList, setIssueList, disabled, handleIssueAdd],
+        [
+            issueList,
+            issueOptions,
+            disabled,
+            handleIssueAdd,
+        ],
     );
 
     const headerActions = useMemo(

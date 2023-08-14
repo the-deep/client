@@ -1,18 +1,20 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Heading, List, ListView, Tab, TabList, TabPanel, Tabs } from '@the-deep/deep-ui';
-import { EntriesAsList, Error, removeNull } from '@togglecorp/toggle-form';
+import { Error, PartialForm, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import { isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
 
 import {
     AssessmentRegistrySectorTypeEnum,
     AssessmentRegistrySummaryFocusDimmensionTypeEnum,
+    AssessmentRegistrySummaryIssueType,
     AssessmentRegistrySummarySubDimmensionTypeEnum,
+    AssessmentRegistrySummarySubPillarTypeEnum,
     GetSummaryDimensionOptionsQuery,
     GetSummaryDimensionOptionsQueryVariables,
 } from '#generated/types';
 
-import { PartialFormType, SubPillarIssueInputType } from '../formSchema';
+import { IssuesMapType, PartialFormType } from '../formSchema';
 import PillarItem from './PillarItem';
 import DimmensionItem from './DimmensionItem';
 
@@ -57,28 +59,34 @@ export interface DimmensionType {
     }[]
 }
 
+type IssueOptionsType = {
+    id: string;
+    label: string;
+    subPillar?: AssessmentRegistrySummarySubPillarTypeEnum | null;
+}
+
 const keySelectorPillar = (d: PillarType) => d.pillar;
 const keySelectorDimmension = (d: DimmensionType) => d.dimmension;
 
 interface Props {
-    value: PartialFormType;
-    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    error: Error<PartialFormType>;
-    issueList: SubPillarIssueInputType[];
-    setIssueList: React.Dispatch<React.SetStateAction<SubPillarIssueInputType[]>>;
     projectId: string;
+    value: PartialFormType;
+    error: Error<PartialFormType>;
+    issueOptions?: IssueOptionsType[] | null;
+    issueList: IssuesMapType;
     disabled?: boolean;
+    handleIssueAdd: (name: string, value: string) => void;
 }
 
 function SummaryForm(props: Props) {
     const {
         issueList,
-        setIssueList,
         disabled,
         projectId,
         value,
-        setFieldValue,
         error,
+        handleIssueAdd,
+        issueOptions,
     } = props;
 
     const [selectedDimension, setSelectedDimension] = useState<AssessmentRegistrySectorTypeEnum
@@ -144,19 +152,17 @@ function SummaryForm(props: Props) {
             data: pillarData,
             pillarName: name,
             issueList,
-            setIssueList,
+            issueOptions,
             disabled: loading || disabled,
-            value,
-            setFieldValue,
             error,
+            handleIssueAdd,
         }), [
-            setIssueList,
             issueList,
+            issueOptions,
             loading,
             disabled,
-            value,
-            setFieldValue,
             error,
+            handleIssueAdd,
         ],
     );
 
