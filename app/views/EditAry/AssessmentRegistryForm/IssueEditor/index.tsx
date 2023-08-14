@@ -33,8 +33,7 @@ function IssueEditor(props: Props) {
         GET_ISSUE_OPTIONS,
     );
 
-    console.log('option', options);
-
+    console.log('options', options);
     return (
         <Modal
             heading="Issue editor"
