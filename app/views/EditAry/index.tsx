@@ -64,6 +64,7 @@ import {
     transformToFormError,
 } from '#base/utils/errorTransform';
 import { GeoArea } from '#components/GeoMultiSelectInput';
+import { BasicOrganization } from '#types/organization';
 
 import AssessmentRegistryForm from './AssessmentRegistryForm';
 import {
@@ -72,7 +73,6 @@ import {
 } from './AssessmentRegistryForm/formSchema';
 
 import styles from './styles.css';
-import { BasicOrganization } from '#types/organization';
 
 const LEAD_ENTRIES_FOR_ARY = gql`
     ${ORGANIZATION_FRAGMENT}
