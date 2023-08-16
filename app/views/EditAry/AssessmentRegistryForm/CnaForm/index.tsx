@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
     gql,
     useQuery,
@@ -19,7 +19,6 @@ import {
 import {
     NumberOutput,
     Heading,
-    Button,
 } from '@the-deep/deep-ui';
 import {
     CnaQuestionsQuery,
@@ -29,7 +28,6 @@ import {
     CnaType,
     PartialFormType,
 } from '../formSchema';
-import IssueEditor from '../IssueEditor';
 import AnswerQuestionInput from './AnswerQuestionInput';
 
 import styles from './styles.css';
@@ -89,8 +87,6 @@ function CnaForm(props: Props) {
     const error = getErrorObject(
         riskyError,
     );
-
-    const [isOpenModal, setOpenModal] = useState<boolean>(false);
 
     const cnaError = getErrorObject(error?.cna);
     const responseCna = cnaResponse?.project?.assessmentRegistryOptions?.cnaQuestions;
@@ -156,28 +152,9 @@ function CnaForm(props: Props) {
         return finalList;
     }, [responseCna, cnaValue]);
 
-    const handleOpenModal = useCallback(() => (
-        setOpenModal(true)
-    ), [setOpenModal]);
-
-    const handleCloseModal = useCallback(() => (
-        setOpenModal(false)
-    ), [setOpenModal]);
-
     return (
         <div className={styles.cnaForm}>
             <div className={styles.sectorStats}>
-                <Button
-                    name={undefined}
-                    onClick={handleOpenModal}
-                >
-                    Open sesame
-                </Button>
-                {isOpenModal && (
-                    <IssueEditor
-                        handleCloseModal={handleCloseModal}
-                    />
-                )}
                 {questionPercentage?.map((question) => (
                     <div
                         key={question.sector}
