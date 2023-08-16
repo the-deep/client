@@ -366,6 +366,11 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             id
             organization {
                 id
+                title
+                mergedAs {
+                    id
+                    title
+                }
             }
             organizationType
         }

@@ -70,13 +70,6 @@ export const schema: FormSchema = {
             dataCollectionStartDate: [],
             dataCollectionEndDate: [],
             publicationDate: [],
-            leadOrganizations: [defaultEmptyArrayType],
-            internationalPartners: [defaultEmptyArrayType],
-            donors: [defaultEmptyArrayType],
-            nationalPartners: [defaultEmptyArrayType],
-            governments: [defaultEmptyArrayType],
-
-            // NOTE: uncomment on other form
             sectors: [],
             protectionInfoMgmts: [defaultEmptyArrayType],
             focuses: [],
@@ -84,6 +77,7 @@ export const schema: FormSchema = {
             locations: [defaultEmptyArrayType],
             limitations: [requiredCondition],
             objectives: [requiredCondition],
+            stakeholders: [defaultEmptyArrayType],
             methodologyAttributes: {
                 keySelector: (attribute) => attribute.clientId,
                 member: (): MethodologyAttributesFormSchemaMember => ({

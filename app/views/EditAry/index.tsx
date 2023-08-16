@@ -19,7 +19,6 @@ import {
     listToMap,
     isDefined,
     isNotDefined,
-    unique,
 } from '@togglecorp/fujs';
 import {
     Button,
@@ -64,7 +63,6 @@ import {
     ObjectError,
     transformToFormError,
 } from '#base/utils/errorTransform';
-import { BasicOrganization } from '#types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import AssessmentRegistryForm from './AssessmentRegistryForm';
@@ -74,6 +72,7 @@ import {
 } from './AssessmentRegistryForm/formSchema';
 
 import styles from './styles.css';
+import { BasicOrganization } from '#types/organization';
 
 const LEAD_ENTRIES_FOR_ARY = gql`
     ${ORGANIZATION_FRAGMENT}
@@ -409,14 +408,13 @@ function EditAry(props: Props) {
                         })),
                         lead: result.lead.id,
                         bgCountries: result.bgCountries.map((country) => country.id),
-                        leadOrganizations: result.leadOrganizations.map((leadOrg) => leadOrg.id),
-                        internationalPartners: result.internationalPartners.map(
-                            (intPartner) => intPartner.id,
-                        ),
-                        nationalPartners: result.nationalPartners.map((nPartner) => nPartner.id),
-                        donors: result.donors.map((donor) => donor.id),
-                        governments: result.governments.map((gov) => gov.id),
                         locations: result.locations?.map((location) => location.id),
+                        stakeholders: result.stakeholders?.map((stake) => ({
+                            clientId: stake.clientId,
+                            id: stake.id,
+                            organizationType: stake.organizationType,
+                            organization: stake.organization.id,
+                        })),
                         additionalDocuments: result.additionalDocuments?.map((doc) => ({
                             ...doc,
                             file: doc.file?.id,
@@ -437,16 +435,10 @@ function EditAry(props: Props) {
                         })),
                     });
 
-                    const stakeholders = [
-                        ...result.leadOrganizations,
-                        ...result.internationalPartners,
-                        ...result.nationalPartners,
-                        ...result.donors,
-                        ...result.governments,
-                    ];
-
                     setRegionOptions(result.bgCountries);
-                    setStakeholderOptions(unique(stakeholders, (d) => d.id));
+                    setStakeholderOptions(result.stakeholders?.map(
+                        (stake) => stake.organization,
+                    ) ?? []);
 
                     setGeoAreaOptions(result.locations);
                     setUploadedList(
@@ -657,7 +649,6 @@ function EditAry(props: Props) {
                                 className={styles.form}
                                 value={value}
                                 setFieldValue={setFieldValue}
-                                setValue={setValue}
                                 error={error}
                                 regionOptions={regionOptions}
                                 setRegionOptions={setRegionOptions}
