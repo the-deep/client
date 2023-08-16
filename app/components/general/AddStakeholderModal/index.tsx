@@ -3,6 +3,7 @@ import {
     isDefined,
     listToGroupList,
     mapToList,
+    randomString,
 } from '@togglecorp/fujs';
 import {
     useForm,
@@ -42,7 +43,8 @@ const stakeholdersSchema: FormSchema = {
     }),
 };
 
-export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
+export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>
+    & { clientId: string };
 
 export interface Props<T> {
     name: T;
@@ -93,6 +95,7 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
         const organizations = mapToList(value, (v, key) => {
             const out = v?.map((o) => ({
                 organization: o,
+                clientId: randomString(),
                 organizationType: key as ProjectOrganizationTypeEnum,
             }));
             return out;
