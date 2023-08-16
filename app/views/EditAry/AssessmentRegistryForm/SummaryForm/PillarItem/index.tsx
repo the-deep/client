@@ -39,19 +39,6 @@ function PillarItem(props: Props) {
         handleIssueAdd,
     } = props;
 
-    // const handleIssueAdd = useCallback(
-    //     (issues: SubPillarIssueInputType[]) => {
-    //         setFieldValue(() => {
-    //             const val = issues?.map((issueItem) => ({
-    //                 summaryIssue: issueItem.issueId,
-    //                 order: Number(issueItem.order),
-    //                 text: issueItem?.text ?? '',
-    //             })).filter((item) => isTruthyString(item.summaryIssue));
-    //             return [val].flat();
-    //         }, 'summarySubPillarIssue');
-    //     }, [setFieldValue],
-    // );
-
     const issuesParams = useCallback(
         (name: string) => ({
             name,

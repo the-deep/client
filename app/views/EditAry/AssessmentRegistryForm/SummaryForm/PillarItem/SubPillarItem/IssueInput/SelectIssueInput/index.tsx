@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { SelectInput, TextInput } from '@the-deep/deep-ui';
+import { isNotDefined } from '@togglecorp/fujs';
 
 interface Option {
     id: string;
@@ -35,25 +36,6 @@ function SelectIssueInput(props: Props) {
 
     const handleInputChange = useCallback(
         (fieldValue, fieldName: string) => {
-            // setIssue(() => {
-            //     if (fieldName === 'issueId') {
-            //         return {
-            //             name,
-            //             order: name.split('-')[1],
-            //             text: value?.text,
-            //             issueId: fieldValue,
-            //         };
-            //     }
-            //     if (fieldName === 'text') {
-            //         return {
-            //             name,
-            //             order: name.split('-')[1],
-            //             text: fieldValue,
-            //             issueId: value.issueId,
-            //         };
-            //     }
-            //     return value;
-            // });
             onChangeIssue(fieldName, fieldValue);
         }, [onChangeIssue],
     );
@@ -77,7 +59,7 @@ function SelectIssueInput(props: Props) {
                 onChange={handleInputChange}
                 value={value?.text}
                 variant="general"
-                // disabled={disabled || isNotDefined(value?.issueId)}
+                disabled={disabled || isNotDefined(value?.summaryIssue)}
             />
         </>
 
