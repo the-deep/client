@@ -65,7 +65,6 @@ import generateString from '#utils/string';
 
 import _ts from '#ts';
 import {
-    ProjectOrganizationGqInputType,
     UserLastActiveProjectQuery,
     UserLastActiveProjectQueryVariables,
     ProjectCreateInputType,
@@ -81,6 +80,7 @@ import {
     ProjectOrganizationTypeEnum,
 } from '#generated/types';
 import { LAST_ACTIVE_PROJECT_FRAGMENT } from '#gqlFragments';
+import { DeepMandatory } from '#utils/types';
 
 import StakeholderList from './StakeholderList';
 import RequestPrivateProjectButton from './RequestPrivateProjectButton';
@@ -139,28 +139,16 @@ const projectVisibilityOptions: BooleanOption[] = [
     },
 ];
 
-type PartialFormType = PartialForm<PurgeNull<ProjectCreateInputType>, 'organizations'>;
+type ProjectCreateType = DeepMandatory<PurgeNull<ProjectCreateInputType>, 'clientId'>
+type PartialFormType = PartialForm<ProjectCreateType, 'organization' | 'clientId' | 'organizationType'>;
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-type PartialOrganizationType = ProjectOrganizationGqInputType;
-
-type StakeholderSchema = ObjectSchema<PartialOrganizationType, PartialFormType>;
-type StakeholderSchemaFields = ReturnType<StakeholderSchema['fields']>;
-const organizationSchema: StakeholderSchema = {
-    fields: (): StakeholderSchemaFields => ({
-        organization: [requiredCondition],
-        organizationType: [requiredCondition],
-    }),
-};
-
-type StakeholderListSchema = ArraySchema<PartialOrganizationType, PartialFormType>;
-type StakeholderListMember = ReturnType<StakeholderListSchema['member']>;
-
-const organizationListSchema: StakeholderListSchema = {
-    keySelector: (d) => d.organization,
-    member: (): StakeholderListMember => organizationSchema,
-};
+type PartialOrganizationType = NonNullable<PartialFormType['organizations']>[number];
+type OrganizationsSchema = ObjectSchema<PartialOrganizationType, PartialFormType>;
+type OrganizationsSchemaFields = ReturnType<OrganizationsSchema['fields']>;
+type OrganizationsListSchema = ArraySchema<PartialOrganizationType, PartialFormType>;
+type OrganizationsListMember = ReturnType<OrganizationsListSchema['member']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
@@ -168,7 +156,16 @@ const schema: FormSchema = {
         startDate: [],
         endDate: [],
         description: [],
-        organizations: organizationListSchema,
+        organizations: {
+            keySelector: (org) => org.clientId,
+            member: (): OrganizationsListMember => ({
+                fields: (): OrganizationsSchemaFields => ({
+                    clientId: [requiredCondition],
+                    organization: [],
+                    organizationType: [],
+                }),
+            }),
+        },
         hasPubliclyViewableUnprotectedLeads: [requiredCondition],
         hasPubliclyViewableRestrictedLeads: [requiredCondition],
         hasPubliclyViewableConfidentialLeads: [requiredCondition],
@@ -250,6 +247,7 @@ const CURRENT_PROJECT = gql`
             hasPubliclyViewableRestrictedLeads
             organizations {
                 id
+                clientId
                 organization {
                     id
                     title
@@ -286,6 +284,7 @@ mutation ProjectCreate($data: ProjectCreateInputType!) {
             isPrivate
             organizations {
                 id
+                clientId
                 organization {
                     id
                     title
@@ -325,6 +324,7 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 hasPubliclyViewableRestrictedLeads
                 organizations {
                     id
+                    clientId
                     organization {
                         id
                         title
@@ -403,6 +403,8 @@ function ProjectDetailsForm(props: Props) {
                     setValue({
                         ...cleanProject,
                         organizations: cleanProject?.organizations?.map((org) => ({
+                            clientId: org.clientId,
+                            id: org.id,
                             organization: org.organization.id,
                             organizationType: org.organizationType,
                         })),
