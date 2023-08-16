@@ -9,7 +9,6 @@ import {
 import {
     EntriesAsList,
     Error,
-    SetBaseValueArg,
 } from '@togglecorp/toggle-form';
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
@@ -42,11 +41,7 @@ const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
     dataCollectionStartDate: true,
     dataCollectionEndDate: true,
     publicationDate: true,
-    donors: true,
-    leadOrganizations: true,
-    internationalPartners: true,
-    nationalPartners: true,
-    governments: true,
+    stakeholders: true,
 };
 
 const fieldsInAdditionalDocuments: { [key in keyof PartialFormType]?: true } = {
@@ -84,7 +79,6 @@ interface Props {
     value: Value;
     className?: string;
     setFieldValue: (...entries: EntriesAsList<Value>) => void;
-    setValue: (value: SetBaseValueArg<Value>) => void;
     error: Error<Value>;
     setRegionOptions?: React.Dispatch<React.SetStateAction<BasicRegion[] | null | undefined>>;
     regionOptions?: BasicRegion[] | null;
@@ -101,7 +95,6 @@ function AssessmentRegistryForm(props: Props) {
         projectId,
         value,
         setFieldValue,
-        setValue,
         error,
         regionOptions,
         setRegionOptions,
@@ -243,7 +236,6 @@ function AssessmentRegistryForm(props: Props) {
                     <MetadataForm
                         value={value}
                         setFieldValue={setFieldValue}
-                        setValue={setValue}
                         error={error}
                         regionOptions={regionOptions}
                         setRegionOptions={setRegionOptions}
