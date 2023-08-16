@@ -19,7 +19,7 @@ import {
 export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
 type AssessmentRegistryType = DeepMandatory<PurgeNull<AssessmentRegistryCreateInputType>, 'clientId'>;
 
-export type PartialFormType = PartialForm<AssessmentRegistryType, 'clientId' | 'question' | 'sector'>;
+export type PartialFormType = PartialForm<AssessmentRegistryType, 'clientId' | 'question' | 'sector' | 'organization' | 'organizationType'>;
 
 export type PartialAdditionalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
