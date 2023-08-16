@@ -35,7 +35,7 @@ function SubPillarItem(props: Props) {
         () => {
             const removeNullOptions = removeNull(issueOptions);
             return removeNullOptions.filter((issue) => issue.subPillar === name);
-        }, [issueOptions],
+        }, [issueOptions, name],
     );
 
     return (

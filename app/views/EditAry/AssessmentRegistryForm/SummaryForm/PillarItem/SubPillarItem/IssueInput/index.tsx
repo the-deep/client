@@ -32,18 +32,6 @@ function IssueInput(props: Props) {
         disabled,
     } = props;
 
-    // const handleIssueSelect = useCallback(
-    //     (issueVal: SubPillarIssueInputType) => {
-    //         setValue((prev) => {
-    //             const filteredIssues = prev.filter(
-    //                 (item) => item.name !== issueVal.name,
-    //             );
-    //             return [...filteredIssues, issueVal];
-    //         });
-    //         // onSuccessIssueAdd(value);
-    //     }, [setValue, value, onSuccessIssueAdd],
-    // );
-
     const getFieldValue = useCallback(
         (n?: string) => {
             if (isDefined(value) && isDefined(n)) {

@@ -11,7 +11,7 @@ import {
     removeNull,
     SetBaseValueArg,
 } from '@togglecorp/toggle-form';
-import { isDefined, listToMap, _cs } from '@togglecorp/fujs';
+import { isDefined, isNotDefined, listToMap, _cs } from '@togglecorp/fujs';
 import { gql, useQuery } from '@apollo/client';
 
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
@@ -179,41 +179,11 @@ function AssessmentRegistryForm(props: Props) {
         )
     ), [error]);
 
-    // useEffect(
-    //     () => {
-    //         setFieldValue(() => {
-    //             const val = issueList?.map((issueItem) => ({
-    //                 summaryIssue: issueItem.issueId,
-    //                 order: Number(issueItem.order),
-    //                 text: issueItem?.text ?? '',
-    //             })).filter((item) => isTruthyString(item.summaryIssue));
-    //             return [val].flat();
-    //         }, 'summarySubPillarIssue');
-    //     }, [setFieldValue, issueList],
-    // );
-
     const {
         loading,
         data: issuesResponse,
     } = useQuery<GetSubPillarIssuesQuery, GetSubPillarIssuesQueryVariables>(
         GET_SUBPILLAR_ISSUES,
-    );
-
-    const handleIssueAdd = useCallback(
-        (n: string, v: string) => {
-            const issueOrder = n.split('-')[1];
-            setFieldValue((prev: PartialFormType['summarySubPillarIssue']) => {
-                const safeOldValue = (prev ?? []).filter(
-                    (item) => item.summaryIssue !== v && item.order !== Number(issueOrder),
-                );
-                const newValue = {
-                    summaryIssue: v,
-                    order: Number(issueOrder),
-                    text: '',
-                };
-                return [...safeOldValue, newValue];
-            }, 'summarySubPillarIssue');
-        }, [setFieldValue],
     );
 
     // FIXME: subPillar type required in server
@@ -228,19 +198,69 @@ function AssessmentRegistryForm(props: Props) {
                 removeNullIssue ?? [],
                 (d) => d.id,
             );
-            const resultMap = (value.summarySubPillarIssue ?? []).reduce((acc, item) => {
-                const subPillarInfo = item.summaryIssue
-                    ? issueBySubPillar[item.summaryIssue] : undefined;
+            const resultMap = (value.summarySubPillarIssue ?? []).reduce((acc, currentIssue) => {
+                const subPillarInfo = currentIssue.summaryIssue
+                    ? issueBySubPillar[currentIssue.summaryIssue] : undefined;
                 if (isDefined(subPillarInfo)) {
-                    const key = generateKey(subPillarInfo.subPillar, item.order);
+                    const key = generateKey(subPillarInfo.subPillar, currentIssue.order);
                     // FIXME: Typescript can't provide type saftely for dynamic key
-                    acc[key as string] = item;
+                    acc[key] = currentIssue;
                 }
                 return acc;
             }, {});
             return resultMap;
         },
-        [value, issuesResponse],
+        [value, issuesResponse, generateKey],
+    );
+
+    const updateValue = useCallback(
+        (
+            summaryissueToUpdate: string,
+            targetOrder: number,
+            updatedSummaryIssue: string,
+            updatedText?: string,
+        ) => value.summarySubPillarIssue?.map(
+            (item) => {
+                if (
+                    item.summaryIssue === summaryissueToUpdate
+                    && item.order === targetOrder
+                ) {
+                    return {
+                        ...item,
+                        summaryIssue: updatedSummaryIssue,
+                        text: updatedText,
+                    };
+                }
+                return item;
+            },
+        ), [value],
+    );
+    const handleIssueAdd = useCallback(
+        (n: string, issueId: string) => {
+            const issueOrder = n.split('-')[1];
+            const previousMatch = issueMappedData[n];
+            if (isDefined(previousMatch)) {
+                const updatedValue = updateValue(
+                    previousMatch?.summaryIssue,
+                    previousMatch?.order,
+                    issueId,
+                );
+                setFieldValue(
+                    (_: PartialFormType['summarySubPillarIssue']) => [...updatedValue ?? []],
+                    'summarySubPillarIssue',
+                );
+            }
+            if (isNotDefined(previousMatch)) {
+                setFieldValue((prev: PartialFormType['summarySubPillarIssue']) => {
+                    const newValue = {
+                        summaryIssue: issueId,
+                        order: Number(issueOrder),
+                        text: '',
+                    };
+                    return [...prev ?? [], newValue];
+                }, 'summarySubPillarIssue');
+            }
+        }, [setFieldValue, issueMappedData, updateValue],
     );
 
     return (
