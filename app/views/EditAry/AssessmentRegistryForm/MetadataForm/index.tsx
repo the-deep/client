@@ -11,7 +11,6 @@ import {
     Error,
     getErrorObject,
     getErrorString,
-    SetBaseValueArg,
 } from '@togglecorp/toggle-form';
 
 import { enumKeySelector, enumLabelSelector } from '#utils/common';
@@ -101,7 +100,6 @@ query GetOptions {
 interface Props {
     value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     error: Error<PartialFormType>;
     setRegionOptions?: React.Dispatch<React.SetStateAction<BasicRegion[] | null | undefined>>;
     regionOptions?: BasicRegion[] | null;
@@ -113,13 +111,13 @@ function MetadataForm(props: Props) {
     const {
         value,
         setFieldValue,
-        setValue,
         error: riskyError,
         regionOptions,
         setRegionOptions,
         stakeholderOptions,
         setStakeholderOptions,
     } = props;
+
     const error = getErrorObject(riskyError);
 
     const {
@@ -312,7 +310,7 @@ function MetadataForm(props: Props) {
             <StakeholderForm
                 className={styles.stakeholderForm}
                 value={value}
-                setValue={setValue}
+                setFieldValue={setFieldValue}
                 loading={loading}
                 error={error}
                 stakeholderOptions={stakeholderOptions}
