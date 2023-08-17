@@ -1,4 +1,8 @@
-.issue-input {
+.issue-modal {
     display: grid;
     gap: var(--dui-spacing-extra-large);
+
+    .description {
+        width: 100%;
+    }
 }

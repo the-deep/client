@@ -288,7 +288,6 @@ function EditAry(props: Props) {
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
     const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
     const [uploadedList, setUploadedList] = useState<GalleryFileType[]>();
-    const [issueList, setIssueList] = useState<SubPillarIssueInputType[]>([]);
 
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo((): LeadEntriesForAryQueryVariables | undefined => (
@@ -460,16 +459,6 @@ function EditAry(props: Props) {
                             clientId: doc.file?.id,
                             mimeType: doc.file?.mimeType,
                         })).filter(isDefined),
-                    );
-                    setIssueList(
-                        result.summarySubPillarIssue?.map(
-                            (subIssue) => ({
-                                issueId: subIssue.summaryIssue.id,
-                                name: `${subIssue.summaryIssue.subPillar}-${subIssue.order}`,
-                                order: String(subIssue.order),
-                                text: subIssue.text,
-                            }),
-                        ) ?? [],
                     );
                 }
             },
@@ -677,8 +666,6 @@ function EditAry(props: Props) {
                                 setGeoAreaOptions={setGeoAreaOptions}
                                 uploadedList={uploadedList}
                                 setUploadedList={setUploadedList}
-                                issueList={issueList}
-                                setIssueList={setIssueList}
                             />
                         </div>
                     </>
