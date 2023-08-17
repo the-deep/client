@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Button, Header, SelectInput, TextInput, useAlert } from '@the-deep/deep-ui';
+import { Button, Header, TextInput, useAlert } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
 import {
     getErrorObject,
@@ -8,9 +8,14 @@ import {
     useForm,
     createSubmitHandler,
     requiredCondition,
+    removeNull,
 } from '@togglecorp/toggle-form';
 
-import { AssessmentRegistrySummaryIssueCreateInputType } from '#generated/types';
+import {
+    AssessmentRegistrySummaryIssueCreateInputType,
+    CreateAssessmentRegistrySummaryIssueMutation,
+    CreateAssessmentRegistrySummaryIssueMutationVariables,
+} from '#generated/types';
 
 import { PillarType } from '..';
 
@@ -37,7 +42,7 @@ const initialVaue: PartialForm<AssessmentRegistrySummaryIssueCreateInputType> = 
 };
 
 const CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE = gql`
-    mutation CreateAssessmentRegistrySummaryIssue($data: AssessmentRegistrySummaryIssueCreateInputType) {
+    mutation CreateAssessmentRegistrySummaryIssue($data: AssessmentRegistrySummaryIssueCreateInputType!) {
         createAssessmentRegSummaryIssue(data: $data) {
             ok
             errors
@@ -75,40 +80,39 @@ function AddIssueModal(props: Props) {
         {
             loading,
         },
-    ] = useMutation(
-        CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE, {
-            onCompleted: (response) => {
-                const {
-                    error: errorResponse,
-                } = response.createAssessmentRegSummaryIssue;
-                if (!errorResponse) {
-                    setFieldValue(undefined, 'label');
-                    refetchIssuesOptions();
-                }
+    ] = useMutation<
+    CreateAssessmentRegistrySummaryIssueMutation,
+    CreateAssessmentRegistrySummaryIssueMutationVariables
+    >(CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE, {
+        onCompleted: (response) => {
+            const result = removeNull(response.createAssessmentRegSummaryIssue);
+            const { ok } = result;
+            if (ok) {
                 alert.show(
                     'Successfully added new issue.',
                     {
                         variant: 'success',
                     },
                 );
-            },
-            onError: () => {
-                alert.show(
-                    'Failed to add issue.',
-                    {
-                        variant: 'error',
-                    },
-                );
-            },
+                refetchIssuesOptions();
+            }
         },
-    );
+        onError: () => {
+            alert.show(
+                'Failed to add issue.',
+                {
+                    variant: 'error',
+                },
+            );
+        },
+    });
 
     const handleSave = useCallback(
         () => {
             createSummaryIssue({
                 variables: {
                     data: {
-                        label: value.label,
+                        ...value,
                         subPillar: data.subPillar,
                     } as AssessmentRegistrySummaryIssueCreateInputType,
                 },
@@ -127,7 +131,8 @@ function AddIssueModal(props: Props) {
                 description={(<hr />)}
                 descriptionClassName={styles.description}
             />
-            <SelectInput
+            {/* TODO:
+                <SelectInput
                 placeholder="Select parent"
                 name="parent"
                 onChange={setFieldValue}
@@ -135,7 +140,7 @@ function AddIssueModal(props: Props) {
                 options={[]}
                 labelSelector={(d) => d}
                 keySelector={(d) => d}
-            />
+            /> */}
             <TextInput
                 placeholder="label"
                 label="label"
