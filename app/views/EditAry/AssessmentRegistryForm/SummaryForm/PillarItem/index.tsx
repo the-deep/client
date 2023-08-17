@@ -39,8 +39,9 @@ function PillarItem(props: Props) {
         handleIssueAdd,
     } = props;
 
-    const issuesParams = useCallback(
-        (name: string) => ({
+    const subPillarParams = useCallback(
+        (name: string, subPillarData) => ({
+            data: subPillarData,
             name,
             issueList,
             issueOptions,
@@ -118,7 +119,7 @@ function PillarItem(props: Props) {
                     data={data.subPillarInformation}
                     keySelector={keySelector}
                     renderer={SubPillarItem}
-                    rendererParams={issuesParams}
+                    rendererParams={subPillarParams}
                 />
             </ExpandableContainer>
 

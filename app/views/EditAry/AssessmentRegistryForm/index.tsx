@@ -107,8 +107,6 @@ interface Props {
     geoAreaOptions?: GeoArea[] | null;
     setUploadedList: React.Dispatch<React.SetStateAction<GalleryFileType[] | undefined>>;
     uploadedList?: GalleryFileType[];
-    issueList: SubPillarIssueInputType[];
-    setIssueList: React.Dispatch<React.SetStateAction<SubPillarIssueInputType[]>>;
 }
 
 function AssessmentRegistryForm(props: Props) {
@@ -126,8 +124,6 @@ function AssessmentRegistryForm(props: Props) {
         className,
         uploadedList,
         setUploadedList,
-        issueList,
-        setIssueList,
     } = props;
 
     const errorInMetadata = useMemo(() => (

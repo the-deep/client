@@ -1,0 +1,4 @@
+.input {
+    display: grid;
+    gap: var(--dui-spacing-small);
+}
