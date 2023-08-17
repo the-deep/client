@@ -1,13 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Heading, List, ListView, Tab, TabList, TabPanel, Tabs } from '@the-deep/deep-ui';
-import { Error, PartialForm, removeNull } from '@togglecorp/toggle-form';
+import { Heading, List, Tab, TabList, TabPanel, Tabs } from '@the-deep/deep-ui';
+import { Error, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import { isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
 
 import {
     AssessmentRegistrySectorTypeEnum,
     AssessmentRegistrySummaryFocusDimmensionTypeEnum,
-    AssessmentRegistrySummaryIssueType,
     AssessmentRegistrySummarySubDimmensionTypeEnum,
     AssessmentRegistrySummarySubPillarTypeEnum,
     GetSummaryDimensionOptionsQuery,
@@ -76,6 +75,7 @@ interface Props {
     issueList: IssuesMapType;
     disabled?: boolean;
     handleIssueAdd: (name: string, value: string) => void;
+    refetchIssuesOptions: () => void;
 }
 
 function SummaryForm(props: Props) {
@@ -85,8 +85,9 @@ function SummaryForm(props: Props) {
         projectId,
         value,
         error,
-        handleIssueAdd,
         issueOptions,
+        handleIssueAdd,
+        refetchIssuesOptions,
     } = props;
 
     const [selectedDimension, setSelectedDimension] = useState<AssessmentRegistrySectorTypeEnum
@@ -129,9 +130,9 @@ function SummaryForm(props: Props) {
         );
         const groupByDimmension = listToGroupList(dimmensionOptions ?? [], (d) => d.dimmension);
         const finalDimmensionList = Object.entries(groupByDimmension).map(
-            ([dimmension, dimmensionArray]) => ({
-                pillar: dimmension,
-                pillarDisplay: dimmensionArray[0].dimmensionDisplay,
+            ([dimmensionItem, dimmensionArray]) => ({
+                dimmension: dimmensionItem,
+                dimmensionDisplay: dimmensionArray[0].dimmensionDisplay,
                 subDimmensionInformation: dimmensionArray.map((subDimmensionItem) => ({
                     subDimmension: subDimmensionItem.subDimmension,
                     subDimmensionDisplay: subDimmensionItem.subDimmensionDisplay,
@@ -156,6 +157,7 @@ function SummaryForm(props: Props) {
             disabled: loading || disabled,
             error,
             handleIssueAdd,
+            refetchIssuesOptions,
         }), [
             issueList,
             issueOptions,
@@ -163,6 +165,7 @@ function SummaryForm(props: Props) {
             disabled,
             error,
             handleIssueAdd,
+            refetchIssuesOptions,
         ],
     );
 
@@ -209,7 +212,7 @@ function SummaryForm(props: Props) {
                                 key={sector}
                                 name={sector}
                             >
-                                <ListView
+                                <List
                                     data={dimmensionList}
                                     keySelector={keySelectorDimmension}
                                     renderer={DimmensionItem}

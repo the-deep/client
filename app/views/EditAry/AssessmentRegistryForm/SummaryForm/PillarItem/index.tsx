@@ -24,6 +24,7 @@ interface Props {
     disabled?: boolean;
     error: Error<PartialFormType>;
     handleIssueAdd: (name: string, value: string) => void;
+    refetchIssuesOptions: () => void;
 }
 
 const keySelector = (d: NonNullable<PillarType['subPillarInformation']>[number]) => d.subPillar;
@@ -37,6 +38,7 @@ function PillarItem(props: Props) {
         error,
         issueOptions,
         handleIssueAdd,
+        refetchIssuesOptions,
     } = props;
 
     const subPillarParams = useCallback(
@@ -47,12 +49,14 @@ function PillarItem(props: Props) {
             issueOptions,
             disabled,
             onSuccessIssueAdd: handleIssueAdd,
+            refetchIssuesOptions,
         }),
         [
             issueList,
             issueOptions,
             disabled,
             handleIssueAdd,
+            refetchIssuesOptions,
         ],
     );
 

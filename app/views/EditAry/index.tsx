@@ -70,7 +70,6 @@ import AssessmentRegistryForm from './AssessmentRegistryForm';
 import {
     initialValue,
     schema,
-    SubPillarIssueInputType,
 } from './AssessmentRegistryForm/formSchema';
 
 import styles from './styles.css';
