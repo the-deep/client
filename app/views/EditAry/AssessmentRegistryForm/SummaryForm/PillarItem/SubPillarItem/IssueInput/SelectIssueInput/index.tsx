@@ -2,6 +2,8 @@ import React, { useCallback } from 'react';
 import { SelectInput, TextInput } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
 
+import styles from './styles.css';
+
 interface Option {
     id: string;
     label: string;
@@ -41,7 +43,7 @@ function SelectIssueInput(props: Props) {
     );
 
     return (
-        <>
+        <div className={styles.input}>
             <SelectInput
                 name={name}
                 placeholder={placeholder}
@@ -61,7 +63,7 @@ function SelectIssueInput(props: Props) {
                 variant="general"
                 disabled={disabled || isNotDefined(value?.summaryIssue)}
             />
-        </>
+        </div>
 
     );
 }

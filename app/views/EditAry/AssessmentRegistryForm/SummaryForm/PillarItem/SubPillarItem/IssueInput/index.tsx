@@ -42,7 +42,7 @@ function IssueInput(props: Props) {
     );
 
     return (
-        <div className={styles.input}>
+        <div className={styles.issueInput}>
             <SelectIssueInput
                 name={`${name}-1`}
                 placeholder="1. Field Name"
