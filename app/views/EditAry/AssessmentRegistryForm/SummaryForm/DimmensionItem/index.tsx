@@ -17,7 +17,7 @@ interface Props {
 function DimmensionItem(props: Props) {
     const { data } = props;
 
-    const issuesParams = useCallback(
+    const subDimensionParams = useCallback(
         (name: string) => ({
             name,
         }),
@@ -37,9 +37,12 @@ function DimmensionItem(props: Props) {
                     data={data.subDimmensionInformation}
                     keySelector={keySelector}
                     renderer={SubDimmensionItem}
-                    rendererParams={issuesParams}
+                    rendererParams={subDimensionParams}
                     errored={false}
                     filtered={false}
+                    pending={false}
+                    messageShown
+                    messageIconShown
                 />
             </ExpandableContainer>
 

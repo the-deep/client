@@ -27,7 +27,7 @@ import ScoreForm from './ScoreForm';
 import SummaryForm from './SummaryForm';
 import AdditionalDocument from './AdditionalDocument';
 
-import { PartialFormType, SubPillarIssueInputType } from './formSchema';
+import { PartialFormType } from './formSchema';
 
 import styles from './styles.css';
 
@@ -178,6 +178,7 @@ function AssessmentRegistryForm(props: Props) {
     const {
         loading,
         data: issuesResponse,
+        refetch,
     } = useQuery<GetSubPillarIssuesQuery, GetSubPillarIssuesQueryVariables>(
         GET_SUBPILLAR_ISSUES,
     );
@@ -391,6 +392,8 @@ function AssessmentRegistryForm(props: Props) {
                         issueOptions={issuesResponse?.assessmentRegSummaryIssues?.results}
                         issueList={issueMappedData}
                         handleIssueAdd={handleIssueAdd}
+                        refetchIssuesOptions={refetch}
+                        disabled={loading}
                     />
                 </TabPanel>
                 <TabPanel
