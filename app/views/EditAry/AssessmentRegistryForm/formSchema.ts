@@ -46,6 +46,12 @@ type MethodologyAttributesSchemaFields = ReturnType<MethodologyAttributesSchema[
 type MethodologyAttributesFormSchema = ArraySchema<MethodologyAttributesType, PartialFormType>;
 type MethodologyAttributesFormSchemaMember = ReturnType<MethodologyAttributesFormSchema['member']>;
 
+type PartialOrganizationType = NonNullable<PartialFormType['stakeholders']>[number];
+type OrganizationsSchema = ObjectSchema<PartialOrganizationType, PartialFormType>;
+type OrganizationsSchemaFields = ReturnType<OrganizationsSchema['fields']>;
+type OrganizationsListSchema = ArraySchema<PartialOrganizationType, PartialFormType>;
+type OrganizationsListMember = ReturnType<OrganizationsListSchema['member']>;
+
 export const initialValue: PartialFormType = {
     methodologyAttributes: [
         { clientId: randomString() },
@@ -77,7 +83,17 @@ export const schema: FormSchema = {
             locations: [defaultEmptyArrayType],
             limitations: [requiredCondition],
             objectives: [requiredCondition],
-            stakeholders: [defaultEmptyArrayType],
+            stakeholders: {
+                keySelector: (org) => org.clientId,
+                member: (): OrganizationsListMember => ({
+                    fields: (): OrganizationsSchemaFields => ({
+                        id: [defaultUndefinedType],
+                        clientId: [requiredCondition],
+                        organization: [],
+                        organizationType: [],
+                    }),
+                }),
+            },
             methodologyAttributes: {
                 keySelector: (attribute) => attribute.clientId,
                 member: (): MethodologyAttributesFormSchemaMember => ({

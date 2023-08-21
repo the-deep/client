@@ -2,13 +2,15 @@ import React, { useCallback } from 'react';
 import {
     isDefined,
     listToGroupList,
-    mapToList,
-    randomString,
 } from '@togglecorp/fujs';
 import {
+    PartialForm,
+    defaultUndefinedType,
+    requiredCondition,
     useForm,
     ObjectSchema,
-    defaultEmptyArrayType,
+    ArraySchema,
+    createSubmitHandler,
     PurgeNull,
 } from '@togglecorp/toggle-form';
 import {
@@ -29,22 +31,81 @@ import StakeholderList from './StakeholderList';
 
 import styles from './styles.css';
 
-type FormType = Partial<Record<ProjectOrganizationTypeEnum, string[]>>;
+export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>
+    & { clientId: string };
+
+type FormType = PartialForm<Record<ProjectOrganizationTypeEnum, BasicProjectOrganization[]>, 'clientId'>;
+
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
+export type PartialOrg = NonNullable<FormType['LEAD_ORGANIZATION']>[number];
+
+type OrgSchema = ObjectSchema<PartialOrg, FormType>;
+type OrgSchemaFields = ReturnType<OrgSchema['fields']>;
+
+type OrgFormSchema = ArraySchema<PartialOrg, FormType>;
+type OrgFormSchemaMember = ReturnType<OrgFormSchema['member']>;
+
 const stakeholdersSchema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        LEAD_ORGANIZATION: [defaultEmptyArrayType],
-        INTERNATIONAL_PARTNER: [defaultEmptyArrayType],
-        NATIONAL_PARTNER: [defaultEmptyArrayType],
-        DONOR: [defaultEmptyArrayType],
-        GOVERNMENT: [defaultEmptyArrayType],
+        LEAD_ORGANIZATION: {
+            keySelector: (org) => org.clientId,
+            member: (): OrgFormSchemaMember => ({
+                fields: (): OrgSchemaFields => ({
+                    clientId: [requiredCondition],
+                    id: [defaultUndefinedType],
+                    organization: [requiredCondition],
+                    organizationType: [requiredCondition],
+                }),
+            }),
+        },
+        INTERNATIONAL_PARTNER: {
+            keySelector: (org) => org.clientId,
+            member: (): OrgFormSchemaMember => ({
+                fields: (): OrgSchemaFields => ({
+                    clientId: [requiredCondition],
+                    id: [defaultUndefinedType],
+                    organization: [requiredCondition],
+                    organizationType: [requiredCondition],
+                }),
+            }),
+        },
+        NATIONAL_PARTNER: {
+            keySelector: (org) => org.clientId,
+            member: (): OrgFormSchemaMember => ({
+                fields: (): OrgSchemaFields => ({
+                    clientId: [requiredCondition],
+                    id: [defaultUndefinedType],
+                    organization: [requiredCondition],
+                    organizationType: [requiredCondition],
+                }),
+            }),
+        },
+        DONOR: {
+            keySelector: (org) => org.clientId,
+            member: (): OrgFormSchemaMember => ({
+                fields: (): OrgSchemaFields => ({
+                    clientId: [requiredCondition],
+                    id: [defaultUndefinedType],
+                    organization: [requiredCondition],
+                    organizationType: [requiredCondition],
+                }),
+            }),
+        },
+        GOVERNMENT: {
+            keySelector: (org) => org.clientId,
+            member: (): OrgFormSchemaMember => ({
+                fields: (): OrgSchemaFields => ({
+                    clientId: [requiredCondition],
+                    id: [defaultUndefinedType],
+                    organization: [requiredCondition],
+                    organizationType: [requiredCondition],
+                }),
+            }),
+        },
     }),
 };
-
-export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>
-    & { clientId: string };
 
 export interface Props<T> {
     name: T;
@@ -71,7 +132,7 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
         (organizations: BasicProjectOrganization[]) => listToGroupList(
             organizations,
             (o) => o.organizationType,
-            (o) => o.organization,
+            (o) => o,
         ),
         [],
     );
@@ -83,26 +144,38 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
     const {
         pristine,
         value,
+        setError,
+        validate,
         setFieldValue,
     } = useForm(stakeholdersSchema, initialFormValue);
 
     const handleChange = useCallback(
-        (stakeholders: string[], organizationType: ProjectOrganizationTypeEnum) => {
+        (
+            stakeholders: PartialForm<BasicProjectOrganization[], 'clientId'>,
+            organizationType: ProjectOrganizationTypeEnum,
+        ) => {
             setFieldValue(stakeholders, organizationType);
         }, [setFieldValue],
     );
-    const handleSubmitButtonClick = () => {
-        const organizations = mapToList(value, (v, key) => {
-            const out = v?.map((o) => ({
-                organization: o,
-                clientId: randomString(),
-                organizationType: key as ProjectOrganizationTypeEnum,
-            }));
-            return out;
-        }).filter(isDefined).flat();
-        onChange(organizations, name);
-        onModalClose();
-    };
+    const handleSubmitButtonClick = useCallback(
+        () => {
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => {
+                    console.warn('here', val);
+                    const orgs = Object.values(val).flat() as BasicProjectOrganization[];
+                    onChange(orgs, name);
+                    onModalClose();
+                },
+            );
+            submit();
+        },
+        [
+            validate,
+            setError,
+        ],
+    );
 
     return (
         <Modal
