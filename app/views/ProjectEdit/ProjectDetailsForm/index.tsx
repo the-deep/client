@@ -31,6 +31,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     ObjectSchema,
+    defaultUndefinedType,
     requiredStringCondition,
     removeNull,
     useForm,
@@ -160,6 +161,7 @@ const schema: FormSchema = {
             keySelector: (org) => org.clientId,
             member: (): OrganizationsListMember => ({
                 fields: (): OrganizationsSchemaFields => ({
+                    id: [defaultUndefinedType],
                     clientId: [requiredCondition],
                     organization: [],
                     organizationType: [],
@@ -183,22 +185,6 @@ const schema: FormSchema = {
         return undefined;
     },
 };
-
-/*
-const getOrganizationValues = (project: ProjectDetails) => (
-    project.organizations.map((v) => ({
-        organization: v.organization,
-        organizationType: v.organizationType,
-    }))
-);
-
-const getOrganizationOptions = (project: ProjectDetails) => (
-    project.organizations.map((v) => ({
-        id: v.organization,
-        title: organizationTitleSelector(v.organizationDetails),
-    }))
-);
- */
 
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 
