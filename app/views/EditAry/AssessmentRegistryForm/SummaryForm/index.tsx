@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Header, Heading, List, Tab, TabList, TabPanel, Tabs } from '@the-deep/deep-ui';
-import { Error, removeNull, SetBaseValueArg } from '@togglecorp/toggle-form';
+import { Header, List, Tab, TabList, TabPanel, Tabs } from '@the-deep/deep-ui';
+import { Error, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import { isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
 
@@ -76,7 +76,7 @@ interface Props {
     issueOptions?: IssueOptionsType[] | null;
     pillarIssuesList: SubPillarIssuesMapType;
     disabled?: boolean;
-    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
+    // setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     handleIssueAdd: (name: string, value: string) => void;
     refetchIssuesOptions: () => void;
 }
@@ -90,7 +90,7 @@ function SummaryForm(props: Props) {
         error,
         issueOptions,
         handleIssueAdd,
-        setValue,
+        // setValue,
         refetchIssuesOptions,
     } = props;
 
@@ -164,6 +164,7 @@ function SummaryForm(props: Props) {
             handleIssueAdd,
             refetchIssuesOptions,
             formValue: value,
+            // setValue,
         }), [
             pillarIssuesList,
             issueOptions,
