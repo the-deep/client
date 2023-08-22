@@ -163,7 +163,6 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
                 validate,
                 setError,
                 (val) => {
-                    console.warn('here', val);
                     const orgs = Object.values(val).flat() as BasicProjectOrganization[];
                     onChange(orgs, name);
                     onModalClose();
@@ -174,6 +173,9 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
         [
             validate,
             setError,
+            name,
+            onChange,
+            onModalClose,
         ],
     );
 

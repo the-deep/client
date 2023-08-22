@@ -566,10 +566,10 @@ const createNewAssessmentEditRoute = wrap({
 
 const assessmentEditRoute = wrap({
     parent: { path: projectRoute.path },
-    path: '/assessments/leads/:leadId(\\d+)/',
+    path: '/assessments/:assessmentId(\\d+)/',
     title: 'Edit Assessment',
     navbarVisibility: false,
-    component: lazy(() => import('#views/EditAssessment')),
+    component: lazy(() => import('#views/EditAry')),
     componentProps: {
     },
     visibility: 'is-authenticated',
