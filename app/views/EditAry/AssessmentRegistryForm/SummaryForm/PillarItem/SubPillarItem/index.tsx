@@ -4,7 +4,7 @@ import { Header, Modal, QuickActionButton, useModalState } from '@the-deep/deep-
 import { IoAddCircleOutline } from 'react-icons/io5';
 
 import { AssessmentRegistrySummarySubPillarTypeEnum } from '#generated/types';
-import { IssuesMapType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import { SubPillarIssuesMapType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 import IssueInput from './IssueInput';
 import AddIssueModal from '../../AddIssueModal';
@@ -23,7 +23,7 @@ interface Props {
     name: string;
     disabled?: boolean;
     issueOptions?: IssueOptionsType[] | null;
-    issueList?: IssuesMapType;
+    pillarIssuesList?: SubPillarIssuesMapType;
     onSuccessIssueAdd: (name: string, value: string) => void;
     refetchIssuesOptions: () => void;
 }
@@ -32,7 +32,7 @@ function SubPillarItem(props: Props) {
     const {
         data,
         name,
-        issueList,
+        pillarIssuesList,
         onSuccessIssueAdd,
         disabled,
         issueOptions,
@@ -55,6 +55,7 @@ function SubPillarItem(props: Props) {
         <div className={styles.subPillarItem}>
             <Header
                 heading={data.subPillarDisplay}
+                headingSize="extraSmall"
                 actions={(
                     <QuickActionButton
                         name={data.subPillar}
@@ -68,7 +69,7 @@ function SubPillarItem(props: Props) {
             <IssueInput
                 name={name}
                 options={options}
-                value={issueList}
+                value={pillarIssuesList}
                 onSuccessIssueAdd={onSuccessIssueAdd}
                 disabled={disabled}
             />

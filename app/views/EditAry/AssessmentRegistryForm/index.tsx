@@ -31,13 +31,14 @@ import { PartialFormType } from './formSchema';
 
 import styles from './styles.css';
 
-const GET_SUBPILLAR_ISSUES = gql`
+const GET_ASSESSMENT_SUMMARY_ISSUES = gql`
     query GetSubPillarIssues {
         assessmentRegSummaryIssues {
             results {
                 id
                 label
                 subPillar
+                subDimmension
             }
         }
     }
@@ -180,15 +181,10 @@ function AssessmentRegistryForm(props: Props) {
         data: issuesResponse,
         refetch,
     } = useQuery<GetSubPillarIssuesQuery, GetSubPillarIssuesQueryVariables>(
-        GET_SUBPILLAR_ISSUES,
+        GET_ASSESSMENT_SUMMARY_ISSUES,
     );
 
-    // FIXME: subPillar type required in server
-    const generateKey = useCallback(
-        (subPillar?: string, order?: number): string => `${subPillar}-${order}`,
-        [],
-    );
-    const issueMappedData = useMemo(
+    const pillarIssueMappedData = useMemo(
         () => {
             const removeNullIssue = removeNull(issuesResponse?.assessmentRegSummaryIssues?.results);
             const issueBySubPillar = listToMap(
@@ -199,7 +195,8 @@ function AssessmentRegistryForm(props: Props) {
                 const subPillarInfo = currentIssue.summaryIssue
                     ? issueBySubPillar[currentIssue.summaryIssue] : undefined;
                 if (isDefined(subPillarInfo)) {
-                    const key = generateKey(subPillarInfo.subPillar, currentIssue.order);
+                    // FIXME: subPillar type required in server
+                    const key = `${subPillarInfo.subPillar}-${currentIssue.order}`;
                     // FIXME: Typescript can't provide type saftely for dynamic key
                     acc[key] = currentIssue;
                 }
@@ -207,10 +204,10 @@ function AssessmentRegistryForm(props: Props) {
             }, {});
             return resultMap;
         },
-        [value, issuesResponse, generateKey],
+        [value, issuesResponse],
     );
 
-    const updateValue = useCallback(
+    const updatePillarItemValue = useCallback(
         (
             summaryissueToUpdate: string,
             targetOrder: number,
@@ -232,12 +229,12 @@ function AssessmentRegistryForm(props: Props) {
             },
         ), [value],
     );
-    const handleIssueAdd = useCallback(
+    const handlePillarIssueAdd = useCallback(
         (n: string, issueId: string) => {
             const issueOrder = n.split('-')[1];
-            const previousMatch = issueMappedData[n];
+            const previousMatch = pillarIssueMappedData[n];
             if (isDefined(previousMatch)) {
-                const updatedValue = updateValue(
+                const updatedValue = updatePillarItemValue(
                     previousMatch?.summaryIssue,
                     previousMatch?.order,
                     issueId,
@@ -257,7 +254,7 @@ function AssessmentRegistryForm(props: Props) {
                     return [...prev ?? [], newValue];
                 }, 'summarySubPillarIssue');
             }
-        }, [setFieldValue, issueMappedData, updateValue],
+        }, [setFieldValue, pillarIssueMappedData, updatePillarItemValue],
     );
 
     return (
@@ -389,9 +386,10 @@ function AssessmentRegistryForm(props: Props) {
                         projectId={projectId}
                         value={value}
                         error={error}
+                        setValue={setValue}
                         issueOptions={issuesResponse?.assessmentRegSummaryIssues?.results}
-                        issueList={issueMappedData}
-                        handleIssueAdd={handleIssueAdd}
+                        pillarIssuesList={pillarIssueMappedData}
+                        handleIssueAdd={handlePillarIssueAdd}
                         refetchIssuesOptions={refetch}
                         disabled={loading}
                     />

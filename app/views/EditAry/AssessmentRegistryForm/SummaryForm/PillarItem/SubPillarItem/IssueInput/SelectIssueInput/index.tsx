@@ -2,12 +2,9 @@ import React, { useCallback } from 'react';
 import { SelectInput, TextInput } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
 
-import styles from './styles.css';
+import { Option } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
-interface Option {
-    id: string;
-    label: string;
-}
+import styles from './styles.css';
 
 interface Props {
     name: string;

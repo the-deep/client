@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
-import { Error } from '@togglecorp/toggle-form';
+import { EntriesAsList, Error, SetBaseValueArg } from '@togglecorp/toggle-form';
 import { noOp } from '@togglecorp/fujs';
-import { ExpandableContainer, List, NumberInput } from '@the-deep/deep-ui';
+import { ExpandableContainer, List, ListView, NumberInput } from '@the-deep/deep-ui';
 
 import { AssessmentRegistrySummarySubPillarTypeEnum } from '#generated/types';
 
 import SubPillarItem from './SubPillarItem';
-import { IssuesMapType, PartialFormType } from '../../formSchema';
+import { SubPillarIssuesMapType, PartialFormType } from '../../formSchema';
 import { PillarType } from '..';
 
 import styles from './styles.css';
@@ -20,9 +20,11 @@ type IssueOptionsType = {
 interface Props {
     data: PillarType;
     issueOptions?: IssueOptionsType[] | null;
-    issueList?: IssuesMapType;
-    disabled?: boolean;
+    pillarIssuesList?: SubPillarIssuesMapType;
+    formValue: PartialFormType['summaryPillarMeta'];
+    setValue: (value: SetBaseValueArg<PartialFormType['summaryPillarMeta']>) => void;
     error: Error<PartialFormType>;
+    disabled?: boolean;
     handleIssueAdd: (name: string, value: string) => void;
     refetchIssuesOptions: () => void;
 }
@@ -33,9 +35,11 @@ function PillarItem(props: Props) {
     // TODO: need to change in server for meta data
     const {
         data,
-        issueList,
-        disabled,
+        pillarIssuesList,
+        formValue,
+        setValue,
         error,
+        disabled,
         issueOptions,
         handleIssueAdd,
         refetchIssuesOptions,
@@ -45,14 +49,14 @@ function PillarItem(props: Props) {
         (name: string, subPillarData) => ({
             data: subPillarData,
             name,
-            issueList,
+            pillarIssuesList,
             issueOptions,
             disabled,
             onSuccessIssueAdd: handleIssueAdd,
             refetchIssuesOptions,
         }),
         [
-            issueList,
+            pillarIssuesList,
             issueOptions,
             disabled,
             handleIssueAdd,
@@ -68,9 +72,9 @@ function PillarItem(props: Props) {
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
                         placeholder="Total people assessed"
-                        name="totalDead"
-                        onChange={noOp}
-                        value={undefined}
+                        name="totalAssessed"
+                        onChange={setValue}
+                        value={formValue?.totalPeopleAssessed}
                         disabled={disabled}
                     />
                 )}
@@ -81,26 +85,26 @@ function PillarItem(props: Props) {
                             inputSectionClassName={styles.inputSection}
                             name="totalDeath"
                             placeholder="Total death:"
-                            value={undefined}
-                            onChange={noOp}
+                            value={formValue?.totalDead}
+                            onChange={setValue}
                             disabled={disabled}
                         />
                         <NumberInput
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
-                            name="totalDeath"
+                            name="totalInjured"
                             placeholder="Total injured:"
-                            value={undefined}
-                            onChange={noOp}
+                            value={formValue?.totalInjured}
+                            onChange={setValue}
                             disabled={disabled}
                         />
                         <NumberInput
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
-                            name="totalDeath"
+                            name="totalMissing"
                             placeholder="Total missing:"
-                            value={undefined}
-                            onChange={noOp}
+                            value={formValue?.totalMissing}
+                            onChange={setValue}
                             disabled={disabled}
                         />
                     </div>
@@ -113,17 +117,23 @@ function PillarItem(props: Props) {
         <div className={styles.pillar}>
             <ExpandableContainer
                 className={styles.expandableContainer}
-                contentClassName={styles.expandableContent}
                 heading={data.pillarDisplay}
+                headingSize="extraSmall"
                 withoutBorder
                 headerActions={headerActions}
                 expansionTriggerArea="arrow"
             >
-                <List
+                <ListView
+                    className={styles.subPillarItem}
                     data={data.subPillarInformation}
                     keySelector={keySelector}
                     renderer={SubPillarItem}
                     rendererParams={subPillarParams}
+                    errored={false}
+                    filtered={false}
+                    pending={false}
+                    messageShown
+                    messageIconShown
                 />
             </ExpandableContainer>
 
