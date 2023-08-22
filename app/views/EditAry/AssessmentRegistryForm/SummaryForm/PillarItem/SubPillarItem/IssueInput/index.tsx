@@ -1,21 +1,16 @@
 import React, { useCallback } from 'react';
 import { isDefined } from '@togglecorp/fujs';
 
-import { IssuesMapType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import { Option, SubPillarIssuesMapType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 import SelectIssueInput from './SelectIssueInput';
 
 import styles from './styles.css';
 
-interface Option {
-    id: string;
-    label: string;
-}
-
 interface Props {
     name?: string;
     options: Option[];
-    value?: IssuesMapType;
+    value?: SubPillarIssuesMapType;
     onSuccessIssueAdd: (name: string, value: string) => void;
     disabled?: boolean;
 }

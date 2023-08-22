@@ -1,22 +1,17 @@
 .pillar {
     display: grid;
-    gap: var(--dui-spacing-large);
     grid-auto-flow: column;
     grid-template-columns: 1fr;
-    /* grid-template-columns: 3fr 1fr; */
 
     .expandable-container {
-        gap: var(--dui-spacing-large);
+        .header-actions {
+            display: flex;
+        }
 
-        .expandable-content {
+        .sub-pillar-item {
             display: grid;
             grid-auto-flow: column;
             gap: var(--dui-spacing-large);
-            padding: var(--dui-spacing-large) 0;
-        }
-
-        .header-actions {
-            display: flex;
         }
     }
 
