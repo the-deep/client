@@ -10,16 +10,15 @@ import {
     ObjectSchema,
     useForm,
 } from '@togglecorp/toggle-form';
-
 import {
     AssessmentListQueryVariables,
 } from '#generated/types';
-
-import styles from './styles.css';
 import ProjectMemberMultiSelectInput,
 {
     ProjectMember,
 } from '#components/selections/ProjectMemberMultiSelectInput';
+
+import styles from './styles.css';
 
 type FormType = Omit<AssessmentListQueryVariables, 'projectId'>;
 type FormSchema = ObjectSchema<FormType>;
