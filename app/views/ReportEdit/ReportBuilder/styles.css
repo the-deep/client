@@ -1,0 +1,73 @@
+.report-builder {
+    padding: var(--dui-spacing-small);
+    height: auto;
+    overflow-y: auto;
+
+    .containers {
+        display: grid;
+        align-items: start;
+        margin: 0 auto;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        padding: var(--dui-spacing-small);
+        grid-template-columns: repeat(12, 1fr);
+        width: 210mm;
+        grid-gap: var(--dui-spacing-small);
+
+        .item {
+            display: flex;
+            position: relative;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--dui-spacing-small);
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            padding: var(--dui-spacing-large);
+            min-height: 20rem;
+
+            .add-button {
+                position: absolute;
+                transition: all 0.2s ease-in-out;
+                opacity: 0;
+            }
+
+            .before-button {
+                top: 50%;
+                left: 0;
+                transform: translateY(-50%);
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            .after-button {
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%);
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            .above-button {
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+            }
+
+            .below-button {
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            &:hover {
+                .add-button {
+                    display: block;
+                    opacity: 1;
+                    font-size: var(--dui-font-size-large);
+                }
+            }
+        }
+    }
+}

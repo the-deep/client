@@ -1,0 +1,27 @@
+.report-edit {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+
+    .header {
+        flex-shrink: 0;
+    }
+
+    .content {
+        display: flex;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .left-content {
+            flex-shrink: 0;
+            border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            width: 20rem;
+        }
+
+        .right-content {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+    }
+}
