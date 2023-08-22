@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
-import { EntriesAsList, Error, SetBaseValueArg } from '@togglecorp/toggle-form';
+import { Error } from '@togglecorp/toggle-form';
 import { noOp } from '@togglecorp/fujs';
-import { ExpandableContainer, List, ListView, NumberInput } from '@the-deep/deep-ui';
+import { ExpandableContainer, ListView, NumberInput } from '@the-deep/deep-ui';
 
 import { AssessmentRegistrySummarySubPillarTypeEnum } from '#generated/types';
 
@@ -22,7 +22,7 @@ interface Props {
     issueOptions?: IssueOptionsType[] | null;
     pillarIssuesList?: SubPillarIssuesMapType;
     formValue: PartialFormType['summaryPillarMeta'];
-    setValue: (value: SetBaseValueArg<PartialFormType['summaryPillarMeta']>) => void;
+    // setValue: (value: SetBaseValueArg<PartialFormType['summaryPillarMeta']>) => void;
     error: Error<PartialFormType>;
     disabled?: boolean;
     handleIssueAdd: (name: string, value: string) => void;
@@ -37,7 +37,7 @@ function PillarItem(props: Props) {
         data,
         pillarIssuesList,
         formValue,
-        setValue,
+        // setValue,
         error,
         disabled,
         issueOptions,
@@ -73,7 +73,7 @@ function PillarItem(props: Props) {
                         inputSectionClassName={styles.inputSection}
                         placeholder="Total people assessed"
                         name="totalAssessed"
-                        onChange={setValue}
+                        onChange={noOp}
                         value={formValue?.totalPeopleAssessed}
                         disabled={disabled}
                     />
@@ -86,7 +86,7 @@ function PillarItem(props: Props) {
                             name="totalDeath"
                             placeholder="Total death:"
                             value={formValue?.totalDead}
-                            onChange={setValue}
+                            onChange={noOp}
                             disabled={disabled}
                         />
                         <NumberInput
@@ -95,7 +95,7 @@ function PillarItem(props: Props) {
                             name="totalInjured"
                             placeholder="Total injured:"
                             value={formValue?.totalInjured}
-                            onChange={setValue}
+                            onChange={noOp}
                             disabled={disabled}
                         />
                         <NumberInput
@@ -104,13 +104,13 @@ function PillarItem(props: Props) {
                             name="totalMissing"
                             placeholder="Total missing:"
                             value={formValue?.totalMissing}
-                            onChange={setValue}
+                            onChange={noOp}
                             disabled={disabled}
                         />
                     </div>
                 )}
             </div>
-        ), [data, disabled],
+        ), [data, disabled, formValue],
     );
 
     return (

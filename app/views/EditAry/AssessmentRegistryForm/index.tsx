@@ -386,7 +386,7 @@ function AssessmentRegistryForm(props: Props) {
                         projectId={projectId}
                         value={value}
                         error={error}
-                        setValue={setValue}
+                        // setValue={setValue}
                         issueOptions={issuesResponse?.assessmentRegSummaryIssues?.results}
                         pillarIssuesList={pillarIssueMappedData}
                         handleIssueAdd={handlePillarIssueAdd}
