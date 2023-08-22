@@ -94,7 +94,6 @@ function StakeholderForm(props: Props) {
             error?.stakeholders,
         ],
     );
-    console.warn('here', value?.stakeholders, stakeholderTypes);
 
     return (
         <ContainerCard
