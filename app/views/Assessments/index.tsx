@@ -150,10 +150,9 @@ function Assessments(props: Props) {
                 sortable: false,
             },
             cellRenderer: ActionCell,
-            cellRendererParams: (assessmentId, assessment) => ({
+            cellRendererParams: (assessmentId) => ({
                 assessmentId,
                 projectId: project?.id,
-                leadId: assessment.lead.id,
                 onDeleteSuccess: refetch,
                 disabled: !canEditEntry,
             }),
