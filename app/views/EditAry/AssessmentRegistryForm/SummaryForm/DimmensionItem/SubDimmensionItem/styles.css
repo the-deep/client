@@ -4,4 +4,5 @@
     border-radius: var(--dui-border-radius-card);
     padding: var(--dui-spacing-medium);
     min-width: 300px;
+    gap: var(--dui-spacing-large);
 }

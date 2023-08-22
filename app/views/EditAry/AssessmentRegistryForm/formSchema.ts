@@ -22,7 +22,8 @@ export interface SubPillarIssueInputType {
     text?: string;
 }
 
-export type IssuesMapType = Record<string, NonNullable<PartialFormType['summarySubPillarIssue']>[number]>;
+export type SubPillarIssuesMapType = Record<string, NonNullable<PartialFormType['summarySubPillarIssue']>[number]>;
+export type SubDimensionIssuesMapType = Record<string, NonNullable<PartialFormType['summarySubDimmensionIssue']>[number]>;
 
 export interface Option {
     id: string;

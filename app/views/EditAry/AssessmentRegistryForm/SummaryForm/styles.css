@@ -1,21 +1,32 @@
-.summary {
+.summary-form {
     display: grid;
-    gap: var(--dui-spacing-extra-large);
+    gap: var(--dui-spacing-mega-large);
 
-    .tab-list {
-        display: flex;
-        flex-shrink: 0;
-
-        .dummy {
-            flex-grow: 1;
-            border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-separator);
-        }
-    }
-
-    .tab-panel {
+    .pillar-content {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
         overflow: auto;
+        gap: var(--dui-spacing-extra-large);
+    }
+
+    .dimension-content {
+        .tab-list {
+            display: flex;
+            flex-shrink: 0;
+
+            .dummy {
+                flex-grow: 1;
+                border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-separator);
+            }
+        }
+
+        .tab-panel {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: auto;
+            gap: var(--dui-spacing-extra-large);
+        }
     }
 }

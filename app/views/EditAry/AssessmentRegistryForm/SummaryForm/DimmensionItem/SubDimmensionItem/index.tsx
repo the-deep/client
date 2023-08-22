@@ -1,56 +1,70 @@
 import React, { useMemo } from 'react';
-import { gql } from '@apollo/client/core';
-import { useQuery } from '@apollo/client';
-import { isNotDefined } from '@togglecorp/fujs';
+import { removeNull } from '@togglecorp/toggle-form';
+import { Header, QuickActionButton } from '@the-deep/deep-ui';
+import { noOp } from '@togglecorp/fujs';
+import { IoAddCircleOutline } from 'react-icons/io5';
+
 import {
     AssessmentRegistrySummarySubDimmensionTypeEnum,
-    GetSubDimmensionIssuesQuery,
-    GetSubDimmensionIssuesQueryVariables,
 } from '#generated/types';
+
+import IssueInput from '../../PillarItem/SubPillarItem/IssueInput';
+import { DimmensionType } from '../..';
 
 import styles from './styles.css';
 
-const GET_SUB_DIMMENSION_ISSUES = gql`
-    query GetSubDimmensionIssues ($subDimmension: AssessmentRegistrySummarySubDimmensionTypeEnum) {
-        assessmentRegSummaryIssues(subDimmension: $subDimmension) {
-            results {
-                id
-                label
-                subDimmension
-                subDimmensionDisplay
-            }
-        }
-    }
-`;
+type IssueOptionsType = {
+    id: string;
+    label: string;
+    subDimmension?: AssessmentRegistrySummarySubDimmensionTypeEnum | null;
+}
 
 interface Props {
+    data: NonNullable<DimmensionType['subDimmensionInformation']>[number];
     name: string;
-    // value: SubPillarIssueInputType[];
-    // onValueChange: (data: SubPillarIssueInputType) => void;
-    // disabled?: boolean;
+    disabled?: boolean;
+    issueOptions?: IssueOptionsType[] | null;
+    refetchIssuesOptions: () => void;
 }
 
 function SubDimmensionItem(props: Props) {
-    const { name } = props;
-
-    const variablesForSubDimmensionIssues = useMemo(
-        (): GetSubDimmensionIssuesQueryVariables => ({
-            subDimmension: name as AssessmentRegistrySummarySubDimmensionTypeEnum,
-        }), [name],
-    );
-
     const {
-        loading,
-        data: result,
-    } = useQuery<GetSubDimmensionIssuesQuery, GetSubDimmensionIssuesQueryVariables>(
-        GET_SUB_DIMMENSION_ISSUES, {
-            skip: isNotDefined(name),
-            variables: variablesForSubDimmensionIssues,
-        },
+        data,
+        name,
+        disabled,
+        issueOptions,
+        refetchIssuesOptions,
+    } = props;
+
+    const options = useMemo(
+        () => {
+            const removeNullOptions = removeNull(issueOptions);
+            return removeNullOptions.filter((issue) => issue.subDimmension === name);
+        }, [issueOptions, name],
     );
+
     return (
         <div className={styles.subDimmensionItem}>
-            this is sub dimmension component
+            <Header
+                heading={data.subDimmensionDisplay}
+                headingSize="extraSmall"
+                actions={(
+                    <QuickActionButton
+                        name={data.subDimmension}
+                        // onClick={showModal}
+                        title="add issue"
+                    >
+                        <IoAddCircleOutline />
+                    </QuickActionButton>
+                )}
+            />
+            <IssueInput
+                name={name}
+                options={options}
+                value={undefined}
+                onSuccessIssueAdd={noOp}
+                disabled={disabled}
+            />
 
         </div>
     );
