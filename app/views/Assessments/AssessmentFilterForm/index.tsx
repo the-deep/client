@@ -10,18 +10,21 @@ import {
     ObjectSchema,
     useForm,
 } from '@togglecorp/toggle-form';
-import {
-    AssessmentListQueryVariables,
-} from '#generated/types';
-import ProjectMemberMultiSelectInput,
-{
+import ProjectMemberMultiSelectInput, {
     ProjectMember,
 } from '#components/selections/ProjectMemberMultiSelectInput';
 
 import styles from './styles.css';
 
-type FormType = Omit<AssessmentListQueryVariables, 'projectId'>;
-type FormSchema = ObjectSchema<FormType>;
+export type FilterFormType = {
+    search?: string;
+    createdBy?: string[];
+    createdAtLte?: string;
+    createdAtGte?: string;
+    publicationDateLte?: string;
+    publicationDateGte?: string;
+};
+type FormSchema = ObjectSchema<FilterFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
@@ -35,11 +38,11 @@ const schema: FormSchema = {
     }),
 };
 
-const initialValue: FormType = {};
+const initialValue: FilterFormType = {};
 
 interface Props {
-    filters: Omit<AssessmentListQueryVariables, 'projectId'> | undefined;
-    onFiltersChange: (filters: Omit<AssessmentListQueryVariables, 'projectId'> | undefined) => void;
+    filters: FilterFormType | undefined;
+    onFiltersChange: (filters: FilterFormType | undefined) => void;
     projectId?: string;
 }
 

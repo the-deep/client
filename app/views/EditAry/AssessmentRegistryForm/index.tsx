@@ -45,6 +45,8 @@ const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
 };
 
 const fieldsInAdditionalDocuments: { [key in keyof PartialFormType]?: true } = {
+    executiveSummary: true,
+    additionalDocuments: true,
 };
 
 const fieldsInFocus: { [key in keyof PartialFormType]?: true } = {

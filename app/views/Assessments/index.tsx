@@ -1,5 +1,4 @@
-import React,
-{
+import React, {
     useMemo,
     useState,
     useContext,
@@ -38,7 +37,7 @@ import ActionCell,
     Props as ActionCellProps,
 } from './ActionCell';
 
-import AssessmentFilterForm from './AssessmentFilterForm';
+import AssessmentFilterForm, { type FilterFormType } from './AssessmentFilterForm';
 
 import styles from './styles.css';
 
@@ -102,7 +101,7 @@ function Assessments(props: Props) {
         className,
     } = props;
 
-    const [filters, setFilters] = useState<Omit<AssessmentListQueryVariables, 'projectId'> | undefined>(undefined);
+    const [filters, setFilters] = useState<FilterFormType | undefined>(undefined);
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(25);
 
