@@ -23,7 +23,7 @@ const ASSESSMENT_DELETE = gql`
         $assessmentId: ID!,
     ) {
         project(id: $projectId) {
-            assessmentDelete(id: $assessmentId) {
+            deleteAssessmentRegistry(id: $assessmentId) {
                 ok
             }
         }
@@ -55,7 +55,7 @@ function ActionCell(props: Props) {
         ASSESSMENT_DELETE,
         {
             onCompleted: (result) => {
-                if (result?.project?.assessmentDelete?.ok) {
+                if (result?.project?.deleteAssessmentRegistry?.ok) {
                     onDeleteSuccess();
                     alert.show(
                         'Successfully deleted assessment.',
