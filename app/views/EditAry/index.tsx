@@ -70,6 +70,7 @@ import AssessmentRegistryForm from './AssessmentRegistryForm';
 import {
     initialValue,
     schema,
+    SummaryIssueType,
 } from './AssessmentRegistryForm/formSchema';
 
 import styles from './styles.css';
@@ -287,6 +288,9 @@ function EditAry(props: Props) {
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
     const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
     const [uploadedList, setUploadedList] = useState<GalleryFileType[]>();
+    const [issuesOptions, setIssuesOptions] = useState<SummaryIssueType[]
+    | undefined
+    | null>([]);
 
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo((): LeadEntriesForAryQueryVariables | undefined => (
@@ -665,6 +669,8 @@ function EditAry(props: Props) {
                                 setGeoAreaOptions={setGeoAreaOptions}
                                 uploadedList={uploadedList}
                                 setUploadedList={setUploadedList}
+                                issuesOptions={issuesOptions}
+                                setIssuesOptions={setIssuesOptions}
                             />
                         </div>
                     </>
