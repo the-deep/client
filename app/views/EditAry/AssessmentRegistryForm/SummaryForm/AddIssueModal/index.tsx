@@ -58,11 +58,14 @@ const CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE = gql`
 
 interface Props {
     data: NonNullable<PillarType['subPillarInformation']>[number];
-    refetchIssuesOptions: () => void;
+    onClose: () => void;
 }
 
 function AddIssueModal(props: Props) {
-    const { data, refetchIssuesOptions } = props;
+    const {
+        data,
+        onClose,
+    } = props;
     const {
         value,
         error: riskyError,
@@ -94,7 +97,7 @@ function AddIssueModal(props: Props) {
                         variant: 'success',
                     },
                 );
-                refetchIssuesOptions();
+                onClose();
             }
         },
         onError: () => {

@@ -11,6 +11,7 @@ import { randomString } from '@togglecorp/fujs';
 import {
     AssessmentRegistryCreateInputType,
     ProjectOrganizationGqInputType,
+    SummaryIssueSearchQuery,
 } from '#generated/types';
 import {
     DeepMandatory,
@@ -24,6 +25,7 @@ export interface SubPillarIssueInputType {
 
 export type SubPillarIssuesMapType = Record<string, NonNullable<PartialFormType['summarySubPillarIssue']>[number]>;
 export type SubDimensionIssuesMapType = Record<string, NonNullable<PartialFormType['summarySubDimmensionIssue']>[number]>;
+export type SummaryIssueType = NonNullable<NonNullable<SummaryIssueSearchQuery['assessmentRegSummaryIssues']>['results']>[number];
 
 export interface Option {
     id: string;
@@ -70,13 +72,27 @@ type OrganizationsListMember = ReturnType<OrganizationsListSchema['member']>;
 export type SubPillarIssueType = NonNullable<PartialFormType['summarySubPillarIssue']>[number];
 type SubPillarIssueSchema = ObjectSchema<SubPillarIssueType, PartialFormType>;
 type SubPillarIssueSchemaFields = ReturnType<SubPillarIssueSchema['fields']>;
-
 type SubPillarIssuesFormSchema = ArraySchema<SubPillarIssueType, PartialFormType>;
 type SubPillarIssuesFormSchemaMember = ReturnType<SubPillarIssuesFormSchema['member']>;
+
+export type SubDimensionIssueType = NonNullable<PartialFormType['summarySubDimmensionIssue']>[number];
+type SubDimensionIssueSchema = ObjectSchema<SubDimensionIssueType, PartialFormType>;
+type SubDimensionIssueSchemaFields = ReturnType<SubDimensionIssueSchema['fields']>;
+type SubDimensionIssuesSchema = ArraySchema<SubDimensionIssueType, PartialFormType>;
+type SubDimensionIssuesFormSchemMember = ReturnType<SubDimensionIssuesSchema['member']>;
+
+export type SubDimensionMetaInputType = NonNullable<PartialFormType['summaryDimmensionMeta']>[number];
+type SubDimensionMetaSchema = ObjectSchema<SubDimensionMetaInputType, PartialFormType>;
+type SubDimensionMetaSchemaFields = ReturnType<SubDimensionMetaSchema['fields']>;
+type SubDimensionMetasFormSchema = ArraySchema<SubDimensionMetaInputType, PartialFormType>;
+type SubDimensionMetasFormSchemaMember = ReturnType<SubDimensionMetasFormSchema['member']>;
 
 export const initialValue: PartialFormType = {
     methodologyAttributes: [
         { clientId: randomString() },
+    ],
+    summaryDimmensionMeta: [
+        { clientId: randomString(), totalPeopleAffected: 0 },
     ],
 };
 
@@ -167,12 +183,44 @@ export const schema: FormSchema = {
                 }),
             },
             summarySubPillarIssue: {
-                keySelector: (issue) => issue.id as string,
+                keySelector: (issue) => issue.clientId,
                 member: (): SubPillarIssuesFormSchemaMember => ({
                     fields: (): SubPillarIssueSchemaFields => ({
+                        clientId: [requiredCondition],
                         summaryIssue: [],
                         text: [],
                         order: [],
+                    }),
+                }),
+            },
+            summarySubDimmensionIssue: {
+                keySelector: (issue) => issue.clientId,
+                member: (): SubDimensionIssuesFormSchemMember => ({
+                    fields: (): SubDimensionIssueSchemaFields => ({
+                        clientId: [],
+                        focus: [],
+                        summaryIssue: [],
+                        order: [],
+                        text: [],
+                    }),
+                }),
+            },
+            summaryDimmensionMeta: {
+                keySelector: (dimensionMeta) => dimensionMeta.clientId,
+                member: (): SubDimensionMetasFormSchemaMember => ({
+                    fields: (): SubDimensionMetaSchemaFields => ({
+                        clientId: [requiredCondition],
+                        percentageOfPeopleAffected: [],
+                        totalPeopleAffected: [],
+                        percentageOfModerate: [],
+                        percentageOfSevere: [],
+                        percentageOfCritical: [],
+                        percentageInNeed: [],
+                        totalModerate: [],
+                        totalSevere: [],
+                        totalCritical: [],
+                        totalInNeed: [],
+
                     }),
                 }),
             },

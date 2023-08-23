@@ -3,30 +3,22 @@ import { Error } from '@togglecorp/toggle-form';
 import { noOp } from '@togglecorp/fujs';
 import { ExpandableContainer, ListView, NumberInput } from '@the-deep/deep-ui';
 
-import { AssessmentRegistrySummarySubPillarTypeEnum } from '#generated/types';
-
 import SubPillarItem from './SubPillarItem';
-import { SubPillarIssuesMapType, PartialFormType } from '../../formSchema';
+import { SubPillarIssuesMapType, PartialFormType, SummaryIssueType } from '../../formSchema';
 import { PillarType } from '..';
 
 import styles from './styles.css';
 
-type IssueOptionsType = {
-    id: string;
-    label: string;
-    subPillar?: AssessmentRegistrySummarySubPillarTypeEnum | null;
-}
-
 interface Props {
     data: PillarType;
-    issueOptions?: IssueOptionsType[] | null;
+    issuesOptions?: SummaryIssueType[] | null;
+    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
     pillarIssuesList?: SubPillarIssuesMapType;
     formValue: PartialFormType['summaryPillarMeta'];
     // setValue: (value: SetBaseValueArg<PartialFormType['summaryPillarMeta']>) => void;
     error: Error<PartialFormType>;
     disabled?: boolean;
     handleIssueAdd: (name: string, value: string) => void;
-    refetchIssuesOptions: () => void;
 }
 
 const keySelector = (d: NonNullable<PillarType['subPillarInformation']>[number]) => d.subPillar;
@@ -40,9 +32,9 @@ function PillarItem(props: Props) {
         // setValue,
         error,
         disabled,
-        issueOptions,
+        issuesOptions,
+        setIssuesOptions,
         handleIssueAdd,
-        refetchIssuesOptions,
     } = props;
 
     const subPillarParams = useCallback(
@@ -50,17 +42,17 @@ function PillarItem(props: Props) {
             data: subPillarData,
             name,
             pillarIssuesList,
-            issueOptions,
+            issuesOptions,
+            setIssuesOptions,
             disabled,
             onSuccessIssueAdd: handleIssueAdd,
-            refetchIssuesOptions,
         }),
         [
             pillarIssuesList,
-            issueOptions,
+            issuesOptions,
+            setIssuesOptions,
             disabled,
             handleIssueAdd,
-            refetchIssuesOptions,
         ],
     );
 

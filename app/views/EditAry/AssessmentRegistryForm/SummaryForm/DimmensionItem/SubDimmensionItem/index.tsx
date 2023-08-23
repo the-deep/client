@@ -1,30 +1,20 @@
-import React, { useMemo } from 'react';
-import { removeNull } from '@togglecorp/toggle-form';
+import React from 'react';
 import { Header, QuickActionButton } from '@the-deep/deep-ui';
 import { noOp } from '@togglecorp/fujs';
 import { IoAddCircleOutline } from 'react-icons/io5';
-
-import {
-    AssessmentRegistrySummarySubDimmensionTypeEnum,
-} from '#generated/types';
 
 import IssueInput from '../../PillarItem/SubPillarItem/IssueInput';
 import { DimmensionType } from '../..';
 
 import styles from './styles.css';
-
-type IssueOptionsType = {
-    id: string;
-    label: string;
-    subDimmension?: AssessmentRegistrySummarySubDimmensionTypeEnum | null;
-}
+import { SummaryIssueType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 interface Props {
     data: NonNullable<DimmensionType['subDimmensionInformation']>[number];
     name: string;
     disabled?: boolean;
-    issueOptions?: IssueOptionsType[] | null;
-    refetchIssuesOptions: () => void;
+    issuesOptions?: SummaryIssueType[] | null;
+    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
 }
 
 function SubDimmensionItem(props: Props) {
@@ -32,16 +22,9 @@ function SubDimmensionItem(props: Props) {
         data,
         name,
         disabled,
-        issueOptions,
-        refetchIssuesOptions,
+        issuesOptions,
+        setIssuesOptions,
     } = props;
-
-    const options = useMemo(
-        () => {
-            const removeNullOptions = removeNull(issueOptions);
-            return removeNullOptions.filter((issue) => issue.subDimmension === name);
-        }, [issueOptions, name],
-    );
 
     return (
         <div className={styles.subDimmensionItem}>
@@ -60,7 +43,8 @@ function SubDimmensionItem(props: Props) {
             />
             <IssueInput
                 name={name}
-                options={options}
+                options={issuesOptions}
+                setOptions={setIssuesOptions}
                 value={undefined}
                 onSuccessIssueAdd={noOp}
                 disabled={disabled}
