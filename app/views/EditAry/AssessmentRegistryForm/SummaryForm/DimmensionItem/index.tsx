@@ -1,27 +1,24 @@
 import React, { useCallback } from 'react';
 import { ExpandableContainer, ListView } from '@the-deep/deep-ui';
-import { Error } from '@togglecorp/toggle-form';
-
-import { AssessmentRegistrySummarySubDimmensionTypeEnum } from '#generated/types';
+import { EntriesAsList, Error, getErrorObject, useFormArray } from '@togglecorp/toggle-form';
 
 import SubDimmensionItem from './SubDimmensionItem';
-import { PartialFormType } from '../../formSchema';
+import { PartialFormType, SubDimensionMetaInputType, SummaryIssueType } from '../../formSchema';
 import { DimmensionType } from '..';
+import SummaryDimensionMetaInput from './SummaryDimensionMetaInput';
 
 import styles from './styles.css';
-
-type IssueOptionsType = {
-    id: string;
-    label: string;
-    subDimmension?: AssessmentRegistrySummarySubDimmensionTypeEnum | null;
-}
+import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 
 interface Props {
+    value: PartialFormType;
     data: DimmensionType;
-    issueOptions?: IssueOptionsType[] | null;
-    disabled?: boolean;
+    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    issuesOptions?: SummaryIssueType[] | null;
+    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
     error: Error<PartialFormType>;
-    refetchIssuesOptions: () => void;
+    focus: AssessmentRegistrySectorTypeEnum;
+    disabled?: boolean;
 }
 
 const keySelector = (d: NonNullable<
@@ -30,26 +27,36 @@ const keySelector = (d: NonNullable<
 
 function DimmensionItem(props: Props) {
     const {
+        value,
         data,
-        issueOptions,
         disabled,
-        error,
-        refetchIssuesOptions,
+        error: riskError,
+        setFieldValue,
+        issuesOptions,
+        setIssuesOptions,
+        focus,
     } = props;
 
+    const error = getErrorObject(riskError);
     const subDimensionParams = useCallback(
         (name: string, subDimmensionData) => ({
             data: subDimmensionData,
             name,
-            issueOptions,
+            issuesOptions,
+            setIssuesOptions,
             disabled,
-            refetchIssuesOptions,
         }),
         [
-            issueOptions,
+            issuesOptions,
+            setIssuesOptions,
             disabled,
-            refetchIssuesOptions,
         ],
+    );
+
+    const {
+        setValue: onChangeDimensionMeta,
+    } = useFormArray<'summaryDimmensionMeta', SubDimensionMetaInputType>(
+        'summaryDimmensionMeta', setFieldValue,
     );
 
     return (
@@ -59,7 +66,16 @@ function DimmensionItem(props: Props) {
                 heading={data.dimmensionDisplay}
                 headingSize="extraSmall"
                 withoutBorder
-                // headerActions={headerActions}
+                headerActions={(
+                    <SummaryDimensionMetaInput
+                        name={+focus}
+                        value={undefined}
+                        onChange={onChangeDimensionMeta}
+                        error={error?.summaryDimmensionMeta}
+                        focus={focus}
+                        dimension={data.dimmension}
+                    />
+                )}
                 expansionTriggerArea="arrow"
             >
                 <ListView

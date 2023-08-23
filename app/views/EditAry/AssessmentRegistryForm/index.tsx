@@ -9,15 +9,25 @@ import {
     EntriesAsList,
     Error,
     removeNull,
-    SetBaseValueArg,
 } from '@togglecorp/toggle-form';
-import { isDefined, isNotDefined, listToMap, _cs } from '@togglecorp/fujs';
+import {
+    isDefined,
+    isNotDefined,
+    isTruthyString,
+    listToMap,
+    randomString,
+    _cs,
+} from '@togglecorp/fujs';
 import { gql, useQuery } from '@apollo/client';
 
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
-import { GalleryFileType, GetSubPillarIssuesQuery, GetSubPillarIssuesQueryVariables } from '#generated/types';
+import {
+    GalleryFileType,
+    GetSubPillarIssueDetailsQuery,
+    GetSubPillarIssueDetailsQueryVariables,
+} from '#generated/types';
 
 import MetadataForm from './MetadataForm';
 import MethodologyForm from './MethodologyForm';
@@ -27,22 +37,21 @@ import ScoreForm from './ScoreForm';
 import SummaryForm from './SummaryForm';
 import AdditionalDocument from './AdditionalDocument';
 
-import { PartialFormType } from './formSchema';
+import { PartialFormType, SubPillarIssuesMapType, SummaryIssueType } from './formSchema';
 
 import styles from './styles.css';
 
-const GET_ASSESSMENT_SUMMARY_ISSUES = gql`
-    query GetSubPillarIssues {
-        assessmentRegSummaryIssues {
-            results {
-                id
-                label
-                subPillar
-                subDimmension
-            }
+const GET_ASSESSMENT_SUMMARY_ISSUE_DETAILS = gql`
+    query GetSubPillarIssueDetails($id: ID!) {
+        assessmentRegSummaryIssue(id: $id) {
+            id
+            label
+            subPillar
+            subDimmension
         }
     }
 `;
+
 const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
     bgCountries: true,
     bgCrisisType: true,
@@ -108,6 +117,8 @@ interface Props {
     geoAreaOptions?: GeoArea[] | null;
     setUploadedList: React.Dispatch<React.SetStateAction<GalleryFileType[] | undefined>>;
     uploadedList?: GalleryFileType[];
+    issuesOptions?: SummaryIssueType[] | null;
+    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
 }
 
 function AssessmentRegistryForm(props: Props) {
@@ -125,6 +136,8 @@ function AssessmentRegistryForm(props: Props) {
         className,
         uploadedList,
         setUploadedList,
+        issuesOptions,
+        setIssuesOptions,
     } = props;
 
     const errorInMetadata = useMemo(() => (
@@ -176,24 +189,34 @@ function AssessmentRegistryForm(props: Props) {
         )
     ), [error]);
 
+    const variables = useMemo((): GetSubPillarIssueDetailsQueryVariables => ({
+        id: '',
+    }), []);
+
     const {
         loading,
-        data: issuesResponse,
-        refetch,
-    } = useQuery<GetSubPillarIssuesQuery, GetSubPillarIssuesQueryVariables>(
-        GET_ASSESSMENT_SUMMARY_ISSUES,
+        data: issueDetails,
+        refetch: refetchIssue,
+    } = useQuery<GetSubPillarIssueDetailsQuery, GetSubPillarIssueDetailsQueryVariables>(
+        GET_ASSESSMENT_SUMMARY_ISSUE_DETAILS,
+        {
+            variables,
+            skip: isTruthyString(variables.id),
+        },
     );
 
     const pillarIssueMappedData = useMemo(
         () => {
-            const removeNullIssue = removeNull(issuesResponse?.assessmentRegSummaryIssues?.results);
+            const removeNullIssue = removeNull(issueDetails?.assessmentRegSummaryIssue);
             const issueBySubPillar = listToMap(
-                removeNullIssue ?? [],
-                (d) => d.id,
+                [removeNullIssue] ?? [],
+                (d) => d?.id,
             );
+
             const resultMap = (value.summarySubPillarIssue ?? []).reduce((acc, currentIssue) => {
                 const subPillarInfo = currentIssue.summaryIssue
                     ? issueBySubPillar[currentIssue.summaryIssue] : undefined;
+
                 if (isDefined(subPillarInfo)) {
                     // FIXME: subPillar type required in server
                     const key = `${subPillarInfo.subPillar}-${currentIssue.order}`;
@@ -201,28 +224,28 @@ function AssessmentRegistryForm(props: Props) {
                     acc[key] = currentIssue;
                 }
                 return acc;
-            }, {});
+            }, {} as SubPillarIssuesMapType);
             return resultMap;
         },
-        [value, issuesResponse],
+        [value, issueDetails?.assessmentRegSummaryIssue],
     );
 
     const updatePillarItemValue = useCallback(
         (
-            summaryissueToUpdate: string,
-            targetOrder: number,
-            updatedSummaryIssue: string,
+            summaryIssueToUpdate?: string,
+            targetOrder?: number,
+            updatedSummaryIssue?: string,
             updatedText?: string,
         ) => value.summarySubPillarIssue?.map(
             (item) => {
                 if (
-                    item.summaryIssue === summaryissueToUpdate
+                    item.summaryIssue === summaryIssueToUpdate
                     && item.order === targetOrder
                 ) {
                     return {
                         ...item,
                         summaryIssue: updatedSummaryIssue,
-                        text: updatedText,
+                        text: updatedText ?? '',
                     };
                 }
                 return item;
@@ -231,8 +254,10 @@ function AssessmentRegistryForm(props: Props) {
     );
     const handlePillarIssueAdd = useCallback(
         (n: string, issueId: string) => {
+            refetchIssue({ id: issueId });
             const issueOrder = n.split('-')[1];
             const previousMatch = pillarIssueMappedData[n];
+
             if (isDefined(previousMatch)) {
                 const updatedValue = updatePillarItemValue(
                     previousMatch?.summaryIssue,
@@ -247,14 +272,17 @@ function AssessmentRegistryForm(props: Props) {
             if (isNotDefined(previousMatch)) {
                 setFieldValue((prev: PartialFormType['summarySubPillarIssue']) => {
                     const newValue = {
+                        clientId: randomString(),
                         summaryIssue: issueId,
                         order: Number(issueOrder),
                         text: '',
                     };
-                    return [...prev ?? [], newValue];
+                    return [...prev ?? [], newValue].filter(
+                        (issues) => isDefined(issues.summaryIssue),
+                    );
                 }, 'summarySubPillarIssue');
             }
-        }, [setFieldValue, pillarIssueMappedData, updatePillarItemValue],
+        }, [setFieldValue, pillarIssueMappedData, updatePillarItemValue, refetchIssue],
     );
 
     return (
@@ -386,11 +414,11 @@ function AssessmentRegistryForm(props: Props) {
                         projectId={projectId}
                         value={value}
                         error={error}
-                        // setValue={setValue}
-                        issueOptions={issuesResponse?.assessmentRegSummaryIssues?.results}
+                        setFieldValue={setFieldValue}
+                        issuesOptions={issuesOptions}
+                        setIssuesOptions={setIssuesOptions}
                         pillarIssuesList={pillarIssueMappedData}
                         handleIssueAdd={handlePillarIssueAdd}
-                        refetchIssuesOptions={refetch}
                         disabled={loading}
                     />
                 </TabPanel>

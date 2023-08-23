@@ -1,21 +1,26 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Header, List, Tab, TabList, TabPanel, Tabs } from '@the-deep/deep-ui';
-import { Error, removeNull } from '@togglecorp/toggle-form';
+import { Header, List, Tab, TabList, TabPanel, Tabs } from '@the-deep/deep-ui'; import { EntriesAsList, Error, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import { isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
 
 import {
     AssessmentRegistrySectorTypeEnum,
     AssessmentRegistrySummaryFocusDimmensionTypeEnum,
+    AssessmentRegistrySummaryPillarTypeEnum,
     AssessmentRegistrySummarySubDimmensionTypeEnum,
     AssessmentRegistrySummarySubPillarTypeEnum,
     GetAssessmentRegistrySummaryOptionsQuery,
     GetAssessmentRegistrySummaryOptionsQueryVariables,
 } from '#generated/types';
 
-import { SubPillarIssuesMapType, PartialFormType } from '../formSchema';
+import {
+    SubPillarIssuesMapType,
+    PartialFormType,
+    SummaryIssueType,
+} from '../formSchema';
 import PillarItem from './PillarItem';
 import DimmensionItem from './DimmensionItem';
+import DimensionTabPanel from './DimensionTabPanel';
 
 import styles from './styles.css';
 
@@ -42,10 +47,10 @@ const GET_ASSESSMENT_REGISTRY_SUMMARY_OPTIONS = gql`
 `;
 
 export interface PillarType {
-    pillar: string;
+    pillar: AssessmentRegistrySummaryPillarTypeEnum;
     pillarDisplay: string;
     subPillarInformation: {
-        subPillar: string;
+        subPillar: AssessmentRegistrySummarySubPillarTypeEnum;
         subPillarDisplay: string;
     }[]
 }
@@ -59,26 +64,20 @@ export interface DimmensionType {
     }[]
 }
 
-type IssueOptionsType = {
-    id: string;
-    label: string;
-    subPillar?: AssessmentRegistrySummarySubPillarTypeEnum | null;
-    subDimmension?: AssessmentRegistrySummarySubDimmensionTypeEnum | null;
-}
-
 const keySelectorPillar = (d: PillarType) => d.pillar;
 const keySelectorDimmension = (d: DimmensionType) => d.dimmension;
 
 interface Props {
     projectId: string;
     value: PartialFormType;
-    error: Error<PartialFormType>;
-    issueOptions?: IssueOptionsType[] | null;
+    issuesOptions?: SummaryIssueType[] | null;
+    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
     pillarIssuesList: SubPillarIssuesMapType;
-    disabled?: boolean;
     // setValue: (value: SetBaseValueArg<PartialFormType>) => void;
+    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     handleIssueAdd: (name: string, value: string) => void;
-    refetchIssuesOptions: () => void;
+    error: Error<PartialFormType>;
+    disabled?: boolean;
 }
 
 function SummaryForm(props: Props) {
@@ -88,10 +87,11 @@ function SummaryForm(props: Props) {
         projectId,
         value,
         error,
-        issueOptions,
+        setFieldValue,
+        issuesOptions,
+        setIssuesOptions,
         handleIssueAdd,
         // setValue,
-        refetchIssuesOptions,
     } = props;
 
     const [selectedDimension, setSelectedDimension] = useState<AssessmentRegistrySectorTypeEnum
@@ -136,7 +136,7 @@ function SummaryForm(props: Props) {
         const groupByDimmension = listToGroupList(dimmensionOptions ?? [], (d) => d.dimmension);
         const finalDimmensionList = Object.entries(groupByDimmension).map(
             ([dimmensionItem, dimmensionArray]) => ({
-                dimmension: dimmensionItem,
+                dimmension: dimmensionItem as AssessmentRegistrySummaryFocusDimmensionTypeEnum,
                 dimmensionDisplay: dimmensionArray[0].dimmensionDisplay,
                 subDimmensionInformation: dimmensionArray.map((subDimmensionItem) => ({
                     subDimmension: subDimmensionItem.subDimmension,
@@ -158,38 +158,42 @@ function SummaryForm(props: Props) {
             data: pillarData,
             pillarName: name,
             pillarIssuesList,
-            issueOptions,
-            disabled: loading || disabled,
-            error,
+            issuesOptions,
+            setIssuesOptions,
             handleIssueAdd,
-            refetchIssuesOptions,
             formValue: value,
             // setValue,
+            disabled: loading || disabled,
+            error,
         }), [
-            pillarIssuesList,
-            issueOptions,
             value,
+            pillarIssuesList,
+            issuesOptions,
+            setIssuesOptions,
+            handleIssueAdd,
             loading,
             disabled,
             error,
-            handleIssueAdd,
-            refetchIssuesOptions,
         ],
     );
 
     const dimmensionRendererParams = useCallback(
         (_: string, dimmensionData) => ({
+            value,
             data: dimmensionData,
-            issueOptions,
+            setFieldValue,
+            issuesOptions,
+            setIssuesOptions,
             disabled: loading || disabled,
             error,
-            refetchIssuesOptions,
         }), [
-            issueOptions,
+            value,
+            setFieldValue,
+            issuesOptions,
+            setIssuesOptions,
             loading,
             disabled,
             error,
-            refetchIssuesOptions,
         ],
     );
 
@@ -229,10 +233,20 @@ function SummaryForm(props: Props) {
                                 </Tab>
                             ))}
                             <div className={styles.dummy} />
-
                         </TabList>
                         {value.sectors?.map((sector) => (
-                            <TabPanel
+                            <DimensionTabPanel
+                                key={sector}
+                                name={sector}
+                                data={dimmensionList}
+                                value={value}
+                                setFieldValue={setFieldValue}
+                                error={error}
+                                issuesOptions={issuesOptions}
+                                setIssuesOptions={setIssuesOptions}
+                                disabled={disabled}
+                            />
+                            /* <TabPanel
                                 key={sector}
                                 name={sector}
                                 className={styles.tabPanel}
@@ -243,7 +257,7 @@ function SummaryForm(props: Props) {
                                     renderer={DimmensionItem}
                                     rendererParams={dimmensionRendererParams}
                                 />
-                            </TabPanel>
+                            </TabPanel> */
                         ))}
                     </Tabs>
                 </div>
