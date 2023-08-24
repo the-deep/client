@@ -187,9 +187,9 @@ export const schema: FormSchema = {
                 member: (): SubPillarIssuesFormSchemaMember => ({
                     fields: (): SubPillarIssueSchemaFields => ({
                         clientId: [requiredCondition],
-                        summaryIssue: [],
-                        text: [],
-                        order: [],
+                        summaryIssue: [requiredCondition],
+                        text: [requiredCondition],
+                        order: [requiredCondition],
                     }),
                 }),
             },

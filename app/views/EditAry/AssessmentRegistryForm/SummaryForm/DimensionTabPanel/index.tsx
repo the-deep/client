@@ -58,7 +58,7 @@ function DimensionTabPanel(props: Props) {
         <TabPanel
             key={name}
             name={name}
-            // className={styles.tabPanel}
+            className={className}
         >
             <List
                 data={data}

@@ -1,8 +1,15 @@
 import React from 'react';
 import { Header, Modal, QuickActionButton, useModalState } from '@the-deep/deep-ui';
 import { IoAddCircleOutline } from 'react-icons/io5';
+import {
+    EntriesAsList,
+} from '@togglecorp/toggle-form';
 
-import { SubPillarIssuesMapType, SummaryIssueType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import {
+    SummaryIssueType,
+    SubPillarIssueType,
+    PartialFormType,
+} from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 import IssueInput from './IssueInput';
 import AddIssueModal from '../../AddIssueModal';
@@ -10,25 +17,31 @@ import { PillarType } from '../..';
 
 import styles from './styles.css';
 
-interface Props {
+export interface Props {
     data: NonNullable<PillarType['subPillarInformation']>[number];
+
     name: string;
     disabled?: boolean;
+    value: SubPillarIssueType[] | undefined;
+    onChange: (...entries: EntriesAsList<PartialFormType>) => void;
+
     issuesOptions?: SummaryIssueType[] | null;
     setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
-    pillarIssuesList?: SubPillarIssuesMapType;
-    onSuccessIssueAdd: (name: string, value: string) => void;
+    issueItemToClientIdMap: Record<string, string>;
+    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
 function SubPillarItem(props: Props) {
     const {
         data,
         name,
-        pillarIssuesList,
-        onSuccessIssueAdd,
         disabled,
         issuesOptions,
         setIssuesOptions,
+        value,
+        onChange,
+        issueItemToClientIdMap,
+        setIssueItemToClientIdMap,
     } = props;
 
     const [
@@ -55,13 +68,14 @@ function SubPillarItem(props: Props) {
             <IssueInput
                 name={name}
                 subPillar={data.subPillar}
-                value={pillarIssuesList}
-                options={issuesOptions}
-                setOptions={setIssuesOptions}
-                onSuccessIssueAdd={onSuccessIssueAdd}
+                value={value}
+                onChange={onChange}
+                issueOptions={issuesOptions}
+                setIssueOptions={setIssuesOptions}
                 disabled={disabled}
+                issueItemToClientIdMap={issueItemToClientIdMap}
+                setIssueItemToClientIdMap={setIssueItemToClientIdMap}
             />
-
             {isModalShown && (
                 <Modal
                     heading="Issue Editor"

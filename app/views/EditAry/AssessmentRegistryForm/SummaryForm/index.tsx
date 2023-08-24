@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Header, List, Tab, TabList, TabPanel, Tabs } from '@the-deep/deep-ui'; import { EntriesAsList, Error, removeNull } from '@togglecorp/toggle-form';
+import { Header, List, Tab, TabList, Tabs } from '@the-deep/deep-ui';
+import { EntriesAsList, Error, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import { isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
 
@@ -14,12 +15,10 @@ import {
 } from '#generated/types';
 
 import {
-    SubPillarIssuesMapType,
     PartialFormType,
     SummaryIssueType,
 } from '../formSchema';
-import PillarItem from './PillarItem';
-import DimensionItem from './DimensionItem';
+import PillarItem, { type Props as PillarItemProps } from './PillarItem';
 import DimensionTabPanel from './DimensionTabPanel';
 
 import styles from './styles.css';
@@ -70,19 +69,17 @@ const keySelectorDimension = (d: DimensionType) => d.dimension;
 interface Props {
     projectId: string;
     value: PartialFormType;
-    issuesOptions?: SummaryIssueType[] | null;
-    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
-    pillarIssuesList: SubPillarIssuesMapType;
-    // setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    handleIssueAdd: (name: string, value: string) => void;
     error: Error<PartialFormType>;
     disabled?: boolean;
+    issuesOptions?: SummaryIssueType[] | null;
+    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
+    issueItemToClientIdMap: Record<string, string>;
+    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
 function SummaryForm(props: Props) {
     const {
-        pillarIssuesList,
         disabled,
         projectId,
         value,
@@ -90,7 +87,8 @@ function SummaryForm(props: Props) {
         setFieldValue,
         issuesOptions,
         setIssuesOptions,
-        handleIssueAdd,
+        issueItemToClientIdMap,
+        setIssueItemToClientIdMap,
         // setValue,
     } = props;
 
@@ -113,15 +111,12 @@ function SummaryForm(props: Props) {
         },
     );
 
-    const [
-        pillarList,
-        dimensionList,
-    ] = useMemo(() => {
+    const pillarList: PillarType[] = useMemo(() => {
         const pillarOptions = removeNull(data?.project?.assessmentRegistryOptions?.summaryOptions);
         const groupByPillar = listToGroupList(pillarOptions ?? [], (d) => d.pillar);
         const finalPillarList = Object.entries(groupByPillar).map(
             ([pillarItem, pillarArray]) => ({
-                pillar: pillarItem,
+                pillar: pillarItem as AssessmentRegistrySummaryPillarTypeEnum,
                 pillarDisplay: pillarArray[0].pillarDisplay,
                 subPillarInformation: pillarArray.map((subPillarItem) => ({
                     subPillar: subPillarItem.subPillar,
@@ -130,6 +125,10 @@ function SummaryForm(props: Props) {
             }),
         );
 
+        return finalPillarList;
+    }, [data]);
+
+    const dimensionList: DimensionType[] = useMemo(() => {
         const dimensionOptions = removeNull(
             data?.project?.assessmentRegistryOptions?.summaryFocusOptions,
         );
@@ -144,53 +143,27 @@ function SummaryForm(props: Props) {
                 })),
             }),
         );
-        return ([finalPillarList, finalDimensionList]);
+        return finalDimensionList;
     }, [data]);
 
-    // FIXME: side effect hook
-    useMemo(
-        () => (isDefined(value.sectors) && setSelectedDimension(value.sectors[0])),
-        [value.sectors],
-    );
-
     const pillarRenderParams = useCallback(
-        (name: string, pillarData) => ({
+        (_: string, pillarData: PillarType): PillarItemProps => ({
             data: pillarData,
-            pillarName: name,
-            pillarIssuesList,
             issuesOptions,
             setIssuesOptions,
-            handleIssueAdd,
-            formValue: value,
-            // setValue,
+            issueItemToClientIdMap,
+            setIssueItemToClientIdMap,
+            value,
+            setFieldValue,
             disabled: loading || disabled,
             error,
         }), [
+            issueItemToClientIdMap,
+            setIssueItemToClientIdMap,
             value,
-            pillarIssuesList,
             issuesOptions,
             setIssuesOptions,
-            handleIssueAdd,
-            loading,
-            disabled,
-            error,
-        ],
-    );
-
-    const dimensionRendererParams = useCallback(
-        (_: string, dimensionData) => ({
-            value,
-            data: dimensionData,
             setFieldValue,
-            issuesOptions,
-            setIssuesOptions,
-            disabled: loading || disabled,
-            error,
-        }), [
-            value,
-            setFieldValue,
-            issuesOptions,
-            setIssuesOptions,
             loading,
             disabled,
             error,
@@ -246,18 +219,6 @@ function SummaryForm(props: Props) {
                                 setIssuesOptions={setIssuesOptions}
                                 disabled={disabled}
                             />
-                            /* <TabPanel
-                                key={sector}
-                                name={sector}
-                                className={styles.tabPanel}
-                            >
-                                <List
-                                    data={dimensionList}
-                                    keySelector={keySelectorDimension}
-                                    renderer={DimensionItem}
-                                    rendererParams={dimensionRendererParams}
-                                />
-                            </TabPanel> */
                         ))}
                     </Tabs>
                 </div>

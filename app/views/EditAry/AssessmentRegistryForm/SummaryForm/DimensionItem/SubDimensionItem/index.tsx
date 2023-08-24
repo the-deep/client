@@ -44,8 +44,8 @@ function SubDimensionItem(props: Props) {
             />
             <IssueInput
                 name={name}
-                options={issuesOptions}
-                setOptions={setIssuesOptions}
+                issueOptions={issuesOptions}
+                setIssueOptions={setIssuesOptions}
                 value={undefined}
                 onSuccessIssueAdd={noOp}
                 disabled={disabled}
