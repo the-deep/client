@@ -445,7 +445,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 value={data}
                 readOnly={readOnly}
                 disabled={disabled}
-                widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
@@ -461,7 +460,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 className={className}
                 title={widget.title}
                 error={error?.data}
-                disabled={disabled}
                 readOnly={readOnly}
                 actions={actions}
             />

@@ -25,11 +25,11 @@ import NonFieldError from '#components/NonFieldError';
 import NewUserSelectInput, { User } from '#components/selections/NewUserSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
-import styles from './styles.css';
 import {
     UserGroupMembershipBulkEditMutation,
     UserGroupMembershipBulkEditMutationVariables,
 } from '#generated/types';
+import styles from './styles.css';
 
 const USER_GROUP_MEMBERSHIP_EDIT = gql`
     mutation UserGroupMembershipBulkEdit(

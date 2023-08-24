@@ -95,7 +95,8 @@ function Screenshot(props: Props) {
     const brushContainerRef = React.useRef<SVGGElement>(null);
     const svgRef = React.useRef<SVGSVGElement>(null);
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
-    const handleBrush = React.useCallback((event) => {
+
+    const handleBrush = React.useCallback((event: { selection: number[][] }) => {
         if (!onCapture) {
             return;
         }

@@ -159,12 +159,12 @@ function CanvasDraw(props: Props) {
         }
     });
 
-    const handleColorInputChange = React.useCallback((newColor) => {
+    const handleColorInputChange = React.useCallback((newColor: string) => {
         colorRef.current = newColor;
         setColor(newColor);
     }, [setColor]);
 
-    const handlePenSizeInputChange = React.useCallback((newPenSize) => {
+    const handlePenSizeInputChange = React.useCallback((newPenSize: number) => {
         penSizeRef.current = newPenSize;
         setPenSize(newPenSize);
     }, [setPenSize]);

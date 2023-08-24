@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import {
     _cs,
     unique,
@@ -172,7 +172,8 @@ function ExploreDeepMapView(props: Props) {
         const width = Math.min(20 * Math.log10(uniqueProjectsCount) + 20, 200);
 
         const mainDiv = document.createElement('div');
-        ReactDOM.render(
+        const root = createRoot(mainDiv);
+        root.render(
             <button
                 className={styles.count}
                 type="button"
@@ -187,7 +188,6 @@ function ExploreDeepMapView(props: Props) {
             >
                 {uniqueProjectsCount}
             </button>,
-            mainDiv,
         );
         return mainDiv;
     }, [onClickedFeaturePropertiesChange, onClusterClickedChange]);

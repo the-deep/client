@@ -20,13 +20,12 @@ import {
     JoinRequestAcceptRejectMutationVariables,
 } from '#generated/types';
 
+import { USER_NOTIFICATIONS_COUNT } from '#base/components/Navbar/queries';
 import {
     BaseNotification,
     ProjectJoinRequest,
 } from '../../types';
 import NotificationContainer from '../../NotificationContainer';
-
-import { USER_NOTIFICATIONS_COUNT } from '#base/components/Navbar/queries';
 
 import styles from './styles.css';
 

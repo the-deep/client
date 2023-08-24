@@ -27,8 +27,8 @@ import BooleanInput, { Option } from '#components/selections/BooleanInput';
 import SourcesFilterContext from '#components/leadFilters/SourcesFilterContext';
 import { EnumEntity } from '#types/common';
 
-import FrameworkFilterItem from './FrameworkFilterItem';
 import { FrameworkFilterType } from '#types/newAnalyticalFramework';
+import FrameworkFilterItem from './FrameworkFilterItem';
 
 import { PartialEntriesFilterDataType } from '../schema';
 import styles from './styles.css';

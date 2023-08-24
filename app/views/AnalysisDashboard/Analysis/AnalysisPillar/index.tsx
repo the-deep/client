@@ -80,7 +80,7 @@ function AnalysisPillar(props: Props) {
         onDelete(pillarId);
     }, [onDelete, pillarId]);
 
-    const statementRendererParams = useCallback((_, data: AnalyticalStatementSummary) => ({
+    const statementRendererParams = useCallback((_: number, data: AnalyticalStatementSummary) => ({
         className: styles.statement,
         valueContainerClassName: styles.statementText,
         descriptionContainerClassName: styles.description,

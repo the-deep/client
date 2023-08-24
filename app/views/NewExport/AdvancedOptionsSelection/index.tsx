@@ -120,7 +120,7 @@ function AdvancedOptionsSelection(props: Props) {
         onWidgetColumnChange,
     } = props;
 
-    const handleSwapOrderValueChange = useCallback((newValue) => {
+    const handleSwapOrderValueChange = useCallback((newValue: boolean) => {
         if (newValue) {
             onReportStructureVariantChange(DIMENSION_FIRST);
         } else {

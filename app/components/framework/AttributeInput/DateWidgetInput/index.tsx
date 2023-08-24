@@ -4,8 +4,8 @@ import { isNotDefined } from '@togglecorp/fujs';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
-import WidgetWrapper from '../WidgetWrapper';
 import { DateWidgetAttribute } from '#types/newEntry';
+import WidgetWrapper from '../WidgetWrapper';
 
 type DateValue = NonNullable<DateWidgetAttribute['data']>;
 
@@ -57,7 +57,6 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             actions={actions}
             icons={icons}
-            error={error}
         >
             <NonFieldError
                 error={error}

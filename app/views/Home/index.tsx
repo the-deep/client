@@ -189,7 +189,7 @@ function Home(props: ViewProps) {
     });
 
     const recentProjectsRendererParams = useCallback(
-        (_, data: ProjectDetail): RecentProjectItemProps => ({
+        (_: string, data: ProjectDetail): RecentProjectItemProps => ({
             projectId: data?.id,
             title: data?.title,
             isPrivate: data?.isPrivate,

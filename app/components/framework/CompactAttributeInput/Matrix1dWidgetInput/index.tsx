@@ -265,7 +265,6 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         <WidgetWrapper
             className={_cs(className, styles.matrix)}
             error={error}
-            disabled={disabled}
             readOnly={readOnly}
             actions={actions}
             icons={icons}

@@ -98,6 +98,7 @@ function GoogleDrivePicker(props: Props) {
             client_id: clientId,
             scope,
             error_callback: (response) => {
+                // eslint-disable-next-line no-console
                 console.warn('response', response);
             },
             callback: (response) => {

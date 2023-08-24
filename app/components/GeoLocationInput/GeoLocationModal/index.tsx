@@ -4,8 +4,8 @@ import {
     Modal,
     Button,
 } from '@the-deep/deep-ui';
-import GeoLocationMapInput from './GeoLocationMapInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
+import GeoLocationMapInput from './GeoLocationMapInput';
 
 import styles from './styles.css';
 

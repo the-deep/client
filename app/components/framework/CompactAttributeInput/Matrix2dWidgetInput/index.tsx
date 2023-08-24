@@ -499,7 +499,6 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             className={_cs(className, styles.matrix)}
             error={error}
             title={title}
-            disabled={disabled}
             readOnly={readOnly}
             actions={actions}
             icons={icons}

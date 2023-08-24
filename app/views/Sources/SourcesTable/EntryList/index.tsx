@@ -33,11 +33,11 @@ import {
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { FRAMEWORK_FRAGMENT, ENTRY_FRAGMENT } from '#gqlFragments';
 
+import EditableEntry from '#components/entry/EditableEntry';
 import {
     Framework,
     Entry,
 } from './types';
-import EditableEntry from '#components/entry/EditableEntry';
 
 import styles from './styles.css';
 

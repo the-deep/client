@@ -253,7 +253,7 @@ function FrameworkDetail(props: Props) {
         failureMessage: _ts('projectEdit', 'projectDetailsLabel'),
     });
 
-    const itemRendererParams = useCallback((_, data) => ({
+    const itemRendererParams = useCallback((_: string, data: { title: string; id: string }) => ({
         className: styles.projectTitle,
         children: data.title,
         to: generatePath(routes.tagging.path, { projectId: data.id }),
@@ -442,8 +442,8 @@ function FrameworkDetail(props: Props) {
                             hideLabelColon
                         />
                         {(isDefined(visibleProjects)
-                        && isDefined(frameworkDetailsResponse?.projects)
-                        && (visibleProjects?.length ?? 0)) > 0 && (
+                            && isDefined(frameworkDetailsResponse?.projects)
+                            && ((visibleProjects?.length ?? 0)) > 0) && (
                             <>
                                 <TextOutput
                                     className={styles.block}

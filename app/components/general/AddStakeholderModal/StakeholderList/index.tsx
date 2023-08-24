@@ -60,7 +60,7 @@ function StakeholderList(props: Props) {
         }
     }, [value, name, onChange]);
 
-    const rowRendererParams = useCallback((_, val) => ({
+    const rowRendererParams = useCallback((_: string, val: string) => ({
         onRemove: onRowRemove,
         value: val,
         displayValue: getValueLabel(val),

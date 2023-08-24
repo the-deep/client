@@ -4,8 +4,8 @@ import { isNotDefined } from '@togglecorp/fujs';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
-import WidgetWrapper from '../WidgetWrapper';
 import { NumberWidgetAttribute } from '#types/newEntry';
+import WidgetWrapper from '../WidgetWrapper';
 
 type NumberValue = NonNullable<NumberWidgetAttribute['data']>;
 
@@ -57,7 +57,6 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             actions={actions}
             icons={icons}
-            error={error}
         >
             <NonFieldError
                 error={error}

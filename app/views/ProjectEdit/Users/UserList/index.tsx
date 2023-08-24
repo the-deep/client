@@ -218,11 +218,9 @@ function UserList(props: Props) {
                     return;
                 }
                 const {
-                    errors,
                     deletedResult,
                 } = response.project.projectUserMembershipBulk;
 
-                const [err] = errors ?? [];
                 const [deletedUser] = deletedResult ?? [];
 
                 if (deletedUser) {
@@ -233,7 +231,7 @@ function UserList(props: Props) {
                     refetch();
                 } else {
                     alert.show(
-                        err ?? 'There was an issue while removing the user from this project.',
+                        'There was an issue while removing the user from this project.',
                         { variant: 'error' },
                     );
                 }

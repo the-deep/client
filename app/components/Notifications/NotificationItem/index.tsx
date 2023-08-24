@@ -9,10 +9,10 @@ import { generatePath } from 'react-router-dom';
 import generateString from '#utils/string';
 import routes from '#base/configs/routes';
 
+import { EntryAction } from '#components/entryReview/commentConstants';
 import { Notification, ReviewEntryCommentAdd } from '../types';
 import NotificationContainer from '../NotificationContainer';
 import ProjectJoinRequestItem from './ProjectJoinRequestItem';
-import { EntryAction } from '#components/entryReview/commentConstants';
 import styles from './styles.css';
 
 interface Props {

@@ -5,8 +5,8 @@ import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/NonFieldError';
 import DateRangeInputWrapper from '#components/DateRangeInputWrapper';
 
-import WidgetWrapper from '../WidgetWrapper';
 import { DateRangeWidgetAttribute } from '#types/newEntry';
+import WidgetWrapper from '../WidgetWrapper';
 
 import styles from './styles.css';
 
@@ -65,7 +65,6 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             childrenContainerClassName={styles.content}
-            error={error}
             actions={actions}
             icons={icons}
         >

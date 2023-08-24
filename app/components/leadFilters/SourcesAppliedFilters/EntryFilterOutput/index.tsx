@@ -25,9 +25,8 @@ import DismissableDateRangeOutput from '#components/input/DismissableDateRangeOu
 import DismissableListOutput from '#components/input/DismissableListOutput';
 import DismissableTextOutput from '#components/input/DismissableTextOutput';
 
-import FrameworkFilterOutput from './FrameworkFilterOutput';
-
 import { FrameworkFilterType } from '#types/newAnalyticalFramework';
+import FrameworkFilterOutput from './FrameworkFilterOutput';
 
 const defaultValue: PartialEntriesFilterDataType = {
     filterableData: [],

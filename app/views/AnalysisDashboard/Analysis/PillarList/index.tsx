@@ -93,7 +93,7 @@ function AnalysisDetails(props: Props) {
     );
 
     const analysisPillarRendererParams = useCallback(
-        (_, data: PillarSummary): PillarComponentProps => ({
+        (_: number, data: PillarSummary): PillarComponentProps => ({
             className: styles.pillar,
             analysisId,
             assigneeName: data.assigneeDetails?.displayName,

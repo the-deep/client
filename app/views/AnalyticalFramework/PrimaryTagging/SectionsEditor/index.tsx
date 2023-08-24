@@ -257,7 +257,7 @@ function SectionsEditor(props: Props) {
         focusedSection ?? undefined,
     );
 
-    const handleExpansionChange = useCallback((sectionExpanded: boolean, sectionId) => {
+    const handleExpansionChange = useCallback((sectionExpanded: boolean, sectionId: string) => {
         setExpandedSectionId(sectionExpanded ? sectionId : undefined);
     }, []);
 

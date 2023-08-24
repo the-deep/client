@@ -321,7 +321,10 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         onTempStateChange(sectionsState.editMode);
     }, [sectionsState.editMode, onTempStateChange]);
 
-    const handleSectionEditClick: ButtonProps<string>['onClick'] = useCallback((newSectionToEdit, event) => {
+    const handleSectionEditClick: ButtonProps<string>['onClick'] = useCallback((
+        newSectionToEdit: string,
+        event: React.MouseEvent,
+    ) => {
         event.stopPropagation();
         setSectionToEdit(newSectionToEdit);
         handleSectionsEdit();
