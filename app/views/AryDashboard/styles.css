@@ -1,6 +1,7 @@
 .dashboard {
     background-color: var(--dui-color-foreground);
-    padding: var(--dui-spacing-extra-large) 0 0;
+    padding-right: unset;
+    padding-left: unset;
 
     .header {
         padding-right: var(--dui-spacing-super-large);

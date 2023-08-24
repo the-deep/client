@@ -16,8 +16,8 @@ function Statistics(props: Props) {
         className,
         projectId,
     } = props;
-    console.warn('here', projectId);
 
+    // TODO dummy data
     const noOfAssessments = 220;
     const noOfJointAssessments = 25;
     const noOfUncoordinatedAssessments = 25;
