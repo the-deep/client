@@ -2,7 +2,6 @@ const config = {
     extends: [
         'airbnb',
         'airbnb/hooks',
-        'plugin:postcss-modules/recommended',
         'plugin:@typescript-eslint/recommended',
     ],
     env: {
@@ -14,7 +13,6 @@ const config = {
     plugins: [
         'graphql',
         '@typescript-eslint',
-        'postcss-modules',
     ],
     settings: {
         'import/resolver': {
@@ -22,9 +20,6 @@ const config = {
         },
         react: {
             version: 'detect',
-        },
-        'postcss-modules': {
-            camelCase: 'camelCaseOnly',
         },
     },
     parser: '@typescript-eslint/parser',
@@ -48,6 +43,7 @@ const config = {
 
         'no-shadow': 0,
         '@typescript-eslint/no-shadow': ['error'],
+        'react/prop-types': 'off',
 
         '@typescript-eslint/no-empty-interface': 0,
         '@typescript-eslint/explicit-function-return-type': 0,
@@ -108,9 +104,6 @@ const config = {
         }],
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'warn',
-
-        'postcss-modules/no-unused-class': 'warn',
-        'postcss-modules/no-undef-class': 'warn',
     },
 };
 try {

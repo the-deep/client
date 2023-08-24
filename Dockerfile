@@ -1,4 +1,4 @@
-FROM node:17.3.0-alpine
+FROM node:18.17-alpine
 
 LABEL maintainer="Deep Dev dev@thedeep.com"
 
