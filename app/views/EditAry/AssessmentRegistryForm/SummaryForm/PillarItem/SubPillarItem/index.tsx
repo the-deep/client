@@ -190,12 +190,12 @@ function SubPillarItem(props: Props) {
             </div>
             {isModalShown && (
                 <Modal
-                    heading="Issue Editor"
+                    heading={`Issue Editor: ${data.subPillarDisplay}`}
                     size="medium"
                     onCloseButtonClick={closeModal}
+                    freeHeight
                 >
                     <AddIssueModal
-                        heading={data.subPillarDisplay}
                         type="pillar"
                         subPillar={data.subPillar}
                         onClose={closeModal}

@@ -16,6 +16,8 @@ function Statistics(props: Props) {
         className,
         projectId,
     } = props;
+    // eslint-disable-next-line no-console
+    console.log('here', projectId);
 
     // TODO dummy data
     const noOfAssessments = 220;
