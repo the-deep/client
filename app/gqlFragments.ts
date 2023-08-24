@@ -391,6 +391,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         summarySubPillarIssue {
             id
             order
+            clientId
             text
             summaryIssue {
                 id

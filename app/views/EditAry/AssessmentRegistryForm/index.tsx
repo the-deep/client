@@ -8,25 +8,16 @@ import {
 import {
     EntriesAsList,
     Error,
-    removeNull,
 } from '@togglecorp/toggle-form';
 import {
-    isDefined,
-    isNotDefined,
-    isTruthyString,
-    listToMap,
-    randomString,
     _cs,
 } from '@togglecorp/fujs';
-import { gql, useQuery } from '@apollo/client';
 
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import {
     GalleryFileType,
-    GetSubPillarIssueDetailsQuery,
-    GetSubPillarIssueDetailsQueryVariables,
 } from '#generated/types';
 
 import MetadataForm from './MetadataForm';
@@ -37,20 +28,9 @@ import ScoreForm from './ScoreForm';
 import SummaryForm from './SummaryForm';
 import AdditionalDocument from './AdditionalDocument';
 
-import { PartialFormType, SubPillarIssuesMapType, SummaryIssueType } from './formSchema';
+import { PartialFormType, SummaryIssueType } from './formSchema';
 
 import styles from './styles.css';
-
-const GET_ASSESSMENT_SUMMARY_ISSUE_DETAILS = gql`
-    query GetSubPillarIssueDetails($id: ID!) {
-        assessmentRegSummaryIssue(id: $id) {
-            id
-            label
-            subPillar
-            subDimension
-        }
-    }
-`;
 
 const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
     bgCountries: true,
@@ -119,6 +99,8 @@ interface Props {
     uploadedList?: GalleryFileType[];
     issuesOptions?: SummaryIssueType[] | null;
     setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
+    issueItemToClientIdMap: Record<string, string>;
+    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
 function AssessmentRegistryForm(props: Props) {
@@ -138,6 +120,8 @@ function AssessmentRegistryForm(props: Props) {
         setUploadedList,
         issuesOptions,
         setIssuesOptions,
+        issueItemToClientIdMap,
+        setIssueItemToClientIdMap,
     } = props;
 
     const errorInMetadata = useMemo(() => (
@@ -188,102 +172,6 @@ function AssessmentRegistryForm(props: Props) {
             (fieldName) => fieldsInCna[fieldName as keyof typeof error],
         )
     ), [error]);
-
-    const variables = useMemo((): GetSubPillarIssueDetailsQueryVariables => ({
-        id: '',
-    }), []);
-
-    const {
-        loading,
-        data: issueDetails,
-        refetch: refetchIssue,
-    } = useQuery<GetSubPillarIssueDetailsQuery, GetSubPillarIssueDetailsQueryVariables>(
-        GET_ASSESSMENT_SUMMARY_ISSUE_DETAILS,
-        {
-            variables,
-            skip: isTruthyString(variables.id),
-        },
-    );
-
-    const pillarIssueMappedData = useMemo(
-        () => {
-            const removeNullIssue = removeNull(issueDetails?.assessmentRegSummaryIssue);
-            const issueBySubPillar = listToMap(
-                [removeNullIssue] ?? [],
-                (d) => d?.id,
-            );
-
-            const resultMap = (value.summarySubPillarIssue ?? []).reduce((acc, currentIssue) => {
-                const subPillarInfo = currentIssue.summaryIssue
-                    ? issueBySubPillar[currentIssue.summaryIssue] : undefined;
-
-                if (isDefined(subPillarInfo)) {
-                    // FIXME: subPillar type required in server
-                    const key = `${subPillarInfo.subPillar}-${currentIssue.order}`;
-                    // FIXME: Typescript can't provide type saftely for dynamic key
-                    acc[key] = currentIssue;
-                }
-                return acc;
-            }, {} as SubPillarIssuesMapType);
-            return resultMap;
-        },
-        [value, issueDetails?.assessmentRegSummaryIssue],
-    );
-
-    const updatePillarItemValue = useCallback(
-        (
-            summaryIssueToUpdate?: string,
-            targetOrder?: number,
-            updatedSummaryIssue?: string,
-            updatedText?: string,
-        ) => value.summarySubPillarIssue?.map(
-            (item) => {
-                if (
-                    item.summaryIssue === summaryIssueToUpdate
-                    && item.order === targetOrder
-                ) {
-                    return {
-                        ...item,
-                        summaryIssue: updatedSummaryIssue,
-                        text: updatedText ?? '',
-                    };
-                }
-                return item;
-            },
-        ), [value],
-    );
-    const handlePillarIssueAdd = useCallback(
-        (n: string, issueId: string) => {
-            refetchIssue({ id: issueId });
-            const issueOrder = n.split('-')[1];
-            const previousMatch = pillarIssueMappedData[n];
-
-            if (isDefined(previousMatch)) {
-                const updatedValue = updatePillarItemValue(
-                    previousMatch?.summaryIssue,
-                    previousMatch?.order,
-                    issueId,
-                );
-                setFieldValue(
-                    (_: PartialFormType['summarySubPillarIssue']) => [...updatedValue ?? []],
-                    'summarySubPillarIssue',
-                );
-            }
-            if (isNotDefined(previousMatch)) {
-                setFieldValue((prev: PartialFormType['summarySubPillarIssue']) => {
-                    const newValue = {
-                        clientId: randomString(),
-                        summaryIssue: issueId,
-                        order: Number(issueOrder),
-                        text: '',
-                    };
-                    return [...prev ?? [], newValue].filter(
-                        (issues) => isDefined(issues.summaryIssue),
-                    );
-                }, 'summarySubPillarIssue');
-            }
-        }, [setFieldValue, pillarIssueMappedData, updatePillarItemValue, refetchIssue],
-    );
 
     return (
         <div className={_cs(styles.assessmentRegistryForm, className)}>
@@ -417,9 +305,8 @@ function AssessmentRegistryForm(props: Props) {
                         setFieldValue={setFieldValue}
                         issuesOptions={issuesOptions}
                         setIssuesOptions={setIssuesOptions}
-                        pillarIssuesList={pillarIssueMappedData}
-                        handleIssueAdd={handlePillarIssueAdd}
-                        disabled={loading}
+                        issueItemToClientIdMap={issueItemToClientIdMap}
+                        setIssueItemToClientIdMap={setIssueItemToClientIdMap}
                     />
                 </TabPanel>
                 <TabPanel

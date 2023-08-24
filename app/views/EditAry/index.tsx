@@ -292,6 +292,11 @@ function EditAry(props: Props) {
     | undefined
     | null>([]);
 
+    const [
+        issueItemToClientIdMap,
+        setIssueItemToClientIdMap,
+    ] = useState<Record<string, string>>({});
+
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo((): LeadEntriesForAryQueryVariables | undefined => (
         (leadId && projectId) ? { projectId, leadId } : undefined
@@ -439,6 +444,8 @@ function EditAry(props: Props) {
                         })),
                         summarySubPillarIssue: result.summarySubPillarIssue?.map(
                             (subIssue) => ({
+                                id: subIssue.id,
+                                clientId: subIssue.clientId,
                                 summaryIssue: subIssue.summaryIssue.id,
                                 order: subIssue.order,
                                 text: subIssue.text,
@@ -463,6 +470,17 @@ function EditAry(props: Props) {
                             mimeType: doc.file?.mimeType,
                         })).filter(isDefined),
                     );
+                    const subPillarMap = listToMap(
+                        result.summarySubPillarIssue ?? [],
+                        (item) => `${item.summaryIssue.subPillar}-${item.order}`,
+                        (item) => item.clientId ?? item.id,
+                    );
+                    setIssuesOptions(
+                        result.summarySubPillarIssue?.map(
+                            (item) => item.summaryIssue,
+                        ),
+                    );
+                    setIssueItemToClientIdMap(subPillarMap);
                 }
             },
         },
@@ -671,6 +689,8 @@ function EditAry(props: Props) {
                                 setUploadedList={setUploadedList}
                                 issuesOptions={issuesOptions}
                                 setIssuesOptions={setIssuesOptions}
+                                issueItemToClientIdMap={issueItemToClientIdMap}
+                                setIssueItemToClientIdMap={setIssueItemToClientIdMap}
                             />
                         </div>
                     </>
