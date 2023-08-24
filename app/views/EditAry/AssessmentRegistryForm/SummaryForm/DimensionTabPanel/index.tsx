@@ -3,14 +3,14 @@ import { List, TabPanel } from '@the-deep/deep-ui';
 import { EntriesAsList, Error } from '@togglecorp/toggle-form';
 
 import { PartialFormType, SummaryIssueType } from '../../formSchema';
-import DimmensionItem from '../DimmensionItem';
-import { DimmensionType } from '..';
+import DimensionItem from '../DimensionItem';
+import { DimensionType } from '..';
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 
 interface Props {
     className?: string;
     name: AssessmentRegistrySectorTypeEnum;
-    data: DimmensionType[];
+    data: DimensionType[];
     value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     issuesOptions?: SummaryIssueType[] | null;
@@ -19,7 +19,7 @@ interface Props {
     disabled?: boolean;
 }
 
-const keySelectorDimmension = (d: DimmensionType) => d.dimmension;
+const keySelectorDimension = (d: DimensionType) => d.dimension;
 function DimensionTabPanel(props: Props) {
     const {
         className,
@@ -33,9 +33,9 @@ function DimensionTabPanel(props: Props) {
         disabled,
     } = props;
 
-    const dimmensionRendererParams = useCallback(
-        (_: string, dimmensionData) => ({
-            data: dimmensionData,
+    const dimensionRendererParams = useCallback(
+        (_: string, dimensionData) => ({
+            data: dimensionData,
             value,
             setFieldValue,
             issuesOptions,
@@ -62,9 +62,9 @@ function DimensionTabPanel(props: Props) {
         >
             <List
                 data={data}
-                keySelector={keySelectorDimmension}
-                renderer={DimmensionItem}
-                rendererParams={dimmensionRendererParams}
+                keySelector={keySelectorDimension}
+                renderer={DimensionItem}
+                rendererParams={dimensionRendererParams}
             />
         </TabPanel>
     );

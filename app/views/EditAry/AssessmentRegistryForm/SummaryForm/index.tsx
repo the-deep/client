@@ -5,9 +5,9 @@ import { isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
 
 import {
     AssessmentRegistrySectorTypeEnum,
-    AssessmentRegistrySummaryFocusDimmensionTypeEnum,
+    AssessmentRegistrySummaryFocusDimensionTypeEnum,
     AssessmentRegistrySummaryPillarTypeEnum,
-    AssessmentRegistrySummarySubDimmensionTypeEnum,
+    AssessmentRegistrySummarySubDimensionTypeEnum,
     AssessmentRegistrySummarySubPillarTypeEnum,
     GetAssessmentRegistrySummaryOptionsQuery,
     GetAssessmentRegistrySummaryOptionsQueryVariables,
@@ -19,7 +19,7 @@ import {
     SummaryIssueType,
 } from '../formSchema';
 import PillarItem from './PillarItem';
-import DimmensionItem from './DimmensionItem';
+import DimensionItem from './DimensionItem';
 import DimensionTabPanel from './DimensionTabPanel';
 
 import styles from './styles.css';
@@ -36,10 +36,10 @@ const GET_ASSESSMENT_REGISTRY_SUMMARY_OPTIONS = gql`
                     pillar
                 }
                 summaryFocusOptions {
-                    dimmension
-                    subDimmension
-                    dimmensionDisplay
-                    subDimmensionDisplay
+                    dimension
+                    subDimension
+                    dimensionDisplay
+                    subDimensionDisplay
                 }
             }
         }
@@ -55,17 +55,17 @@ export interface PillarType {
     }[]
 }
 
-export interface DimmensionType {
-    dimmension: AssessmentRegistrySummaryFocusDimmensionTypeEnum;
-    dimmensionDisplay: string;
-    subDimmensionInformation: {
-        subDimmension: AssessmentRegistrySummarySubDimmensionTypeEnum;
-        subDimmensionDisplay: string;
+export interface DimensionType {
+    dimension: AssessmentRegistrySummaryFocusDimensionTypeEnum;
+    dimensionDisplay: string;
+    subDimensionInformation: {
+        subDimension: AssessmentRegistrySummarySubDimensionTypeEnum;
+        subDimensionDisplay: string;
     }[]
 }
 
 const keySelectorPillar = (d: PillarType) => d.pillar;
-const keySelectorDimmension = (d: DimmensionType) => d.dimmension;
+const keySelectorDimension = (d: DimensionType) => d.dimension;
 
 interface Props {
     projectId: string;
@@ -115,7 +115,7 @@ function SummaryForm(props: Props) {
 
     const [
         pillarList,
-        dimmensionList,
+        dimensionList,
     ] = useMemo(() => {
         const pillarOptions = removeNull(data?.project?.assessmentRegistryOptions?.summaryOptions);
         const groupByPillar = listToGroupList(pillarOptions ?? [], (d) => d.pillar);
@@ -130,21 +130,21 @@ function SummaryForm(props: Props) {
             }),
         );
 
-        const dimmensionOptions = removeNull(
+        const dimensionOptions = removeNull(
             data?.project?.assessmentRegistryOptions?.summaryFocusOptions,
         );
-        const groupByDimmension = listToGroupList(dimmensionOptions ?? [], (d) => d.dimmension);
-        const finalDimmensionList = Object.entries(groupByDimmension).map(
-            ([dimmensionItem, dimmensionArray]) => ({
-                dimmension: dimmensionItem as AssessmentRegistrySummaryFocusDimmensionTypeEnum,
-                dimmensionDisplay: dimmensionArray[0].dimmensionDisplay,
-                subDimmensionInformation: dimmensionArray.map((subDimmensionItem) => ({
-                    subDimmension: subDimmensionItem.subDimmension,
-                    subDimmensionDisplay: subDimmensionItem.subDimmensionDisplay,
+        const groupByDimension = listToGroupList(dimensionOptions ?? [], (d) => d.dimension);
+        const finalDimensionList = Object.entries(groupByDimension).map(
+            ([dimensionItem, dimensionArray]) => ({
+                dimension: dimensionItem as AssessmentRegistrySummaryFocusDimensionTypeEnum,
+                dimensionDisplay: dimensionArray[0].dimensionDisplay,
+                subDimensionInformation: dimensionArray.map((subDimensionItem) => ({
+                    subDimension: subDimensionItem.subDimension,
+                    subDimensionDisplay: subDimensionItem.subDimensionDisplay,
                 })),
             }),
         );
-        return ([finalPillarList, finalDimmensionList]);
+        return ([finalPillarList, finalDimensionList]);
     }, [data]);
 
     // FIXME: side effect hook
@@ -177,10 +177,10 @@ function SummaryForm(props: Props) {
         ],
     );
 
-    const dimmensionRendererParams = useCallback(
-        (_: string, dimmensionData) => ({
+    const dimensionRendererParams = useCallback(
+        (_: string, dimensionData) => ({
             value,
-            data: dimmensionData,
+            data: dimensionData,
             setFieldValue,
             issuesOptions,
             setIssuesOptions,
@@ -238,7 +238,7 @@ function SummaryForm(props: Props) {
                             <DimensionTabPanel
                                 key={sector}
                                 name={sector}
-                                data={dimmensionList}
+                                data={dimensionList}
                                 value={value}
                                 setFieldValue={setFieldValue}
                                 error={error}
@@ -252,10 +252,10 @@ function SummaryForm(props: Props) {
                                 className={styles.tabPanel}
                             >
                                 <List
-                                    data={dimmensionList}
-                                    keySelector={keySelectorDimmension}
-                                    renderer={DimmensionItem}
-                                    rendererParams={dimmensionRendererParams}
+                                    data={dimensionList}
+                                    keySelector={keySelectorDimension}
+                                    renderer={DimensionItem}
+                                    rendererParams={dimensionRendererParams}
                                 />
                             </TabPanel> */
                         ))}

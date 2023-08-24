@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import { ExpandableContainer, ListView } from '@the-deep/deep-ui';
 import { EntriesAsList, Error, getErrorObject, useFormArray } from '@togglecorp/toggle-form';
 
-import SubDimmensionItem from './SubDimmensionItem';
+import SubDimensionItem from './SubDimensionItem';
 import { PartialFormType, SubDimensionMetaInputType, SummaryIssueType } from '../../formSchema';
-import { DimmensionType } from '..';
+import { DimensionType } from '..';
 import SummaryDimensionMetaInput from './SummaryDimensionMetaInput';
 
 import styles from './styles.css';
@@ -12,7 +12,7 @@ import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 
 interface Props {
     value: PartialFormType;
-    data: DimmensionType;
+    data: DimensionType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     issuesOptions?: SummaryIssueType[] | null;
     setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
@@ -22,10 +22,10 @@ interface Props {
 }
 
 const keySelector = (d: NonNullable<
-    DimmensionType['subDimmensionInformation']
->[number]) => d.subDimmension;
+    DimensionType['subDimensionInformation']
+>[number]) => d.subDimension;
 
-function DimmensionItem(props: Props) {
+function DimensionItem(props: Props) {
     const {
         value,
         data,
@@ -39,8 +39,8 @@ function DimmensionItem(props: Props) {
 
     const error = getErrorObject(riskError);
     const subDimensionParams = useCallback(
-        (name: string, subDimmensionData) => ({
-            data: subDimmensionData,
+        (name: string, subDimensionData) => ({
+            data: subDimensionData,
             name,
             issuesOptions,
             setIssuesOptions,
@@ -55,15 +55,15 @@ function DimmensionItem(props: Props) {
 
     const {
         setValue: onChangeDimensionMeta,
-    } = useFormArray<'summaryDimmensionMeta', SubDimensionMetaInputType>(
-        'summaryDimmensionMeta', setFieldValue,
+    } = useFormArray<'summaryDimensionMeta', SubDimensionMetaInputType>(
+        'summaryDimensionMeta', setFieldValue,
     );
 
     return (
         <div className={styles.dimension}>
             <ExpandableContainer
                 className={styles.expandableContainer}
-                heading={data.dimmensionDisplay}
+                heading={data.dimensionDisplay}
                 headingSize="extraSmall"
                 withoutBorder
                 headerActions={(
@@ -71,18 +71,18 @@ function DimmensionItem(props: Props) {
                         name={+focus}
                         value={undefined}
                         onChange={onChangeDimensionMeta}
-                        error={error?.summaryDimmensionMeta}
+                        error={error?.summaryDimensionMeta}
                         focus={focus}
-                        dimension={data.dimmension}
+                        dimension={data.dimension}
                     />
                 )}
                 expansionTriggerArea="arrow"
             >
                 <ListView
                     className={styles.subDimensionItem}
-                    data={data.subDimmensionInformation}
+                    data={data.subDimensionInformation}
                     keySelector={keySelector}
-                    renderer={SubDimmensionItem}
+                    renderer={SubDimensionItem}
                     rendererParams={subDimensionParams}
                     errored={false}
                     filtered={false}
@@ -96,4 +96,4 @@ function DimmensionItem(props: Props) {
     );
 }
 
-export default DimmensionItem;
+export default DimensionItem;
