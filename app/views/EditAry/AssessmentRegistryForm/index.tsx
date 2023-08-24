@@ -47,7 +47,7 @@ const GET_ASSESSMENT_SUMMARY_ISSUE_DETAILS = gql`
             id
             label
             subPillar
-            subDimmension
+            subDimension
         }
     }
 `;
