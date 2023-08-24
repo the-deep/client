@@ -1,9 +1,18 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { SearchSelectInput, TextInput } from '@the-deep/deep-ui';
-import { isNotDefined } from '@togglecorp/fujs';
+import {
+    EntriesAsList,
+    useFormObject,
+    useFormArray,
+} from '@togglecorp/toggle-form';
+import { randomString, isNotDefined } from '@togglecorp/fujs';
 import { gql, useQuery } from '@apollo/client';
 
-import { SummaryIssueType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import {
+    PartialFormType,
+    SummaryIssueType,
+    SubPillarIssueType,
+} from '#views/EditAry/AssessmentRegistryForm/formSchema';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import {
     AssessmentRegistrySummarySubPillarTypeEnum,
@@ -39,16 +48,16 @@ const SUMMARY_ISSUE_SEARCH = gql`
 interface Props {
     name: string;
     subPillar?: AssessmentRegistrySummarySubPillarTypeEnum;
+    order: number;
     disabled?: boolean;
+    mainIndex?: number;
     placeholder?: string;
-    options?: SummaryIssueType[] | null;
-    setOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
-    value?: {
-        summaryIssue?: string;
-        text?: string;
-        order?: number;
-    };
-    onChangeIssue: (name: string, value: string) => void;
+    value?: SubPillarIssueType;
+
+    issueOptions?: SummaryIssueType[] | null;
+    setIssueOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
+    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    onChange: (...entries: EntriesAsList<PartialFormType>) => void;
 }
 
 const keySelector = (d: SummaryIssueType) => d.id;
@@ -59,15 +68,81 @@ function SelectIssueInput(props: Props) {
         subPillar,
         name,
         value,
+        mainIndex,
+        order,
+        setIssueItemToClientIdMap,
         placeholder,
-        options,
-        setOptions,
-        onChangeIssue,
+        issueOptions: options,
+        setIssueOptions: setOptions,
+        onChange,
         disabled,
     } = props;
+
     const [opened, setOpened] = useState(false);
     const [searchText, setSearchText] = useState('');
     const debouncedSearchText = useDebouncedValue(searchText);
+
+    const {
+        setValue: setSubPillarIssue,
+    } = useFormArray<
+        'summarySubPillarIssue',
+        SubPillarIssueType
+    >('summarySubPillarIssue', onChange);
+
+    const onFieldChange = useFormObject(mainIndex, setSubPillarIssue, {
+        clientId: randomString(),
+        order,
+    });
+
+    const handleIssueChange = useCallback((issueId: string | undefined) => {
+        if (!value) {
+            const newVal = {
+                clientId: randomString(),
+                order,
+                summaryIssue: issueId,
+            };
+            setIssueItemToClientIdMap((oldVal) => ({
+                ...oldVal,
+                [name]: newVal.clientId,
+            }));
+            onChange((oldVal: SubPillarIssueType[] | undefined) => ([
+                ...(oldVal ?? []),
+                newVal,
+            ]), 'summarySubPillarIssue');
+        } else {
+            onFieldChange(issueId, 'summaryIssue');
+        }
+    }, [
+        value,
+        onFieldChange,
+        setIssueItemToClientIdMap,
+        onChange,
+    ]);
+
+    const handleTextChange = useCallback((newText: string | undefined) => {
+        if (!value) {
+            const newVal = {
+                clientId: randomString(),
+                order,
+                text: newText,
+            };
+            setIssueItemToClientIdMap((oldVal) => ({
+                ...oldVal,
+                [name]: newVal.clientId,
+            }));
+            onChange((oldVal: SubPillarIssueType[] | undefined) => ([
+                ...(oldVal ?? []),
+                newVal,
+            ]), 'summarySubPillarIssue');
+        } else {
+            onFieldChange(newText, 'text');
+        }
+    }, [
+        value,
+        onFieldChange,
+        setIssueItemToClientIdMap,
+        onChange,
+    ]);
 
     const variables = useMemo(
         (): SummaryIssueSearchQueryVariables => ({
@@ -128,19 +203,14 @@ function SelectIssueInput(props: Props) {
         variables,
         data?.assessmentRegSummaryIssues?.page,
     ]);
-    const handleInputChange = useCallback(
-        (fieldValue, fieldName: string) => {
-            onChangeIssue(fieldName, fieldValue);
-        }, [onChangeIssue],
-    );
 
     return (
         <div className={styles.input}>
             <SearchSelectInput
                 placeholder={placeholder}
-                name={name}
+                name="summaryIssue"
                 value={value?.summaryIssue}
-                onChange={handleInputChange}
+                onChange={handleIssueChange}
                 keySelector={keySelector}
                 labelSelector={labelSelector}
                 options={options}
@@ -155,7 +225,7 @@ function SelectIssueInput(props: Props) {
             <TextInput
                 placeholder="Drop text here"
                 name="text"
-                onChange={handleInputChange}
+                onChange={handleTextChange}
                 value={value?.text}
                 variant="general"
                 disabled={disabled || isNotDefined(value?.summaryIssue)}

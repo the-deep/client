@@ -1,24 +1,30 @@
 import React, { useCallback, useMemo } from 'react';
-import { Error } from '@togglecorp/toggle-form';
+import {
+    Error,
+    EntriesAsList,
+} from '@togglecorp/toggle-form';
 import { noOp } from '@togglecorp/fujs';
 import { ExpandableContainer, ListView, NumberInput } from '@the-deep/deep-ui';
 
-import SubPillarItem from './SubPillarItem';
-import { SubPillarIssuesMapType, PartialFormType, SummaryIssueType } from '../../formSchema';
+import SubPillarItem, { Props as SubPillarItemProps } from './SubPillarItem';
+import {
+    PartialFormType,
+    SummaryIssueType,
+} from '../../formSchema';
 import { PillarType } from '..';
 
 import styles from './styles.css';
 
-interface Props {
+export interface Props {
     data: PillarType;
     issuesOptions?: SummaryIssueType[] | null;
     setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
-    pillarIssuesList?: SubPillarIssuesMapType;
-    formValue: PartialFormType['summaryPillarMeta'];
-    // setValue: (value: SetBaseValueArg<PartialFormType['summaryPillarMeta']>) => void;
+    value: PartialFormType;
+    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>;
     disabled?: boolean;
-    handleIssueAdd: (name: string, value: string) => void;
+    issueItemToClientIdMap: Record<string, string>;
+    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
 const keySelector = (d: NonNullable<PillarType['subPillarInformation']>[number]) => d.subPillar;
@@ -27,32 +33,36 @@ function PillarItem(props: Props) {
     // TODO: need to change in server for meta data
     const {
         data,
-        pillarIssuesList,
-        formValue,
-        // setValue,
+        value,
+        setFieldValue,
         error,
         disabled,
         issuesOptions,
+        issueItemToClientIdMap,
+        setIssueItemToClientIdMap,
         setIssuesOptions,
-        handleIssueAdd,
     } = props;
 
     const subPillarParams = useCallback(
-        (name: string, subPillarData) => ({
+        (name: string, subPillarData): SubPillarItemProps => ({
             data: subPillarData,
             name,
-            pillarIssuesList,
             issuesOptions,
+            value: value?.summarySubPillarIssue,
             setIssuesOptions,
             disabled,
-            onSuccessIssueAdd: handleIssueAdd,
+            issueItemToClientIdMap,
+            setIssueItemToClientIdMap,
+            onChange: setFieldValue,
         }),
         [
-            pillarIssuesList,
+            value,
+            setFieldValue,
             issuesOptions,
+            issueItemToClientIdMap,
+            setIssueItemToClientIdMap,
             setIssuesOptions,
             disabled,
-            handleIssueAdd,
         ],
     );
 
@@ -66,7 +76,7 @@ function PillarItem(props: Props) {
                         placeholder="Total people assessed"
                         name="totalAssessed"
                         onChange={noOp}
-                        value={formValue?.totalPeopleAssessed}
+                        value={value?.summaryPillarMeta?.totalPeopleAssessed}
                         disabled={disabled}
                     />
                 )}
@@ -77,7 +87,7 @@ function PillarItem(props: Props) {
                             inputSectionClassName={styles.inputSection}
                             name="totalDeath"
                             placeholder="Total death:"
-                            value={formValue?.totalDead}
+                            value={value?.summaryPillarMeta?.totalDead}
                             onChange={noOp}
                             disabled={disabled}
                         />
@@ -86,7 +96,7 @@ function PillarItem(props: Props) {
                             inputSectionClassName={styles.inputSection}
                             name="totalInjured"
                             placeholder="Total injured:"
-                            value={formValue?.totalInjured}
+                            value={value?.summaryPillarMeta?.totalInjured}
                             onChange={noOp}
                             disabled={disabled}
                         />
@@ -95,14 +105,14 @@ function PillarItem(props: Props) {
                             inputSectionClassName={styles.inputSection}
                             name="totalMissing"
                             placeholder="Total missing:"
-                            value={formValue?.totalMissing}
+                            value={value?.summaryPillarMeta?.totalMissing}
                             onChange={noOp}
                             disabled={disabled}
                         />
                     </div>
                 )}
             </div>
-        ), [data, disabled, formValue],
+        ), [data, disabled, value],
     );
 
     return (
