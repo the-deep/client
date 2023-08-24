@@ -4,6 +4,8 @@ import {
     EntriesAsList,
     useFormObject,
     useFormArray,
+    Error,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import { randomString, isNotDefined } from '@togglecorp/fujs';
 import { gql, useQuery } from '@apollo/client';
@@ -53,9 +55,10 @@ interface Props {
     mainIndex?: number;
     placeholder?: string;
     value?: SubPillarIssueType;
+    error?: Error<PartialFormType['summarySubPillarIssue']>;
 
-    issueOptions?: SummaryIssueType[] | null;
-    setIssueOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
+    issuesOptions?: SummaryIssueType[] | null;
+    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
     setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     onChange: (...entries: EntriesAsList<PartialFormType>) => void;
 }
@@ -72,9 +75,10 @@ function SelectIssueInput(props: Props) {
         order,
         setIssueItemToClientIdMap,
         placeholder,
-        issueOptions: options,
-        setIssueOptions: setOptions,
+        issuesOptions: options,
+        setIssuesOptions: setOptions,
         onChange,
+        error,
         disabled,
     } = props;
 
@@ -113,6 +117,8 @@ function SelectIssueInput(props: Props) {
             onFieldChange(issueId, 'summaryIssue');
         }
     }, [
+        name,
+        order,
         value,
         onFieldChange,
         setIssueItemToClientIdMap,
@@ -138,6 +144,8 @@ function SelectIssueInput(props: Props) {
             onFieldChange(newText, 'text');
         }
     }, [
+        name,
+        order,
         value,
         onFieldChange,
         setIssueItemToClientIdMap,
@@ -204,6 +212,15 @@ function SelectIssueInput(props: Props) {
         data?.assessmentRegSummaryIssues?.page,
     ]);
 
+    const getError = useCallback(
+        (clientId?: string) => {
+            if (!clientId) {
+                return undefined;
+            }
+            return getErrorObject(getErrorObject(error)?.[clientId]);
+        }, [error],
+    );
+
     return (
         <div className={styles.input}>
             <SearchSelectInput
@@ -221,6 +238,7 @@ function SelectIssueInput(props: Props) {
                 optionsPending={loading}
                 onShowDropdownChange={setOpened}
                 handleShowMoreClick={handleShowMoreClick}
+                error={getError(value?.clientId)?.summaryIssue}
             />
             <TextInput
                 placeholder="Drop text here"
@@ -229,6 +247,7 @@ function SelectIssueInput(props: Props) {
                 value={value?.text}
                 variant="general"
                 disabled={disabled || isNotDefined(value?.summaryIssue)}
+                error={getError(value?.clientId)?.text}
             />
         </div>
 
