@@ -24,7 +24,7 @@ export interface SubPillarIssueInputType {
 }
 
 export type SubPillarIssuesMapType = Record<string, NonNullable<PartialFormType['summarySubPillarIssue']>[number]>;
-export type SubDimensionIssuesMapType = Record<string, NonNullable<PartialFormType['summarySubDimmensionIssue']>[number]>;
+export type SubDimensionIssuesMapType = Record<string, NonNullable<PartialFormType['summarySubDimensionIssue']>[number]>;
 export type SummaryIssueType = NonNullable<NonNullable<SummaryIssueSearchQuery['assessmentRegSummaryIssues']>['results']>[number];
 
 export interface Option {
@@ -75,13 +75,13 @@ type SubPillarIssueSchemaFields = ReturnType<SubPillarIssueSchema['fields']>;
 type SubPillarIssuesFormSchema = ArraySchema<SubPillarIssueType, PartialFormType>;
 type SubPillarIssuesFormSchemaMember = ReturnType<SubPillarIssuesFormSchema['member']>;
 
-export type SubDimensionIssueType = NonNullable<PartialFormType['summarySubDimmensionIssue']>[number];
+export type SubDimensionIssueType = NonNullable<PartialFormType['summarySubDimensionIssue']>[number];
 type SubDimensionIssueSchema = ObjectSchema<SubDimensionIssueType, PartialFormType>;
 type SubDimensionIssueSchemaFields = ReturnType<SubDimensionIssueSchema['fields']>;
 type SubDimensionIssuesSchema = ArraySchema<SubDimensionIssueType, PartialFormType>;
 type SubDimensionIssuesFormSchemMember = ReturnType<SubDimensionIssuesSchema['member']>;
 
-export type SubDimensionMetaInputType = NonNullable<PartialFormType['summaryDimmensionMeta']>[number];
+export type SubDimensionMetaInputType = NonNullable<PartialFormType['summaryDimensionMeta']>[number];
 type SubDimensionMetaSchema = ObjectSchema<SubDimensionMetaInputType, PartialFormType>;
 type SubDimensionMetaSchemaFields = ReturnType<SubDimensionMetaSchema['fields']>;
 type SubDimensionMetasFormSchema = ArraySchema<SubDimensionMetaInputType, PartialFormType>;
@@ -91,7 +91,7 @@ export const initialValue: PartialFormType = {
     methodologyAttributes: [
         { clientId: randomString() },
     ],
-    summaryDimmensionMeta: [
+    summaryDimensionMeta: [
         { clientId: randomString(), totalPeopleAffected: 0 },
     ],
 };
@@ -193,7 +193,7 @@ export const schema: FormSchema = {
                     }),
                 }),
             },
-            summarySubDimmensionIssue: {
+            summarySubDimensionIssue: {
                 keySelector: (issue) => issue.clientId,
                 member: (): SubDimensionIssuesFormSchemMember => ({
                     fields: (): SubDimensionIssueSchemaFields => ({
@@ -205,7 +205,7 @@ export const schema: FormSchema = {
                     }),
                 }),
             },
-            summaryDimmensionMeta: {
+            summaryDimensionMeta: {
                 keySelector: (dimensionMeta) => dimensionMeta.clientId,
                 member: (): SubDimensionMetasFormSchemaMember => ({
                     fields: (): SubDimensionMetaSchemaFields => ({
