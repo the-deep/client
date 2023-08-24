@@ -95,7 +95,7 @@ interface TimelineData {
 
 const labelSelector = (item: AuthoringOrganizations) => item.organizationTypeTitle;
 const valueSelector = (item: AuthoringOrganizations) => item.count;
-const tickFormatter = (title: string) => ({ title });
+const tickFormatter = (title: string) => title;
 
 const timelineLabelSelector = (item: TimelineData) => item.label;
 const timelineValueSelector = (item: TimelineData) => item.value;

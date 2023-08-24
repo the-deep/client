@@ -1,5 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import { Button, Header, TextInput, useAlert } from '@the-deep/deep-ui';
+import {
+    Button,
+    TextInput,
+    Footer,
+    useAlert,
+} from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
 import { _cs } from '@togglecorp/fujs';
 import { removeNull } from '@togglecorp/toggle-form';
@@ -30,7 +35,6 @@ const CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE = gql`
 
 type Props = {
     className?: string;
-    heading: string;
     onClose: () => void;
 } & ({
     type: 'pillar';
@@ -43,7 +47,6 @@ type Props = {
 function AddIssueModal(props: Props) {
     const {
         className,
-        heading,
         onClose,
     } = props;
 
@@ -117,12 +120,6 @@ function AddIssueModal(props: Props) {
 
     return (
         <div className={_cs(className, styles.issueModal)}>
-            <Header
-                heading={heading}
-                headingSize="medium"
-                description={(<hr />)}
-                descriptionClassName={styles.description}
-            />
             {/* TODO:
                 <SelectInput
                 placeholder="Select parent"
@@ -140,14 +137,26 @@ function AddIssueModal(props: Props) {
                 value={label}
                 onChange={setLabel}
             />
-
-            <Button
-                name="save"
-                disabled={loading}
-                onClick={handleSave}
-            >
-                save
-            </Button>
+            <Footer
+                actions={(
+                    <>
+                        <Button
+                            name={undefined}
+                            onClick={onClose}
+                            variant="secondary"
+                        >
+                            Close
+                        </Button>
+                        <Button
+                            name="save"
+                            disabled={loading}
+                            onClick={handleSave}
+                        >
+                            save
+                        </Button>
+                    </>
+                )}
+            />
         </div>
     );
 }
