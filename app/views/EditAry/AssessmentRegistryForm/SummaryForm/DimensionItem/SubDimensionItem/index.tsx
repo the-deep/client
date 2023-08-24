@@ -203,12 +203,12 @@ function SubDimensionItem(props: Props) {
             </div>
             {isModalShown && (
                 <Modal
-                    heading="Issue Editor"
+                    heading={`Issue Editor: ${data.subDimensionDisplay}`}
                     size="medium"
                     onCloseButtonClick={closeModal}
+                    freeHeight
                 >
                     <AddIssueModal
-                        heading={data.subDimensionDisplay}
                         type="dimension"
                         subDimension={data.subDimension}
                         onClose={closeModal}
