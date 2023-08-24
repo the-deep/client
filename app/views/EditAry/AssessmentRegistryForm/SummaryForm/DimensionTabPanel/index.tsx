@@ -1,11 +1,15 @@
 import React, { useCallback } from 'react';
 import { List, TabPanel } from '@the-deep/deep-ui';
 import { EntriesAsList, Error } from '@togglecorp/toggle-form';
+import { _cs } from '@togglecorp/fujs';
+
+import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 
 import { PartialFormType, SummaryIssueType } from '../../formSchema';
 import DimensionItem from '../DimensionItem';
 import { DimensionType } from '..';
-import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
+
+import styles from './styles.css';
 
 interface Props {
     className?: string;
@@ -58,7 +62,7 @@ function DimensionTabPanel(props: Props) {
         <TabPanel
             key={name}
             name={name}
-            className={className}
+            className={_cs(className, styles.dimensionTabPanel)}
         >
             <List
                 data={data}

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
     Tab,
     TabList,
@@ -9,16 +9,12 @@ import {
     EntriesAsList,
     Error,
 } from '@togglecorp/toggle-form';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 
 import { BasicRegion } from '#components/selections/RegionMultiSelectInput';
 import { BasicOrganization } from '#types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
-import {
-    GalleryFileType,
-} from '#generated/types';
+import { GalleryFileType } from '#generated/types';
 
 import MetadataForm from './MetadataForm';
 import MethodologyForm from './MethodologyForm';
@@ -27,7 +23,6 @@ import CnaForm from './CnaForm';
 import ScoreForm from './ScoreForm';
 import SummaryForm from './SummaryForm';
 import AdditionalDocument from './AdditionalDocument';
-
 import { PartialFormType, SummaryIssueType } from './formSchema';
 
 import styles from './styles.css';

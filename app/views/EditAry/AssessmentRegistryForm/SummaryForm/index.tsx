@@ -64,7 +64,8 @@ export interface DimensionType {
 }
 
 const keySelectorPillar = (d: PillarType) => d.pillar;
-const keySelectorDimension = (d: DimensionType) => d.dimension;
+// TODO
+// const keySelectorDimension = (d: DimensionType) => d.dimension;
 
 interface Props {
     projectId: string;
@@ -200,7 +201,6 @@ function SummaryForm(props: Props) {
                                 <Tab
                                     key={sector}
                                     name={sector}
-                                    className={styles.tab}
                                 >
                                     {sector}
                                 </Tab>

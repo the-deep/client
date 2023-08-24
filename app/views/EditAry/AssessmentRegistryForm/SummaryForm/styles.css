@@ -20,13 +20,5 @@
                 border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-separator);
             }
         }
-
-        .tab-panel {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            overflow: auto;
-            gap: var(--dui-spacing-extra-large);
-        }
     }
 }
