@@ -13,6 +13,8 @@ const proxyMap: { [key in string]: string } = {
     'reliefweb.int': 'reliefweb-int.preview-proxy.thedeep.io',
     'data2.unhcr.org': 'data2-unhcr-org.preview-proxy.thedeep.io',
     'data.unhcr.org': 'data-unhcr-org.preview-proxy.thedeep.io',
+    'www.who.int': 'www-who-int.preview-proxy.thedeep.io',
+    'apps.who.int': 'apps-who-int.preview-proxy.thedeep.io',
 };
 
 function getProxiedUrl(url: string) {
