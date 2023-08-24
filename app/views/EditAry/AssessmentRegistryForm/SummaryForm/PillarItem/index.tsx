@@ -2,9 +2,14 @@ import React, { useCallback, useMemo } from 'react';
 import {
     Error,
     EntriesAsList,
+    getErrorObject,
+    useFormObject,
 } from '@togglecorp/toggle-form';
-import { noOp } from '@togglecorp/fujs';
-import { ExpandableContainer, ListView, NumberInput } from '@the-deep/deep-ui';
+import {
+    ExpandableContainer,
+    ListView,
+    NumberInput,
+} from '@the-deep/deep-ui';
 
 import SubPillarItem, { Props as SubPillarItemProps } from './SubPillarItem';
 import {
@@ -35,13 +40,15 @@ function PillarItem(props: Props) {
         data,
         value,
         setFieldValue,
-        error,
+        error: riskyError,
         disabled,
         issuesOptions,
         issueItemToClientIdMap,
         setIssueItemToClientIdMap,
         setIssuesOptions,
     } = props;
+    const error = getErrorObject(riskyError);
+    const summaryPillarMetaError = getErrorObject(error?.summaryPillarMeta);
 
     const subPillarParams = useCallback(
         (name: string, subPillarData): SubPillarItemProps => ({
@@ -54,6 +61,7 @@ function PillarItem(props: Props) {
             issueItemToClientIdMap,
             setIssueItemToClientIdMap,
             onChange: setFieldValue,
+            error: error?.summarySubPillarIssue,
         }),
         [
             value,
@@ -63,7 +71,17 @@ function PillarItem(props: Props) {
             setIssueItemToClientIdMap,
             setIssuesOptions,
             disabled,
+            error,
         ],
+    );
+
+    const onPillarMetaChange = useFormObject<
+        'summaryPillarMeta',
+        PartialFormType['summaryPillarMeta']
+    >(
+        'summaryPillarMeta',
+        setFieldValue,
+        {},
     );
 
     const headerActions = useMemo(
@@ -74,9 +92,10 @@ function PillarItem(props: Props) {
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
                         placeholder="Total people assessed"
-                        name="totalAssessed"
-                        onChange={noOp}
+                        name="totalPeopleAssessed"
+                        onChange={onPillarMetaChange}
                         value={value?.summaryPillarMeta?.totalPeopleAssessed}
+                        error={summaryPillarMetaError?.totalPeopleAssessed}
                         disabled={disabled}
                     />
                 )}
@@ -85,10 +104,11 @@ function PillarItem(props: Props) {
                         <NumberInput
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
-                            name="totalDeath"
+                            name="totalDead"
                             placeholder="Total death:"
                             value={value?.summaryPillarMeta?.totalDead}
-                            onChange={noOp}
+                            onChange={onPillarMetaChange}
+                            error={summaryPillarMetaError?.totalDead}
                             disabled={disabled}
                         />
                         <NumberInput
@@ -97,7 +117,8 @@ function PillarItem(props: Props) {
                             name="totalInjured"
                             placeholder="Total injured:"
                             value={value?.summaryPillarMeta?.totalInjured}
-                            onChange={noOp}
+                            onChange={onPillarMetaChange}
+                            error={summaryPillarMetaError?.totalInjured}
                             disabled={disabled}
                         />
                         <NumberInput
@@ -106,13 +127,20 @@ function PillarItem(props: Props) {
                             name="totalMissing"
                             placeholder="Total missing:"
                             value={value?.summaryPillarMeta?.totalMissing}
-                            onChange={noOp}
+                            onChange={onPillarMetaChange}
+                            error={summaryPillarMetaError?.totalMissing}
                             disabled={disabled}
                         />
                     </div>
                 )}
             </div>
-        ), [data, disabled, value],
+        ), [
+            data,
+            disabled,
+            value,
+            summaryPillarMetaError,
+            onPillarMetaChange,
+        ],
     );
 
     return (

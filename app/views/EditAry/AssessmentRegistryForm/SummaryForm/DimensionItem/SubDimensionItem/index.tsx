@@ -1,11 +1,9 @@
 import React from 'react';
 import { Header, QuickActionButton } from '@the-deep/deep-ui';
-import { noOp } from '@togglecorp/fujs';
 import { IoAddCircleOutline } from 'react-icons/io5';
 
 import { SummaryIssueType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
-import IssueInput from '../../PillarItem/SubPillarItem/IssueInput';
 import { DimensionType } from '../..';
 
 import styles from './styles.css';
@@ -42,15 +40,6 @@ function SubDimensionItem(props: Props) {
                     </QuickActionButton>
                 )}
             />
-            <IssueInput
-                name={name}
-                issueOptions={issuesOptions}
-                setIssueOptions={setIssuesOptions}
-                value={undefined}
-                onSuccessIssueAdd={noOp}
-                disabled={disabled}
-            />
-
         </div>
     );
 }

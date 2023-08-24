@@ -5,4 +5,9 @@
     padding: var(--dui-spacing-medium);
     min-width: 300px;
     gap: var(--dui-spacing-large);
+
+    .issue-input {
+        display: grid;
+        gap: var(--dui-spacing-extra-large);
+    }
 }
