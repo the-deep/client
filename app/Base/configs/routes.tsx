@@ -382,9 +382,9 @@ const aryDashboard = wrap({
             return false;
         }
         return (
-            project.isVisualizationEnabled
-            && project.isVisualizationAvailable
-            && project.hasAssessmentTemplate
+            // project.isVisualizationEnabled
+            // && project.isVisualizationAvailable
+            project.hasAssessmentTemplate
         );
     },
 });
