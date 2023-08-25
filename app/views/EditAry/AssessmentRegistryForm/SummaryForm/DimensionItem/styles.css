@@ -4,6 +4,10 @@
     grid-template-columns: 1fr;
 
     .expandable-container {
+
+        .heading-container {
+            align-self: center;
+        }
         .header-actions {
             display: flex;
         }

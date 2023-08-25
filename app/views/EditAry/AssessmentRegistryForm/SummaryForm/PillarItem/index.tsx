@@ -147,6 +147,7 @@ function PillarItem(props: Props) {
         <div className={styles.pillar}>
             <ExpandableContainer
                 className={styles.expandableContainer}
+                headingContainerClassName={styles.headingContainer}
                 heading={data.pillarDisplay}
                 headingSize="extraSmall"
                 withoutBorder

@@ -3,8 +3,12 @@ import { EntriesAsList, Error } from '@togglecorp/toggle-form';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { Header, QuickActionButton } from '@the-deep/deep-ui';
 
-import { AssessmentRegistrySummaryFocusDimensionTypeEnum } from '#generated/types';
-import { PartialFormType, SubDimensionIssueType, SummaryIssueType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
+import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
+import {
+    PartialFormType,
+    SubDimensionIssueType,
+    SummaryIssueType,
+} from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 import SelectIssueInput from './SelectIssueInput';
 import { DimensionType } from '../..';
@@ -17,12 +21,18 @@ export interface Props {
     onChange: (...entries: EntriesAsList<PartialFormType>) => void;
     name: string;
     disabled?: boolean;
-    issuesOptions?: SummaryIssueType[] | null;
-    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
-    issueItemToClientIdMap: Record<string, string>;
-    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    dimensionIssueToClienIdMap: Record<string, string>;
+    setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<
+    Record<string, string>>>;
+
+    dimensionIssuesOptions?: SummaryIssueType[] | null;
+    setDimensionIssuesOptions: React.Dispatch<React.SetStateAction<
+    SummaryIssueType[]
+    | undefined
+    | null
+    >>;
     error: Error<PartialFormType['summarySubDimensionIssue']>;
-    dimension: AssessmentRegistrySummaryFocusDimensionTypeEnum;
+    sector: AssessmentRegistrySectorTypeEnum;
 }
 
 function SubDimensionItem(props: Props) {
@@ -31,35 +41,35 @@ function SubDimensionItem(props: Props) {
         name,
         value,
         onChange,
-        issuesOptions,
-        setIssuesOptions,
-        issueItemToClientIdMap,
-        setIssueItemToClientIdMap,
+        dimensionIssuesOptions,
+        setDimensionIssuesOptions,
+        dimensionIssueToClienIdMap,
+        setDimensionIssueToClientIdMap,
+        sector,
         disabled,
         error,
-        dimension,
     } = props;
 
     const getFieldValue = useCallback(
         (n: string) => {
-            const clientId = issueItemToClientIdMap[n];
+            const clientId = dimensionIssueToClienIdMap[n];
             if (!clientId) {
                 return undefined;
             }
             const itemInValue = value?.find((item) => item.clientId === clientId);
             return itemInValue;
-        }, [value, issueItemToClientIdMap],
+        }, [value, dimensionIssueToClienIdMap],
     );
 
     const getMainIndex = useCallback(
         (n: string) => {
-            const clientId = issueItemToClientIdMap[n];
+            const clientId = dimensionIssueToClienIdMap[n];
             if (!clientId) {
                 return undefined;
             }
             const mainIndex = value?.findIndex((item) => item.clientId === clientId);
             return mainIndex;
-        }, [value, issueItemToClientIdMap],
+        }, [value, dimensionIssueToClienIdMap],
     );
 
     return (
@@ -79,17 +89,107 @@ function SubDimensionItem(props: Props) {
             />
             <div className={styles.issueInput}>
                 <SelectIssueInput
-                    name={`${name}-1`}
+                    name={`${sector}-${name}-1`}
                     order={1}
                     placeholder="1. Field Name"
-                    value={getFieldValue(`${name}-1`)}
-                    mainIndex={getMainIndex(`${name}-1`)}
+                    value={getFieldValue(`${sector}-${name}-1`)}
+                    mainIndex={getMainIndex(`${sector}-${name}-1`)}
                     onChange={onChange}
-                    issuesOptions={issuesOptions}
-                    setIssueItemToClientIdMap={setIssueItemToClientIdMap}
-                    setIssuesOptions={setIssuesOptions}
+                    dimensionIssuesOptions={dimensionIssuesOptions}
+                    setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
+                    setDimensionIssuesOptions={setDimensionIssuesOptions}
                     subDimension={data.subDimension}
-                    dimension={dimension}
+                    sector={sector}
+                    disabled={disabled}
+                    error={error}
+                />
+                <SelectIssueInput
+                    name={`${sector}-${name}-2`}
+                    order={2}
+                    placeholder="2. Field Name"
+                    value={getFieldValue(`${sector}-${name}-2`)}
+                    mainIndex={getMainIndex(`${sector}-${name}-2`)}
+                    onChange={onChange}
+                    dimensionIssuesOptions={dimensionIssuesOptions}
+                    setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
+                    setDimensionIssuesOptions={setDimensionIssuesOptions}
+                    subDimension={data.subDimension}
+                    sector={sector}
+                    disabled={disabled}
+                    error={error}
+                />
+                <SelectIssueInput
+                    name={`${sector}-${name}-3`}
+                    order={3}
+                    placeholder="3. Field Name"
+                    value={getFieldValue(`${sector}-${name}-3`)}
+                    mainIndex={getMainIndex(`${sector}-${name}-3`)}
+                    onChange={onChange}
+                    dimensionIssuesOptions={dimensionIssuesOptions}
+                    setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
+                    setDimensionIssuesOptions={setDimensionIssuesOptions}
+                    subDimension={data.subDimension}
+                    sector={sector}
+                    disabled={disabled}
+                    error={error}
+                />
+                <SelectIssueInput
+                    name={`${sector}-${name}-4`}
+                    order={4}
+                    placeholder="4. Field Name"
+                    value={getFieldValue(`${sector}-${name}-4`)}
+                    mainIndex={getMainIndex(`${sector}-${name}-4`)}
+                    onChange={onChange}
+                    dimensionIssuesOptions={dimensionIssuesOptions}
+                    setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
+                    setDimensionIssuesOptions={setDimensionIssuesOptions}
+                    subDimension={data.subDimension}
+                    sector={sector}
+                    disabled={disabled}
+                    error={error}
+                />
+                <SelectIssueInput
+                    name={`${sector}-${name}-5`}
+                    order={5}
+                    placeholder="5. Field Name"
+                    value={getFieldValue(`${sector}-${name}-5`)}
+                    mainIndex={getMainIndex(`${sector}-${name}-5`)}
+                    onChange={onChange}
+                    dimensionIssuesOptions={dimensionIssuesOptions}
+                    setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
+                    setDimensionIssuesOptions={setDimensionIssuesOptions}
+                    subDimension={data.subDimension}
+                    sector={sector}
+                    disabled={disabled}
+                    error={error}
+                />
+                <SelectIssueInput
+                    name={`${sector}-${name}-6`}
+                    order={6}
+                    placeholder="6. Field Name"
+                    value={getFieldValue(`${sector}-${name}-6`)}
+                    mainIndex={getMainIndex(`${sector}-${name}-6`)}
+                    onChange={onChange}
+                    dimensionIssuesOptions={dimensionIssuesOptions}
+                    setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
+                    setDimensionIssuesOptions={setDimensionIssuesOptions}
+                    subDimension={data.subDimension}
+                    sector={sector}
+                    disabled={disabled}
+                    error={error}
+                />
+                <SelectIssueInput
+                    name={`${sector}-${name}-7`}
+                    order={7}
+                    placeholder="7. Field Name"
+                    value={getFieldValue(`${sector}-${name}-7`)}
+                    mainIndex={getMainIndex(`${sector}-${name}-7`)}
+                    onChange={onChange}
+                    dimensionIssuesOptions={dimensionIssuesOptions}
+                    setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
+                    setDimensionIssuesOptions={setDimensionIssuesOptions}
+                    subDimension={data.subDimension}
+                    sector={sector}
                     disabled={disabled}
                     error={error}
                 />

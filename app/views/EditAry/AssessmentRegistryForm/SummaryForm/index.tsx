@@ -75,6 +75,14 @@ interface Props {
     setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
     issueItemToClientIdMap: Record<string, string>;
     setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    dimensionIssueToClienIdMap: Record<string, string>;
+    setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    dimensionIssuesOptions?: SummaryIssueType[] | null;
+    setDimensionIssuesOptions: React.Dispatch<React.SetStateAction<
+    SummaryIssueType[]
+    | undefined
+    | null
+    >>;
 }
 
 function SummaryForm(props: Props) {
@@ -88,6 +96,10 @@ function SummaryForm(props: Props) {
         setIssuesOptions,
         issueItemToClientIdMap,
         setIssueItemToClientIdMap,
+        dimensionIssueToClienIdMap,
+        setDimensionIssueToClientIdMap,
+        dimensionIssuesOptions,
+        setDimensionIssuesOptions,
     } = props;
 
     const [selectedDimension, setSelectedDimension] = useState<AssessmentRegistrySectorTypeEnum
@@ -211,12 +223,12 @@ function SummaryForm(props: Props) {
                                 data={dimensionList}
                                 value={value}
                                 setFieldValue={setFieldValue}
-                                error={error}
-                                issuesOptions={issuesOptions}
-                                setIssuesOptions={setIssuesOptions}
+                                dimensionIssuesOptions={dimensionIssuesOptions}
+                                setDimensionIssuesOptions={setDimensionIssuesOptions}
+                                dimensionIssueToClienIdMap={dimensionIssueToClienIdMap}
+                                setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
                                 disabled={disabled}
-                                issueItemToClientIdMap={issueItemToClientIdMap}
-                                setIssueItemToClientIdMap={setIssueItemToClientIdMap}
+                                error={error}
                             />
                         ))}
                     </Tabs>

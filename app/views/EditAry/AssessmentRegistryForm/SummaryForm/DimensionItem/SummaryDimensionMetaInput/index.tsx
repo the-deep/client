@@ -9,7 +9,9 @@ import {
 } from '@togglecorp/toggle-form';
 
 import { SubDimensionMetaInputType } from '#views/EditAry/AssessmentRegistryForm/formSchema';
-import { AssessmentRegistrySectorTypeEnum, AssessmentRegistrySummaryFocusDimmensionTypeEnum } from '#generated/types';
+import { AssessmentRegistrySectorTypeEnum, AssessmentRegistrySummaryFocusDimensionTypeEnum } from '#generated/types';
+
+import styles from './styles.css';
 
 interface Props {
     className?: string;
@@ -18,7 +20,7 @@ interface Props {
     onChange: (value: SetValueArg<SubDimensionMetaInputType>, name?: number) => void;
     error: Error<SubDimensionMetaInputType>;
     sector?: AssessmentRegistrySectorTypeEnum;
-    dimension?: AssessmentRegistrySummaryFocusDimmensionTypeEnum;
+    dimension?: AssessmentRegistrySummaryFocusDimensionTypeEnum;
 }
 
 function SummaryDimensionMetaInput(props: Props) {
@@ -39,11 +41,11 @@ function SummaryDimensionMetaInput(props: Props) {
     });
 
     return (
-        <div>
+        <>
             {dimension === 'IMPACT' && (
                 <NumberInput
-                    // className={styles.inputMetadata}
-                    // inputSectionClassName={styles.inputSection}
+                    className={styles.inputMetadata}
+                    inputSectionClassName={styles.inputSection}
                     placeholder="Total people assessed"
                     name="totalPeopleAffected"
                     onChange={onValueChange}
@@ -52,10 +54,10 @@ function SummaryDimensionMetaInput(props: Props) {
                 />
             )}
             {dimension === 'HUMANITARIAN_CONDITIONS' && (
-                <div>
+                <div className={styles.metaInput}>
                     <NumberInput
-                        // className={styles.inputMetadata}
-                        // inputSectionClassName={styles.inputSection}
+                        className={styles.inputMetadata}
+                        inputSectionClassName={styles.inputSection}
                         placeholder="Total Moderate:"
                         name="totalPeopleAffected"
                         onChange={onValueChange}
@@ -63,8 +65,8 @@ function SummaryDimensionMetaInput(props: Props) {
                         disabled={false}
                     />
                     <NumberInput
-                        // className={styles.inputMetadata}
-                        // inputSectionClassName={styles.inputSection}
+                        className={styles.inputMetadata}
+                        inputSectionClassName={styles.inputSection}
                         placeholder="Total Severe:"
                         name="totalPeopleAffected"
                         onChange={onValueChange}
@@ -72,8 +74,8 @@ function SummaryDimensionMetaInput(props: Props) {
                         disabled={false}
                     />
                     <NumberInput
-                        // className={styles.inputMetadata}
-                        // inputSectionClassName={styles.inputSection}
+                        className={styles.inputMetadata}
+                        inputSectionClassName={styles.inputSection}
                         placeholder="Total Critical:"
                         name="totalPeopleAffected"
                         onChange={onValueChange}
@@ -81,8 +83,8 @@ function SummaryDimensionMetaInput(props: Props) {
                         disabled={false}
                     />
                     <NumberInput
-                        // className={styles.inputMetadata}
-                        // inputSectionClassName={styles.inputSection}
+                        className={styles.inputMetadata}
+                        inputSectionClassName={styles.inputSection}
                         placeholder="Total in need:"
                         name="totalPeopleAffected"
                         onChange={onValueChange}
@@ -91,7 +93,7 @@ function SummaryDimensionMetaInput(props: Props) {
                     />
                 </div>
             )}
-        </div>
+        </>
     );
 }
 export default SummaryDimensionMetaInput;
