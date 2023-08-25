@@ -2,22 +2,25 @@ import React, { useCallback } from 'react';
 import { ExpandableContainer, ListView } from '@the-deep/deep-ui';
 import { EntriesAsList, Error, getErrorObject, useFormArray } from '@togglecorp/toggle-form';
 
-import SubDimensionItem from './SubDimensionItem';
-import { PartialFormType, SubDimensionMetaInputType, SummaryIssueType } from '../../formSchema';
-import { DimensionType } from '..';
-import SummaryDimensionMetaInput from './SummaryDimensionMetaInput';
-
-import styles from './styles.css';
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 
-interface Props {
+import SubDimensionItem, { Props as SubDimensionItemProps } from './SubDimensionItem';
+import { DimensionType } from '..';
+import SummaryDimensionMetaInput from './SummaryDimensionMetaInput';
+import { PartialFormType, SubDimensionMetaInputType, SummaryIssueType } from '../../formSchema';
+
+import styles from './styles.css';
+
+export interface Props {
     value: PartialFormType;
     data: DimensionType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     issuesOptions?: SummaryIssueType[] | null;
     setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
+    issueItemToClientIdMap: Record<string, string>;
+    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     error: Error<PartialFormType>;
-    focus: AssessmentRegistrySectorTypeEnum;
+    sector: AssessmentRegistrySectorTypeEnum;
     disabled?: boolean;
 }
 
@@ -34,22 +37,36 @@ function DimensionItem(props: Props) {
         setFieldValue,
         issuesOptions,
         setIssuesOptions,
-        focus,
+        issueItemToClientIdMap,
+        setIssueItemToClientIdMap,
+        sector,
     } = props;
 
     const error = getErrorObject(riskError);
     const subDimensionParams = useCallback(
-        (name: string, subDimensionData) => ({
+        (name: string, subDimensionData): SubDimensionItemProps => ({
             data: subDimensionData,
             name,
+            value: value.summarySubDimensionIssue,
+            onChange: setFieldValue,
             issuesOptions,
+            issueItemToClientIdMap,
+            setIssueItemToClientIdMap,
             setIssuesOptions,
             disabled,
+            error: error?.summarySubDimensionIssue,
+            dimension: data.dimension,
         }),
         [
+            value,
+            setFieldValue,
             issuesOptions,
             setIssuesOptions,
+            issueItemToClientIdMap,
+            setIssueItemToClientIdMap,
             disabled,
+            error,
+            data.dimension,
         ],
     );
 
@@ -68,11 +85,11 @@ function DimensionItem(props: Props) {
                 withoutBorder
                 headerActions={(
                     <SummaryDimensionMetaInput
-                        name={+focus}
+                        name={+sector}
                         value={undefined}
                         onChange={onChangeDimensionMeta}
                         error={error?.summaryDimensionMeta}
-                        focus={focus}
+                        sector={sector}
                         dimension={data.dimension}
                     />
                 )}
