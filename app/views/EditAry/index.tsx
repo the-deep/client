@@ -295,6 +295,13 @@ function EditAry(props: Props) {
         issueItemToClientIdMap,
         setIssueItemToClientIdMap,
     ] = useState<Record<string, string>>({});
+    const [
+        dimensionIssueToClienIdMap,
+        setDimensionIssueToClientIdMap,
+    ] = useState<Record<string, string>>({});
+
+    const [dimensionIssuesOptions, setDimensionIssuesOptions] = useState<SummaryIssueType[]
+    | undefined | null>([]);
 
     const projectId = project ? project.id : '';
     const variablesForLeadEntries = useMemo((): LeadEntriesForAryQueryVariables | undefined => (
@@ -450,6 +457,16 @@ function EditAry(props: Props) {
                                 text: subIssue.text,
                             }),
                         ),
+                        summarySubDimensionIssue: result.summarySubDimensionIssue?.map(
+                            (subDimension) => ({
+                                id: subDimension.id,
+                                clientId: subDimension.clientId,
+                                sector: subDimension.sector,
+                                summaryIssue: subDimension.summaryIssue.id,
+                                order: subDimension.order,
+                                text: subDimension.text,
+                            }),
+                        ),
                     });
 
                     setRegionOptions(result.bgCountries);
@@ -480,6 +497,21 @@ function EditAry(props: Props) {
                         ),
                     );
                     setIssueItemToClientIdMap(subPillarMap);
+
+                    setDimensionIssuesOptions(
+                        result.summarySubDimensionIssue?.map(
+                            (item) => item.summaryIssue,
+                        ),
+                    );
+
+                    const subDimensionIssue = listToMap(
+                        result.summarySubDimensionIssue ?? [],
+                        (item) => `${item.sector}-${item.summaryIssue.subDimension}-${item.order}`,
+                        (item) => item.clientId ?? item.id,
+                    );
+
+                    // FIXME fix type on sever
+                    setDimensionIssueToClientIdMap(subDimensionIssue);
                 }
             },
         },
@@ -690,6 +722,10 @@ function EditAry(props: Props) {
                                 setIssuesOptions={setIssuesOptions}
                                 issueItemToClientIdMap={issueItemToClientIdMap}
                                 setIssueItemToClientIdMap={setIssueItemToClientIdMap}
+                                dimensionIssueToClienIdMap={dimensionIssueToClienIdMap}
+                                setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
+                                dimensionIssuesOptions={dimensionIssuesOptions}
+                                setDimensionIssuesOptions={setDimensionIssuesOptions}
                             />
                         </div>
                     </>

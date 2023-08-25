@@ -15,10 +15,14 @@ export interface Props {
     value: PartialFormType;
     data: DimensionType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    issuesOptions?: SummaryIssueType[] | null;
-    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
-    issueItemToClientIdMap: Record<string, string>;
-    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    dimensionIssueToClienIdMap: Record<string, string>;
+    setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    dimensionIssuesOptions?: SummaryIssueType[] | null;
+    setDimensionIssuesOptions: React.Dispatch<React.SetStateAction<
+    SummaryIssueType[]
+    | undefined
+    | null
+    >>;
     error: Error<PartialFormType>;
     sector: AssessmentRegistrySectorTypeEnum;
     disabled?: boolean;
@@ -35,10 +39,10 @@ function DimensionItem(props: Props) {
         disabled,
         error: riskError,
         setFieldValue,
-        issuesOptions,
-        setIssuesOptions,
-        issueItemToClientIdMap,
-        setIssueItemToClientIdMap,
+        dimensionIssuesOptions,
+        setDimensionIssuesOptions,
+        dimensionIssueToClienIdMap,
+        setDimensionIssueToClientIdMap,
         sector,
     } = props;
 
@@ -47,26 +51,26 @@ function DimensionItem(props: Props) {
         (name: string, subDimensionData): SubDimensionItemProps => ({
             data: subDimensionData,
             name,
+            sector,
             value: value.summarySubDimensionIssue,
             onChange: setFieldValue,
-            issuesOptions,
-            issueItemToClientIdMap,
-            setIssueItemToClientIdMap,
-            setIssuesOptions,
+            dimensionIssuesOptions,
+            setDimensionIssuesOptions,
+            dimensionIssueToClienIdMap,
+            setDimensionIssueToClientIdMap,
             disabled,
             error: error?.summarySubDimensionIssue,
-            dimension: data.dimension,
         }),
         [
             value,
             setFieldValue,
-            issuesOptions,
-            setIssuesOptions,
-            issueItemToClientIdMap,
-            setIssueItemToClientIdMap,
+            dimensionIssuesOptions,
+            setDimensionIssuesOptions,
+            dimensionIssueToClienIdMap,
+            setDimensionIssueToClientIdMap,
+            sector,
             disabled,
             error,
-            data.dimension,
         ],
     );
 
@@ -80,6 +84,7 @@ function DimensionItem(props: Props) {
         <div className={styles.dimension}>
             <ExpandableContainer
                 className={styles.expandableContainer}
+                headingContainerClassName={styles.headingContainer}
                 heading={data.dimensionDisplay}
                 headingSize="extraSmall"
                 withoutBorder

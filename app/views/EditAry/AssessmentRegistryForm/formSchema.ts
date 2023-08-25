@@ -81,6 +81,12 @@ type SubDimensionIssueSchemaFields = ReturnType<SubDimensionIssueSchema['fields'
 type SubDimensionIssuesSchema = ArraySchema<SubDimensionIssueType, PartialFormType>;
 type SubDimensionIssuesFormSchemMember = ReturnType<SubDimensionIssuesSchema['member']>;
 
+export type SubPillarMetaInputType = NonNullable<PartialFormType['summaryDimensionMeta']>[number];
+type SubPillarMetaSchema = ObjectSchema<SubPillarMetaInputType, PartialFormType>;
+type SubPillarMetaSchemaFields = ReturnType<SubPillarMetaSchema['fields']>;
+type SubPillarMetasFormSchema = ArraySchema<SubPillarMetaInputType, PartialFormType>;
+type SubPillarMetasFormSchemaMember = ReturnType<SubPillarMetasFormSchema['member']>;
+
 export type SubDimensionMetaInputType = NonNullable<PartialFormType['summaryDimensionMeta']>[number];
 // TODO
 // type SubDimensionMetaSchema = ObjectSchema<SubDimensionMetaInputType, PartialFormType>;
@@ -122,7 +128,6 @@ export const schema: FormSchema = {
             locations: [defaultEmptyArrayType],
             limitations: [requiredCondition],
             objectives: [requiredCondition],
-            summaryPillarMeta: [],
             stakeholders: {
                 keySelector: (org) => org.clientId,
                 member: (): OrganizationsListMember => ({
@@ -195,12 +200,13 @@ export const schema: FormSchema = {
                     }),
                 }),
             },
+            summaryPillarMeta: [requiredCondition],
             summarySubDimensionIssue: {
                 keySelector: (issue) => issue.clientId,
                 member: (): SubDimensionIssuesFormSchemMember => ({
                     fields: (): SubDimensionIssueSchemaFields => ({
                         clientId: [],
-                        focus: [],
+                        sector: [],
                         summaryIssue: [],
                         order: [],
                         text: [],

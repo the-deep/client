@@ -17,10 +17,15 @@ interface Props {
     data: DimensionType[];
     value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    issuesOptions?: SummaryIssueType[] | null;
-    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
-    issueItemToClientIdMap: Record<string, string>;
-    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    dimensionIssueToClienIdMap: Record<string, string>;
+    setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+
+    dimensionIssuesOptions?: SummaryIssueType[] | null;
+    setDimensionIssuesOptions: React.Dispatch<React.SetStateAction<
+    SummaryIssueType[]
+    | undefined
+    | null
+    >>;
     error: Error<PartialFormType>;
     disabled?: boolean;
 }
@@ -32,11 +37,10 @@ function DimensionTabPanel(props: Props) {
         name: sector,
         data,
         value,
-        setFieldValue,
-        issuesOptions,
-        setIssuesOptions,
-        issueItemToClientIdMap,
-        setIssueItemToClientIdMap,
+        setFieldValue, dimensionIssuesOptions,
+        setDimensionIssuesOptions,
+        dimensionIssueToClienIdMap,
+        setDimensionIssueToClientIdMap,
         error,
         disabled,
     } = props;
@@ -46,20 +50,20 @@ function DimensionTabPanel(props: Props) {
             data: dimensionData,
             value,
             setFieldValue,
-            issuesOptions,
-            setIssuesOptions,
-            issueItemToClientIdMap,
-            setIssueItemToClientIdMap,
+            dimensionIssuesOptions,
+            setDimensionIssuesOptions,
+            dimensionIssueToClienIdMap,
+            setDimensionIssueToClientIdMap,
             disabled,
             error,
             sector,
         }), [
             value,
             setFieldValue,
-            issuesOptions,
-            setIssuesOptions,
-            issueItemToClientIdMap,
-            setIssueItemToClientIdMap,
+            dimensionIssuesOptions,
+            setDimensionIssuesOptions,
+            dimensionIssueToClienIdMap,
+            setDimensionIssueToClientIdMap,
             disabled,
             error,
             sector,
