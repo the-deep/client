@@ -26,8 +26,8 @@ import {
     organizationTitleSelector,
 } from '#components/selections/NewOrganizationMultiSelectInput';
 
-import { transformEntry } from '../../../context';
 import _ts from '#ts';
+import { transformEntry } from '../../../context';
 
 import styles from './styles.css';
 

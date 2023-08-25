@@ -7,7 +7,6 @@ export interface Props{
     title: string | undefined;
     className?: string;
     error?: unknown;
-    disabled?: boolean;
     readOnly?: boolean;
     actions?: React.ReactNode;
     icons?: React.ReactNode;
@@ -18,7 +17,6 @@ function BaseWidgetInput(props: Props) {
         className,
         title,
         error,
-        disabled,
         readOnly,
         actions,
         icons,
@@ -29,7 +27,6 @@ function BaseWidgetInput(props: Props) {
             className={className}
             title={title}
             error={error}
-            disabled={disabled}
             readOnly={readOnly}
             actions={actions}
             icons={icons}

@@ -139,9 +139,9 @@ function RegisterModal(props: Props) {
         setTermsModalHidden();
     }, [setTermsModalHidden]);
 
-    const handleSubmit = useCallback((finalValue) => {
+    const handleSubmit = useCallback((finalValue: FormType) => {
         elementRef.current?.resetCaptcha();
-        triggerRegister({ variables: { input: finalValue } });
+        triggerRegister({ variables: { input: finalValue as RegisterInputType } });
     }, [triggerRegister]);
 
     return (

@@ -12,15 +12,10 @@ import styles from './styles.css';
 export interface Props {
     className?: string;
     itemKey: string;
-    member?: string;
     onAddClick?: () => void;
     onEditClick: (group: string) => void;
     onDeleteClick: (key: string) => void;
     disabled?: boolean;
-    addButtonTitle?: string;
-    editButtonTitle?: string;
-    deleteButtonTitle?: string;
-    deleteConfirmationMessage?: string;
 }
 
 function UserGroupActionCell(props: Props) {

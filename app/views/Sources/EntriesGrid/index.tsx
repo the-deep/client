@@ -13,10 +13,6 @@ import {
     Container,
     Kraken,
 } from '@the-deep/deep-ui';
-import {
-    Framework,
-    Entry,
-} from './types';
 
 import {
     ProjectEntriesQuery,
@@ -40,6 +36,10 @@ import {
     isFiltered,
 } from '#utils/common';
 import { ENTRY_FRAGMENT, FRAMEWORK_FRAGMENT } from '#gqlFragments';
+import {
+    Framework,
+    Entry,
+} from './types';
 
 import EntryCard from './EntryCard';
 import styles from './styles.css';

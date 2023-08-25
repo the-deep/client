@@ -17,15 +17,15 @@ import { useModalState } from '#hooks/stateManagement';
 import UserContext from '#base/context/UserContext';
 import _ts from '#ts';
 
-import AddUserGroupModal from './AddUsergroupModal';
-import UserGroupItem, { Props as UserGroupItemProps } from './UserGroupItem';
-
 import {
     UserGroupsQuery,
     UserGroupsQueryVariables,
     UserGroupDeleteMutation,
     UserGroupDeleteMutationVariables,
 } from '#generated/types';
+import AddUserGroupModal from './AddUsergroupModal';
+import UserGroupItem, { Props as UserGroupItemProps } from './UserGroupItem';
+
 import styles from './styles.css';
 
 export const USERGROUPS = gql`
@@ -164,7 +164,7 @@ function UserGroup(props: Props) {
         setUserGroupModalShow();
     }, [setUserGroupModalShow]);
 
-    const handleEditUserGroupClick = useCallback((value) => {
+    const handleEditUserGroupClick = useCallback((value: string) => {
         setUserGroupToEdit(value);
         setUserGroupModalShow();
     }, [setUserGroupModalShow]);

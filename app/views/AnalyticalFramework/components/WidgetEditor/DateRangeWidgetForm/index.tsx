@@ -16,8 +16,8 @@ import {
 } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/NonFieldError';
 
-import WidgetSizeInput from '../../WidgetSizeInput';
 import { DateRangeWidget } from '#types/newAnalyticalFramework';
+import WidgetSizeInput from '../../WidgetSizeInput';
 import styles from './styles.css';
 
 type FormType = DateRangeWidget;

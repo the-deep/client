@@ -14,9 +14,9 @@ import {
     useModalState,
 } from '@the-deep/deep-ui';
 
+import _ts from '#ts';
 import LeadCopyModal from '../LeadCopyModal';
 import { Lead } from '../types';
-import _ts from '#ts';
 
 import styles from './styles.css';
 

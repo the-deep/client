@@ -114,7 +114,6 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             error={error}
-            disabled={disabled}
             readOnly={readOnly}
             actions={actions}
             icons={icons}

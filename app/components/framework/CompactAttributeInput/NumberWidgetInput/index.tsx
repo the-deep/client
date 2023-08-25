@@ -9,8 +9,8 @@ import {
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
-import WidgetWrapper from '../WidgetWrapper';
 import { NumberWidgetAttribute } from '#types/newEntry';
+import WidgetWrapper from '../WidgetWrapper';
 
 type NumberValue = NonNullable<NumberWidgetAttribute['data']>;
 
@@ -61,7 +61,6 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             error={error}
-            disabled={disabled}
             readOnly={readOnly}
             actions={actions}
             icons={icons}

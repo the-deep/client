@@ -3,8 +3,8 @@ import { IoArrowForward } from 'react-icons/io5';
 import { Button } from '@the-deep/deep-ui';
 
 import { useModalState } from '#hooks/stateManagement';
-import ChangePasswordModal, { Props as ChangePasswordModalProps } from '../ChangePasswordModal';
 import _ts from '#ts';
+import ChangePasswordModal, { Props as ChangePasswordModalProps } from '../ChangePasswordModal';
 
 type Props = Omit<ChangePasswordModalProps, 'onModalClose'> & {
     className?: string;

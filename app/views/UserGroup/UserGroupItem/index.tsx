@@ -24,9 +24,6 @@ import _ts from '#ts';
 import { createDateColumn } from '#components/tableHelpers';
 import { useModalState } from '#hooks/stateManagement';
 
-import AddUserModal from './AddUserModal';
-import MembershipActionCell, { Props as MembershipActionCellProps } from './MembershipActionCell';
-import UserGroupActionCell from './UserGroupActionCell';
 import {
     UserGroupType,
     UserGroupMembershipQuery,
@@ -34,6 +31,9 @@ import {
     UserGroupMembershipDeleteMutation,
     UserGroupMembershipDeleteMutationVariables,
 } from '#generated/types';
+import AddUserModal from './AddUserModal';
+import MembershipActionCell, { Props as MembershipActionCellProps } from './MembershipActionCell';
+import UserGroupActionCell from './UserGroupActionCell';
 
 import styles from './styles.css';
 
@@ -185,11 +185,9 @@ function UserGroupItem(props: Props) {
                     return;
                 }
                 const {
-                    errors,
                     deletedResult,
                 } = response.userGroup.userGroupMembershipBulk;
 
-                const [err] = errors ?? [];
                 const [deletedUser] = deletedResult ?? [];
 
                 if (deletedUser) {
@@ -201,7 +199,7 @@ function UserGroupItem(props: Props) {
                     onUserDeleteSuccess();
                 } else {
                     alert.show(
-                        err ?? 'There was an issue while removing the user from this project.',
+                        'There was an issue while removing the user from this project.',
                         { variant: 'error' },
                     );
                 }
@@ -354,10 +352,6 @@ function UserGroupItem(props: Props) {
                     onEditClick={onEditClick}
                     onDeleteClick={onDeleteClick}
                     onAddClick={handleAddMemberClick}
-                    addButtonTitle={_ts('usergroup', 'addMemberLabel')}
-                    editButtonTitle={_ts('usergroup', 'editUserGroupLabel')}
-                    deleteButtonTitle={_ts('usergroup', 'deleteUserGroupLabel')}
-                    deleteConfirmationMessage={_ts('usergroup', 'deleteUsergroupConfirmMessage')}
                     disabled={userGroup?.currentUserRole === 'NORMAL' || disabled}
                 />
             )}

@@ -33,8 +33,8 @@ import { GrDrag } from 'react-icons/gr';
 import NonFieldError from '#components/NonFieldError';
 import SortableList, { Attributes, Listeners } from '#components/SortableList';
 import { reorder } from '#utils/common';
-import WidgetSizeInput from '../../WidgetSizeInput';
 import { OrganigramWidget } from '#types/newAnalyticalFramework';
+import WidgetSizeInput from '../../WidgetSizeInput';
 
 import styles from './styles.css';
 

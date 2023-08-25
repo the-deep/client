@@ -82,7 +82,6 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             actions={actions}
             icons={icons}
-            error={error}
         >
             <NonFieldError
                 error={error}

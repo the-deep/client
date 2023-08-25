@@ -4,7 +4,6 @@ import {
     SearchSelectInputProps,
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
-import OptionLabelSelector from '../OptionLabelSelector';
 
 import {
     UsersQuery,
@@ -12,6 +11,7 @@ import {
 } from '#generated/types';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
+import OptionLabelSelector from '../OptionLabelSelector';
 
 import styles from './styles.css';
 

@@ -140,7 +140,7 @@ function EntryComments(props: Props) {
         }
     }, [getComments, onEntryCommentAdd]);
 
-    const commentRendererParams = useCallback((_, comment: CommentItem) => ({
+    const commentRendererParams = useCallback((_: string, comment: CommentItem) => ({
         comment,
         onEditSuccess: getComments,
         projectId,

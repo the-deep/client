@@ -217,7 +217,7 @@ function StoryAnalysisModal(props: Props) {
         setRootWord(word);
     }, [word]);
 
-    const handleSourceOptionChange = useCallback((option) => {
+    const handleSourceOptionChange = useCallback((option: KeyLabel['key']) => {
         setSourceOption(option);
         setWord(undefined);
         setRootWord(undefined);

@@ -4,7 +4,10 @@ import {
     Message,
 } from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
-import { Chart } from 'react-google-charts';
+import {
+    Chart,
+    type GoogleChartWrapper,
+} from 'react-google-charts';
 
 import styles from './styles.css';
 
@@ -65,9 +68,11 @@ function WordTreeChart(props: WordTreeChartProps) {
         showTooltip: false,
     }), [word]);
 
-    const handleSelect = useCallback(({ chartWrapper }) => {
+    const handleSelect = useCallback(({ chartWrapper }: { chartWrapper: GoogleChartWrapper }) => {
         if (onWordClick) {
-            const selectedWord = chartWrapper.getChart().getSelection().word;
+            const selection = chartWrapper.getChart().getSelection();
+            // FIXME: Check behavior
+            const selectedWord = (selection as unknown as { word: string }).word;
             onWordClick(selectedWord);
         }
     }, [onWordClick]);

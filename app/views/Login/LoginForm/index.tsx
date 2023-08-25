@@ -262,11 +262,11 @@ function LoginForm(props: Props) {
         }
     }, [loginWithHid]);
 
-    const handleSubmit = useCallback((finalValue) => {
+    const handleSubmit = useCallback((finalValue: FormType) => {
         elementRef.current?.resetCaptcha();
         login({
             variables: {
-                input: finalValue,
+                input: finalValue as LoginMutationVariables['input'],
             },
         });
     }, [login]);

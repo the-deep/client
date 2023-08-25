@@ -17,7 +17,7 @@ function BackLink(props: Props) {
         ...otherProps
     } = props;
 
-    const handleBackLinkClick = useCallback((e) => {
+    const handleBackLinkClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
         if (window.history.length > 1) {
             e.preventDefault();
             e.stopPropagation();

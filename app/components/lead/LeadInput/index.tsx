@@ -199,7 +199,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
     ] = useBooleanState(false);
      */
 
-    const handlePdfSelect = useCallback((pdfUrl) => {
+    const handlePdfSelect = useCallback((pdfUrl: string | undefined) => {
         setSelectedPdf(pdfUrl);
         setFieldValue(pdfUrl, 'url');
     }, [setFieldValue]);

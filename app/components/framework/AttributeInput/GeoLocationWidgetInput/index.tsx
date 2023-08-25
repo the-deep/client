@@ -30,7 +30,6 @@ export interface Props <N extends string>{
     disabled?: boolean;
     readOnly?: boolean;
 
-    widget: PartialGeoLocationWidget;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 
@@ -75,7 +74,6 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             actions={actions}
             icons={icons}
-            error={error}
         >
             <NonFieldError error={error} />
             <GeoLocationInput

@@ -21,8 +21,8 @@ import {
 
 import NonFieldError from '#components/NonFieldError';
 
-import WidgetSizeInput from '../../WidgetSizeInput';
 import { DateWidget } from '#types/newAnalyticalFramework';
+import WidgetSizeInput from '../../WidgetSizeInput';
 
 import styles from './styles.css';
 

@@ -6,10 +6,9 @@ import {
     Card,
 } from '@the-deep/deep-ui';
 
-import styles from './styles.css';
-
 import NonFieldError from '#components/NonFieldError';
 import { OrganigramValue, OrganigramDatum } from '#types/newAnalyticalFramework';
+import styles from './styles.css';
 
 interface Props<N extends string> {
     name: N;

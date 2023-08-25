@@ -22,8 +22,8 @@ import {
 } from '#utils/common';
 import { resolveTime } from '#utils/temporal';
 
-import ExploreDeepContent from '../ExploreDeepContent';
 import { useModalState } from '#hooks/stateManagement';
+import ExploreDeepContent from '../ExploreDeepContent';
 
 const COMPLETE_TIMESERIES = gql`
 query CompleteTimeseries($pathName: String!) {

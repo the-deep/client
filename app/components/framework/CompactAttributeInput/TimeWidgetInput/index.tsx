@@ -4,8 +4,8 @@ import { isNotDefined } from '@togglecorp/fujs';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
-import WidgetWrapper from '../WidgetWrapper';
 import { TimeWidgetAttribute } from '#types/newEntry';
+import WidgetWrapper from '../WidgetWrapper';
 
 type TimeValue = NonNullable<TimeWidgetAttribute['data']>;
 
@@ -56,7 +56,6 @@ function TimeWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             error={error}
-            disabled={disabled}
             readOnly={readOnly}
             actions={actions}
             icons={icons}

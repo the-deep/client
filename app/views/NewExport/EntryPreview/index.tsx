@@ -173,11 +173,11 @@ function EntryPreview(props: Props) {
         textWidgets?.filter((widget) => widget.selected)
     ), [textWidgets]);
 
-    const widgetSampleRendererParams = useCallback((_, widget: Widget) => ({
+    const widgetSampleRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
     }), []);
 
-    const textWidgetRendererParams = useCallback((_, widget: Widget) => ({
+    const textWidgetRendererParams = useCallback((_: string, widget: Widget) => ({
         title: widget.title,
     }), []);
 

@@ -557,7 +557,7 @@ function LeadsPane(props: Props) {
     );
 
     const handleIgnoreLeadButtonClick = useCallback(
-        (connectorSourceLead) => {
+        (connectorSourceLead: ConnectorSourceLead) => {
             updateConnectorLeadBlockStatus({
                 variables: {
                     projectId,

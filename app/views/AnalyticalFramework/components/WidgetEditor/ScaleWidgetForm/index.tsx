@@ -38,8 +38,8 @@ import NonFieldError from '#components/NonFieldError';
 import SortableList, { Attributes, Listeners } from '#components/SortableList';
 import { isValidColor, reorder } from '#utils/common';
 
-import WidgetSizeInput from '../../WidgetSizeInput';
 import { ScaleWidget } from '#types/newAnalyticalFramework';
+import WidgetSizeInput from '../../WidgetSizeInput';
 import styles from './styles.css';
 
 const OPTIONS_LIMIT = 20;

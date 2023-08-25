@@ -20,8 +20,8 @@ import { _cs } from '@togglecorp/fujs';
 
 import NonFieldError from '#components/NonFieldError';
 
-import WidgetSizeInput from '../../WidgetSizeInput';
 import { TextWidget } from '#types/newAnalyticalFramework';
+import WidgetSizeInput from '../../WidgetSizeInput';
 import styles from './styles.css';
 
 type FormType = TextWidget;

@@ -5,8 +5,8 @@ import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
 import TimeRangeInputWrapper from '#components/TimeRangeInputWrapper';
 import NonFieldError from '#components/NonFieldError';
-import WidgetWrapper from '../WidgetWrapper';
 import { TimeRangeWidgetAttribute } from '#types/newEntry';
+import WidgetWrapper from '../WidgetWrapper';
 
 import styles from './styles.css';
 
@@ -69,7 +69,6 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             childrenContainerClassName={styles.content}
             error={error}
-            disabled={disabled}
             readOnly={readOnly}
             actions={actions}
             icons={icons}

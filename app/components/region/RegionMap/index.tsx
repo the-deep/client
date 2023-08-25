@@ -337,10 +337,12 @@ function RegionMap(props: Props) {
 
     const myGeoJson = geoJsonResponse ?? defaultGeoJson;
 
-    const attributes = useMemo(() => selectedGeoAreas?.map((selection) => ({
-        id: +selection,
-        value: true,
-    })), [selectedGeoAreas]);
+    const attributes = useMemo(() => (
+        selectedGeoAreas?.map((selection) => ({
+            id: +selection,
+            value: true,
+        })) ?? []
+    ), [selectedGeoAreas]);
 
     return (
         <Container
@@ -374,6 +376,7 @@ function RegionMap(props: Props) {
                     <MapBounds
                         bounds={bounds}
                         padding={10}
+                        duration={100}
                     />
                 )}
                 <MapSource
@@ -401,6 +404,7 @@ function RegionMap(props: Props) {
                             coordinates={hoverLngLat}
                             tooltipOptions={tooltipOptions}
                             trackPointer
+                            hidden={false}
                         >
                             <List
                                 data={hoverFeatureProperties}

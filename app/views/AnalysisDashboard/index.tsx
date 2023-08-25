@@ -140,7 +140,7 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
     const alert = useAlert();
 
     const [activePage, setActivePage] = useState(1);
-    const [analysisToEdit, setAnalysisToEdit] = useState();
+    const [analysisToEdit, setAnalysisToEdit] = useState<number | undefined>();
     const [dateRangeFilter, setDateRangeFilter] = useState<Filter | undefined>(undefined);
 
     const analysisQueryOptions = useMemo(() => ({
@@ -218,7 +218,7 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
         setModalHidden();
     }, [setModalHidden, triggerGetAnalysis, retriggerAnalysisOverview]);
 
-    const handleAnalysisEditClick = useCallback((analysisId) => {
+    const handleAnalysisEditClick = useCallback((analysisId: number | undefined) => {
         setAnalysisToEdit(analysisId);
         setModalVisible();
     }, [setModalVisible]);

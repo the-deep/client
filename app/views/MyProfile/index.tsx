@@ -208,7 +208,7 @@ function MyProfile(props: Props) {
         },
     );
 
-    const handleSubmit = useCallback((finalValue) => {
+    const handleSubmit = useCallback((finalValue: FormType) => {
         updateUser({ variables: { data: finalValue } });
     }, [updateUser]);
 

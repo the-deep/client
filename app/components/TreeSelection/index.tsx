@@ -187,7 +187,7 @@ function TreeSelection<N extends string, T extends Node>(props: Props<N, T>) {
         onChange(tempValue, name);
     }, [onChange, value, name]);
 
-    const sortableNodeParams = useCallback((_: string, data, index) => ({
+    const sortableNodeParams = useCallback((_: string, data: T, index: number) => ({
         index,
         onCheckboxClick: handleCheckboxChange,
         onChildrenChange: handleChildrenChange,

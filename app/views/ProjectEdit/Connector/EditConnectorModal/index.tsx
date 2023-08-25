@@ -326,7 +326,7 @@ function EditConnectorModal(props: Props) {
     const connectorSourceRendererParams = useCallback((
         key: string,
         data: PartialSourceType,
-        index,
+        index: number,
     ) => ({
         name: index,
         error: sourcesError?.[key],

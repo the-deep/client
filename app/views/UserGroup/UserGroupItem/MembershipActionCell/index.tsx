@@ -15,7 +15,6 @@ export interface Props {
     groupKey: string;
     member: string;
     memberRole: 'ADMIN' | 'NORMAL';
-    onAddClick?: (key: number) => void;
     onEditClick: (
         user: { id: string; member: string; role: 'ADMIN' | 'NORMAL'; },
         group: string,

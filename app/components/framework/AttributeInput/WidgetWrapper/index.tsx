@@ -19,11 +19,6 @@ export interface Props {
 
     children?: React.ReactNode,
     childrenContainerClassName?: string;
-
-    disabled?: boolean;
-    readOnly?: boolean;
-
-    error: unknown;
 }
 
 function WidgetWrapper(props: Props) {

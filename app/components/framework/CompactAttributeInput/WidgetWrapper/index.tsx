@@ -14,7 +14,6 @@ export interface Props {
     children?: React.ReactNode,
     childrenContainerClassName?: string;
 
-    disabled?: boolean;
     readOnly?: boolean;
     headingDescription?: React.ReactNode;
     actions?: React.ReactNode;

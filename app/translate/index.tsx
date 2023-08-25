@@ -36,7 +36,7 @@ interface KeyValue<T> {
     key: string;
     value: T;
 }
-function renderElement<T>(r: KeyValue<T>) {
+function renderElement<T extends React.ReactNode>(r: KeyValue<T>) {
     return (
         <span key={r.key}>
             {r.value}
