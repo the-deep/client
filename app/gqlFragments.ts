@@ -400,5 +400,28 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
                 label
             }
         }
+        summaryPillarMeta {
+            id
+            totalDead
+            percentageOfPeopleFacingHumAccessCons
+            totalInjured
+            totalMissing
+            totalPeopleAssessed
+            totalPeopleFacingHumAccessCons
+        }
+        summarySubDimensionIssue {
+            id
+            clientId
+            sector
+            sectorDisplay
+            order
+            text
+            summaryIssue {
+                id
+                label
+                subDimension
+                subDimensionDisplay
+            }
+        }
     }
 `;

@@ -96,6 +96,14 @@ interface Props {
     setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
     issueItemToClientIdMap: Record<string, string>;
     setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    dimensionIssueToClienIdMap: Record<string, string>;
+    setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    dimensionIssuesOptions?: SummaryIssueType[] | null;
+    setDimensionIssuesOptions: React.Dispatch<React.SetStateAction<
+    SummaryIssueType[]
+    | undefined
+    | null
+    >>;
 }
 
 function AssessmentRegistryForm(props: Props) {
@@ -117,6 +125,10 @@ function AssessmentRegistryForm(props: Props) {
         setIssuesOptions,
         issueItemToClientIdMap,
         setIssueItemToClientIdMap,
+        dimensionIssueToClienIdMap,
+        setDimensionIssueToClientIdMap,
+        dimensionIssuesOptions,
+        setDimensionIssuesOptions,
     } = props;
 
     const errorInMetadata = useMemo(() => (
@@ -302,6 +314,11 @@ function AssessmentRegistryForm(props: Props) {
                         setIssuesOptions={setIssuesOptions}
                         issueItemToClientIdMap={issueItemToClientIdMap}
                         setIssueItemToClientIdMap={setIssueItemToClientIdMap}
+                        dimensionIssueToClienIdMap={dimensionIssueToClienIdMap}
+                        setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
+                        dimensionIssuesOptions={dimensionIssuesOptions}
+                        setDimensionIssuesOptions={setDimensionIssuesOptions}
+
                     />
                 </TabPanel>
                 <TabPanel

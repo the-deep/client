@@ -17,7 +17,7 @@ import {
     SubDimensionIssueType,
 } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 import {
-    AssessmentRegistrySummaryFocusDimensionTypeEnum,
+    AssessmentRegistrySectorTypeEnum,
     AssessmentRegistrySummarySubDimensionTypeEnum,
     SummarySubDimensionIssueSearchQuery,
     SummarySubDimensionIssueSearchQueryVariables,
@@ -58,11 +58,17 @@ interface Props {
     value?: SubDimensionIssueType;
     error?: Error<PartialFormType['summarySubDimensionIssue']>;
 
-    issuesOptions?: SummaryIssueType[] | null;
-    setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
-    setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<
+    Record<string, string>>>;
+    dimensionIssuesOptions?: SummaryIssueType[] | null;
+    setDimensionIssuesOptions: React.Dispatch<React.SetStateAction<
+    SummaryIssueType[]
+    | undefined
+    | null
+    >>;
     onChange: (...entries: EntriesAsList<PartialFormType>) => void;
-    dimension: AssessmentRegistrySummaryFocusDimensionTypeEnum;
+
+    sector: AssessmentRegistrySectorTypeEnum;
 }
 
 const keySelector = (d: SummaryIssueType) => d.id;
@@ -70,17 +76,17 @@ const labelSelector = (d: SummaryIssueType) => d.label;
 
 function SelectIssueInput(props: Props) {
     const {
-        dimension,
         subDimension,
         name,
         value,
         mainIndex,
         order,
-        setIssueItemToClientIdMap,
+        setDimensionIssueToClientIdMap,
         placeholder,
-        issuesOptions: options,
-        setIssuesOptions: setOptions,
+        dimensionIssuesOptions: options,
+        setDimensionIssuesOptions: setOptions,
         onChange,
+        sector,
         error,
         disabled,
     } = props;
@@ -95,28 +101,27 @@ function SelectIssueInput(props: Props) {
         'summarySubDimensionIssue',
         SubDimensionIssueType
     >('summarySubDimensionIssue', onChange);
-
     const onFieldChange = useFormObject(mainIndex, setSubDimensionIssue, {
         clientId: randomString(),
         order,
-        focus: dimension,
+        sector,
     });
-
     const handleIssueChange = useCallback((issueId: string | undefined) => {
         if (!value) {
             const newVal = {
                 clientId: randomString(),
                 order,
                 summaryIssue: issueId,
+                sector,
             };
-            setIssueItemToClientIdMap((oldVal) => ({
+            setDimensionIssueToClientIdMap((oldVal) => ({
                 ...oldVal,
                 [name]: newVal.clientId,
             }));
             onChange((oldVal: SubDimensionIssueType[] | undefined) => ([
                 ...(oldVal ?? []),
                 newVal,
-            ]), 'summarySubPillarIssue');
+            ]), 'summarySubDimensionIssue');
         } else {
             onFieldChange(issueId, 'summaryIssue');
         }
@@ -124,9 +129,9 @@ function SelectIssueInput(props: Props) {
         name,
         order,
         value,
-        dimension,
+        sector,
         onFieldChange,
-        setIssueItemToClientIdMap,
+        setDimensionIssueToClientIdMap,
         onChange,
     ]);
 
@@ -136,8 +141,9 @@ function SelectIssueInput(props: Props) {
                 clientId: randomString(),
                 order,
                 text: newText,
+                sector,
             };
-            setIssueItemToClientIdMap((oldVal) => ({
+            setDimensionIssueToClientIdMap((oldVal) => ({
                 ...oldVal,
                 [name]: newVal.clientId,
             }));
@@ -152,8 +158,9 @@ function SelectIssueInput(props: Props) {
         name,
         order,
         value,
+        sector,
         onFieldChange,
-        setIssueItemToClientIdMap,
+        setDimensionIssueToClientIdMap,
         onChange,
     ]);
 

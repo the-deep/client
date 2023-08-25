@@ -1,3 +1,7 @@
 .dimension-tab-panel {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
+    gap: var(--dui-spacing-extra-large);
 }
