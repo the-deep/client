@@ -289,8 +289,7 @@ function EditAry(props: Props) {
     const [geoAreaOptions, setGeoAreaOptions] = useState<GeoArea[] | undefined | null>();
     const [uploadedList, setUploadedList] = useState<GalleryFileType[]>();
     const [issuesOptions, setIssuesOptions] = useState<SummaryIssueType[]
-    | undefined
-    | null>([]);
+    | undefined | null>([]);
 
     const [
         issueItemToClientIdMap,

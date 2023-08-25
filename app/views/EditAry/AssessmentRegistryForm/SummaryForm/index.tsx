@@ -64,8 +64,6 @@ export interface DimensionType {
 }
 
 const keySelectorPillar = (d: PillarType) => d.pillar;
-// TODO
-// const keySelectorDimension = (d: DimensionType) => d.dimension;
 
 interface Props {
     projectId: string;
@@ -90,7 +88,6 @@ function SummaryForm(props: Props) {
         setIssuesOptions,
         issueItemToClientIdMap,
         setIssueItemToClientIdMap,
-        // setValue,
     } = props;
 
     const [selectedDimension, setSelectedDimension] = useState<AssessmentRegistrySectorTypeEnum
@@ -218,6 +215,8 @@ function SummaryForm(props: Props) {
                                 issuesOptions={issuesOptions}
                                 setIssuesOptions={setIssuesOptions}
                                 disabled={disabled}
+                                issueItemToClientIdMap={issueItemToClientIdMap}
+                                setIssueItemToClientIdMap={setIssueItemToClientIdMap}
                             />
                         ))}
                     </Tabs>

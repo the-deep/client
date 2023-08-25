@@ -10,32 +10,30 @@ import {
 import { randomString, isNotDefined } from '@togglecorp/fujs';
 import { gql, useQuery } from '@apollo/client';
 
+import useDebouncedValue from '#hooks/useDebouncedValue';
 import {
     PartialFormType,
     SummaryIssueType,
-    SubPillarIssueType,
+    SubDimensionIssueType,
 } from '#views/EditAry/AssessmentRegistryForm/formSchema';
-import useDebouncedValue from '#hooks/useDebouncedValue';
 import {
+    AssessmentRegistrySummaryFocusDimensionTypeEnum,
     AssessmentRegistrySummarySubDimensionTypeEnum,
-    AssessmentRegistrySummarySubPillarTypeEnum,
-    SummaryIssueSearchQuery,
-    SummaryIssueSearchQueryVariables,
+    SummarySubDimensionIssueSearchQuery,
+    SummarySubDimensionIssueSearchQueryVariables,
 } from '#generated/types';
 
 import styles from './styles.css';
 
-const SUMMARY_ISSUE_SEARCH = gql`
-    query SummaryIssueSearch(
-        $subPillar: AssessmentRegistrySummarySubPillarTypeEnum,
+const SUMMARY_SUB_DIMENSION_ISSUE_SEARCH = gql`
+    query SummarySubDimensionIssueSearch(
         $subDimension: AssessmentRegistrySummarySubDimensionTypeEnum,
         $search: String,
         $page: Int,
         $pageSize: Int,
     ) {
         assessmentRegSummaryIssues(
-            subPillar: $subPillar,
-        subDimension: $subDimension,
+            subDimension: $subDimension,
             search: $search,
             pageSize: $pageSize,
             page: $page,
@@ -52,19 +50,19 @@ const SUMMARY_ISSUE_SEARCH = gql`
 
 interface Props {
     name: string;
-    subPillar?: AssessmentRegistrySummarySubPillarTypeEnum;
     subDimension?: AssessmentRegistrySummarySubDimensionTypeEnum;
     order: number;
     disabled?: boolean;
     mainIndex?: number;
     placeholder?: string;
-    value?: SubPillarIssueType;
-    error?: Error<PartialFormType['summarySubPillarIssue']>;
+    value?: SubDimensionIssueType;
+    error?: Error<PartialFormType['summarySubDimensionIssue']>;
 
     issuesOptions?: SummaryIssueType[] | null;
     setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
     setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     onChange: (...entries: EntriesAsList<PartialFormType>) => void;
+    dimension: AssessmentRegistrySummaryFocusDimensionTypeEnum;
 }
 
 const keySelector = (d: SummaryIssueType) => d.id;
@@ -72,7 +70,7 @@ const labelSelector = (d: SummaryIssueType) => d.label;
 
 function SelectIssueInput(props: Props) {
     const {
-        subPillar,
+        dimension,
         subDimension,
         name,
         value,
@@ -92,15 +90,16 @@ function SelectIssueInput(props: Props) {
     const debouncedSearchText = useDebouncedValue(searchText);
 
     const {
-        setValue: setSubPillarIssue,
+        setValue: setSubDimensionIssue,
     } = useFormArray<
-        'summarySubPillarIssue',
-        SubPillarIssueType
-    >('summarySubPillarIssue', onChange);
+        'summarySubDimensionIssue',
+        SubDimensionIssueType
+    >('summarySubDimensionIssue', onChange);
 
-    const onFieldChange = useFormObject(mainIndex, setSubPillarIssue, {
+    const onFieldChange = useFormObject(mainIndex, setSubDimensionIssue, {
         clientId: randomString(),
         order,
+        focus: dimension,
     });
 
     const handleIssueChange = useCallback((issueId: string | undefined) => {
@@ -114,7 +113,7 @@ function SelectIssueInput(props: Props) {
                 ...oldVal,
                 [name]: newVal.clientId,
             }));
-            onChange((oldVal: SubPillarIssueType[] | undefined) => ([
+            onChange((oldVal: SubDimensionIssueType[] | undefined) => ([
                 ...(oldVal ?? []),
                 newVal,
             ]), 'summarySubPillarIssue');
@@ -125,6 +124,7 @@ function SelectIssueInput(props: Props) {
         name,
         order,
         value,
+        dimension,
         onFieldChange,
         setIssueItemToClientIdMap,
         onChange,
@@ -141,10 +141,10 @@ function SelectIssueInput(props: Props) {
                 ...oldVal,
                 [name]: newVal.clientId,
             }));
-            onChange((oldVal: SubPillarIssueType[] | undefined) => ([
+            onChange((oldVal: SubDimensionIssueType[] | undefined) => ([
                 ...(oldVal ?? []),
                 newVal,
-            ]), 'summarySubPillarIssue');
+            ]), 'summarySubDimensionIssue');
         } else {
             onFieldChange(newText, 'text');
         }
@@ -158,15 +158,13 @@ function SelectIssueInput(props: Props) {
     ]);
 
     const variables = useMemo(
-        (): SummaryIssueSearchQueryVariables => ({
-            subPillar: subPillar as AssessmentRegistrySummarySubPillarTypeEnum,
+        (): SummarySubDimensionIssueSearchQueryVariables => ({
             subDimension: subDimension as AssessmentRegistrySummarySubDimensionTypeEnum,
             search: debouncedSearchText,
             page: 1,
             pageSize: 10,
         }), [
             debouncedSearchText,
-            subPillar,
             subDimension,
         ],
     );
@@ -175,8 +173,11 @@ function SelectIssueInput(props: Props) {
         loading,
         data,
         fetchMore,
-    } = useQuery<SummaryIssueSearchQuery, SummaryIssueSearchQueryVariables>(
-        SUMMARY_ISSUE_SEARCH,
+    } = useQuery<
+        SummarySubDimensionIssueSearchQuery,
+        SummarySubDimensionIssueSearchQueryVariables
+    >(
+        SUMMARY_SUB_DIMENSION_ISSUE_SEARCH,
         {
             skip: !opened,
             variables,

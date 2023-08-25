@@ -127,8 +127,8 @@ function SubPillarItem(props: Props) {
                     onChange={onChange}
                     issuesOptions={issuesOptions}
                     setIssueItemToClientIdMap={setIssueItemToClientIdMap}
-                    subPillar={data.subPillar}
                     setIssuesOptions={setIssuesOptions}
+                    subPillar={data.subPillar}
                     disabled={disabled}
                     error={error}
                 />
@@ -141,8 +141,8 @@ function SubPillarItem(props: Props) {
                     onChange={onChange}
                     issuesOptions={issuesOptions}
                     setIssueItemToClientIdMap={setIssueItemToClientIdMap}
-                    subPillar={data.subPillar}
                     setIssuesOptions={setIssuesOptions}
+                    subPillar={data.subPillar}
                     disabled={disabled}
                     error={error}
                 />
@@ -155,8 +155,8 @@ function SubPillarItem(props: Props) {
                     onChange={onChange}
                     issuesOptions={issuesOptions}
                     setIssueItemToClientIdMap={setIssueItemToClientIdMap}
-                    subPillar={data.subPillar}
                     setIssuesOptions={setIssuesOptions}
+                    subPillar={data.subPillar}
                     disabled={disabled}
                     error={error}
                 />
@@ -169,8 +169,8 @@ function SubPillarItem(props: Props) {
                     onChange={onChange}
                     issuesOptions={issuesOptions}
                     setIssueItemToClientIdMap={setIssueItemToClientIdMap}
-                    subPillar={data.subPillar}
                     setIssuesOptions={setIssuesOptions}
+                    subPillar={data.subPillar}
                     disabled={disabled}
                     error={error}
                 />
@@ -183,8 +183,8 @@ function SubPillarItem(props: Props) {
                     onChange={onChange}
                     issuesOptions={issuesOptions}
                     setIssueItemToClientIdMap={setIssueItemToClientIdMap}
-                    subPillar={data.subPillar}
                     setIssuesOptions={setIssuesOptions}
+                    subPillar={data.subPillar}
                     error={error}
                 />
             </div>
