@@ -14,7 +14,6 @@ import { AssessmentRegistrySectorTypeEnum, AssessmentRegistrySummaryFocusDimensi
 import styles from './styles.css';
 
 interface Props {
-    className?: string;
     name?: number;
     value?:SubDimensionMetaInputType;
     onChange: (value: SetValueArg<SubDimensionMetaInputType>, name?: number) => void;
@@ -25,7 +24,6 @@ interface Props {
 
 function SummaryDimensionMetaInput(props: Props) {
     const {
-        className,
         name,
         value,
         onChange,
@@ -50,6 +48,8 @@ function SummaryDimensionMetaInput(props: Props) {
                     name="totalPeopleAffected"
                     onChange={onValueChange}
                     value={value?.totalPeopleAffected}
+                    error={error?.totalPeopleAffected}
+                    variant="general"
                     disabled={false}
                 />
             )}
@@ -58,37 +58,45 @@ function SummaryDimensionMetaInput(props: Props) {
                     <NumberInput
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Total Moderate:"
-                        name="totalPeopleAffected"
+                        placeholder="Total Moderate"
+                        name="totalModerate"
                         onChange={onValueChange}
-                        value={value?.totalPeopleAffected}
+                        error={error?.totalModerate}
+                        variant="general"
+                        value={value?.totalModerate}
                         disabled={false}
                     />
                     <NumberInput
+                        variant="general"
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Total Severe:"
-                        name="totalPeopleAffected"
+                        placeholder="Total Severe"
+                        name="totalSevere"
                         onChange={onValueChange}
-                        value={value?.totalPeopleAffected}
+                        value={value?.totalSevere}
+                        error={error?.totalSevere}
                         disabled={false}
                     />
                     <NumberInput
+                        variant="general"
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Total Critical:"
-                        name="totalPeopleAffected"
+                        placeholder="Total Critical"
+                        name="totalCritical"
                         onChange={onValueChange}
-                        value={value?.totalPeopleAffected}
+                        value={value?.totalCritical}
+                        error={error?.totalCritical}
                         disabled={false}
                     />
                     <NumberInput
+                        variant="general"
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Total in need:"
+                        placeholder="Total in need"
                         name="totalPeopleAffected"
                         onChange={onValueChange}
-                        value={value?.totalPeopleAffected}
+                        value={value?.totalInNeed}
+                        error={error?.totalInNeed}
                         disabled={false}
                     />
                 </div>

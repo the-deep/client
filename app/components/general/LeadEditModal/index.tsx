@@ -316,15 +316,6 @@ function LeadEditModal(props: Props) {
                         source,
                     } = leadData;
 
-                    /*
-                    if (leadGroup) {
-                        /*
-                        setLeadGroupOptions((oldVal) => (
-                            oldVal ? [...oldVal, leadGroup] : [leadGroup]
-                        ));
-                         */
-                    }
-                     */
                     if (assignee) {
                         setProjectUserOptions((oldVal) => (
                             oldVal ? [...oldVal, assignee] : [assignee]

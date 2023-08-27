@@ -1,5 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Header, List, Tab, TabList, Tabs } from '@the-deep/deep-ui';
+import {
+    Header,
+    ListView,
+    Tab,
+    TabList,
+    Tabs,
+} from '@the-deep/deep-ui';
 import { EntriesAsList, Error, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import { isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
@@ -187,22 +193,26 @@ function SummaryForm(props: Props) {
                     headingSize="small"
                     heading="Operational Environment"
                 />
-                <List
+                <ListView
+                    className={styles.pillars}
                     data={pillarList}
                     keySelector={keySelectorPillar}
                     renderer={PillarItem}
                     rendererParams={pillarRenderParams}
+                    pending={false}
+                    errored={false}
+                    filtered={false}
                 />
             </div>
             {isDefined(value.sectors) && value.sectors.length > 0 && (
                 <div className={styles.dimensionContent}>
                     <Header
                         headingSize="small"
-                        heading="SECTORAL UNMET NEEDS"
+                        heading="Sectoral Unmet Needs"
                     />
                     <Tabs
                         variant="primary"
-                        value={selectedDimension}
+                        value={selectedDimension ?? value.sectors?.[0]}
                         onChange={setSelectedDimension}
                     >
                         <TabList className={styles.tabList}>
@@ -225,7 +235,7 @@ function SummaryForm(props: Props) {
                                 setFieldValue={setFieldValue}
                                 dimensionIssuesOptions={dimensionIssuesOptions}
                                 setDimensionIssuesOptions={setDimensionIssuesOptions}
-                                dimensionIssueToClienIdMap={dimensionIssueToClienIdMap}
+                                dimensionIssueToClientIdMap={dimensionIssueToClienIdMap}
                                 setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
                                 disabled={disabled}
                                 error={error}

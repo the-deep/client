@@ -2,6 +2,7 @@
     display: grid;
     grid-auto-flow: column;
     grid-template-columns: 1fr;
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
     .expandable-container {
 
@@ -22,8 +23,6 @@
     .input-metadata {
         background: var(--dui-color-background);
         padding: var(--dui-spacing-small);
-        /* Fixme: later remove absolut */
-        height: 50px;
 
         .input-section {
             height: 100%;

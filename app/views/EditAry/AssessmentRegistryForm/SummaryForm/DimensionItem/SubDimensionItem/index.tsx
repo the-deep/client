@@ -21,7 +21,7 @@ export interface Props {
     onChange: (...entries: EntriesAsList<PartialFormType>) => void;
     name: string;
     disabled?: boolean;
-    dimensionIssueToClienIdMap: Record<string, string>;
+    dimensionIssueToClientIdMap: Record<string, string>;
     setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<
     Record<string, string>>>;
 
@@ -43,7 +43,7 @@ function SubDimensionItem(props: Props) {
         onChange,
         dimensionIssuesOptions,
         setDimensionIssuesOptions,
-        dimensionIssueToClienIdMap,
+        dimensionIssueToClientIdMap: dimensionIssueToClienIdMap,
         setDimensionIssueToClientIdMap,
         sector,
         disabled,

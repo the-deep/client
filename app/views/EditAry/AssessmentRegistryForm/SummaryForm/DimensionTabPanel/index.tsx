@@ -17,7 +17,7 @@ interface Props {
     data: DimensionType[];
     value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    dimensionIssueToClienIdMap: Record<string, string>;
+    dimensionIssueToClientIdMap: Record<string, string>;
     setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 
     dimensionIssuesOptions?: SummaryIssueType[] | null;
@@ -39,7 +39,7 @@ function DimensionTabPanel(props: Props) {
         value,
         setFieldValue, dimensionIssuesOptions,
         setDimensionIssuesOptions,
-        dimensionIssueToClienIdMap,
+        dimensionIssueToClientIdMap,
         setDimensionIssueToClientIdMap,
         error,
         disabled,
@@ -52,7 +52,7 @@ function DimensionTabPanel(props: Props) {
             setFieldValue,
             dimensionIssuesOptions,
             setDimensionIssuesOptions,
-            dimensionIssueToClienIdMap,
+            dimensionIssueToClientIdMap,
             setDimensionIssueToClientIdMap,
             disabled,
             error,
@@ -62,7 +62,7 @@ function DimensionTabPanel(props: Props) {
             setFieldValue,
             dimensionIssuesOptions,
             setDimensionIssuesOptions,
-            dimensionIssueToClienIdMap,
+            dimensionIssueToClientIdMap,
             setDimensionIssueToClientIdMap,
             disabled,
             error,

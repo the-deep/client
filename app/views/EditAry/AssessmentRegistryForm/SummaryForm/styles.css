@@ -1,6 +1,7 @@
 .summary-form {
     display: grid;
-    gap: var(--dui-spacing-mega-large);
+    padding: var(--dui-spacing-large);
+    gap: var(--dui-spacing-large);
 
     .pillar-content {
         display: flex;
@@ -8,6 +9,11 @@
         flex-grow: 1;
         overflow: auto;
         gap: var(--dui-spacing-extra-large);
+
+        .pillars {
+            display: flex;
+            flex-direction: column;
+        }
     }
 
     .dimension-content {
