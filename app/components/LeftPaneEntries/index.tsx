@@ -62,12 +62,12 @@ import {
 } from '#generated/types';
 
 import { PartialEntryType as EntryInput } from '#components/entry/schema';
-
-import CanvasDrawModal from './CanvasDrawModal';
 import {
     Entry,
     Framework,
 } from '#components/entry/types';
+
+import CanvasDrawModal from './CanvasDrawModal';
 import SimplifiedTextView from './SimplifiedTextView';
 import EntryItem, { ExcerptModal } from './EntryItem';
 import AutoEntriesModal from './AutoEntriesModal';

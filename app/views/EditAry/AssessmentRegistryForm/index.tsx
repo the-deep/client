@@ -66,6 +66,10 @@ const fieldsInMethodology: { [key in keyof PartialFormType]?: true } = {
 };
 
 const fieldsInSummary: { [key in keyof PartialFormType]?: true } = {
+    summaryPillarMeta: true,
+    summarySubPillarIssue: true,
+    summarySubDimensionIssue: true,
+    summaryDimensionMeta: true,
 };
 
 const fieldsInScore: { [key in keyof PartialFormType]?: true } = {

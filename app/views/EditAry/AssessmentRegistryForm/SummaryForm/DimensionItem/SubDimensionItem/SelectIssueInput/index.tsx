@@ -7,7 +7,7 @@ import {
     Error,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { randomString, isNotDefined } from '@togglecorp/fujs';
+import { randomString, isDefined, isNotDefined } from '@togglecorp/fujs';
 import { gql, useQuery } from '@apollo/client';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
@@ -97,15 +97,18 @@ function SelectIssueInput(props: Props) {
 
     const {
         setValue: setSubDimensionIssue,
+        removeValue,
     } = useFormArray<
         'summarySubDimensionIssue',
         SubDimensionIssueType
     >('summarySubDimensionIssue', onChange);
+
     const onFieldChange = useFormObject(mainIndex, setSubDimensionIssue, {
         clientId: randomString(),
         order,
         sector,
     });
+
     const handleIssueChange = useCallback((issueId: string | undefined) => {
         if (!value) {
             const newVal = {
@@ -122,6 +125,8 @@ function SelectIssueInput(props: Props) {
                 ...(oldVal ?? []),
                 newVal,
             ]), 'summarySubDimensionIssue');
+        } else if (!issueId && isDefined(mainIndex)) {
+            removeValue(mainIndex);
         } else {
             onFieldChange(issueId, 'summaryIssue');
         }
@@ -130,6 +135,8 @@ function SelectIssueInput(props: Props) {
         order,
         value,
         sector,
+        removeValue,
+        mainIndex,
         onFieldChange,
         setDimensionIssueToClientIdMap,
         onChange,
