@@ -405,6 +405,21 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             totalPeopleAssessed
             totalPeopleFacingHumAccessCons
         }
+        summaryDimensionMeta {
+            id
+            clientId
+            focus
+            percentageOfPeopleAffected
+            totalPeopleAffected
+            percentageOfModerate
+            percentageOfSevere
+            percentageOfCritical
+            percentageInNeed
+            totalModerate
+            totalSevere
+            totalCritical
+            totalInNeed
+        }
         summarySubDimensionIssue {
             id
             clientId

@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { ExpandableContainer, ListView } from '@the-deep/deep-ui';
 import { EntriesAsList, Error, getErrorObject, useFormArray } from '@togglecorp/toggle-form';
+import { isDefined } from '@togglecorp/fujs';
 
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 
@@ -15,7 +16,7 @@ export interface Props {
     value: PartialFormType;
     data: DimensionType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
-    dimensionIssueToClienIdMap: Record<string, string>;
+    dimensionIssueToClientIdMap: Record<string, string>;
     setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     dimensionIssuesOptions?: SummaryIssueType[] | null;
     setDimensionIssuesOptions: React.Dispatch<React.SetStateAction<
@@ -41,12 +42,13 @@ function DimensionItem(props: Props) {
         setFieldValue,
         dimensionIssuesOptions,
         setDimensionIssuesOptions,
-        dimensionIssueToClienIdMap,
+        dimensionIssueToClientIdMap,
         setDimensionIssueToClientIdMap,
         sector,
     } = props;
 
     const error = getErrorObject(riskError);
+
     const subDimensionParams = useCallback(
         (name: string, subDimensionData): SubDimensionItemProps => ({
             data: subDimensionData,
@@ -56,7 +58,7 @@ function DimensionItem(props: Props) {
             onChange: setFieldValue,
             dimensionIssuesOptions,
             setDimensionIssuesOptions,
-            dimensionIssueToClienIdMap,
+            dimensionIssueToClientIdMap,
             setDimensionIssueToClientIdMap,
             disabled,
             error: error?.summarySubDimensionIssue,
@@ -66,13 +68,23 @@ function DimensionItem(props: Props) {
             setFieldValue,
             dimensionIssuesOptions,
             setDimensionIssuesOptions,
-            dimensionIssueToClienIdMap,
+            dimensionIssueToClientIdMap,
             setDimensionIssueToClientIdMap,
             sector,
             disabled,
             error,
         ],
     );
+
+    const selectedMetaIndex = useMemo(() => (
+        value?.summaryDimensionMeta?.findIndex((item) => item.focus === sector)
+    ), [
+        value?.summaryDimensionMeta,
+        sector,
+    ]);
+
+    const selectedMeta = isDefined(selectedMetaIndex)
+        ? value?.summaryDimensionMeta?.[selectedMetaIndex] : undefined;
 
     const {
         setValue: onChangeDimensionMeta,
@@ -90,10 +102,12 @@ function DimensionItem(props: Props) {
                 withoutBorder
                 headerActions={(
                     <SummaryDimensionMetaInput
-                        name={+sector}
-                        value={undefined}
+                        name={selectedMetaIndex === -1 ? undefined : selectedMetaIndex}
+                        value={selectedMeta}
                         onChange={onChangeDimensionMeta}
-                        error={error?.summaryDimensionMeta}
+                        error={selectedMeta?.clientId
+                            ? getErrorObject(error?.summaryDimensionMeta)?.[selectedMeta?.clientId]
+                            : undefined}
                         sector={sector}
                         dimension={data.dimension}
                     />

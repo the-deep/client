@@ -97,6 +97,7 @@ function PillarItem(props: Props) {
                         value={value?.summaryPillarMeta?.totalPeopleAssessed}
                         error={summaryPillarMetaError?.totalPeopleAssessed}
                         disabled={disabled}
+                        variant="general"
                     />
                 )}
                 {(data.pillar === 'EVENT_SHOCK') && (
@@ -105,31 +106,34 @@ function PillarItem(props: Props) {
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
                             name="totalDead"
-                            placeholder="Total death:"
+                            placeholder="Total death"
                             value={value?.summaryPillarMeta?.totalDead}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalDead}
                             disabled={disabled}
+                            variant="general"
                         />
                         <NumberInput
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
                             name="totalInjured"
-                            placeholder="Total injured:"
+                            placeholder="Total injured"
                             value={value?.summaryPillarMeta?.totalInjured}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalInjured}
                             disabled={disabled}
+                            variant="general"
                         />
                         <NumberInput
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
                             name="totalMissing"
-                            placeholder="Total missing:"
+                            placeholder="Total missing"
                             value={value?.summaryPillarMeta?.totalMissing}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalMissing}
                             disabled={disabled}
+                            variant="general"
                         />
                     </div>
                 )}
@@ -144,31 +148,28 @@ function PillarItem(props: Props) {
     );
 
     return (
-        <div className={styles.pillar}>
-            <ExpandableContainer
-                className={styles.expandableContainer}
-                headingContainerClassName={styles.headingContainer}
-                heading={data.pillarDisplay}
-                headingSize="extraSmall"
-                withoutBorder
-                headerActions={headerActions}
-                expansionTriggerArea="arrow"
-            >
-                <ListView
-                    className={styles.subPillarItem}
-                    data={data.subPillarInformation}
-                    keySelector={keySelector}
-                    renderer={SubPillarItem}
-                    rendererParams={subPillarParams}
-                    errored={false}
-                    filtered={false}
-                    pending={false}
-                    messageShown
-                    messageIconShown
-                />
-            </ExpandableContainer>
-
-        </div>
+        <ExpandableContainer
+            className={styles.pillarItem}
+            headingContainerClassName={styles.headingContainer}
+            heading={data.pillarDisplay}
+            headingSize="extraSmall"
+            headerActions={headerActions}
+            expansionTriggerArea="arrow"
+            withoutBorder
+        >
+            <ListView
+                className={styles.subPillarItem}
+                data={data.subPillarInformation}
+                keySelector={keySelector}
+                renderer={SubPillarItem}
+                rendererParams={subPillarParams}
+                errored={false}
+                filtered={false}
+                pending={false}
+                messageShown
+                messageIconShown
+            />
+        </ExpandableContainer>
     );
 }
 

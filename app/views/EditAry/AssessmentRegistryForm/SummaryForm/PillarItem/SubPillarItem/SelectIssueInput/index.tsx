@@ -7,7 +7,7 @@ import {
     Error,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { randomString, isNotDefined } from '@togglecorp/fujs';
+import { randomString, isDefined, isNotDefined } from '@togglecorp/fujs';
 import { gql, useQuery } from '@apollo/client';
 
 import {
@@ -93,6 +93,7 @@ function SelectIssueInput(props: Props) {
 
     const {
         setValue: setSubPillarIssue,
+        removeValue,
     } = useFormArray<
         'summarySubPillarIssue',
         SubPillarIssueType
@@ -118,6 +119,8 @@ function SelectIssueInput(props: Props) {
                 ...(oldVal ?? []),
                 newVal,
             ]), 'summarySubPillarIssue');
+        } else if (!issueId && isDefined(mainIndex)) {
+            removeValue(mainIndex);
         } else {
             onFieldChange(issueId, 'summaryIssue');
         }
@@ -126,6 +129,8 @@ function SelectIssueInput(props: Props) {
         order,
         value,
         onFieldChange,
+        removeValue,
+        mainIndex,
         setIssueItemToClientIdMap,
         onChange,
     ]);

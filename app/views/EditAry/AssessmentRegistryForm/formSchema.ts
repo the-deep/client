@@ -79,28 +79,24 @@ export type SubDimensionIssueType = NonNullable<PartialFormType['summarySubDimen
 type SubDimensionIssueSchema = ObjectSchema<SubDimensionIssueType, PartialFormType>;
 type SubDimensionIssueSchemaFields = ReturnType<SubDimensionIssueSchema['fields']>;
 type SubDimensionIssuesSchema = ArraySchema<SubDimensionIssueType, PartialFormType>;
-type SubDimensionIssuesFormSchemMember = ReturnType<SubDimensionIssuesSchema['member']>;
+type SubDimensionIssuesFormSchemaMember = ReturnType<SubDimensionIssuesSchema['member']>;
 
-export type SubPillarMetaInputType = NonNullable<PartialFormType['summaryDimensionMeta']>[number];
+export type SubPillarMetaInputType = NonNullable<PartialFormType['summaryPillarMeta']>;
 type SubPillarMetaSchema = ObjectSchema<SubPillarMetaInputType, PartialFormType>;
 type SubPillarMetaSchemaFields = ReturnType<SubPillarMetaSchema['fields']>;
-type SubPillarMetasFormSchema = ArraySchema<SubPillarMetaInputType, PartialFormType>;
-type SubPillarMetasFormSchemaMember = ReturnType<SubPillarMetasFormSchema['member']>;
 
 export type SubDimensionMetaInputType = NonNullable<PartialFormType['summaryDimensionMeta']>[number];
-// TODO
-// type SubDimensionMetaSchema = ObjectSchema<SubDimensionMetaInputType, PartialFormType>;
-// type SubDimensionMetaSchemaFields = ReturnType<SubDimensionMetaSchema['fields']>;
-// type SubDimensionMetasFormSchema = ArraySchema<SubDimensionMetaInputType, PartialFormType>;
-// type SubDimensionMetasFormSchemaMember = ReturnType<SubDimensionMetasFormSchema['member']>;
+
+type SubDimensionMetaSchema = ObjectSchema<SubDimensionMetaInputType, PartialFormType>;
+type SubDimensionMetaSchemaFields = ReturnType<SubDimensionMetaSchema['fields']>;
+type SubDimensionMetasFormSchema = ArraySchema<SubDimensionMetaInputType, PartialFormType>;
+type SubDimensionMetasFormSchemaMember = ReturnType<SubDimensionMetasFormSchema['member']>;
 
 export const initialValue: PartialFormType = {
     methodologyAttributes: [
         { clientId: randomString() },
     ],
-    summaryDimensionMeta: [
-        { clientId: randomString(), totalPeopleAffected: 0 },
-    ],
+    summaryDimensionMeta: [],
 };
 
 export const schema: FormSchema = {
@@ -160,6 +156,7 @@ export const schema: FormSchema = {
                 keySelector: (score) => score.clientId,
                 member: (): ScoreRatingsFormSchemaMember => ({
                     fields: (): ScoreRatingsSchemaFields => ({
+                        id: [defaultUndefinedType],
                         clientId: [requiredCondition],
                         rating: [],
                         reason: [],
@@ -171,6 +168,7 @@ export const schema: FormSchema = {
                 keySelector: (density) => density.clientId,
                 member: (): ScoreAnalyticalDensityFormSchemaMember => ({
                     fields: (): ScoreAnalyticalDensitySchemaFields => ({
+                        id: [defaultUndefinedType],
                         clientId: [requiredCondition],
                         analysisLevelCovered: [],
                         figureProvided: [],
@@ -193,48 +191,57 @@ export const schema: FormSchema = {
                 keySelector: (issue) => issue.clientId,
                 member: (): SubPillarIssuesFormSchemaMember => ({
                     fields: (): SubPillarIssueSchemaFields => ({
+                        id: [defaultUndefinedType],
                         clientId: [requiredCondition],
                         summaryIssue: [requiredCondition],
-                        text: [requiredCondition],
+                        text: [],
                         order: [requiredCondition],
                     }),
                 }),
             },
-            summaryPillarMeta: [requiredCondition],
+            summaryPillarMeta: {
+                fields: (): SubPillarMetaSchemaFields => ({
+                    id: [defaultUndefinedType],
+                    totalPeopleAssessed: [],
+                    totalDead: [],
+                    totalInjured: [],
+                    totalMissing: [],
+                }),
+            },
             summarySubDimensionIssue: {
                 keySelector: (issue) => issue.clientId,
-                member: (): SubDimensionIssuesFormSchemMember => ({
+                member: (): SubDimensionIssuesFormSchemaMember => ({
                     fields: (): SubDimensionIssueSchemaFields => ({
-                        clientId: [],
-                        sector: [],
-                        summaryIssue: [],
-                        order: [],
+                        id: [defaultUndefinedType],
+                        clientId: [requiredCondition],
+                        summaryIssue: [requiredCondition],
                         text: [],
+                        sector: [requiredCondition],
+                        order: [requiredCondition],
                     }),
                 }),
             },
+            summaryDimensionMeta: {
+                keySelector: (dimensionMeta) => dimensionMeta.clientId,
+                member: (): SubDimensionMetasFormSchemaMember => ({
+                    fields: (): SubDimensionMetaSchemaFields => ({
+                        id: [defaultUndefinedType],
+                        clientId: [requiredCondition],
+                        focus: [requiredCondition],
+                        percentageOfPeopleAffected: [],
+                        totalPeopleAffected: [],
+                        percentageOfModerate: [],
+                        percentageOfSevere: [],
+                        percentageOfCritical: [],
+                        percentageInNeed: [],
+                        totalModerate: [],
+                        totalSevere: [],
+                        totalCritical: [],
+                        totalInNeed: [],
 
-            // TODO uncomment on dimension
-            // summaryDimensionMeta: {
-            //     keySelector: (dimensionMeta) => dimensionMeta.clientId,
-            //     member: (): SubDimensionMetasFormSchemaMember => ({
-            //         fields: (): SubDimensionMetaSchemaFields => ({
-            //             clientId: [requiredCondition],
-            //             focus: [],
-            //             percentageOfPeopleAffected: [],
-            //             totalPeopleAffected: [],
-            //             percentageOfModerate: [],
-            //             percentageOfSevere: [],
-            //             percentageOfCritical: [],
-            //             percentageInNeed: [],
-            //             totalModerate: [],
-            //             totalSevere: [],
-            //             totalCritical: [],
-            //             totalInNeed: [],
-
-            //         }),
-            //     }),
-            // },
+                    }),
+                }),
+            },
         };
         if (value?.sectors?.some((sector) => sector === 'PROTECTION')) {
             baseSchema = {
