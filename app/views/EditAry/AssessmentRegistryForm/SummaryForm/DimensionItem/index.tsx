@@ -50,7 +50,10 @@ function DimensionItem(props: Props) {
     const error = getErrorObject(riskError);
 
     const subDimensionParams = useCallback(
-        (name: string, subDimensionData): SubDimensionItemProps => ({
+        (
+            name: string,
+            subDimensionData: NonNullable<DimensionType['subDimensionInformation']>[number],
+        ): SubDimensionItemProps => ({
             data: subDimensionData,
             name,
             sector,
