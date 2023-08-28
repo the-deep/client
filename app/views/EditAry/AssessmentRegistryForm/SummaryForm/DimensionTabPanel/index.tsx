@@ -46,7 +46,7 @@ function DimensionTabPanel(props: Props) {
     } = props;
 
     const dimensionRendererParams = useCallback(
-        (_: string, dimensionData): DimensionItemProps => ({
+        (_: string, dimensionData: DimensionType): DimensionItemProps => ({
             data: dimensionData,
             value,
             setFieldValue,

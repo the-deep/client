@@ -1,45 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Button, Header, TextInput, useAlert } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
-import {
-    getErrorObject,
-    ObjectSchema,
-    PartialForm,
-    useForm,
-    createSubmitHandler,
-    requiredCondition,
-    removeNull,
-} from '@togglecorp/toggle-form';
-
+import { _cs } from '@togglecorp/fujs';
+import { removeNull } from '@togglecorp/toggle-form';
 import {
     AssessmentRegistrySummaryIssueCreateInputType,
+    AssessmentRegistrySummarySubDimensionTypeEnum,
+    AssessmentRegistrySummarySubPillarTypeEnum,
     CreateAssessmentRegistrySummaryIssueMutation,
     CreateAssessmentRegistrySummaryIssueMutationVariables,
 } from '#generated/types';
 
-import { PillarType } from '..';
-
 import styles from './styles.css';
-
-type FormSchema = ObjectSchema<PartialForm<AssessmentRegistrySummaryIssueCreateInputType>>;
-type FormSchemaFields = ReturnType<FormSchema['fields']>;
-
-const schema: FormSchema = {
-    fields: (): FormSchemaFields => {
-        const baseSchema: FormSchemaFields = {
-            parent: [],
-            label: [requiredCondition],
-            subPillar: [],
-        };
-        return baseSchema;
-    },
-    validation: () => undefined,
-};
-
-const initialVaue: PartialForm<AssessmentRegistrySummaryIssueCreateInputType> = {
-    label: undefined,
-    subPillar: undefined,
-};
 
 const CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE = gql`
     mutation CreateAssessmentRegistrySummaryIssue($data: AssessmentRegistrySummaryIssueCreateInputType!) {
@@ -56,27 +28,27 @@ const CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE = gql`
     }
 `;
 
-interface Props {
-    data: NonNullable<PillarType['subPillarInformation']>[number];
+type Props = {
+    className?: string;
+    heading: string;
     onClose: () => void;
-}
+} & ({
+    type: 'pillar';
+    subPillar: AssessmentRegistrySummarySubPillarTypeEnum;
+} | {
+    type: 'dimension';
+    subDimension: AssessmentRegistrySummarySubDimensionTypeEnum;
+})
 
 function AddIssueModal(props: Props) {
     const {
-        data,
+        className,
+        heading,
         onClose,
     } = props;
-    const {
-        value,
-        error: riskyError,
-        validate,
-        setFieldValue,
-        setError,
-    } = useForm(schema, initialVaue);
 
     const alert = useAlert();
-
-    const error = getErrorObject(riskyError);
+    const [label, setLabel] = useState<string | undefined>(undefined);
 
     const [
         createSummaryIssue,
@@ -112,24 +84,41 @@ function AddIssueModal(props: Props) {
 
     const handleSave = useCallback(
         () => {
-            createSummaryIssue({
-                variables: {
-                    data: {
-                        ...value,
-                        subPillar: data.subPillar,
-                    } as AssessmentRegistrySummaryIssueCreateInputType,
-                },
-            });
-        }, [data, value, createSummaryIssue],
+            // eslint-disable-next-line react/destructuring-assignment
+            if (props.type === 'pillar') {
+                createSummaryIssue({
+                    variables: {
+                        data: {
+                            label,
+                            // eslint-disable-next-line react/destructuring-assignment
+                            subPillar: props.subPillar,
+                        } as AssessmentRegistrySummaryIssueCreateInputType,
+                    },
+                });
+            }
+            // eslint-disable-next-line react/destructuring-assignment
+            if (props.type === 'dimension') {
+                createSummaryIssue({
+                    variables: {
+                        data: {
+                            label,
+                            // eslint-disable-next-line react/destructuring-assignment
+                            subDimension: props.subDimension,
+                        } as AssessmentRegistrySummaryIssueCreateInputType,
+                    },
+                });
+            }
+        }, [
+            props,
+            label,
+            createSummaryIssue,
+        ],
     );
 
     return (
-        <form
-            className={styles.issueModal}
-            onSubmit={createSubmitHandler(validate, setError, handleSave)}
-        >
+        <div className={_cs(className, styles.issueModal)}>
             <Header
-                heading={data.subPillarDisplay}
+                heading={heading}
                 headingSize="medium"
                 description={(<hr />)}
                 descriptionClassName={styles.description}
@@ -148,19 +137,18 @@ function AddIssueModal(props: Props) {
                 placeholder="label"
                 label="label"
                 name="label"
-                value={value.label}
-                onChange={setFieldValue}
-                error={error?.label}
+                value={label}
+                onChange={setLabel}
             />
 
             <Button
                 name="save"
-                type="submit"
                 disabled={loading}
+                onClick={handleSave}
             >
                 save
             </Button>
-        </form>
+        </div>
     );
 }
 

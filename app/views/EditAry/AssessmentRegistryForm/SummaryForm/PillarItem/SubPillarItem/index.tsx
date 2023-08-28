@@ -195,7 +195,9 @@ function SubPillarItem(props: Props) {
                     onCloseButtonClick={closeModal}
                 >
                     <AddIssueModal
-                        data={data}
+                        heading={data.subPillarDisplay}
+                        type="pillar"
+                        subPillar={data.subPillar}
                         onClose={closeModal}
                     />
                 </Modal>

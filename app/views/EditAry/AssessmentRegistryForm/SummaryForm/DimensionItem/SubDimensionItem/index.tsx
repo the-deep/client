@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { EntriesAsList, Error } from '@togglecorp/toggle-form';
 import { IoAddCircleOutline } from 'react-icons/io5';
-import { Header, QuickActionButton } from '@the-deep/deep-ui';
+import { Header, Modal, QuickActionButton, useModalState } from '@the-deep/deep-ui';
 
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 import {
@@ -14,6 +14,7 @@ import SelectIssueInput from './SelectIssueInput';
 import { DimensionType } from '../..';
 
 import styles from './styles.css';
+import AddIssueModal from '../../AddIssueModal';
 
 export interface Props {
     data: NonNullable<DimensionType['subDimensionInformation']>[number];
@@ -50,6 +51,12 @@ function SubDimensionItem(props: Props) {
         error,
     } = props;
 
+    const [
+        isModalShown,
+        showModal,
+        closeModal,
+    ] = useModalState(false);
+
     const getFieldValue = useCallback(
         (n: string) => {
             const clientId = dimensionIssueToClienIdMap[n];
@@ -80,7 +87,7 @@ function SubDimensionItem(props: Props) {
                 actions={(
                     <QuickActionButton
                         name={data.subDimension}
-                        // onClick={showModal}
+                        onClick={showModal}
                         title="add issue"
                     >
                         <IoAddCircleOutline />
@@ -194,6 +201,20 @@ function SubDimensionItem(props: Props) {
                     error={error}
                 />
             </div>
+            {isModalShown && (
+                <Modal
+                    heading="Issue Editor"
+                    size="medium"
+                    onCloseButtonClick={closeModal}
+                >
+                    <AddIssueModal
+                        heading={data.subDimensionDisplay}
+                        type="dimension"
+                        subDimension={data.subDimension}
+                        onClose={closeModal}
+                    />
+                </Modal>
+            )}
         </div>
     );
 }

@@ -51,7 +51,10 @@ function PillarItem(props: Props) {
     const summaryPillarMetaError = getErrorObject(error?.summaryPillarMeta);
 
     const subPillarParams = useCallback(
-        (name: string, subPillarData): SubPillarItemProps => ({
+        (
+            name: string,
+            subPillarData: NonNullable<PillarType['subPillarInformation']>[number],
+        ): SubPillarItemProps => ({
             data: subPillarData,
             name,
             issuesOptions,
