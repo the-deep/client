@@ -18,11 +18,13 @@ import OrganizationMultiSelectInput, {
     BasicOrganization,
 } from '#components/selections/NewOrganizationMultiSelectInput';
 
+import { EnumFix } from '#utils/types';
 import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
 import {
+    AssessmentDashboardFilterDataInputType,
     AssessmentFilterOptionsQuery,
     AssessmentFilterOptionsQueryVariables,
 } from '#generated/types';
@@ -62,26 +64,19 @@ const ASSESSMENT_FILTER_OPTIONS = gql`
     }
 `;
 
-export interface FilterForm {
-    stakeholders?: string[];
-    leadOrganizations?: string[];
-    sectors?: string[];
-    affectedGroups?: string[];
-    assessmentFrequencies?: string[];
-    coordinationTypes?: string[];
-}
+export type FilterForm = EnumFix<AssessmentDashboardFilterDataInputType, 'sectors' | 'affectedGroup' | 'coordinationType' | 'frequency'>;
 
 type FormSchema = ObjectSchema<FilterForm>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        stakeholders: [],
-        leadOrganizations: [],
+        stakeholder: [],
+        leadOrganization: [],
         sectors: [],
-        affectedGroups: [],
-        assessmentFrequencies: [],
-        coordinationTypes: [],
+        affectedGroup: [],
+        frequency: [],
+        coordinationType: [],
     }),
 };
 
@@ -152,8 +147,8 @@ function Filters(props: Props) {
     return (
         <div className={_cs(styles.filters, className)}>
             <OrganizationMultiSelectInput
-                name="stakeholders"
-                value={value.stakeholders}
+                name="stakeholder"
+                value={value.stakeholder}
                 onChange={setFieldValue}
                 options={organizationOptions}
                 onOptionsChange={setOrganizationOptions}
@@ -161,8 +156,8 @@ function Filters(props: Props) {
                 label="Stakeholders"
             />
             <OrganizationMultiSelectInput
-                name="leadOrganizations"
-                value={value.leadOrganizations}
+                name="leadOrganization"
+                value={value.leadOrganization}
                 onChange={setFieldValue}
                 options={organizationOptions}
                 onOptionsChange={setOrganizationOptions}
@@ -170,8 +165,8 @@ function Filters(props: Props) {
                 label="Lead organizations"
             />
             <GeoMultiSelectInput
-                name="leadOrganizations"
-                value={value.leadOrganizations}
+                name="leadOrganization"
+                value={value.leadOrganization}
                 onChange={setFieldValue}
                 options={geoAreaOptions}
                 onOptionsChange={setGeoAreaOptions}
@@ -191,34 +186,34 @@ function Filters(props: Props) {
                 disabled={loading}
             />
             <MultiSelectInput
-                name="affectedGroups"
+                name="affectedGroup"
                 onChange={setFieldValue}
                 options={data?.affectedGroupOptions?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
-                value={value.affectedGroups}
+                value={value.affectedGroup}
                 label="Affected Groups"
                 placeholder="Affected Groups"
                 disabled={loading}
             />
             <MultiSelectInput
-                name="assessmentFrequencies"
+                name="frequency"
                 onChange={setFieldValue}
                 options={data?.assessmentFrequencyOptions?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
-                value={value.assessmentFrequencies}
+                value={value.frequency}
                 label="Assessment Frequency"
                 placeholder="Assessment Frequency"
                 disabled={loading}
             />
             <MultiSelectInput
-                name="coordinationTypes"
+                name="coordinationType"
                 onChange={setFieldValue}
                 options={data?.coordinationTypeOptions?.enumValues}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
-                value={value.coordinationTypes}
+                value={value.coordinationType}
                 label="Coordination Types"
                 placeholder="Coordination Types"
                 disabled={loading}
