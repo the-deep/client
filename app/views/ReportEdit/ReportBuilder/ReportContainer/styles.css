@@ -1,7 +1,7 @@
 .report-container {
     display: flex;
     position: relative;
-    align-items: center;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: var(--dui-spacing-small);
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
@@ -44,6 +44,13 @@
         transform: translateX(-50%);
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
+    }
+
+    .message {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
     }
 
     &:hover {

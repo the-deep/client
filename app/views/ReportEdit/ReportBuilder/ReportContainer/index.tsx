@@ -1,6 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     type EntriesAsList,
+    useFormObject,
+    useFormArray,
 } from '@togglecorp/toggle-form';
 import {
     _cs,
@@ -10,16 +12,27 @@ import {
     compareNumber,
 } from '@togglecorp/fujs';
 import {
+    Message,
+    Kraken,
+    Button,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import { IoAdd } from 'react-icons/io5';
 
 import { reorder } from '#utils/common';
+import { useModalState } from '#hooks/stateManagement';
+import {
+    AnalysisReportContainerContentConfigurationType,
+    AnalysisReportContainerContentTypeEnum,
+} from '#generated/types';
 
 import {
     type PartialFormType,
     type ReportContainerType,
 } from '../../schema';
+
+import ContentAddModal from './ContentAddModal';
+import Content from './Content';
 
 import styles from './styles.css';
 
@@ -29,7 +42,10 @@ interface Props {
     row?: number;
     column?: number;
     width?: number;
+    index: number;
     allItems: ReportContainerType[] | undefined;
+    contentType: AnalysisReportContainerContentTypeEnum | undefined;
+    configuration: AnalysisReportContainerContentConfigurationType | undefined;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
 }
 
@@ -37,12 +53,40 @@ function ReportContainer(props: Props) {
     const {
         className,
         containerKey,
+        contentType,
         row = 1,
         column = 1,
         width = 1,
+        index,
         allItems,
+        configuration,
         setFieldValue,
     } = props;
+    console.log('here', contentType);
+
+    const {
+        setValue: onReportContainerChange,
+    } = useFormArray(
+        'containers',
+        setFieldValue,
+    );
+
+    const onFieldChange = useFormObject(
+        index,
+        onReportContainerChange,
+        () => ({
+            row,
+            column: column + 1,
+            width: 1,
+            clientId: randomString(),
+        }),
+    );
+
+    const [
+        contentAddModalVisible,
+        showContentAddModal,
+        hideContentAddModal,
+    ] = useModalState(false);
 
     const rowItems = useMemo(() => {
         const items = allItems?.filter((item) => item.row === row);
@@ -164,6 +208,16 @@ function ReportContainer(props: Props) {
         row,
     ]);
 
+    const handleContentAddClick = useCallback((
+        newContentType: AnalysisReportContainerContentTypeEnum,
+    ) => {
+        hideContentAddModal();
+        onFieldChange(newContentType, 'contentType');
+    }, [
+        onFieldChange,
+        hideContentAddModal,
+    ]);
+
     return (
         <div
             className={_cs(className, styles.reportContainer)}
@@ -210,7 +264,40 @@ function ReportContainer(props: Props) {
             >
                 <IoAdd />
             </QuickActionButton>
-            {containerKey}
+            {!contentType && (
+                <Message
+                    className={styles.message}
+                    message="No content yet."
+                    icon={(
+                        <Kraken
+                            variant="sleep"
+                            size="extraSmall"
+                        />
+                    )}
+                    actions={(
+                        <Button
+                            name={undefined}
+                            onClick={showContentAddModal}
+                            variant="tertiary"
+                            spacing="compact"
+                        >
+                            Add content
+                        </Button>
+                    )}
+                />
+            )}
+            {contentType && (
+                <Content
+                    contentType={contentType}
+                    configuration={configuration}
+                />
+            )}
+            {contentAddModalVisible && (
+                <ContentAddModal
+                    onCloseButtonClick={hideContentAddModal}
+                    onSelect={handleContentAddClick}
+                />
+            )}
         </div>
     );
 }

@@ -36,15 +36,18 @@ function ReportBuilder(props: Props) {
         (
             containerKey: string,
             item: ReportContainerType,
-            _: number,
+            index: number,
             allItems: ReportContainerType[] | undefined,
         ) => ({
             row: item.row,
             column: item.column,
-            setFieldValue,
             width: item.width,
             allItems,
+            index,
+            configuration: item.contentConfiguration,
+            contentType: item.contentType,
             containerKey,
+            setFieldValue,
         }),
         [setFieldValue],
     );

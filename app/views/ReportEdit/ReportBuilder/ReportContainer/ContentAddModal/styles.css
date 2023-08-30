@@ -1,0 +1,17 @@
+.content-add-modal {
+    .modal-body {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, 12rem);
+        grid-gap: var(--dui-spacing-small);
+
+        .button {
+            background-color: var(--dui-color-background-information);
+            height: 12rem;
+            color: inherit;
+
+            &:hover {
+                background-color: var(--dui-color-background-negative);
+            }
+        }
+    }
+}
