@@ -1,145 +1,95 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     KeyFigure,
 } from '@the-deep/deep-ui';
+import { PurgeNull } from '@togglecorp/toggle-form';
+
+import {
+    AryDashboardFilterQuery,
+    AssessmentRegistryCoordinationTypeEnum,
+} from '#generated/types';
 
 import styles from './styles.module.css';
 
 interface Props {
     className?: string;
     projectId: string;
+    data: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['assessmentDashboardStatistics'];
 }
 
 function Statistics(props: Props) {
     const {
         className,
         projectId,
+        data,
     } = props;
     // eslint-disable-next-line no-console
     console.log('here', projectId);
 
-    // TODO dummy data
-    const noOfAssessments = 220;
-    const noOfJointAssessments = 25;
-    const noOfUncoordinatedAssessments = 25;
-    const noOfHarmoniziedAssessments = 43;
-    const noOfMultisectoralAssessments = 74;
-    const noOfSingleSectorAssessments = 36;
+    const getCoordinationValue = useCallback(
+        (coordinationType: AssessmentRegistryCoordinationTypeEnum) => {
+            const matchedItem = data?.assessmentCount?.find(
+                (coordination) => coordination?.coordinatedJoint === coordinationType,
+            );
 
-    const stakeholders = 168;
-    const ingos = 54;
-    const unAgencies = 54;
-    const lngos = 54;
-    const clusters = 54;
-    const rcrc = 54;
-    const donors = 54;
-    const governments = 54;
-    const acedemic = 24;
-
-    const collectionTechniques = 7;
-    const secondaryDataReviews = 78;
-    const individualsSurveyed = 120;
-    const householdsSurveyed = 54;
-    const keyInformants = 76;
-    const focusGroups = 220;
-    const communityGroups = 47;
+            return matchedItem?.count ?? 0;
+        }, [data?.assessmentCount],
+    );
 
     return (
         <div className={_cs(styles.statistics, className)}>
             <div className={styles.row}>
                 <KeyFigure
                     label="Assessments"
-                    value={noOfAssessments}
+                    value={data?.totalAssessment}
                 />
                 <KeyFigure
                     label="Joint Assessments"
-                    value={noOfJointAssessments}
+                    value={getCoordinationValue('COORDINATED')}
                 />
                 <KeyFigure
                     label="Uncoordinated Assessments"
-                    value={noOfUncoordinatedAssessments}
+                    value={getCoordinationValue('UNCOORDINATED')}
                 />
                 <KeyFigure
                     label="Harmonized Assessments"
-                    value={noOfHarmoniziedAssessments}
+                    value={getCoordinationValue('HARMONIZED')}
                 />
                 <KeyFigure
                     label="Multisectoral Assessments"
-                    value={noOfMultisectoralAssessments}
+                    value={data?.totalSinglesectorAssessment}
                 />
                 <KeyFigure
                     label="Single Sector Assessments"
-                    value={noOfSingleSectorAssessments}
+                    value={data?.totalSinglesectorAssessment}
                 />
             </div>
             <div className={styles.row}>
                 <KeyFigure
                     label="Stakeholders"
-                    value={stakeholders}
+                    value={data?.totalStakeholder}
                 />
-                <KeyFigure
-                    label="INGOs"
-                    value={ingos}
-                />
-                <KeyFigure
-                    label="UN Agencies"
-                    value={unAgencies}
-                />
-                <KeyFigure
-                    label="LNGOs"
-                    value={lngos}
-                />
-                <KeyFigure
-                    label="Cluster/Sectors"
-                    value={clusters}
-                />
-                <KeyFigure
-                    label="RCRC"
-                    value={rcrc}
-                />
-                <KeyFigure
-                    label="Donors"
-                    value={donors}
-                />
-                <KeyFigure
-                    label="Governments"
-                    value={governments}
-                />
-                <KeyFigure
-                    label="Acedemic and Research Institutes"
-                    value={acedemic}
-                />
+                {data?.stakeholderCount?.map((item) => (
+                    <KeyFigure
+                        key={item?.stakeholder}
+                        label={item?.stakeholder}
+                        value={item?.count}
+                    />
+                ))}
             </div>
             <div className={styles.row}>
                 <KeyFigure
                     label="Collection Techniques"
-                    value={collectionTechniques}
+                    value={data?.totalCollectionTechnique}
                 />
-                <KeyFigure
-                    label="Secondary Data Review"
-                    value={secondaryDataReviews}
-                />
-                <KeyFigure
-                    label="Inidividuals Surveyed"
-                    value={individualsSurveyed}
-                />
-                <KeyFigure
-                    label="Households Surveyed"
-                    value={householdsSurveyed}
-                />
-                <KeyFigure
-                    label="Key Informants Interviewed"
-                    value={keyInformants}
-                />
-                <KeyFigure
-                    label="Focus Group Discussions"
-                    value={focusGroups}
-                />
-                <KeyFigure
-                    label="Community Group Discussions"
-                    value={communityGroups}
-                />
+                {data?.collectionTechniqueCount?.map((technique) => (
+                    <KeyFigure
+                        key={technique?.dataCollectionTechnique}
+                        label={technique?.dataCollectionTechniqueDisplay}
+                        value={technique?.count}
+                    />
+                ))}
             </div>
         </div>
     );
