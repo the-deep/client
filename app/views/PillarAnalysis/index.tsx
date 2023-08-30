@@ -365,6 +365,7 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                 }
                 entries(
                     page: $page,
+                    ordering: "-created_at",
                     pageSize: $pageSize,
                     controlled: $controlled,
                     createdAtGte: $createdAtGte,
