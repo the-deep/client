@@ -35,7 +35,7 @@ const SUMMARY_ISSUE_SEARCH = gql`
     ) {
         assessmentRegSummaryIssues(
             subPillar: $subPillar,
-        subDimension: $subDimension,
+            subDimension: $subDimension,
             search: $search,
             pageSize: $pageSize,
             page: $page,

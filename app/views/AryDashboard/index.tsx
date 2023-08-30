@@ -1,8 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
     isDefined,
     formatDateToString,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     Container,
@@ -13,6 +14,8 @@ import {
     TabList,
     Tabs,
 } from '@the-deep/deep-ui';
+import { gql, useQuery } from '@apollo/client';
+import { removeNull } from '@togglecorp/toggle-form';
 
 import {
     todaysDate,
@@ -21,10 +24,42 @@ import {
 } from '#utils/common';
 import { resolveTime } from '#utils/temporal';
 import ProjectContext from '#base/context/ProjectContext';
+import { AryDashboardFilterQuery, AryDashboardFilterQueryVariables, AssessmentDashboardFilterDataInputType, AssessmentDashboardFilterInputType } from '#generated/types';
 
 import Statistics from './Statistics';
 import Filters, { FilterForm } from './Filters';
 import styles from './styles.css';
+
+const ARY_DASHBOARD_FILTER = gql`
+    query AryDashboardFilter(
+        $projectId: ID!,
+        $filter: AssessmentDashboardFilterInputType!,
+    ) {
+        project(id: $projectId) {
+            assessmentDashboardStatistics(filter: $filter){
+                totalAssessment
+                totalCollectionTechnique
+                totalMultisectorAssessment
+                totalSinglesectorAssessment
+                totalStakeholder
+                stakeholderCount {
+                    count
+                    stakeholder
+                }
+                collectionTechniqueCount {
+                    count
+                    dataCollectionTechnique
+                    dataCollectionTechniqueDisplay
+                }
+                assessmentCount {
+                    coordinatedJoint
+                    coordinatedJointDisplay
+                    count
+                }
+            }
+        }
+    }
+`;
 
 const lastYearDateTime = resolveTime(lastYearStartDate, 'day').getTime();
 const todaysDateTime = resolveTime(todaysDate, 'day').getTime();
@@ -41,7 +76,7 @@ function AryDashboard(props: Props) {
 
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
-
+    const [filters, setFilters] = useState<FilterForm | undefined>(undefined);
     const [
         startDate = lastYearDateTime,
         setStartDate,
@@ -51,9 +86,38 @@ function AryDashboard(props: Props) {
         setEndDate,
     ] = useState<number | undefined>(todaysDateTime);
 
+    const variables = useMemo((): AryDashboardFilterQueryVariables => ({
+        projectId: activeProject ?? '',
+        filter: {
+            dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
+            dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
+            assessment: filters as AssessmentDashboardFilterDataInputType,
+        },
+    }), [
+        activeProject,
+        startDate,
+        endDate,
+        filters,
+    ]);
+
+    const {
+        loading,
+        data,
+        refetch,
+    } = useQuery<AryDashboardFilterQuery, AryDashboardFilterQueryVariables>(
+        ARY_DASHBOARD_FILTER,
+        {
+            skip: isNotDefined(project),
+            variables,
+        },
+    );
+
+    console.log('filter response', loading, data, endDate);
+
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
-            setEndDate(Math.min(newDate, todaysDateTime));
+            setEndDate(newDate);
+            // setEndDate(Math.min(newDate, todaysDateTime));
         } else {
             setEndDate(undefined);
         }
@@ -77,15 +141,17 @@ function AryDashboard(props: Props) {
 
     const handleToDateChange = useCallback((newDate: string | undefined) => {
         if (isDefined(newDate)) {
+            console.log('new date', newDate);
             handleEndDateChange(new Date(newDate).getTime());
+            refetch();
         } else {
             handleEndDateChange(undefined);
         }
-    }, [handleEndDateChange]);
+    }, [handleEndDateChange, refetch]);
 
     const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
     const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
-    const [filters, setFilters] = useState<FilterForm | undefined>(undefined);
+    const filterData = removeNull(data?.project?.assessmentDashboardStatistics);
 
     return (
         <Container
@@ -121,6 +187,8 @@ function AryDashboard(props: Props) {
             headerDescription={activeProject && (
                 <Statistics
                     projectId={activeProject}
+                    // data={data?.project?.assessmentDashboardStatistics}
+                    data={filterData}
                 />
             )}
         >

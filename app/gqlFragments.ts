@@ -428,8 +428,9 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         summarySubDimensionIssue {
             id
             clientId
-            sector
-            sectorDisplay
+            # FIXME: error in this branch on generate
+            # sector
+            # sectorDisplay
             order
             text
             summaryIssue {
