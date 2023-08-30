@@ -14,45 +14,52 @@ import {
 import {
     Message,
     Kraken,
+    Footer,
     Button,
+    Modal,
     QuickActionButton,
+    QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
-import { IoAdd } from 'react-icons/io5';
+import {
+    IoAdd,
+    IoTrashOutline,
+    IoPencil,
+} from 'react-icons/io5';
 
 import { reorder } from '#utils/common';
 import { useModalState } from '#hooks/stateManagement';
 import {
-    AnalysisReportContainerContentConfigurationType,
     AnalysisReportContainerContentTypeEnum,
 } from '#generated/types';
 
 import {
     type PartialFormType,
+    type HeadingConfigType,
+    type ContentConfigType,
     type ReportContainerType,
 } from '../../schema';
 
 import ContentAddModal from './ContentAddModal';
+import HeadingEdit from './HeadingEdit';
 import Content from './Content';
 
 import styles from './styles.css';
 
 interface Props {
     className?: string;
-    containerKey?: string;
     row?: number;
     column?: number;
     width?: number;
     index: number;
     allItems: ReportContainerType[] | undefined;
     contentType: AnalysisReportContainerContentTypeEnum | undefined;
-    configuration: AnalysisReportContainerContentConfigurationType | undefined;
+    configuration: ContentConfigType | undefined;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
 }
 
 function ReportContainer(props: Props) {
     const {
         className,
-        containerKey,
         contentType,
         row = 1,
         column = 1,
@@ -62,14 +69,21 @@ function ReportContainer(props: Props) {
         configuration,
         setFieldValue,
     } = props;
-    console.log('here', contentType);
 
     const {
         setValue: onReportContainerChange,
+        removeValue,
     } = useFormArray(
         'containers',
         setFieldValue,
     );
+
+    const handleItemRemove = useCallback(() => {
+        removeValue(index);
+    }, [
+        index,
+        removeValue,
+    ]);
 
     const onFieldChange = useFormObject(
         index,
@@ -81,6 +95,12 @@ function ReportContainer(props: Props) {
             clientId: randomString(),
         }),
     );
+
+    const [
+        contentEditModalVisible,
+        showContentEditModal,
+        hideContentEditModal,
+    ] = useModalState(false);
 
     const [
         contentAddModalVisible,
@@ -218,6 +238,14 @@ function ReportContainer(props: Props) {
         hideContentAddModal,
     ]);
 
+    const onConfigChange = useFormObject<
+        'contentConfiguration', ContentConfigType
+    >('contentConfiguration', onFieldChange, {});
+
+    const onHeadingConfigChange = useFormObject<
+        'heading', HeadingConfigType
+    >('heading', onConfigChange, {});
+
     return (
         <div
             className={_cs(className, styles.reportContainer)}
@@ -292,11 +320,46 @@ function ReportContainer(props: Props) {
                     configuration={configuration}
                 />
             )}
+            <Footer
+                className={styles.footer}
+                actions={(
+                    <>
+                        <QuickActionButton
+                            name={undefined}
+                            title="Edit Content"
+                            onClick={showContentEditModal}
+                        >
+                            <IoPencil />
+                        </QuickActionButton>
+                        <QuickActionConfirmButton
+                            name={undefined}
+                            title="Remove Content"
+                            message="Are you sure you want to delete this content?"
+                            onConfirm={handleItemRemove}
+                        >
+                            <IoTrashOutline />
+                        </QuickActionConfirmButton>
+                    </>
+                )}
+            />
             {contentAddModalVisible && (
                 <ContentAddModal
                     onCloseButtonClick={hideContentAddModal}
                     onSelect={handleContentAddClick}
                 />
+            )}
+            {contentEditModalVisible && (
+                <Modal
+                    onCloseButtonClick={hideContentEditModal}
+                    heading="Configuration"
+                >
+                    {contentType === 'HEADING' && (
+                        <HeadingEdit
+                            value={configuration?.heading}
+                            onFieldChange={onHeadingConfigChange}
+                        />
+                    )}
+                </Modal>
             )}
         </div>
     );

@@ -46,6 +46,13 @@
         border-bottom-right-radius: 0;
     }
 
+    .footer {
+        display: none;
+        position: absolute;
+        right: var(--dui-spacing-small);
+        bottom: var(--dui-spacing-small);
+    }
+
     .message {
         display: flex;
         align-items: center;
@@ -58,6 +65,10 @@
             display: block;
             opacity: 1;
             font-size: var(--dui-font-size-large);
+        }
+
+        .footer {
+            display: block;
         }
     }
 }
