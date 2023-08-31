@@ -79,6 +79,8 @@ function ReportEdit(props: Props) {
                     className={styles.rightContent}
                     value={value}
                     setFieldValue={setFieldValue}
+                    disabled={false}
+                    readOnly={false}
                 />
             </div>
         </div>

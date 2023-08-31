@@ -5,7 +5,7 @@ import {
     Message,
     Kraken,
 } from '@the-deep/deep-ui';
-import { _cs } from '@togglecorp/fujs';
+import ReactMarkdown from 'react-markdown';
 
 import {
     AnalysisReportContainerContentTypeEnum,
@@ -45,6 +45,20 @@ function Content(props: Props) {
             >
                 {content ?? 'Title goes here'}
             </Heading>
+        );
+    }
+
+    if (contentType === 'TEXT') {
+        const {
+            text: {
+                content,
+            } = {},
+        } = configuration;
+
+        return (
+            <ReactMarkdown>
+                {content ?? 'Content goes here'}
+            </ReactMarkdown>
         );
     }
 

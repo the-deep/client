@@ -23,6 +23,8 @@ interface Props {
     className?: string;
     value: PartialFormType;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    readOnly?: boolean;
+    disabled?: boolean;
 }
 
 function ReportBuilder(props: Props) {
@@ -30,6 +32,8 @@ function ReportBuilder(props: Props) {
         className,
         value,
         setFieldValue,
+        readOnly,
+        disabled,
     } = props;
 
     const reportContainerRendererParams = useCallback(
@@ -48,8 +52,14 @@ function ReportBuilder(props: Props) {
             contentType: item.contentType,
             containerKey,
             setFieldValue,
+            readOnly,
+            disabled,
         }),
-        [setFieldValue],
+        [
+            setFieldValue,
+            readOnly,
+            disabled,
+        ],
     );
 
     const orderedContainers = useMemo(() => {

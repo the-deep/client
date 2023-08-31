@@ -35,12 +35,14 @@ import {
 import {
     type PartialFormType,
     type HeadingConfigType,
+    type TextConfigType,
     type ContentConfigType,
     type ReportContainerType,
 } from '../../schema';
 
 import ContentAddModal from './ContentAddModal';
 import HeadingEdit from './HeadingEdit';
+import TextEdit from './TextEdit';
 import Content from './Content';
 
 import styles from './styles.css';
@@ -55,6 +57,8 @@ interface Props {
     contentType: AnalysisReportContainerContentTypeEnum | undefined;
     configuration: ContentConfigType | undefined;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    readOnly?: boolean;
+    disabled?: boolean;
 }
 
 function ReportContainer(props: Props) {
@@ -68,6 +72,8 @@ function ReportContainer(props: Props) {
         allItems,
         configuration,
         setFieldValue,
+        readOnly,
+        disabled,
     } = props;
 
     const {
@@ -246,6 +252,10 @@ function ReportContainer(props: Props) {
         'heading', HeadingConfigType
     >('heading', onConfigChange, {});
 
+    const onTextConfigChange = useFormObject<
+        'text', TextConfigType
+    >('text', onConfigChange, {});
+
     return (
         <div
             className={_cs(className, styles.reportContainer)}
@@ -254,44 +264,50 @@ function ReportContainer(props: Props) {
                 gridColumn: `span ${width}`,
             }}
         >
-            <QuickActionButton
-                className={_cs(styles.beforeButton, styles.addButton)}
-                name={undefined}
-                onClick={handleAddBeforeClick}
-                disabled={disableAddButtons}
-                variant="secondary"
-                spacing="compact"
-            >
-                <IoAdd />
-            </QuickActionButton>
-            <QuickActionButton
-                className={_cs(styles.afterButton, styles.addButton)}
-                name={undefined}
-                onClick={handleAddAfterClick}
-                disabled={disableAddButtons}
-                variant="secondary"
-                spacing="compact"
-            >
-                <IoAdd />
-            </QuickActionButton>
-            <QuickActionButton
-                className={_cs(styles.aboveButton, styles.addButton)}
-                name={undefined}
-                onClick={handleAddAboveClick}
-                variant="secondary"
-                spacing="compact"
-            >
-                <IoAdd />
-            </QuickActionButton>
-            <QuickActionButton
-                className={_cs(styles.belowButton, styles.addButton)}
-                name={undefined}
-                onClick={handleAddBelowClick}
-                variant="secondary"
-                spacing="compact"
-            >
-                <IoAdd />
-            </QuickActionButton>
+            {!readOnly && (
+                <>
+                    <QuickActionButton
+                        className={_cs(styles.beforeButton, styles.addButton)}
+                        name={undefined}
+                        onClick={handleAddBeforeClick}
+                        disabled={disableAddButtons || disabled}
+                        variant="secondary"
+                        spacing="compact"
+                    >
+                        <IoAdd />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        className={_cs(styles.afterButton, styles.addButton)}
+                        name={undefined}
+                        onClick={handleAddAfterClick}
+                        disabled={disableAddButtons || disabled}
+                        variant="secondary"
+                        spacing="compact"
+                    >
+                        <IoAdd />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        className={_cs(styles.aboveButton, styles.addButton)}
+                        name={undefined}
+                        onClick={handleAddAboveClick}
+                        disabled={disabled}
+                        variant="secondary"
+                        spacing="compact"
+                    >
+                        <IoAdd />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        className={_cs(styles.belowButton, styles.addButton)}
+                        name={undefined}
+                        onClick={handleAddBelowClick}
+                        disabled={disabled}
+                        variant="secondary"
+                        spacing="compact"
+                    >
+                        <IoAdd />
+                    </QuickActionButton>
+                </>
+            )}
             {!contentType && (
                 <Message
                     className={styles.message}
@@ -302,7 +318,7 @@ function ReportContainer(props: Props) {
                             size="extraSmall"
                         />
                     )}
-                    actions={(
+                    actions={!readOnly && (
                         <Button
                             name={undefined}
                             onClick={showContentAddModal}
@@ -320,35 +336,37 @@ function ReportContainer(props: Props) {
                     configuration={configuration}
                 />
             )}
-            <Footer
-                className={styles.footer}
-                actions={(
-                    <>
-                        <QuickActionButton
-                            name={undefined}
-                            title="Edit Content"
-                            onClick={showContentEditModal}
-                        >
-                            <IoPencil />
-                        </QuickActionButton>
-                        <QuickActionConfirmButton
-                            name={undefined}
-                            title="Remove Content"
-                            message="Are you sure you want to delete this content?"
-                            onConfirm={handleItemRemove}
-                        >
-                            <IoTrashOutline />
-                        </QuickActionConfirmButton>
-                    </>
-                )}
-            />
-            {contentAddModalVisible && (
+            {!readOnly && (
+                <Footer
+                    className={styles.footer}
+                    actions={(
+                        <>
+                            <QuickActionButton
+                                name={undefined}
+                                title="Edit Content"
+                                onClick={showContentEditModal}
+                            >
+                                <IoPencil />
+                            </QuickActionButton>
+                            <QuickActionConfirmButton
+                                name={undefined}
+                                title="Remove Content"
+                                message="Are you sure you want to delete this content?"
+                                onConfirm={handleItemRemove}
+                            >
+                                <IoTrashOutline />
+                            </QuickActionConfirmButton>
+                        </>
+                    )}
+                />
+            )}
+            {!readOnly && contentAddModalVisible && (
                 <ContentAddModal
                     onCloseButtonClick={hideContentAddModal}
                     onSelect={handleContentAddClick}
                 />
             )}
-            {contentEditModalVisible && (
+            {!readOnly && contentEditModalVisible && (
                 <Modal
                     onCloseButtonClick={hideContentEditModal}
                     heading="Configuration"
@@ -357,6 +375,12 @@ function ReportContainer(props: Props) {
                         <HeadingEdit
                             value={configuration?.heading}
                             onFieldChange={onHeadingConfigChange}
+                        />
+                    )}
+                    {contentType === 'TEXT' && (
+                        <TextEdit
+                            value={configuration?.text}
+                            onFieldChange={onTextConfigChange}
                         />
                     )}
                 </Modal>

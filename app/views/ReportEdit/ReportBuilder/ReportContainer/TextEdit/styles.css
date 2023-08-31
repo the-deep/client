@@ -1,0 +1,8 @@
+.text-edit {
+    display: flex;
+    gap: var(--dui-spacing-small);
+
+    .left {
+        width: 20rem;
+    }
+}
