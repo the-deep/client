@@ -12,6 +12,8 @@ import {
     AnalysisReportContainerContentConfigurationType,
 } from '#generated/types';
 
+import styles from './styles.css';
+
 const variantToSizeMapping = {
     H1: 'extraLarge',
     H2: 'large',
@@ -56,7 +58,7 @@ function Content(props: Props) {
         } = configuration;
 
         return (
-            <ReactMarkdown>
+            <ReactMarkdown className={styles.markdown}>
                 {content ?? 'Content goes here'}
             </ReactMarkdown>
         );

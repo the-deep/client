@@ -262,6 +262,37 @@ const reportEditRoute = wrap({
         );
     },
 });
+
+const newReportRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/reports/new/',
+    title: 'Edit Report',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/ReportEdit')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (
+            !project
+            || project.allowedPermissions.length <= 0
+            || isNotDefined(project.analysisFramework?.id)
+        ) {
+            return false;
+        }
+        // NOTE: should also check if users can edit lead
+        // either in route or inside page
+        return (
+            project.allowedPermissions.includes('CREATE_ENTRY')
+            || project.allowedPermissions.includes('UPDATE_ENTRY')
+            || project.allowedPermissions.includes('DELETE_ENTRY')
+        );
+    },
+});
+
 const analysis = wrap({
     parent: { path: projectRoute.path },
     path: '/analysis-module/',
@@ -630,6 +661,7 @@ const routes = {
     export: exportRoute,
     exportCreate: exportCreateRoute,
     reportEdit: reportEditRoute,
+    newReport: newReportRoute,
     assessmentExportCreate: newAssessmentExportCreateRoute,
     entryEdit: entryEditRoute,
     assessmentEdit: assessmentEditRoute,

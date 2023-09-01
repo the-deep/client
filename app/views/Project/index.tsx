@@ -195,6 +195,12 @@ function Project(props: Props) {
                     {routes.reportEdit.load({ className })}
                 </Route>
                 <Route
+                    exact
+                    path={routes.newReport.path}
+                >
+                    {routes.newReport.load({ className })}
+                </Route>
+                <Route
                     path={routes.tagging.path}
                 >
                     {routes.tagging.load({ className })}

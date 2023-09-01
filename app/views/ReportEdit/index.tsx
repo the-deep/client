@@ -1,19 +1,64 @@
 import React, { useMemo } from 'react';
 import {
     _cs,
+    randomString,
 } from '@togglecorp/fujs';
+import { useParams } from 'react-router-dom';
 import {
     useForm,
 } from '@togglecorp/toggle-form';
+import {
+    useQuery,
+    gql,
+} from '@apollo/client';
 import { Button } from '@the-deep/deep-ui';
 
 import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 
+import {
+    PillarsForReportQuery,
+    PillarsForReportQueryVariables,
+} from '#generated/types';
+
 import ReportBuilder from './ReportBuilder';
 import Toc from './Toc';
-import schema, { PartialFormType } from './schema';
+import schema, {
+    type PartialFormType,
+    type ReportContainerType,
+} from './schema';
 import styles from './styles.css';
+
+const PILLARS_FOR_REPORT = gql`
+    query PillarsForReport(
+        $projectId: ID!,
+        $analysisId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            analysis(id: $analysisId) {
+                id
+                title
+                pillars {
+                    id
+                    analyzedEntriesCount
+                    informationGap
+                    mainStatement
+                    modifiedAt
+                    title
+                    filters
+                    clientId
+                    statements {
+                        clientId
+                        informationGaps
+                        statement
+                        reportText
+                    }
+                }
+            }
+        }
+    }
+`;
 
 const defaultValue: PartialFormType = {
     containers: [
@@ -117,14 +162,103 @@ function ReportEdit(props: Props) {
     } = props;
 
     const {
+        reportId,
+        projectId,
+    } = useParams<{
+        reportId: string | undefined,
+        projectId: string | undefined,
+    }>();
+
+    const analysisId = new URL(window.location.href).searchParams.get('analysis');
+
+    const analysisVariables = useMemo(() => {
+        if (!analysisId || !projectId) {
+            return undefined;
+        }
+        return {
+            analysisId,
+            projectId,
+        };
+    }, [analysisId, projectId]);
+
+    const {
         value,
         setFieldValue,
     } = useForm(schema, defaultValue);
 
+    useQuery<PillarsForReportQuery, PillarsForReportQueryVariables>(
+        PILLARS_FOR_REPORT,
+        {
+            skip: !analysisId || !projectId || !!reportId,
+            variables: analysisVariables,
+            onCompleted: (response) => {
+                if (!response.project?.analysis?.pillars) {
+                    return;
+                }
+                const {
+                    pillars,
+                } = response.project.analysis;
+
+                const containers: ReportContainerType[] = pillars.reduce((acc, item) => {
+                    const header: ReportContainerType = {
+                        clientId: randomString(),
+                        row: acc.length + 1,
+                        column: 1,
+                        width: 12,
+                        contentType: 'HEADING' as const,
+                        contentConfiguration: {
+                            heading: {
+                                content: item.title,
+                                variant: 'H2',
+                            },
+                        },
+                    };
+
+                    return ([
+                        ...acc,
+                        header,
+                        ...(item?.statements ?? []).map((statement, statementIndex) => ({
+                            clientId: randomString(),
+                            row: acc.length + 1 + statementIndex + 1,
+                            column: 1,
+                            width: 12,
+                            contentType: 'TEXT' as const,
+                            contentConfiguration: {
+                                text: {
+                                    content: [
+                                        '#### Main Statement',
+                                        statement.statement,
+                                        '#### Information Gaps',
+                                        statement.informationGaps,
+                                        '#### My Analysis',
+                                        statement.reportText,
+                                    ].join('\n'),
+                                },
+                            },
+                        })),
+                    ]);
+                }, [{
+                    clientId: randomString(),
+                    row: 1,
+                    column: 1,
+                    width: 12,
+                    contentType: 'HEADING' as const,
+                    contentConfiguration: {
+                        heading: {
+                            content: response.project.analysis.title,
+                            variant: 'H1',
+                        },
+                    },
+                }] as ReportContainerType[]);
+
+                setFieldValue(containers, 'containers');
+            },
+        },
+    );
+
     const tableOfContents = useMemo(() => (
         value?.containers?.filter((item) => item.contentType === 'HEADING')
     ), [value?.containers]);
-    console.log('here', value);
 
     return (
         <div className={_cs(className, styles.reportEdit)}>
