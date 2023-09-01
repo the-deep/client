@@ -24,10 +24,16 @@ import {
 } from '#utils/common';
 import { resolveTime } from '#utils/temporal';
 import ProjectContext from '#base/context/ProjectContext';
-import { AryDashboardFilterQuery, AryDashboardFilterQueryVariables, AssessmentDashboardFilterDataInputType, AssessmentDashboardFilterInputType } from '#generated/types';
+import {
+    AryDashboardFilterQuery,
+    AryDashboardFilterQueryVariables,
+    AssessmentDashboardFilterDataInputType,
+} from '#generated/types';
 
 import Statistics from './Statistics';
 import Filters, { FilterForm } from './Filters';
+import GeographicalAreaAssessments from './GeographicalAreaAssessments';
+
 import styles from './styles.css';
 
 const ARY_DASHBOARD_FILTER = gql`
@@ -55,6 +61,41 @@ const ARY_DASHBOARD_FILTER = gql`
                     coordinatedJoint
                     coordinatedJointDisplay
                     count
+                }
+                assessmentGeographicAreas {
+                    geoId
+                    count
+                    code
+                    adminLevelId
+                    assessmentIds
+                }
+            }
+            geoAreas {
+                results {
+                    adminLevelLevel
+                    adminLevelTitle
+                    id
+                    parentTitles
+                    regionTitle
+                    title
+                }
+                totalCount
+            }
+            regions {
+                title
+                mediaSources
+                id
+                adminLevels {
+                    geojsonFile {
+                        name
+                        url
+                    }
+                    id
+                    level
+                    boundsFile {
+                        name
+                        url
+                    }
                 }
             }
         }
@@ -112,8 +153,6 @@ function AryDashboard(props: Props) {
         },
     );
 
-    console.log('filter response', loading, data, endDate);
-
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
             setEndDate(newDate);
@@ -141,7 +180,6 @@ function AryDashboard(props: Props) {
 
     const handleToDateChange = useCallback((newDate: string | undefined) => {
         if (isDefined(newDate)) {
-            console.log('new date', newDate);
             handleEndDateChange(new Date(newDate).getTime());
             refetch();
         } else {
@@ -187,7 +225,6 @@ function AryDashboard(props: Props) {
             headerDescription={activeProject && (
                 <Statistics
                     projectId={activeProject}
-                    // data={data?.project?.assessmentDashboardStatistics}
                     data={filterData}
                 />
             )}
@@ -238,7 +275,10 @@ function AryDashboard(props: Props) {
                 <TabPanel
                     name="what"
                 >
-                    What was assessed?
+                    <GeographicalAreaAssessments
+                        data={data}
+                        navigationDisabled={loading}
+                    />
                 </TabPanel>
                 <TabPanel
                     name="how"
