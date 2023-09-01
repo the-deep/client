@@ -4,7 +4,7 @@
     flex-direction: column;
     flex-wrap: wrap;
     gap: var(--dui-spacing-medium);
-    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    border: var(--dui-width-separator-thin) solid transparent;
     padding: var(--dui-spacing-small);
 
     .add-button {
@@ -60,6 +60,8 @@
     }
 
     &:hover {
+        border-color: var(--dui-color-separator);
+
         .add-button {
             display: block;
             opacity: 1;

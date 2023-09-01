@@ -183,6 +183,7 @@ function ReportEdit(props: Props) {
 
     const {
         value,
+        error,
         setFieldValue,
     } = useForm(schema, defaultValue);
 
@@ -291,6 +292,7 @@ function ReportEdit(props: Props) {
                 <ReportBuilder
                     className={styles.rightContent}
                     value={value}
+                    error={error}
                     setFieldValue={setFieldValue}
                     disabled={false}
                     readOnly={false}

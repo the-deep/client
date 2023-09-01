@@ -1,15 +1,50 @@
 .report-builder {
-    padding: var(--dui-spacing-small);
+    background-color: var(--dui-color-background);
+    padding: var(--dui-spacing-large) 0;
     height: auto;
     overflow-y: auto;
 
-    .containers {
-        display: grid;
+    .heading-container {
+        position: relative;
+        border: var(--dui-width-separator-thin) solid transparent;
+        padding: var(--dui-spacing-small);
+
+        .organization-logo {
+            width: 2rem;
+            height: 2rem;
+            font-size: var(--dui-font-size-extra-large);
+        }
+
+        .edit-button {
+            position: absolute;
+            right: var(--dui-spacing-small);
+            bottom: var(--dui-spacing-small);
+            visibility: hidden;
+        }
+
+        &:hover {
+            border-color: var(--dui-color-separator);
+
+            .edit-button {
+                visibility: unset;
+            }
+        }
+    }
+
+    .report {
+        display: flex;
+        flex-direction: column;
         margin: 0 auto;
         box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-        padding: var(--dui-spacing-small);
-        grid-template-columns: repeat(12, 1fr);
+        background-color: #fff;
+        padding: var(--dui-spacing-extra-large);
         width: 210mm;
-        grid-gap: var(--dui-spacing-small);
+        overflow-y: auto;
+
+        .containers {
+            display: grid;
+            margin: 0 auto;
+            grid-template-columns: repeat(12, 1fr);
+        }
     }
 }

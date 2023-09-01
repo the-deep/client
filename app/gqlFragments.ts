@@ -262,10 +262,20 @@ export const ORGANIZATION_FRAGMENT = gql`
         title
         verified
         shortName
+        logo {
+            file {
+                url
+            }
+        }
         mergedAs {
             id
             title
             shortName
+            logo {
+                file {
+                    url
+                }
+            }
         }
     }
 `;
