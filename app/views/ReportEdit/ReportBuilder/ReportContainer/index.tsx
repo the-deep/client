@@ -16,6 +16,8 @@ import {
     Kraken,
     Footer,
     Button,
+    SegmentInput,
+    QuickActionDropdownMenu,
     Modal,
     QuickActionButton,
     QuickActionConfirmButton,
@@ -47,12 +49,14 @@ import Content from './Content';
 
 import styles from './styles.css';
 
+const widthSelector = (item: { width: number }) => item.width;
+
 interface Props {
     className?: string;
     row?: number;
     column?: number;
     width?: number;
-    index: number;
+    containerKey?: string;
     allItems: ReportContainerType[] | undefined;
     contentType: AnalysisReportContainerContentTypeEnum | undefined;
     configuration: ContentConfigType | undefined;
@@ -68,13 +72,15 @@ function ReportContainer(props: Props) {
         row = 1,
         column = 1,
         width = 1,
-        index,
         allItems,
         configuration,
+        containerKey,
         setFieldValue,
         readOnly,
         disabled,
     } = props;
+
+    const index = allItems?.findIndex((item) => item.clientId === containerKey);
 
     const {
         setValue: onReportContainerChange,
@@ -85,7 +91,9 @@ function ReportContainer(props: Props) {
     );
 
     const handleItemRemove = useCallback(() => {
-        removeValue(index);
+        if (isDefined(index)) {
+            removeValue(index);
+        }
     }, [
         index,
         removeValue,
@@ -132,6 +140,10 @@ function ReportContainer(props: Props) {
         sum(rowItems.map((item) => item.width).filter(isDefined))
     ), [rowItems]);
 
+    const widthOptions = useMemo(() => (
+        Array.from({ length: (12 - (totalColSpan - width)) - 2 }, (_, i) => ({ width: i + 3 }))
+    ), [totalColSpan, width]);
+
     const disableAddButtons = totalColSpan >= 12;
 
     const handleAddBeforeClick = useCallback(() => {
@@ -147,10 +159,15 @@ function ReportContainer(props: Props) {
 
         setFieldValue((oldVal: ReportContainerType[] | undefined = []) => {
             const newVal = oldVal.filter((item) => item.row !== row);
-            return [
+            const newItems = [
                 ...newVal,
                 ...orderedItems,
             ];
+            newItems.sort((a, b) => (
+                compareNumber(a.row, b.row) || compareNumber(a.column, b.column)
+            ));
+
+            return newItems;
         }, 'containers');
     }, [
         setFieldValue,
@@ -174,10 +191,15 @@ function ReportContainer(props: Props) {
 
         setFieldValue((oldVal: ReportContainerType[] | undefined = []) => {
             const newVal = oldVal.filter((item) => item.row !== row);
-            return [
+            const newItems = [
                 ...newVal,
                 ...orderedItems,
             ];
+            newItems.sort((a, b) => (
+                compareNumber(a.row, b.row) || compareNumber(a.column, b.column)
+            ));
+
+            return newItems;
         }, 'containers');
     }, [
         setFieldValue,
@@ -197,8 +219,8 @@ function ReportContainer(props: Props) {
                 clientId: randomString(),
                 width: 6,
             };
-            const indexOfCurrentRow = oldVal.findIndex((item) => item.row === row);
-            newItems.splice(indexOfCurrentRow, 0, newItem);
+            const indexOfCurrentRowBefore = oldVal.findIndex((item) => item.row === row);
+            newItems.splice(indexOfCurrentRowBefore, 0, newItem);
             return newItems.map((item) => ({
                 ...item,
                 row: ((item.row ?? 0) >= newItem.row && item.clientId !== newItem.clientId)
@@ -220,8 +242,8 @@ function ReportContainer(props: Props) {
                 clientId: randomString(),
                 width: 6,
             };
-            const indexOfRowAfter = oldVal.findIndex((item) => item.row === row + 1);
-            newItems.splice(indexOfRowAfter, 0, newItem);
+            const indexOfRow = oldVal.findIndex((item) => item.row === row);
+            newItems.splice(indexOfRow + 1, 0, newItem);
             return newItems.map((item) => ({
                 ...item,
                 row: ((item.row ?? 0) >= newItem.row && item.clientId !== newItem.clientId)
@@ -238,9 +260,11 @@ function ReportContainer(props: Props) {
         newContentType: AnalysisReportContainerContentTypeEnum,
     ) => {
         hideContentAddModal();
+        showContentEditModal();
         onFieldChange(newContentType, 'contentType');
     }, [
         onFieldChange,
+        showContentEditModal,
         hideContentAddModal,
     ]);
 
@@ -341,6 +365,21 @@ function ReportContainer(props: Props) {
                     className={styles.footer}
                     actions={(
                         <>
+                            <QuickActionDropdownMenu
+                                label={width}
+                            >
+                                <SegmentInput
+                                    name="width"
+                                    label=""
+                                    spacing="compact"
+                                    value={width}
+                                    onChange={onFieldChange}
+                                    options={widthOptions}
+                                    keySelector={widthSelector}
+                                    labelSelector={widthSelector}
+                                    disabled={disabled}
+                                />
+                            </QuickActionDropdownMenu>
                             <QuickActionButton
                                 name={undefined}
                                 title="Edit Content"

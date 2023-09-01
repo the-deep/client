@@ -1,0 +1,21 @@
+.toc {
+    display: flex;
+    flex-direction: column;
+
+    .toc-item {
+        border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+        font-size: var(--dui-font-size-large);
+        font-weight: var(--dui-font-weight-bold);
+
+        &.heading-two {
+            padding-left: calc(2 * var(--dui-spacing-medium));
+        }
+        &.heading-three {
+            padding-left: calc(3 * var(--dui-spacing-medium));
+        }
+        &.heading-four {
+            padding-left: calc(4 * var(--dui-spacing-medium));
+        }
+    }
+}

@@ -1,14 +1,11 @@
-import React, { useMemo, useCallback } from 'react';
-import {
-    type EntriesAsList,
-} from '@togglecorp/toggle-form';
-import {
-    _cs,
-    compareNumber,
-} from '@togglecorp/fujs';
+import React, { useCallback } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     ListView,
 } from '@the-deep/deep-ui';
+import {
+    type EntriesAsList,
+} from '@togglecorp/toggle-form';
 
 import {
     type PartialFormType,
@@ -18,6 +15,8 @@ import {
 import ReportContainer from './ReportContainer';
 
 import styles from './styles.css';
+
+const reportContainerKeySelector = (item: ReportContainerType) => item.clientId;
 
 interface Props {
     className?: string;
@@ -40,42 +39,32 @@ function ReportBuilder(props: Props) {
         (
             containerKey: string,
             item: ReportContainerType,
-            index: number,
-            allItems: ReportContainerType[] | undefined,
         ) => ({
             row: item.row,
+            containerKey,
             column: item.column,
             width: item.width,
-            allItems,
-            index,
+            allItems: value?.containers,
             configuration: item.contentConfiguration,
             contentType: item.contentType,
-            containerKey,
             setFieldValue,
             readOnly,
             disabled,
         }),
         [
+            value?.containers,
             setFieldValue,
             readOnly,
             disabled,
         ],
     );
 
-    const orderedContainers = useMemo(() => {
-        const sortedContainers = [...(value?.containers) ?? []];
-        sortedContainers.sort((a, b) => (
-            compareNumber(a.row, b.row) || compareNumber(a.column, b.column)
-        ));
-        return sortedContainers;
-    }, [value?.containers]);
-
     return (
         <div className={_cs(className, styles.reportBuilder)}>
             <ListView
                 className={styles.containers}
-                data={orderedContainers}
-                keySelector={(d) => d.clientId}
+                data={value?.containers}
+                keySelector={reportContainerKeySelector}
                 renderer={ReportContainer}
                 rendererParams={reportContainerRendererParams}
                 errored={false}

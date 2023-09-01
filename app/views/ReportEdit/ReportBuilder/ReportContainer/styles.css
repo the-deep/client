@@ -3,10 +3,9 @@
     position: relative;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: var(--dui-spacing-small);
+    gap: var(--dui-spacing-medium);
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-    padding: var(--dui-spacing-large);
-    min-height: 20rem;
+    padding: var(--dui-spacing-small);
 
     .add-button {
         position: absolute;
@@ -47,10 +46,10 @@
     }
 
     .footer {
-        display: none;
         position: absolute;
         right: var(--dui-spacing-small);
         bottom: var(--dui-spacing-small);
+        visibility: hidden;
     }
 
     .message {
@@ -68,7 +67,7 @@
         }
 
         .footer {
-            display: block;
+            visibility: unset;
         }
     }
 }
