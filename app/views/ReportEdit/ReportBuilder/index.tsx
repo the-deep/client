@@ -11,6 +11,8 @@ import {
 } from '@the-deep/deep-ui';
 import {
     type Error,
+    analyzeErrors,
+    getErrorObject,
     type EntriesAsList,
 } from '@togglecorp/toggle-form';
 import { IoPencil } from 'react-icons/io5';
@@ -33,6 +35,12 @@ import MetadataEdit from './MetadataEdit';
 
 import styles from './styles.css';
 
+const metadataFields: (keyof PartialFormType)[] = [
+    'slug',
+    'title',
+    'subTitle',
+];
+
 const reportContainerKeySelector = (item: ReportContainerType) => item.clientId;
 
 interface Props {
@@ -42,6 +50,10 @@ interface Props {
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     readOnly?: boolean;
     disabled?: boolean;
+    organizationOptions: BasicOrganization[] | undefined | null;
+    onOrganizationOptionsChange: React.Dispatch<React.SetStateAction<
+        BasicOrganization[] | undefined | null
+    >>;
 }
 
 function ReportBuilder(props: Props) {
@@ -52,12 +64,9 @@ function ReportBuilder(props: Props) {
         setFieldValue,
         readOnly,
         disabled,
-    } = props;
-
-    const [
         organizationOptions,
-        setOrganizationOptions,
-    ] = useState<BasicOrganization[] | null | undefined>();
+        onOrganizationOptionsChange,
+    } = props;
 
     const orgMap = useMemo(() => (
         listToMap(
@@ -97,13 +106,23 @@ function ReportBuilder(props: Props) {
         ],
     );
 
+    const errorInMetadata = useMemo(() => (
+        metadataFields.some((field) => analyzeErrors(getErrorObject(error)?.[field]))
+    ), [error]);
+
     return (
         <div className={_cs(className, styles.reportBuilder)}>
             <div className={styles.report}>
-                <div className={styles.headingContainer}>
+                <div
+                    className={_cs(
+                        errorInMetadata && styles.error,
+                        styles.headingContainer,
+                    )}
+                >
                     <Header
                         heading={value?.title ?? 'Title goes here'}
                         headingSize="extraLarge"
+                        description={value?.subTitle}
                         actions={value?.organizations?.map((org) => (
                             <Avatar
                                 className={styles.organizationLogo}
@@ -143,7 +162,7 @@ function ReportBuilder(props: Props) {
                     <MetadataEdit
                         setFieldValue={setFieldValue}
                         organizationOptions={organizationOptions}
-                        onOrganizationOptionsChange={setOrganizationOptions}
+                        onOrganizationOptionsChange={onOrganizationOptionsChange}
                         error={error}
                         value={value}
                     />

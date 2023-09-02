@@ -49,6 +49,21 @@ function MetadataEdit(props: Props) {
                 onChange={setFieldValue}
                 error={error?.title}
             />
+            <TextInput
+                name="subTitle"
+                label="Subtitle"
+                value={value?.subTitle}
+                onChange={setFieldValue}
+                error={error?.subTitle}
+            />
+            <TextInput
+                name="slug"
+                // FIXME: Find better label for this
+                label="Slug"
+                value={value?.slug}
+                onChange={setFieldValue}
+                error={error?.slug}
+            />
             <NewOrganizationMultiSelectInput
                 className={styles.input}
                 name="organizations"

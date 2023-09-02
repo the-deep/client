@@ -57,7 +57,7 @@ const schema: FormSchema = {
     fields: (): FormSchemaFields => {
         const baseSchema: FormSchemaFields = {
             analysis: [requiredCondition],
-            isPublic: [],
+            isPublic: [defaultUndefinedType],
             slug: [requiredCondition],
             title: [requiredCondition],
             subTitle: [requiredCondition],
@@ -65,7 +65,7 @@ const schema: FormSchema = {
             containers: {
                 keySelector: (container) => container.clientId,
                 member: (): ReportContainerFormSchemaMember => ({
-                    fields: (): ReportContainerSchemaFields => ({
+                    fields: (containerValue): ReportContainerSchemaFields => ({
                         id: [defaultUndefinedType],
                         clientId: [requiredCondition],
                         row: [requiredCondition],
@@ -76,34 +76,59 @@ const schema: FormSchema = {
                         // TODO: Write better type for content data
                         contentData: [defaultEmptyArrayType],
                         contentConfiguration: {
-                            fields: (): ContentConfigSchemaFields => ({
-                                heading: {
-                                    fields: (): HeadingConfigSchemaFields => ({
-                                        content: [],
-                                        variant: [requiredCondition],
-                                        // TODO: Write style input schemas separately
-                                    }),
-                                },
-                                image: {
-                                    fields: (): ImageConfigSchemaFields => ({
-                                        altText: [],
-                                        caption: [],
-                                        // TODO: Write style input schemas separately
-                                    }),
-                                },
-                                text: {
-                                    fields: (): TextConfigSchemaFields => ({
-                                        content: [],
-                                        // TODO: Write style input schemas separately
-                                    }),
-                                },
-                                url: {
-                                    fields: (): UrlConfigSchemaFields => ({
-                                        url: [],
-                                        // TODO: Write style input schemas separately
-                                    }),
-                                },
-                            }),
+                            fields: (): ContentConfigSchemaFields => {
+                                let configSchema: ContentConfigSchemaFields = {
+                                    // FIXME: This should be force undefined type
+                                    heading: [defaultUndefinedType],
+                                    image: [defaultUndefinedType],
+                                    text: [defaultUndefinedType],
+                                    url: [defaultUndefinedType],
+                                };
+                                if (containerValue?.contentType === 'HEADING') {
+                                    configSchema = {
+                                        ...configSchema,
+                                        heading: {
+                                            fields: (): HeadingConfigSchemaFields => ({
+                                                content: [],
+                                                variant: [requiredCondition],
+                                                // TODO: Write style input schemas separately
+                                            }),
+                                        },
+                                    };
+                                } else if (containerValue?.contentType === 'IMAGE') {
+                                    configSchema = {
+                                        ...configSchema,
+                                        image: {
+                                            fields: (): ImageConfigSchemaFields => ({
+                                                altText: [],
+                                                caption: [],
+                                                // TODO: Write style input schemas separately
+                                            }),
+                                        },
+                                    };
+                                } else if (containerValue?.contentType === 'TEXT') {
+                                    configSchema = {
+                                        ...configSchema,
+                                        text: {
+                                            fields: (): TextConfigSchemaFields => ({
+                                                content: [],
+                                                // TODO: Write style input schemas separately
+                                            }),
+                                        },
+                                    };
+                                } else if (containerValue?.contentType === 'URL') {
+                                    configSchema = {
+                                        ...configSchema,
+                                        url: {
+                                            fields: (): UrlConfigSchemaFields => ({
+                                                url: [],
+                                                // TODO: Write style input schemas separately
+                                            }),
+                                        },
+                                    };
+                                }
+                                return configSchema;
+                            },
                         },
                     }),
                 }),

@@ -29,6 +29,10 @@
                 visibility: unset;
             }
         }
+
+        &.error {
+            border-color: var(--dui-color-danger);
+        }
     }
 
     .report {

@@ -1,25 +1,58 @@
-import React, { useMemo } from 'react';
+import React, {
+    useMemo,
+    useState,
+    useCallback,
+} from 'react';
 import {
     _cs,
     randomString,
 } from '@togglecorp/fujs';
-import { useParams } from 'react-router-dom';
+import {
+    useParams,
+    useHistory,
+    generatePath,
+} from 'react-router-dom';
 import {
     useForm,
+    removeNull,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     useQuery,
+    useMutation,
     gql,
 } from '@apollo/client';
-import { Button } from '@the-deep/deep-ui';
+import {
+    useAlert,
+    Button,
+    PendingMessage,
+} from '@the-deep/deep-ui';
 
 import BackLink from '#components/BackLink';
+import routes from '#base/configs/routes';
 import SubNavbar from '#components/SubNavbar';
+import {
+    BasicOrganization,
+} from '#components/selections/NewOrganizationMultiSelectInput';
+import {
+    ORGANIZATION_FRAGMENT,
+} from '#gqlFragments';
 
 import {
+    AnalysisReportInputType,
     PillarsForReportQuery,
     PillarsForReportQueryVariables,
+    CreateReportMutation,
+    CreateReportMutationVariables,
+    UpdateReportMutation,
+    UpdateReportMutationVariables,
+    ReportDetailsQuery,
+    ReportDetailsQueryVariables,
 } from '#generated/types';
+import {
+    type ObjectError,
+    transformToFormError,
+} from '#base/utils/errorTransform';
 
 import ReportBuilder from './ReportBuilder';
 import Toc from './Toc';
@@ -60,97 +93,94 @@ const PILLARS_FOR_REPORT = gql`
     }
 `;
 
-const defaultValue: PartialFormType = {
-    containers: [
-        {
-            clientId: '1',
-            row: 1,
-            column: 1,
-            width: 12,
-            contentType: 'HEADING',
-            contentConfiguration: {
-                heading: {
-                    variant: 'H1',
-                    content: 'Heading 1',
-                },
-            },
-        },
-        {
-            clientId: '3',
-            row: 2,
-            column: 1,
-            width: 12,
-            contentType: 'TEXT',
-            contentConfiguration: {
-                text: {
-                    content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n\n",
-                },
-            },
-        },
-        {
-            row: 3,
-            column: 1,
-            clientId: '1q2bff9cu2p8bec4',
-            width: 12,
-            contentType: 'HEADING',
-            contentConfiguration: {
-                heading: {
-                    variant: 'H2',
-                    content: 'Heading 1-1',
-                },
-            },
-        },
-        {
-            row: 4,
-            column: 1,
-            clientId: '4f7go61enim1a6hb',
-            width: 12,
-            contentType: 'TEXT',
-            contentConfiguration: {
-                text: {
-                    content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n\n",
-                },
-            },
-        },
-        {
-            row: 5,
-            column: 1,
-            clientId: 'mv6iu7gf8jjw3vcg',
-            width: 12,
-            contentType: 'HEADING',
-            contentConfiguration: {
-                heading: {
-                    variant: 'H2',
-                    content: 'Heading 1-2',
-                },
-            },
-        },
-        {
-            row: 6,
-            column: 1,
-            clientId: '8oge9qq2b7w696xk',
-            width: 6,
-            contentType: 'TEXT',
-            contentConfiguration: {
-                text: {
-                    content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n\n",
-                },
-            },
-        },
-        {
-            row: 6,
-            column: 2,
-            clientId: 'jcojqn94he65os1y',
-            width: 6,
-            contentType: 'TEXT',
-            contentConfiguration: {
-                text: {
-                    content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n\n",
-                },
-            },
-        },
-    ],
-};
+const REPORT_DETAILS = gql`
+    ${ORGANIZATION_FRAGMENT}
+    query ReportDetails(
+        $projectId: ID!,
+        $reportId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            analysisReport(
+                id: $reportId,
+            ) {
+                id
+                analysis
+                title
+                subTitle
+                slug
+                organizations {
+                    ...OrganizationGeneralResponse
+                }
+                containers {
+                    id
+                    clientId
+                    row
+                    column
+                    width
+                    height
+                    contentType
+                    contentConfiguration {
+                        heading {
+                            content
+                            variant
+                        }
+                        image {
+                            altText
+                            caption
+                        }
+                        text {
+                            content
+                        }
+                        url {
+                            url
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
+const CREATE_REPORT = gql`
+    mutation CreateReport(
+        $projectId: ID!,
+        $data: AnalysisReportInputType!,
+    ) {
+        project(id: $projectId) {
+            id
+            analysisReportCreate(data: $data) {
+                result {
+                    id
+                }
+                errors
+                ok
+            }
+        }
+    }
+`;
+
+const UPDATE_REPORT = gql`
+    mutation UpdateReport(
+        $projectId: ID!,
+        $reportId: ID!,
+        $data: AnalysisReportInputUpdateType!,
+    ) {
+        project(id: $projectId) {
+            id
+            analysisReportUpdate(
+                id: $reportId,
+                data: $data,
+            ) {
+                result {
+                    id
+                }
+                errors
+                ok
+            }
+        }
+    }
+`;
 
 interface Props {
     className?: string;
@@ -161,6 +191,9 @@ function ReportEdit(props: Props) {
         className,
     } = props;
 
+    const alert = useAlert();
+    const history = useHistory();
+
     const {
         reportId,
         projectId,
@@ -169,7 +202,16 @@ function ReportEdit(props: Props) {
         projectId: string | undefined,
     }>();
 
+    const [
+        organizationOptions,
+        setOrganizationOptions,
+    ] = useState<BasicOrganization[] | null | undefined>();
+
     const analysisId = new URL(window.location.href).searchParams.get('analysis');
+
+    const defaultValue: PartialFormType = useMemo(() => ({
+        analysis: analysisId ?? undefined,
+    }), [analysisId]);
 
     const analysisVariables = useMemo(() => {
         if (!analysisId || !projectId) {
@@ -183,11 +225,19 @@ function ReportEdit(props: Props) {
 
     const {
         value,
+        validate,
+        setError,
+        setValue,
         error,
         setFieldValue,
-    } = useForm(schema, defaultValue);
+    } = useForm(
+        schema,
+        defaultValue,
+    );
 
-    useQuery<PillarsForReportQuery, PillarsForReportQueryVariables>(
+    const {
+        loading: analysisDataLoading,
+    } = useQuery<PillarsForReportQuery, PillarsForReportQueryVariables>(
         PILLARS_FOR_REPORT,
         {
             skip: !analysisId || !projectId || !!reportId,
@@ -257,9 +307,151 @@ function ReportEdit(props: Props) {
         },
     );
 
+    const reportVariables = useMemo(() => (
+        (projectId && reportId) ? {
+            projectId,
+            reportId,
+        } : undefined
+    ), [projectId, reportId]);
+
+    const {
+        loading: reportLoading,
+    } = useQuery<ReportDetailsQuery, ReportDetailsQueryVariables>(
+        REPORT_DETAILS,
+        {
+            skip: !projectId || !reportId,
+            variables: reportVariables,
+            onCompleted: (response) => {
+                if (!response.project?.analysisReport) {
+                    return;
+                }
+                const valueToSet = removeNull(response.project.analysisReport);
+                setValue(
+                    {
+                        ...valueToSet,
+                        organizations: valueToSet.organizations?.map((item) => item.id),
+                    },
+                );
+                setOrganizationOptions(valueToSet.organizations);
+            },
+        },
+    );
+
+    const [
+        triggerCreate,
+        {
+            loading: createReportLoading,
+        },
+    ] = useMutation<CreateReportMutation, CreateReportMutationVariables>(
+        CREATE_REPORT,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.project?.analysisReportCreate) {
+                    return;
+                }
+                const {
+                    errors,
+                    result,
+                    ok,
+                } = response.project.analysisReportCreate;
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                    alert.show(
+                        'Failed to create analysis report.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    if (result?.id) {
+                        const editPath = generatePath(
+                            routes.reportEdit.path,
+                            {
+                                projectId,
+                                reportId: result.id,
+                            },
+                        );
+                        history.replace(editPath);
+                    }
+                    alert.show(
+                        'Successfully created report.',
+                        { variant: 'success' },
+                    );
+                }
+            },
+        },
+    );
+
+    const [
+        triggerUpdate,
+        {
+            loading: updateReportLoading,
+        },
+    ] = useMutation<UpdateReportMutation, UpdateReportMutationVariables>(
+        UPDATE_REPORT,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.project?.analysisReportUpdate) {
+                    return;
+                }
+                const {
+                    errors,
+                    ok,
+                } = response.project.analysisReportUpdate;
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                    alert.show(
+                        'Failed to update analysis report.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    alert.show(
+                        'Successfully update report.',
+                        { variant: 'success' },
+                    );
+                }
+            },
+        },
+    );
+
     const tableOfContents = useMemo(() => (
         value?.containers?.filter((item) => item.contentType === 'HEADING')
     ), [value?.containers]);
+
+    const handleSubmit = useCallback(
+        (val: PartialFormType) => {
+            if (!projectId) {
+                return;
+            }
+            if (!reportId) {
+                triggerCreate({
+                    variables: {
+                        projectId,
+                        data: val as AnalysisReportInputType,
+                    },
+                });
+            } else {
+                triggerUpdate({
+                    variables: {
+                        projectId,
+                        reportId,
+                        data: val as AnalysisReportInputType,
+                    },
+                });
+            }
+        },
+        [
+            triggerUpdate,
+            reportId,
+            triggerCreate,
+            projectId,
+        ],
+    );
+
+    const pending = analysisDataLoading
+        || reportLoading
+        || createReportLoading
+        || updateReportLoading;
 
     return (
         <div className={_cs(className, styles.reportEdit)}>
@@ -276,6 +468,11 @@ function ReportEdit(props: Props) {
                         </BackLink>
                         <Button
                             name={undefined}
+                            onClick={createSubmitHandler(
+                                validate,
+                                setError,
+                                handleSubmit,
+                            )}
                             variant="primary"
                         >
                             Save
@@ -284,6 +481,7 @@ function ReportEdit(props: Props) {
                 )}
             />
             <div className={styles.content}>
+                {pending && <PendingMessage />}
                 <div className={styles.leftContent}>
                     <Toc
                         data={tableOfContents}
@@ -296,6 +494,8 @@ function ReportEdit(props: Props) {
                     setFieldValue={setFieldValue}
                     disabled={false}
                     readOnly={false}
+                    organizationOptions={organizationOptions}
+                    onOrganizationOptionsChange={setOrganizationOptions}
                 />
             </div>
         </div>
