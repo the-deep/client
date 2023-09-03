@@ -72,4 +72,8 @@
             visibility: unset;
         }
     }
+
+    &.errored {
+        border-color: var(--dui-color-danger);
+    }
 }

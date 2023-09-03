@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
     listToMap,
@@ -24,6 +24,7 @@ import {
     organizationTitleSelector,
     organizationLogoSelector,
 } from '#components/selections/NewOrganizationMultiSelectInput';
+import NonFieldError from '#components/NonFieldError';
 
 import {
     type PartialFormType,
@@ -86,19 +87,26 @@ function ReportBuilder(props: Props) {
         (
             containerKey: string,
             item: ReportContainerType,
-        ) => ({
-            row: item.row,
-            containerKey,
-            column: item.column,
-            width: item.width,
-            allItems: value?.containers,
-            configuration: item.contentConfiguration,
-            contentType: item.contentType,
-            setFieldValue,
-            readOnly,
-            disabled,
-        }),
+        ) => {
+            const containersError = getErrorObject(error)?.containers;
+            const itemError = getErrorObject(containersError)?.[containerKey];
+
+            return ({
+                row: item.row,
+                containerKey,
+                column: item.column,
+                width: item.width,
+                allItems: value?.containers,
+                configuration: item.contentConfiguration,
+                contentType: item.contentType,
+                error: itemError,
+                setFieldValue,
+                readOnly,
+                disabled,
+            });
+        },
         [
+            error,
             value?.containers,
             setFieldValue,
             readOnly,
@@ -109,6 +117,8 @@ function ReportBuilder(props: Props) {
     const errorInMetadata = useMemo(() => (
         metadataFields.some((field) => analyzeErrors(getErrorObject(error)?.[field]))
     ), [error]);
+
+    console.log('aditya', value);
 
     return (
         <div className={_cs(className, styles.reportBuilder)}>
@@ -142,6 +152,7 @@ function ReportBuilder(props: Props) {
                         <IoPencil />
                     </QuickActionButton>
                 </div>
+                <NonFieldError error={getErrorObject(error)?.containers} />
                 <ListView
                     className={styles.containers}
                     data={value?.containers}

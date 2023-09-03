@@ -10,7 +10,16 @@ import {
 
 import {
     AnalysisReportInputType,
+    AnalysisReportImageContentStyleType,
+    AnalysisReportTextContentStyleType,
+    AnalysisReportHeadingContentStyleType,
+    AnalysisReportBackgroundStyleType,
+    AnalysisReportBorderStyleType,
+    AnalysisReportPaddingStyleType,
+    AnalysisReportContainerStyleType,
+    AnalysisReportTextStyleType,
 } from '#generated/types';
+
 import { DeepReplace } from '#utils/types';
 
 type InitialFormType = PartialForm<PurgeNull<AnalysisReportInputType>, 'clientId'>;
@@ -26,11 +35,145 @@ export type PartialFormType = DeepReplace<
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
+// Styling common schemas
+
+// Background
+type BackgroundStyleFormType = PartialForm<PurgeNull<AnalysisReportBackgroundStyleType>>;
+type BackgroundStyleFormSchema = ObjectSchema<BackgroundStyleFormType, PartialFormType>;
+type BackgroundStyleFormSchemaFields = ReturnType<BackgroundStyleFormSchema['fields']>;
+
+const backgroundStyleSchema: BackgroundStyleFormSchema = {
+    fields: (): BackgroundStyleFormSchemaFields => ({
+        color: [defaultUndefinedType],
+        opacity: [defaultUndefinedType],
+    }),
+};
+
+// Border
+type BorderStyleFormType = PartialForm<PurgeNull<AnalysisReportBorderStyleType>>;
+type BorderStyleFormSchema = ObjectSchema<BorderStyleFormType, PartialFormType>;
+type BorderStyleFormSchemaFields = ReturnType<BorderStyleFormSchema['fields']>;
+
+const borderStyleSchema: BorderStyleFormSchema = {
+    fields: (): BorderStyleFormSchemaFields => ({
+        color: [defaultUndefinedType],
+        opacity: [defaultUndefinedType],
+        style: [defaultUndefinedType],
+        width: [defaultUndefinedType],
+    }),
+};
+
+// Padding
+type PaddingStyleFormType = PartialForm<PurgeNull<AnalysisReportPaddingStyleType>>;
+type PaddingStyleFormSchema = ObjectSchema<PaddingStyleFormType, PartialFormType>;
+type PaddingStyleFormSchemaFields = ReturnType<PaddingStyleFormSchema['fields']>;
+
+const paddingStyleSchema: PaddingStyleFormSchema = {
+    fields: (): PaddingStyleFormSchemaFields => ({
+        left: [defaultUndefinedType],
+        right: [defaultUndefinedType],
+        bottom: [defaultUndefinedType],
+        top: [defaultUndefinedType],
+    }),
+};
+
+// Container style
+type ContainerStyleFormType = PartialForm<PurgeNull<AnalysisReportContainerStyleType>>;
+type ContainerStyleFormSchema = ObjectSchema<ContainerStyleFormType, PartialFormType>;
+type ContainerStyleFormSchemaFields = ReturnType<ContainerStyleFormSchema['fields']>;
+
+const containerStyleSchema: ContainerStyleFormSchema = {
+    fields: (): ContainerStyleFormSchemaFields => ({
+        background: backgroundStyleSchema,
+        border: borderStyleSchema,
+        padding: paddingStyleSchema,
+    }),
+};
+
+// Text
+type TextStyleFormType = PartialForm<PurgeNull<AnalysisReportTextStyleType>>;
+type TextStyleFormSchema = ObjectSchema<TextStyleFormType, PartialFormType>;
+type TextStyleFormSchemaFields = ReturnType<TextStyleFormSchema['fields']>;
+
+const textStyleSchema: TextStyleFormSchema = {
+    fields: (): TextStyleFormSchemaFields => ({
+        color: [defaultUndefinedType],
+        family: [defaultUndefinedType],
+        size: [defaultUndefinedType],
+        weight: [defaultUndefinedType],
+        align: [defaultUndefinedType],
+    }),
+};
+
+// Image
+type ImageContentStyleFormType = PartialForm<PurgeNull<AnalysisReportImageContentStyleType>>;
+type ImageContentStyleFormSchema = ObjectSchema<ImageContentStyleFormType, PartialFormType>;
+type ImageContentStyleFormSchemaFields = ReturnType<ImageContentStyleFormSchema['fields']>;
+
+const imageContentStyleSchema: ImageContentStyleFormSchema = {
+    fields: (): ImageContentStyleFormSchemaFields => ({
+        caption: textStyleSchema,
+        fit: [defaultUndefinedType],
+    }),
+};
+
+// Image
+type TextContentStyleFormType = PartialForm<PurgeNull<AnalysisReportTextContentStyleType>>;
+type TextContentStyleFormSchema = ObjectSchema<TextContentStyleFormType, PartialFormType>;
+type TextContentStyleFormSchemaFields = ReturnType<TextContentStyleFormSchema['fields']>;
+
+const textContentStyleSchema: TextContentStyleFormSchema = {
+    fields: (): TextContentStyleFormSchemaFields => ({
+        content: textStyleSchema,
+    }),
+};
+
+// Heading
+export type HeadingContentStyleFormType = PartialForm<
+    PurgeNull<AnalysisReportHeadingContentStyleType>
+>;
+type HeadingContentStyleFormSchema = ObjectSchema<HeadingContentStyleFormType, PartialFormType>;
+type HeadingContentStyleFormSchemaFields = ReturnType<HeadingContentStyleFormSchema['fields']>;
+
+const headingContentStyleSchema: HeadingContentStyleFormSchema = {
+    fields: (): HeadingContentStyleFormSchemaFields => ({
+        h1: textStyleSchema,
+        h2: textStyleSchema,
+        h3: textStyleSchema,
+        h4: textStyleSchema,
+    }),
+};
+
 type ReportContainerSchema = ObjectSchema<ReportContainerType, PartialFormType>;
 type ReportContainerSchemaFields = ReturnType<ReportContainerSchema['fields']>;
 
 type ReportContainerFormSchema = ArraySchema<ReportContainerType, PartialFormType>;
 type ReportContainerFormSchemaMember = ReturnType<ReportContainerFormSchema['member']>;
+
+// Overall configuration types
+export type ConfigType = NonNullable<PartialFormType['configuration']>;
+type ConfigSchema = ObjectSchema<ConfigType, PartialFormType>;
+type ConfigSchemaFields = ReturnType<ConfigSchema['fields']>;
+
+// Header
+type HeaderStyleFormType = NonNullable<ConfigType['headerStyle']>;
+type HeaderStyleFormSchema = ObjectSchema<HeaderStyleFormType, PartialFormType>;
+type HeaderStyleFormSchemaFields = ReturnType<HeaderStyleFormSchema['fields']>;
+
+// FIXME: Talk with @tnagorra
+const headerStyleSchema: HeaderStyleFormSchema = {
+    fields: (): HeaderStyleFormSchemaFields => ({
+        background: backgroundStyleSchema,
+        // FIXME: Talk with @tnagorra
+        // border: borderStyleSchema,
+        padding: paddingStyleSchema,
+        subTitle: textStyleSchema,
+        title: textStyleSchema,
+    }),
+};
+export type BodyStyleConfig = NonNullable<ConfigType['bodyStyle']>;
+type BodyStyleConfigSchema = ObjectSchema<BodyStyleConfig, PartialFormType>;
+type BodyStyleConfigSchemaFields = ReturnType<BodyStyleConfigSchema['fields']>;
 
 export type ContentConfigType = NonNullable<ReportContainerType['contentConfiguration']>;
 type ContentConfigSchema = ObjectSchema<ContentConfigType, PartialFormType>;
@@ -62,6 +205,28 @@ const schema: FormSchema = {
             title: [requiredCondition],
             subTitle: [requiredCondition],
             organizations: [defaultEmptyArrayType],
+            configuration: {
+                fields: (): ConfigSchemaFields => ({
+                    bodyStyle: {
+                        fields: (): BodyStyleConfigSchemaFields => ({
+                            gap: [defaultUndefinedType],
+                        }),
+                    },
+                    textContentStyle: textContentStyleSchema,
+                    /* FIXME: Talk with @tnagorra
+                    containerStyle: {
+                        fields: (): ContainerStyleFormSchemaFields => ({
+                            background: backgroundStyleSchema,
+                            border: borderStyleSchema,
+                            padding: paddingStyleSchema,
+                        }),
+                    },
+                    */
+                    headerStyle: headerStyleSchema,
+                    imageContentStyle: imageContentStyleSchema,
+                    headingContentStyle: headingContentStyleSchema,
+                }),
+            },
             containers: {
                 keySelector: (container) => container.clientId,
                 member: (): ReportContainerFormSchemaMember => ({
@@ -71,8 +236,9 @@ const schema: FormSchema = {
                         row: [requiredCondition],
                         column: [requiredCondition],
                         width: [requiredCondition],
-                        height: [],
+                        height: [defaultUndefinedType],
                         contentType: [requiredCondition],
+                        style: containerStyleSchema,
                         // TODO: Write better type for content data
                         contentData: [defaultEmptyArrayType],
                         contentConfiguration: {
@@ -91,7 +257,7 @@ const schema: FormSchema = {
                                             fields: (): HeadingConfigSchemaFields => ({
                                                 content: [],
                                                 variant: [requiredCondition],
-                                                // TODO: Write style input schemas separately
+                                                style: headingContentStyleSchema,
                                             }),
                                         },
                                     };
@@ -102,7 +268,7 @@ const schema: FormSchema = {
                                             fields: (): ImageConfigSchemaFields => ({
                                                 altText: [],
                                                 caption: [],
-                                                // TODO: Write style input schemas separately
+                                                style: imageContentStyleSchema,
                                             }),
                                         },
                                     };
@@ -112,7 +278,7 @@ const schema: FormSchema = {
                                         text: {
                                             fields: (): TextConfigSchemaFields => ({
                                                 content: [],
-                                                // TODO: Write style input schemas separately
+                                                style: textContentStyleSchema,
                                             }),
                                         },
                                     };
@@ -122,7 +288,6 @@ const schema: FormSchema = {
                                         url: {
                                             fields: (): UrlConfigSchemaFields => ({
                                                 url: [],
-                                                // TODO: Write style input schemas separately
                                             }),
                                         },
                                     };

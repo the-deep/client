@@ -1,8 +1,11 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     type EntriesAsList,
+    type Error,
+    getErrorObject,
     useFormObject,
     useFormArray,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import {
     _cs,
@@ -30,6 +33,7 @@ import {
 
 import { reorder } from '#utils/common';
 import { useModalState } from '#hooks/stateManagement';
+import NonFieldError from '#components/NonFieldError';
 import {
     AnalysisReportContainerContentTypeEnum,
 } from '#generated/types';
@@ -38,13 +42,17 @@ import {
     type PartialFormType,
     type HeadingConfigType,
     type TextConfigType,
+    type ImageConfigType,
+    type UrlConfigType,
     type ContentConfigType,
     type ReportContainerType,
 } from '../../schema';
 
 import ContentAddModal from './ContentAddModal';
 import HeadingEdit from './HeadingEdit';
+import UrlEdit from './UrlEdit';
 import TextEdit from './TextEdit';
+import ImageEdit from './ImageEdit';
 import Content from './Content';
 
 import styles from './styles.css';
@@ -58,6 +66,7 @@ interface Props {
     width?: number;
     containerKey?: string;
     allItems: ReportContainerType[] | undefined;
+    error: Error<ReportContainerType> | undefined;
     contentType: AnalysisReportContainerContentTypeEnum | undefined;
     configuration: ContentConfigType | undefined;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
@@ -69,6 +78,7 @@ function ReportContainer(props: Props) {
     const {
         className,
         contentType,
+        error: riskyError,
         row = 1,
         column = 1,
         width = 1,
@@ -81,6 +91,8 @@ function ReportContainer(props: Props) {
     } = props;
 
     const index = allItems?.findIndex((item) => item.clientId === containerKey);
+
+    const error = getErrorObject(riskyError);
 
     const {
         setValue: onReportContainerChange,
@@ -280,14 +292,29 @@ function ReportContainer(props: Props) {
         'text', TextConfigType
     >('text', onConfigChange, {});
 
+    const onImageConfigChange = useFormObject<
+        'image', ImageConfigType
+    >('image', onConfigChange, {});
+
+    const onUrlConfigChange = useFormObject<
+        'url', UrlConfigType
+    >('url', onConfigChange, {});
+
+    const isErrored = analyzeErrors(error);
+
     return (
         <div
-            className={_cs(className, styles.reportContainer)}
+            className={_cs(
+                className,
+                styles.reportContainer,
+                isErrored && styles.errored,
+            )}
             style={{
                 gridRow: row,
                 gridColumn: `span ${width}`,
             }}
         >
+            <NonFieldError error={error} />
             {!readOnly && (
                 <>
                     <QuickActionButton
@@ -413,13 +440,29 @@ function ReportContainer(props: Props) {
                     {contentType === 'HEADING' && (
                         <HeadingEdit
                             value={configuration?.heading}
+                            error={getErrorObject(error?.contentConfiguration)?.heading}
                             onFieldChange={onHeadingConfigChange}
                         />
                     )}
                     {contentType === 'TEXT' && (
                         <TextEdit
                             value={configuration?.text}
+                            error={getErrorObject(error?.contentConfiguration)?.text}
                             onFieldChange={onTextConfigChange}
+                        />
+                    )}
+                    {contentType === 'IMAGE' && (
+                        <ImageEdit
+                            value={configuration?.image}
+                            error={getErrorObject(error?.contentConfiguration)?.image}
+                            onFieldChange={onImageConfigChange}
+                        />
+                    )}
+                    {contentType === 'URL' && (
+                        <UrlEdit
+                            value={configuration?.url}
+                            error={getErrorObject(error?.contentConfiguration)?.url}
+                            onFieldChange={onUrlConfigChange}
                         />
                     )}
                 </Modal>

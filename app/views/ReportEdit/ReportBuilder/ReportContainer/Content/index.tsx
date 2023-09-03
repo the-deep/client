@@ -64,6 +64,23 @@ function Content(props: Props) {
         );
     }
 
+    if (contentType === 'URL') {
+        const {
+            url: {
+                url,
+            } = {},
+        } = configuration;
+        return (
+            <iframe
+                key={url}
+                className={styles.iframe}
+                sandbox="allow-scripts allow-same-origin allow-popups"
+                title={url}
+                src={url}
+            />
+        );
+    }
+
     return (
         <Message
             message="This type of content has not been configured yet."

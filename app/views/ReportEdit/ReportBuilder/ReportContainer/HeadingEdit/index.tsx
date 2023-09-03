@@ -3,12 +3,14 @@ import { _cs } from '@togglecorp/fujs';
 import {
     SegmentInput,
     PendingMessage,
+    ExpandableContainer,
     TextInput,
 } from '@the-deep/deep-ui';
 import {
     type EntriesAsList,
     type Error,
     getErrorObject,
+    useFormObject,
 } from '@togglecorp/toggle-form';
 import { useQuery, gql } from '@apollo/client';
 
@@ -24,7 +26,9 @@ import { EnumOptions } from '#types/common';
 
 import {
     type HeadingConfigType,
+    type HeadingContentStyleFormType,
 } from '../../../schema';
+import TextElementsStylesEdit from '../TextElementsStylesEdit';
 
 import styles from './styles.css';
 
@@ -70,10 +74,20 @@ function HeadingEdit(props: Props) {
         AnalysisReportHeadingConfigurationVariantEnum
     >;
 
+    const onStyleChange = useFormObject<
+        'style', HeadingContentStyleFormType
+    >('style', onFieldChange, {});
+
     return (
         <div className={_cs(className, styles.headingEdit)}>
             {loading && <PendingMessage />}
-            <div className={styles.left}>
+            <ExpandableContainer
+                heading="General"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
                 <TextInput
                     value={value?.content}
                     name="content"
@@ -93,7 +107,20 @@ function HeadingEdit(props: Props) {
                     error={error?.variant}
                     disabled={disabled}
                 />
-            </div>
+            </ExpandableContainer>
+            <ExpandableContainer
+                heading="Styling"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                <TextElementsStylesEdit
+                    name="h1"
+                    value={value?.style?.h1}
+                    onChange={onStyleChange}
+                />
+            </ExpandableContainer>
         </div>
     );
 }
