@@ -2,16 +2,18 @@ import React, { useCallback } from 'react';
 import {
     useParams,
 } from 'react-router-dom';
-import { FileInput, useAlert } from '@the-deep/deep-ui';
-import { IoCloudUpload } from 'react-icons/io5';
+import { useAlert } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
+
+import GalleryFileUpload from '#components/GalleryFileUpload';
 
 import {
     CreateReportFileMutation,
     CreateReportFileMutationVariables,
     AnalysisReportUploadInputType,
     AnalysisReportUploadType,
+    GalleryFileType,
 } from '#generated/types';
 
 const CREATE_REPORT_FILE = gql`
@@ -136,7 +138,7 @@ function AryFileUpload(props: Props) {
     );
 
     const handleFileInputChange = useCallback(
-        (value: File | null | undefined) => {
+        (value: NonNullable<GalleryFileType>) => {
             if (!value) {
                 return;
             }
@@ -148,10 +150,11 @@ function AryFileUpload(props: Props) {
                 variables: {
                     projectId,
                     data: {
-                        file: value,
+                        file: value.id,
                         report: reportId,
                         type: 'IMAGE' as const,
-                    } as AnalysisReportUploadInputType,
+                        metadata: {},
+                    },
                 },
                 context: {
                     hasUpload: true,
@@ -165,18 +168,10 @@ function AryFileUpload(props: Props) {
     );
 
     return (
-        <FileInput
-            name={undefined}
-            value={null}
-            onChange={handleFileInputChange}
-            status={undefined}
-            overrideStatus
-            maxFileSize={100}
-            accept={acceptFileType}
-            disabled={loading || disabled}
-        >
-            <IoCloudUpload />
-        </FileInput>
+        <GalleryFileUpload
+            onSuccess={handleFileInputChange}
+            projectIds={projectId ? [projectId] : undefined}
+        />
     );
 }
 

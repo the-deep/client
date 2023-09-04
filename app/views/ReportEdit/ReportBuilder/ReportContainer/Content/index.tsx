@@ -12,6 +12,9 @@ import {
     AnalysisReportContainerContentConfigurationType,
 } from '#generated/types';
 
+import { ContentDataFileMap } from '../../../index';
+import { ContentDataType } from '../../../schema';
+
 import styles from './styles.css';
 
 const variantToSizeMapping = {
@@ -23,13 +26,17 @@ const variantToSizeMapping = {
 
 interface Props {
     contentType: AnalysisReportContainerContentTypeEnum;
+    contentData: ContentDataType[] | undefined;
     configuration: AnalysisReportContainerContentConfigurationType | undefined;
+    contentDataToFileMap: ContentDataFileMap | undefined;
 }
 
 function Content(props: Props) {
     const {
         contentType,
         configuration: configurationFromProps = {},
+        contentData,
+        contentDataToFileMap,
     } = props;
 
     const configuration = removeNull(configurationFromProps);
@@ -79,6 +86,26 @@ function Content(props: Props) {
                 src={url}
             />
         );
+    }
+
+    if (contentType === 'IMAGE') {
+        const {
+            image: {
+                altText,
+            } = {},
+        } = configuration;
+
+        const imageContentData = contentData?.[0];
+
+        if (imageContentData && contentDataToFileMap) {
+            return (
+                <img
+                    className={styles.image}
+                    src={contentDataToFileMap[imageContentData.clientId]?.url ?? ''}
+                    alt={altText ?? ''}
+                />
+            );
+        }
     }
 
     return (

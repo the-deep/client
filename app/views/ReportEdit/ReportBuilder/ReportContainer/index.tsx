@@ -20,6 +20,7 @@ import {
     Footer,
     Button,
     SegmentInput,
+    NumberInput,
     QuickActionDropdownMenu,
     Modal,
     QuickActionButton,
@@ -35,6 +36,7 @@ import { reorder } from '#utils/common';
 import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
 import {
+    AnalysisReportUploadType,
     AnalysisReportContainerContentTypeEnum,
 } from '#generated/types';
 
@@ -46,7 +48,9 @@ import {
     type UrlConfigType,
     type ContentConfigType,
     type ReportContainerType,
+    type ContentDataType,
 } from '../../schema';
+import { ContentDataFileMap } from '../../index';
 
 import ContentAddModal from './ContentAddModal';
 import HeadingEdit from './HeadingEdit';
@@ -59,17 +63,21 @@ import styles from './styles.css';
 
 const widthSelector = (item: { width: number }) => item.width;
 
-interface Props {
+export interface Props {
     className?: string;
     row?: number;
     column?: number;
     width?: number;
+    height?: number;
     containerKey?: string;
+    contentData: ContentDataType[] | undefined;
     allItems: ReportContainerType[] | undefined;
     error: Error<ReportContainerType> | undefined;
     contentType: AnalysisReportContainerContentTypeEnum | undefined;
     configuration: ContentConfigType | undefined;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    contentDataToFileMap: ContentDataFileMap | undefined;
+    setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
     readOnly?: boolean;
     disabled?: boolean;
 }
@@ -84,9 +92,13 @@ function ReportContainer(props: Props) {
         width = 1,
         allItems,
         configuration,
+        height,
         containerKey,
+        contentData,
         setFieldValue,
         readOnly,
+        contentDataToFileMap,
+        setContentDataToFileMap,
         disabled,
     } = props;
 
@@ -300,6 +312,26 @@ function ReportContainer(props: Props) {
         'url', UrlConfigType
     >('url', onConfigChange, {});
 
+    const handleImageFileUploadChange = useCallback((file: AnalysisReportUploadType) => {
+        const newClientId = randomString();
+        onFieldChange([
+            {
+                upload: file.id,
+                clientId: newClientId,
+            },
+        ], 'contentData');
+        setContentDataToFileMap((oldVal) => ({
+            ...(oldVal ?? {}),
+            [newClientId]: {
+                url: file.file.file?.url ?? undefined,
+                name: file.file.file?.name ?? undefined,
+            },
+        }));
+    }, [
+        onFieldChange,
+        setContentDataToFileMap,
+    ]);
+
     const isErrored = analyzeErrors(error);
 
     return (
@@ -385,6 +417,8 @@ function ReportContainer(props: Props) {
                 <Content
                     contentType={contentType}
                     configuration={configuration}
+                    contentData={contentData}
+                    contentDataToFileMap={contentDataToFileMap}
                 />
             )}
             {!readOnly && (
@@ -442,6 +476,15 @@ function ReportContainer(props: Props) {
                             value={configuration?.heading}
                             error={getErrorObject(error?.contentConfiguration)?.heading}
                             onFieldChange={onHeadingConfigChange}
+                            additionalStylingSettings={(
+                                <NumberInput
+                                    name="height"
+                                    label="Height"
+                                    value={height}
+                                    onChange={onFieldChange}
+                                    disabled={disabled}
+                                />
+                            )}
                         />
                     )}
                     {contentType === 'TEXT' && (
@@ -449,6 +492,15 @@ function ReportContainer(props: Props) {
                             value={configuration?.text}
                             error={getErrorObject(error?.contentConfiguration)?.text}
                             onFieldChange={onTextConfigChange}
+                            additionalStylingSettings={(
+                                <NumberInput
+                                    name="height"
+                                    label="Height"
+                                    value={height}
+                                    onChange={onFieldChange}
+                                    disabled={disabled}
+                                />
+                            )}
                         />
                     )}
                     {contentType === 'IMAGE' && (
@@ -456,6 +508,16 @@ function ReportContainer(props: Props) {
                             value={configuration?.image}
                             error={getErrorObject(error?.contentConfiguration)?.image}
                             onFieldChange={onImageConfigChange}
+                            onFileUpload={handleImageFileUploadChange}
+                            additionalStylingSettings={(
+                                <NumberInput
+                                    name="height"
+                                    label="Height"
+                                    value={height}
+                                    onChange={onFieldChange}
+                                    disabled={disabled}
+                                />
+                            )}
                         />
                     )}
                     {contentType === 'URL' && (
@@ -463,6 +525,15 @@ function ReportContainer(props: Props) {
                             value={configuration?.url}
                             error={getErrorObject(error?.contentConfiguration)?.url}
                             onFieldChange={onUrlConfigChange}
+                            additionalStylingSettings={(
+                                <NumberInput
+                                    name="height"
+                                    label="Height"
+                                    value={height}
+                                    onChange={onFieldChange}
+                                    disabled={disabled}
+                                />
+                            )}
                         />
                     )}
                 </Modal>

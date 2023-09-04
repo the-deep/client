@@ -1,4 +1,5 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     type SetValueArg,
     type Error,
@@ -7,6 +8,7 @@ import {
     useFormObject,
 } from '@togglecorp/toggle-form';
 import {
+    Heading,
     NumberInput,
 } from '@the-deep/deep-ui';
 
@@ -14,11 +16,14 @@ import {
     AnalysisReportTextStyleType,
 } from '#generated/types';
 
+import styles from './styles.css';
+
 type StylesType = PurgeNull<AnalysisReportTextStyleType>;
 
 interface Props<NAME extends string> {
     name: NAME;
     className?: string;
+    label?: string;
     value?: StylesType | undefined;
     onChange: (
         value: SetValueArg<StylesType | undefined>,
@@ -32,6 +37,7 @@ function TextElementStylesEdit<NAME extends string>(props: Props<NAME>) {
     const {
         className,
         value,
+        label,
         error: riskyError,
         disabled,
         name,
@@ -45,7 +51,10 @@ function TextElementStylesEdit<NAME extends string>(props: Props<NAME>) {
     const error = getErrorObject(riskyError);
 
     return (
-        <div className={className}>
+        <div className={_cs(className, styles.textElementsStylesEdit)}>
+            {label && (
+                <Heading size="extraSmall">{label}</Heading>
+            )}
             <NumberInput
                 label="Size"
                 value={value?.size}

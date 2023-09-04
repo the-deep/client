@@ -6,6 +6,7 @@ import React, {
 import {
     _cs,
     randomString,
+    listToMap,
 } from '@togglecorp/fujs';
 import {
     useParams,
@@ -120,6 +121,21 @@ const REPORT_DETAILS = gql`
                     width
                     height
                     contentType
+                    contentData {
+                        clientId
+                        data
+                        id
+                        upload {
+                            id
+                            file {
+                                id
+                                file {
+                                    name
+                                    url
+                                }
+                            }
+                        }
+                    }
                     contentConfiguration {
                         heading {
                             content
@@ -182,6 +198,11 @@ const UPDATE_REPORT = gql`
     }
 `;
 
+export type ContentDataFileMap = Record<string, {
+    url: string | undefined;
+    name: string | undefined;
+}>;
+
 interface Props {
     className?: string;
 }
@@ -206,6 +227,11 @@ function ReportEdit(props: Props) {
         organizationOptions,
         setOrganizationOptions,
     ] = useState<BasicOrganization[] | null | undefined>();
+
+    const [
+        contentDataToFileMap,
+        setContentDataToFileMap,
+    ] = useState<ContentDataFileMap>();
 
     const analysisId = new URL(window.location.href).searchParams.get('analysis');
 
@@ -330,8 +356,24 @@ function ReportEdit(props: Props) {
                     {
                         ...valueToSet,
                         organizations: valueToSet.organizations?.map((item) => item.id),
+                        containers: valueToSet.containers?.map((item) => ({
+                            ...item,
+                            contentData: item.contentData?.map((contentDataItem) => ({
+                                ...contentDataItem,
+                                upload: contentDataItem.upload.id,
+                            })),
+                        })),
                     },
                 );
+                const uploadItems = valueToSet.containers?.map((item) => item.contentData).flat();
+                setContentDataToFileMap(listToMap(
+                    uploadItems,
+                    (item) => item.clientId,
+                    (item) => ({
+                        name: item.upload.file.file?.name,
+                        url: item.upload.file.file?.url,
+                    }),
+                ));
                 setOrganizationOptions(valueToSet.organizations);
             },
         },
@@ -496,6 +538,8 @@ function ReportEdit(props: Props) {
                     readOnly={false}
                     organizationOptions={organizationOptions}
                     onOrganizationOptionsChange={setOrganizationOptions}
+                    contentDataToFileMap={contentDataToFileMap}
+                    setContentDataToFileMap={setContentDataToFileMap}
                 />
             </div>
         </div>

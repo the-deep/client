@@ -31,8 +31,9 @@ import {
     type ReportContainerType,
 } from '../schema';
 
-import ReportContainer from './ReportContainer';
+import ReportContainer, { Props as ReportContainerProps } from './ReportContainer';
 import MetadataEdit from './MetadataEdit';
+import { ContentDataFileMap } from '../index';
 
 import styles from './styles.css';
 
@@ -55,6 +56,8 @@ interface Props {
     onOrganizationOptionsChange: React.Dispatch<React.SetStateAction<
         BasicOrganization[] | undefined | null
     >>;
+    contentDataToFileMap: ContentDataFileMap | undefined;
+    setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
 }
 
 function ReportBuilder(props: Props) {
@@ -67,6 +70,8 @@ function ReportBuilder(props: Props) {
         disabled,
         organizationOptions,
         onOrganizationOptionsChange,
+        contentDataToFileMap,
+        setContentDataToFileMap,
     } = props;
 
     const orgMap = useMemo(() => (
@@ -87,7 +92,7 @@ function ReportBuilder(props: Props) {
         (
             containerKey: string,
             item: ReportContainerType,
-        ) => {
+        ): ReportContainerProps => {
             const containersError = getErrorObject(error)?.containers;
             const itemError = getErrorObject(containersError)?.[containerKey];
 
@@ -96,16 +101,22 @@ function ReportBuilder(props: Props) {
                 containerKey,
                 column: item.column,
                 width: item.width,
+                height: item.height,
                 allItems: value?.containers,
+                contentData: item?.contentData,
                 configuration: item.contentConfiguration,
                 contentType: item.contentType,
                 error: itemError,
                 setFieldValue,
                 readOnly,
                 disabled,
+                contentDataToFileMap,
+                setContentDataToFileMap,
             });
         },
         [
+            contentDataToFileMap,
+            setContentDataToFileMap,
             error,
             value?.containers,
             setFieldValue,
@@ -117,8 +128,6 @@ function ReportBuilder(props: Props) {
     const errorInMetadata = useMemo(() => (
         metadataFields.some((field) => analyzeErrors(getErrorObject(error)?.[field]))
     ), [error]);
-
-    console.log('aditya', value);
 
     return (
         <div className={_cs(className, styles.reportBuilder)}>

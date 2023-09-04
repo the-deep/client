@@ -4,13 +4,17 @@ import {
     type EntriesAsList,
     type Error,
     getErrorObject,
+    useFormObject,
 } from '@togglecorp/toggle-form';
+import { ExpandableContainer } from '@the-deep/deep-ui';
 
 import MarkdownEditor from '#components/MarkdownEditor';
 
 import {
     type TextConfigType,
+    type TextContentStyleFormType,
 } from '../../../schema';
+import TextElementsStylesEdit from '../TextElementsStylesEdit';
 
 import styles from './styles.css';
 
@@ -20,6 +24,7 @@ interface Props {
     onFieldChange: (...entries: EntriesAsList<TextConfigType>) => void;
     error?: Error<TextConfigType>;
     disabled?: boolean;
+    additionalStylingSettings?: React.ReactNode;
 }
 
 function TextEdit(props: Props) {
@@ -29,13 +34,25 @@ function TextEdit(props: Props) {
         onFieldChange,
         error: riskyError,
         disabled,
+        additionalStylingSettings,
     } = props;
 
     const error = getErrorObject(riskyError);
 
+    const onStyleChange = useFormObject<
+        'style', TextContentStyleFormType
+    >('style', onFieldChange, {});
+
     return (
         <div className={_cs(className, styles.textEdit)}>
-            <div className={styles.left}>
+            <ExpandableContainer
+                heading="General"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                defaultVisibility
+                withoutBorder
+            >
                 <MarkdownEditor
                     className={styles.editor}
                     label="Content"
@@ -46,7 +63,22 @@ function TextEdit(props: Props) {
                     height={300}
                     disabled={disabled}
                 />
-            </div>
+            </ExpandableContainer>
+            <ExpandableContainer
+                heading="Styling"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                <TextElementsStylesEdit
+                    name="content"
+                    label="Content"
+                    value={value?.style?.content}
+                    onChange={onStyleChange}
+                />
+                {additionalStylingSettings}
+            </ExpandableContainer>
         </div>
     );
 }

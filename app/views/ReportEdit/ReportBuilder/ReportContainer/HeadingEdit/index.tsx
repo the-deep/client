@@ -50,6 +50,7 @@ interface Props {
     onFieldChange: (...entries: EntriesAsList<HeadingConfigType>) => void;
     error?: Error<HeadingConfigType>;
     disabled?: boolean;
+    additionalStylingSettings?: React.ReactNode;
 }
 
 function HeadingEdit(props: Props) {
@@ -59,6 +60,7 @@ function HeadingEdit(props: Props) {
         onFieldChange,
         error: riskyError,
         disabled,
+        additionalStylingSettings,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -86,11 +88,13 @@ function HeadingEdit(props: Props) {
                 headingSize="small"
                 spacing="compact"
                 contentClassName={styles.expandedBody}
+                defaultVisibility
                 withoutBorder
             >
                 <TextInput
                     value={value?.content}
                     name="content"
+                    label="Heading"
                     onChange={onFieldChange}
                     error={error?.content}
                     disabled={disabled}
@@ -106,6 +110,7 @@ function HeadingEdit(props: Props) {
                     className={styles.input}
                     error={error?.variant}
                     disabled={disabled}
+                    spacing="compact"
                 />
             </ExpandableContainer>
             <ExpandableContainer
@@ -120,6 +125,7 @@ function HeadingEdit(props: Props) {
                     value={value?.style?.h1}
                     onChange={onStyleChange}
                 />
+                {additionalStylingSettings}
             </ExpandableContainer>
         </div>
     );

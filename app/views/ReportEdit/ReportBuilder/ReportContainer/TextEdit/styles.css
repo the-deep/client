@@ -1,8 +1,11 @@
 .text-edit {
     display: flex;
-    gap: var(--dui-spacing-small);
+    flex-direction: column;
+    gap: var(--dui-spacing-large);
 
-    .left {
-        width: 20rem;
+    .expanded-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
     }
 }

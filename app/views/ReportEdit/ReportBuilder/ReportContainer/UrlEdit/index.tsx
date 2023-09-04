@@ -2,6 +2,7 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     TextInput,
+    ExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
     type EntriesAsList,
@@ -21,22 +22,30 @@ interface Props {
     onFieldChange: (...entries: EntriesAsList<UrlConfigType>) => void;
     error?: Error<UrlConfigType>;
     disabled?: boolean;
+    additionalStylingSettings?: React.ReactNode;
 }
 
-function TextEdit(props: Props) {
+function UrlEdit(props: Props) {
     const {
         className,
         value,
         onFieldChange,
         error: riskyError,
         disabled,
+        additionalStylingSettings,
     } = props;
 
     const error = getErrorObject(riskyError);
 
     return (
-        <div className={_cs(className, styles.textEdit)}>
-            <div className={styles.left}>
+        <div className={_cs(className, styles.urlEdit)}>
+            <ExpandableContainer
+                heading="General"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
                 <TextInput
                     value={value?.url}
                     name="url"
@@ -44,9 +53,18 @@ function TextEdit(props: Props) {
                     error={error?.url}
                     disabled={disabled}
                 />
-            </div>
+            </ExpandableContainer>
+            <ExpandableContainer
+                heading="Styling"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                {additionalStylingSettings}
+            </ExpandableContainer>
         </div>
     );
 }
 
-export default TextEdit;
+export default UrlEdit;
