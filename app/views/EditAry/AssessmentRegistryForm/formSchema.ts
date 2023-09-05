@@ -35,7 +35,7 @@ export interface Option {
 export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
 type AssessmentRegistryType = DeepMandatory<PurgeNull<AssessmentRegistryCreateInputType>, 'clientId'>;
 
-export type PartialFormType = PartialForm<AssessmentRegistryType, 'clientId' | 'question' | 'sector' | 'organization' | 'organizationType'>;
+export type PartialFormType = PartialForm<AssessmentRegistryType, 'clientId'>;
 
 export type PartialAdditionalDocument = NonNullable<PartialFormType['additionalDocuments']>[number];
 
@@ -227,7 +227,7 @@ export const schema: FormSchema = {
                     fields: (): SubDimensionMetaSchemaFields => ({
                         id: [defaultUndefinedType],
                         clientId: [requiredCondition],
-                        focus: [requiredCondition],
+                        sector: [requiredCondition],
                         percentageOfPeopleAffected: [],
                         totalPeopleAffected: [],
                         percentageOfModerate: [],

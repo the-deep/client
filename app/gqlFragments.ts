@@ -375,6 +375,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
             id
             adminLevelTitle
             regionTitle
+            parentTitles
             title
         }
         cna {
@@ -453,7 +454,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         summaryDimensionMeta {
             id
             clientId
-            focus
+            sector
             percentageOfPeopleAffected
             totalPeopleAffected
             percentageOfModerate

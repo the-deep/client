@@ -71,7 +71,7 @@ function QualityScoreForm(props: Props) {
         (_, __, index) => index,
     ), [scoreValue]);
     const scoreInputParams = useCallback(
-        (_, data: ScoreOptions): QualityScoreInputProps => {
+        (_: string, data: ScoreOptions): QualityScoreInputProps => {
             const scoreIndex = scoreValueIndex?.[data.scoreCriteria];
             const scoreRatingValue = isDefined(scoreIndex)
                 ? scoreValue?.[scoreIndex]

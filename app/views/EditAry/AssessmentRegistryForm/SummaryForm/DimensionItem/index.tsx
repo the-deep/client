@@ -80,7 +80,7 @@ function DimensionItem(props: Props) {
     );
 
     const selectedMetaIndex = useMemo(() => (
-        value?.summaryDimensionMeta?.findIndex((item) => item.focus === sector)
+        value?.summaryDimensionMeta?.findIndex((item) => item.sector === sector)
     ), [
         value?.summaryDimensionMeta,
         sector,

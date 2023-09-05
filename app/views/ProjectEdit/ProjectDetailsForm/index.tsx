@@ -141,7 +141,7 @@ const projectVisibilityOptions: BooleanOption[] = [
 ];
 
 type ProjectCreateType = DeepMandatory<PurgeNull<ProjectCreateInputType>, 'clientId'>
-type PartialFormType = PartialForm<ProjectCreateType, 'organization' | 'clientId' | 'organizationType'>;
+type PartialFormType = PartialForm<ProjectCreateType, 'clientId'>
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 

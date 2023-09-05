@@ -203,7 +203,7 @@ function ScoreForm(props: Props) {
     ]);
 
     const scoreStatsValueParams = useCallback(
-        (_, data: ScoreStatsValue): KeyFigureProps => ({
+        (_: string, data: ScoreStatsValue): KeyFigureProps => ({
             label: data.label,
             value: data.score,
         }), [],
