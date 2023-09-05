@@ -42,22 +42,23 @@ import {
 
 import {
     type PartialFormType,
-    type HeadingConfigType,
-    type TextConfigType,
-    type ImageConfigType,
-    type UrlConfigType,
     type ContentConfigType,
     type ReportContainerType,
     type ContentDataType,
+    type ContainerStyleFormType,
 } from '../../schema';
 import { ContentDataFileMap } from '../../index';
 
 import ContentAddModal from './ContentAddModal';
 import HeadingEdit from './HeadingEdit';
+import ContainerStylesEdit from './ContainerStylesEdit';
 import UrlEdit from './UrlEdit';
 import TextEdit from './TextEdit';
 import ImageEdit from './ImageEdit';
 import Content from './Content';
+import {
+    resolveContainerStyle,
+} from '../../utils';
 
 import styles from './styles.css';
 
@@ -77,6 +78,7 @@ export interface Props {
     configuration: ContentConfigType | undefined;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     contentDataToFileMap: ContentDataFileMap | undefined;
+    style: ContainerStyleFormType | undefined;
     setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
     readOnly?: boolean;
     disabled?: boolean;
@@ -91,6 +93,7 @@ function ReportContainer(props: Props) {
         column = 1,
         width = 1,
         allItems,
+        style,
         configuration,
         height,
         containerKey,
@@ -296,22 +299,6 @@ function ReportContainer(props: Props) {
         'contentConfiguration', ContentConfigType
     >('contentConfiguration', onFieldChange, {});
 
-    const onHeadingConfigChange = useFormObject<
-        'heading', HeadingConfigType
-    >('heading', onConfigChange, {});
-
-    const onTextConfigChange = useFormObject<
-        'text', TextConfigType
-    >('text', onConfigChange, {});
-
-    const onImageConfigChange = useFormObject<
-        'image', ImageConfigType
-    >('image', onConfigChange, {});
-
-    const onUrlConfigChange = useFormObject<
-        'url', UrlConfigType
-    >('url', onConfigChange, {});
-
     const handleImageFileUploadChange = useCallback((file: AnalysisReportUploadType) => {
         const newClientId = randomString();
         onFieldChange([
@@ -334,6 +321,8 @@ function ReportContainer(props: Props) {
 
     const isErrored = analyzeErrors(error);
 
+    const containerStyles = resolveContainerStyle(style);
+
     return (
         <div
             className={_cs(
@@ -342,6 +331,8 @@ function ReportContainer(props: Props) {
                 isErrored && styles.errored,
             )}
             style={{
+                ...containerStyles,
+                height,
                 gridRow: row,
                 gridColumn: `span ${width}`,
             }}
@@ -469,73 +460,56 @@ function ReportContainer(props: Props) {
             {!readOnly && contentEditModalVisible && (
                 <Modal
                     onCloseButtonClick={hideContentEditModal}
+                    bodyClassName={styles.modalBody}
                     heading="Configuration"
                 >
                     {contentType === 'HEADING' && (
                         <HeadingEdit
+                            name="heading"
                             value={configuration?.heading}
                             error={getErrorObject(error?.contentConfiguration)?.heading}
-                            onFieldChange={onHeadingConfigChange}
-                            additionalStylingSettings={(
-                                <NumberInput
-                                    name="height"
-                                    label="Height"
-                                    value={height}
-                                    onChange={onFieldChange}
-                                    disabled={disabled}
-                                />
-                            )}
+                            onChange={onConfigChange}
                         />
                     )}
                     {contentType === 'TEXT' && (
                         <TextEdit
+                            name="text"
+                            onChange={onConfigChange}
                             value={configuration?.text}
                             error={getErrorObject(error?.contentConfiguration)?.text}
-                            onFieldChange={onTextConfigChange}
-                            additionalStylingSettings={(
-                                <NumberInput
-                                    name="height"
-                                    label="Height"
-                                    value={height}
-                                    onChange={onFieldChange}
-                                    disabled={disabled}
-                                />
-                            )}
                         />
                     )}
                     {contentType === 'IMAGE' && (
                         <ImageEdit
+                            name="image"
+                            onChange={onConfigChange}
                             value={configuration?.image}
                             error={getErrorObject(error?.contentConfiguration)?.image}
-                            onFieldChange={onImageConfigChange}
                             onFileUpload={handleImageFileUploadChange}
-                            additionalStylingSettings={(
-                                <NumberInput
-                                    name="height"
-                                    label="Height"
-                                    value={height}
-                                    onChange={onFieldChange}
-                                    disabled={disabled}
-                                />
-                            )}
                         />
                     )}
                     {contentType === 'URL' && (
                         <UrlEdit
+                            name="url"
+                            onChange={onConfigChange}
                             value={configuration?.url}
                             error={getErrorObject(error?.contentConfiguration)?.url}
-                            onFieldChange={onUrlConfigChange}
-                            additionalStylingSettings={(
-                                <NumberInput
-                                    name="height"
-                                    label="Height"
-                                    value={height}
-                                    onChange={onFieldChange}
-                                    disabled={disabled}
-                                />
-                            )}
                         />
                     )}
+                    <ContainerStylesEdit
+                        name="style"
+                        value={style}
+                        onChange={onFieldChange}
+                        additionalStylingSettings={(
+                            <NumberInput
+                                name="height"
+                                label="Height"
+                                value={height}
+                                onChange={onFieldChange}
+                                disabled={disabled}
+                            />
+                        )}
+                    />
                 </Modal>
             )}
         </div>

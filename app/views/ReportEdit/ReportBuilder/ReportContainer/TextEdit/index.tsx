@@ -1,7 +1,7 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    type EntriesAsList,
+    type SetValueArg,
     type Error,
     getErrorObject,
     useFormObject,
@@ -18,26 +18,30 @@ import TextElementsStylesEdit from '../TextElementsStylesEdit';
 
 import styles from './styles.css';
 
-interface Props {
+interface Props<NAME extends string> {
+    name: NAME;
     className?: string;
     value: TextConfigType | undefined;
-    onFieldChange: (...entries: EntriesAsList<TextConfigType>) => void;
+    onChange: (value: SetValueArg<TextConfigType | undefined>, name: NAME) => void;
     error?: Error<TextConfigType>;
     disabled?: boolean;
-    additionalStylingSettings?: React.ReactNode;
 }
 
-function TextEdit(props: Props) {
+function TextEdit<NAME extends string>(props: Props<NAME>) {
     const {
         className,
         value,
-        onFieldChange,
+        onChange,
+        name,
         error: riskyError,
         disabled,
-        additionalStylingSettings,
     } = props;
 
     const error = getErrorObject(riskyError);
+
+    const onFieldChange = useFormObject<
+        NAME, TextConfigType
+    >(name, onChange, {});
 
     const onStyleChange = useFormObject<
         'style', TextContentStyleFormType
@@ -77,7 +81,6 @@ function TextEdit(props: Props) {
                     value={value?.style?.content}
                     onChange={onStyleChange}
                 />
-                {additionalStylingSettings}
             </ExpandableContainer>
         </div>
     );

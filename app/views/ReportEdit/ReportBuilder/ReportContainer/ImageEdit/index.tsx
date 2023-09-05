@@ -1,7 +1,7 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    type EntriesAsList,
+    type SetValueArg,
     type Error,
     useFormObject,
     getErrorObject,
@@ -21,28 +21,32 @@ import TextElementsStylesEdit from '../TextElementsStylesEdit';
 
 import styles from './styles.css';
 
-interface Props {
+interface Props<NAME extends string> {
+    name: NAME;
     className?: string;
     value: ImageConfigType | undefined;
-    onFieldChange: (...entries: EntriesAsList<ImageConfigType>) => void;
+    onChange: (value: SetValueArg<ImageConfigType | undefined>, name: NAME) => void;
     onFileUpload: (file: AnalysisReportUploadType) => void;
     error?: Error<ImageConfigType>;
     disabled?: boolean;
-    additionalStylingSettings?: React.ReactNode;
 }
 
-function ImageEdit(props: Props) {
+function ImageEdit<NAME extends string>(props: Props<NAME>) {
     const {
         className,
+        name,
         value,
-        onFieldChange,
+        onChange,
         error: riskyError,
-        additionalStylingSettings,
         onFileUpload,
         disabled,
     } = props;
 
     const error = getErrorObject(riskyError);
+
+    const onFieldChange = useFormObject<
+        NAME, ImageConfigType
+    >(name, onChange, {});
 
     const onStyleChange = useFormObject<
         'style', ImageContentStyleFormType
@@ -93,7 +97,6 @@ function ImageEdit(props: Props) {
                     value={value?.style?.caption}
                     onChange={onStyleChange}
                 />
-                {additionalStylingSettings}
             </ExpandableContainer>
         </div>
     );

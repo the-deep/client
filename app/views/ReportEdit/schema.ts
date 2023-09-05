@@ -48,7 +48,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 // Styling common schemas
 
 // Background
-type BackgroundStyleFormType = PartialForm<PurgeNull<AnalysisReportBackgroundStyleType>>;
+export type BackgroundStyleFormType = PartialForm<PurgeNull<AnalysisReportBackgroundStyleType>>;
 type BackgroundStyleFormSchema = ObjectSchema<BackgroundStyleFormType, PartialFormType>;
 type BackgroundStyleFormSchemaFields = ReturnType<BackgroundStyleFormSchema['fields']>;
 
@@ -60,7 +60,7 @@ const backgroundStyleSchema: BackgroundStyleFormSchema = {
 };
 
 // Border
-type BorderStyleFormType = PartialForm<PurgeNull<AnalysisReportBorderStyleType>>;
+export type BorderStyleFormType = PartialForm<PurgeNull<AnalysisReportBorderStyleType>>;
 type BorderStyleFormSchema = ObjectSchema<BorderStyleFormType, PartialFormType>;
 type BorderStyleFormSchemaFields = ReturnType<BorderStyleFormSchema['fields']>;
 
@@ -74,7 +74,7 @@ const borderStyleSchema: BorderStyleFormSchema = {
 };
 
 // Padding
-type PaddingStyleFormType = PartialForm<PurgeNull<AnalysisReportPaddingStyleType>>;
+export type PaddingStyleFormType = PartialForm<PurgeNull<AnalysisReportPaddingStyleType>>;
 type PaddingStyleFormSchema = ObjectSchema<PaddingStyleFormType, PartialFormType>;
 type PaddingStyleFormSchemaFields = ReturnType<PaddingStyleFormSchema['fields']>;
 
@@ -88,7 +88,7 @@ const paddingStyleSchema: PaddingStyleFormSchema = {
 };
 
 // Container style
-type ContainerStyleFormType = PartialForm<PurgeNull<AnalysisReportContainerStyleType>>;
+export type ContainerStyleFormType = PartialForm<PurgeNull<AnalysisReportContainerStyleType>>;
 
 type ContainerStyleFormSchema = ObjectSchema<ContainerStyleFormType, PartialFormType>;
 type ContainerStyleFormSchemaFields = ReturnType<ContainerStyleFormSchema['fields']>;

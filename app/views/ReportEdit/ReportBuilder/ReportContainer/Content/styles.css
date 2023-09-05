@@ -8,6 +8,7 @@
 .iframe {
     outline: 0;
     border: none;
+    height: 100%;
 }
 
 .image {

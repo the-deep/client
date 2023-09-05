@@ -7,7 +7,7 @@ import {
     TextInput,
 } from '@the-deep/deep-ui';
 import {
-    type EntriesAsList,
+    type SetValueArg,
     type Error,
     getErrorObject,
     useFormObject,
@@ -26,7 +26,7 @@ import { EnumOptions } from '#types/common';
 
 import {
     type HeadingConfigType,
-    type HeadingContentStyleFormType,
+    type TextContentStyleFormType,
 } from '../../../schema';
 import TextElementsStylesEdit from '../TextElementsStylesEdit';
 
@@ -44,26 +44,30 @@ const REPORT_HEADING = gql`
     }
 `;
 
-interface Props {
+interface Props<NAME extends string> {
+    name: NAME;
     className?: string;
     value: HeadingConfigType | undefined;
-    onFieldChange: (...entries: EntriesAsList<HeadingConfigType>) => void;
+    onChange: (value: SetValueArg<HeadingConfigType | undefined>, name: NAME) => void;
     error?: Error<HeadingConfigType>;
     disabled?: boolean;
-    additionalStylingSettings?: React.ReactNode;
 }
 
-function HeadingEdit(props: Props) {
+function HeadingEdit<NAME extends string>(props: Props<NAME>) {
     const {
         className,
+        name,
         value,
-        onFieldChange,
+        onChange,
         error: riskyError,
         disabled,
-        additionalStylingSettings,
     } = props;
 
     const error = getErrorObject(riskyError);
+
+    const onFieldChange = useFormObject<
+        NAME, HeadingConfigType
+    >(name, onChange, {});
 
     const {
         loading,
@@ -77,7 +81,7 @@ function HeadingEdit(props: Props) {
     >;
 
     const onStyleChange = useFormObject<
-        'style', HeadingContentStyleFormType
+        'style', TextContentStyleFormType
     >('style', onFieldChange, {});
 
     return (
@@ -121,11 +125,10 @@ function HeadingEdit(props: Props) {
                 withoutBorder
             >
                 <TextElementsStylesEdit
-                    name="h1"
-                    value={value?.style?.h1}
+                    name="content"
+                    value={value?.style?.content}
                     onChange={onStyleChange}
                 />
-                {additionalStylingSettings}
             </ExpandableContainer>
         </div>
     );

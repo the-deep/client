@@ -5,8 +5,9 @@ import {
     ExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
-    type EntriesAsList,
+    type SetValueArg,
     type Error,
+    useFormObject,
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
@@ -16,24 +17,28 @@ import {
 
 import styles from './styles.css';
 
-interface Props {
+interface Props<NAME extends string> {
+    name: NAME;
     className?: string;
     value: UrlConfigType | undefined;
-    onFieldChange: (...entries: EntriesAsList<UrlConfigType>) => void;
+    onChange: (value: SetValueArg<UrlConfigType | undefined>, name: NAME) => void;
     error?: Error<UrlConfigType>;
     disabled?: boolean;
-    additionalStylingSettings?: React.ReactNode;
 }
 
-function UrlEdit(props: Props) {
+function UrlEdit<NAME extends string>(props: Props<NAME>) {
     const {
         className,
         value,
-        onFieldChange,
+        name,
+        onChange,
         error: riskyError,
         disabled,
-        additionalStylingSettings,
     } = props;
+
+    const onFieldChange = useFormObject<
+        NAME, UrlConfigType
+    >(name, onChange, {});
 
     const error = getErrorObject(riskyError);
 
@@ -53,15 +58,6 @@ function UrlEdit(props: Props) {
                     error={error?.url}
                     disabled={disabled}
                 />
-            </ExpandableContainer>
-            <ExpandableContainer
-                heading="Styling"
-                headingSize="small"
-                spacing="compact"
-                contentClassName={styles.expandedBody}
-                withoutBorder
-            >
-                {additionalStylingSettings}
             </ExpandableContainer>
         </div>
     );

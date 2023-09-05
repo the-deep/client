@@ -81,6 +81,7 @@ function ReportBuilder(props: Props) {
             (org) => org,
         )
     ), [organizationOptions]);
+    console.log('aditya', value);
 
     const [
         contentEditModalVisible,
@@ -106,6 +107,7 @@ function ReportBuilder(props: Props) {
                 contentData: item?.contentData,
                 configuration: item.contentConfiguration,
                 contentType: item.contentType,
+                style: item.style,
                 error: itemError,
                 setFieldValue,
                 readOnly,
