@@ -42,6 +42,7 @@ const ARY_DASHBOARD_FILTER = gql`
         $filter: AssessmentDashboardFilterInputType!,
     ) {
         project(id: $projectId) {
+            id
             assessmentDashboardStatistics(filter: $filter){
                 totalAssessment
                 totalCollectionTechnique
@@ -69,6 +70,10 @@ const ARY_DASHBOARD_FILTER = gql`
                     adminLevelId
                     assessmentIds
                 }
+                assessmentByOverTime {
+                    count
+                    date
+                }
             }
             geoAreas {
                 results {
@@ -82,9 +87,10 @@ const ARY_DASHBOARD_FILTER = gql`
                 totalCount
             }
             regions {
+                id
                 title
                 mediaSources
-                id
+                centroid
                 adminLevels {
                     geojsonFile {
                         name
@@ -277,7 +283,11 @@ function AryDashboard(props: Props) {
                 >
                     <GeographicalAreaAssessments
                         data={data}
+                        startDate={startDate}
+                        endDate={endDate}
                         navigationDisabled={loading}
+                        onStartDateChange={setStartDate}
+                        onEndDateChange={setEndDate}
                     />
                 </TabPanel>
                 <TabPanel
