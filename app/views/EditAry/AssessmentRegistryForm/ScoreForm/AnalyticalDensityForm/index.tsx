@@ -114,7 +114,7 @@ function AnalyticalDensityForm(props: Props) {
     ), [analyticalDensityValue]);
 
     const analyticalInputParams = useCallback(
-        (_, data: SectorType): AnalyticalDensityInputProps => {
+        (_: string, data: SectorType): AnalyticalDensityInputProps => {
             const analyticalIndex = analyticalDensityValueIndex?.[
                 data as AssessmentRegistrySectorTypeEnum
             ];

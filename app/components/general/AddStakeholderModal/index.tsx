@@ -31,7 +31,7 @@ import StakeholderList from './StakeholderList';
 
 import styles from './styles.css';
 
-export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>
+export type BasicProjectOrganization = PartialForm<PurgeNull<ProjectOrganizationGqInputType>>
     & { clientId: string };
 
 type FormType = PartialForm<Record<ProjectOrganizationTypeEnum, BasicProjectOrganization[]>, 'clientId'>;
@@ -131,7 +131,7 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
     const groupOrganizations = useCallback(
         (organizations: BasicProjectOrganization[]) => listToGroupList(
             organizations,
-            (o) => o.organizationType,
+            (o) => o.organizationType ?? '??',
             (o) => o,
         ),
         [],

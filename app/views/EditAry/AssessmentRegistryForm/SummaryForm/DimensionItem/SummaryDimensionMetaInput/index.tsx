@@ -18,7 +18,7 @@ interface Props {
     value?:SubDimensionMetaInputType;
     onChange: (value: SetValueArg<SubDimensionMetaInputType>, name?: number) => void;
     error: Error<SubDimensionMetaInputType>;
-    sector?: AssessmentRegistrySectorTypeEnum;
+    sector: AssessmentRegistrySectorTypeEnum;
     dimension?: AssessmentRegistrySummaryFocusDimensionTypeEnum;
 }
 
@@ -35,7 +35,7 @@ function SummaryDimensionMetaInput(props: Props) {
     const error = getErrorObject(riskyError);
     const onValueChange = useFormObject(name, onChange, {
         clientId: randomString(),
-        focus: sector,
+        sector,
     });
 
     return (
