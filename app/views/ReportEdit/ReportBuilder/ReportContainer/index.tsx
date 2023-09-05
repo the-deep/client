@@ -22,7 +22,7 @@ import {
     SegmentInput,
     NumberInput,
     QuickActionDropdownMenu,
-    Modal,
+    Container,
     QuickActionButton,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
@@ -32,6 +32,7 @@ import {
     IoPencil,
 } from 'react-icons/io5';
 
+import Portal from '#components/Portal';
 import { reorder } from '#utils/common';
 import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
@@ -82,6 +83,8 @@ export interface Props {
     setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
     readOnly?: boolean;
     disabled?: boolean;
+    leftContentRef: React.RefObject<HTMLDivElement>;
+    onContentEditChange: (newVal: boolean) => void;
 }
 
 function ReportContainer(props: Props) {
@@ -103,6 +106,8 @@ function ReportContainer(props: Props) {
         contentDataToFileMap,
         setContentDataToFileMap,
         disabled,
+        onContentEditChange,
+        leftContentRef,
     } = props;
 
     const index = allItems?.findIndex((item) => item.clientId === containerKey);
@@ -148,6 +153,22 @@ function ReportContainer(props: Props) {
         showContentAddModal,
         hideContentAddModal,
     ] = useModalState(false);
+
+    const handleContentEdit = useCallback(() => {
+        showContentEditModal();
+        onContentEditChange(true);
+    }, [
+        showContentEditModal,
+        onContentEditChange,
+    ]);
+
+    const handleContentEditClose = useCallback(() => {
+        hideContentEditModal();
+        onContentEditChange(false);
+    }, [
+        hideContentEditModal,
+        onContentEditChange,
+    ]);
 
     const rowItems = useMemo(() => {
         const items = allItems?.filter((item) => item.row === row);
@@ -287,11 +308,11 @@ function ReportContainer(props: Props) {
         newContentType: AnalysisReportContainerContentTypeEnum,
     ) => {
         hideContentAddModal();
-        showContentEditModal();
+        handleContentEdit();
         onFieldChange(newContentType, 'contentType');
     }, [
         onFieldChange,
-        showContentEditModal,
+        handleContentEdit,
         hideContentAddModal,
     ]);
 
@@ -329,6 +350,7 @@ function ReportContainer(props: Props) {
                 className,
                 styles.reportContainer,
                 isErrored && styles.errored,
+                contentEditModalVisible && styles.selected,
                 readOnly && styles.readOnly,
             )}
             style={{
@@ -436,7 +458,7 @@ function ReportContainer(props: Props) {
                             <QuickActionButton
                                 name={undefined}
                                 title="Edit Content"
-                                onClick={showContentEditModal}
+                                onClick={handleContentEdit}
                             >
                                 <IoPencil />
                             </QuickActionButton>
@@ -458,60 +480,72 @@ function ReportContainer(props: Props) {
                     onSelect={handleContentAddClick}
                 />
             )}
-            {!readOnly && contentEditModalVisible && (
-                <Modal
-                    onCloseButtonClick={hideContentEditModal}
-                    bodyClassName={styles.modalBody}
-                    heading="Configuration"
-                >
-                    {contentType === 'HEADING' && (
-                        <HeadingEdit
-                            name="heading"
-                            value={configuration?.heading}
-                            error={getErrorObject(error?.contentConfiguration)?.heading}
-                            onChange={onConfigChange}
-                        />
-                    )}
-                    {contentType === 'TEXT' && (
-                        <TextEdit
-                            name="text"
-                            onChange={onConfigChange}
-                            value={configuration?.text}
-                            error={getErrorObject(error?.contentConfiguration)?.text}
-                        />
-                    )}
-                    {contentType === 'IMAGE' && (
-                        <ImageEdit
-                            name="image"
-                            onChange={onConfigChange}
-                            value={configuration?.image}
-                            error={getErrorObject(error?.contentConfiguration)?.image}
-                            onFileUpload={handleImageFileUploadChange}
-                        />
-                    )}
-                    {contentType === 'URL' && (
-                        <UrlEdit
-                            name="url"
-                            onChange={onConfigChange}
-                            value={configuration?.url}
-                            error={getErrorObject(error?.contentConfiguration)?.url}
-                        />
-                    )}
-                    <ContainerStylesEdit
-                        name="style"
-                        value={style}
-                        onChange={onFieldChange}
-                        additionalStylingSettings={(
-                            <NumberInput
-                                name="height"
-                                label="Height"
-                                value={height}
-                                onChange={onFieldChange}
-                                disabled={disabled}
+            {!readOnly && contentEditModalVisible && leftContentRef?.current && (
+                <Portal element={leftContentRef.current}>
+                    <Container
+                        className={styles.editContainer}
+                        contentClassName={styles.editContentBody}
+                        heading="Configuration"
+                        headingSize="extraSmall"
+                        footerActions={(
+                            <Button
+                                name={undefined}
+                                variant="secondary"
+                                onClick={handleContentEditClose}
+                            >
+                                Close
+                            </Button>
+                        )}
+                    >
+                        {contentType === 'HEADING' && (
+                            <HeadingEdit
+                                name="heading"
+                                value={configuration?.heading}
+                                error={getErrorObject(error?.contentConfiguration)?.heading}
+                                onChange={onConfigChange}
                             />
                         )}
-                    />
-                </Modal>
+                        {contentType === 'TEXT' && (
+                            <TextEdit
+                                name="text"
+                                onChange={onConfigChange}
+                                value={configuration?.text}
+                                error={getErrorObject(error?.contentConfiguration)?.text}
+                            />
+                        )}
+                        {contentType === 'IMAGE' && (
+                            <ImageEdit
+                                name="image"
+                                onChange={onConfigChange}
+                                value={configuration?.image}
+                                error={getErrorObject(error?.contentConfiguration)?.image}
+                                onFileUpload={handleImageFileUploadChange}
+                            />
+                        )}
+                        {contentType === 'URL' && (
+                            <UrlEdit
+                                name="url"
+                                onChange={onConfigChange}
+                                value={configuration?.url}
+                                error={getErrorObject(error?.contentConfiguration)?.url}
+                            />
+                        )}
+                        <ContainerStylesEdit
+                            name="style"
+                            value={style}
+                            onChange={onFieldChange}
+                            additionalStylingSettings={(
+                                <NumberInput
+                                    name="height"
+                                    label="Height"
+                                    value={height}
+                                    onChange={onFieldChange}
+                                    disabled={disabled}
+                                />
+                            )}
+                        />
+                    </Container>
+                </Portal>
             )}
         </div>
     );

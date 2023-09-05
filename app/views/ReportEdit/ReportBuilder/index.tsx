@@ -5,8 +5,9 @@ import {
 } from '@togglecorp/fujs';
 import {
     ListView,
-    Modal,
+    Button,
     Header,
+    Container,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
@@ -18,6 +19,7 @@ import {
 import { IoPencil } from 'react-icons/io5';
 
 import Avatar from '#components/Avatar';
+import Portal from '#components/Portal';
 import { useModalState } from '#hooks/stateManagement';
 import {
     BasicOrganization,
@@ -58,6 +60,8 @@ interface Props {
     >>;
     contentDataToFileMap: ContentDataFileMap | undefined;
     setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
+    leftContentRef: React.RefObject<HTMLDivElement>;
+    onContentEditChange: (newVal: boolean) => void;
 }
 
 function ReportBuilder(props: Props) {
@@ -72,6 +76,8 @@ function ReportBuilder(props: Props) {
         onOrganizationOptionsChange,
         contentDataToFileMap,
         setContentDataToFileMap,
+        onContentEditChange,
+        leftContentRef,
     } = props;
 
     const orgMap = useMemo(() => (
@@ -81,13 +87,28 @@ function ReportBuilder(props: Props) {
             (org) => org,
         )
     ), [organizationOptions]);
-    console.log('aditya', value);
 
     const [
         contentEditModalVisible,
         showContentEditModal,
         hideContentEditModal,
     ] = useModalState(false);
+
+    const handleContentEdit = useCallback(() => {
+        showContentEditModal();
+        onContentEditChange(true);
+    }, [
+        showContentEditModal,
+        onContentEditChange,
+    ]);
+
+    const handleContentEditClose = useCallback(() => {
+        hideContentEditModal();
+        onContentEditChange(false);
+    }, [
+        hideContentEditModal,
+        onContentEditChange,
+    ]);
 
     const reportContainerRendererParams = useCallback(
         (
@@ -102,11 +123,13 @@ function ReportBuilder(props: Props) {
                 containerKey,
                 column: item.column,
                 width: item.width,
+                onContentEditChange,
                 height: item.height,
                 allItems: value?.containers,
                 contentData: item?.contentData,
                 configuration: item.contentConfiguration,
                 contentType: item.contentType,
+                leftContentRef,
                 style: item.style,
                 error: itemError,
                 setFieldValue,
@@ -119,6 +142,8 @@ function ReportBuilder(props: Props) {
         [
             contentDataToFileMap,
             setContentDataToFileMap,
+            onContentEditChange,
+            leftContentRef,
             error,
             value?.containers,
             setFieldValue,
@@ -164,7 +189,7 @@ function ReportBuilder(props: Props) {
                     {!readOnly && (
                         <QuickActionButton
                             name={undefined}
-                            onClick={showContentEditModal}
+                            onClick={handleContentEdit}
                             className={styles.editButton}
                             disabled={disabled}
                         >
@@ -184,21 +209,32 @@ function ReportBuilder(props: Props) {
                     pending={false}
                 />
             </div>
-            {contentEditModalVisible && (
-                <Modal
-                    heading="Edit metadata"
-                    onCloseButtonClick={hideContentEditModal}
-                    freeHeight
-                >
-                    <MetadataEdit
-                        setFieldValue={setFieldValue}
-                        organizationOptions={organizationOptions}
-                        onOrganizationOptionsChange={onOrganizationOptionsChange}
-                        error={error}
-                        value={value}
-                        disabled={disabled}
-                    />
-                </Modal>
+            {contentEditModalVisible && leftContentRef?.current && (
+                <Portal element={leftContentRef.current}>
+                    <Container
+                        className={styles.editContainer}
+                        heading="Metadata Edit"
+                        headingSize="small"
+                        footerActions={(
+                            <Button
+                                name={undefined}
+                                variant="secondary"
+                                onClick={handleContentEditClose}
+                            >
+                                Close
+                            </Button>
+                        )}
+                    >
+                        <MetadataEdit
+                            setFieldValue={setFieldValue}
+                            organizationOptions={organizationOptions}
+                            onOrganizationOptionsChange={onOrganizationOptionsChange}
+                            error={error}
+                            value={value}
+                            disabled={disabled}
+                        />
+                    </Container>
+                </Portal>
             )}
         </div>
     );

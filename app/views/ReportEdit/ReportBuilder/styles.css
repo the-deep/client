@@ -53,6 +53,11 @@
             display: grid;
             margin: 0 auto;
             grid-template-columns: repeat(12, 1fr);
+            grid-gap: var(--dui-spacing-super-small);
         }
     }
+}
+
+.edit-container {
+    background-color: transparent;
 }

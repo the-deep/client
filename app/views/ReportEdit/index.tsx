@@ -2,11 +2,13 @@ import React, {
     useMemo,
     useState,
     useCallback,
+    useRef,
 } from 'react';
 import {
     _cs,
     randomString,
     listToMap,
+    compareNumber,
 } from '@togglecorp/fujs';
 import {
     useParams,
@@ -273,6 +275,7 @@ function ReportEdit(props: Props) {
 
     const alert = useAlert();
     const history = useHistory();
+    const leftContentRef = useRef<HTMLDivElement>(null);
 
     const {
         reportId,
@@ -411,11 +414,15 @@ function ReportEdit(props: Props) {
                     return;
                 }
                 const valueToSet = removeNull(response.project.analysisReport);
+                const newContainers = [...(valueToSet?.containers ?? [])];
+                newContainers.sort((a, b) => (
+                    compareNumber(a.row, b.row) || compareNumber(a.column, b.column)
+                ));
                 setValue(
                     {
                         ...valueToSet,
                         organizations: valueToSet.organizations?.map((item) => item.id),
-                        containers: valueToSet.containers?.map((item) => ({
+                        containers: newContainers?.map((item) => ({
                             ...item,
                             contentData: item.contentData?.map((contentDataItem) => ({
                                 ...contentDataItem,
@@ -554,6 +561,11 @@ function ReportEdit(props: Props) {
         || createReportLoading
         || updateReportLoading;
 
+    const [
+        contentEditPaneVisible,
+        setContentEditPaneVisibility,
+    ] = useState(false);
+
     return (
         <div className={_cs(className, styles.reportEdit)}>
             <SubNavbar
@@ -583,9 +595,20 @@ function ReportEdit(props: Props) {
             />
             <div className={styles.content}>
                 {pending && <PendingMessage />}
-                <div className={styles.leftContent}>
-                    <Toc
-                        data={tableOfContents}
+                <div
+                    className={_cs(
+                        styles.leftContent,
+                        contentEditPaneVisible && styles.large,
+                    )}
+                >
+                    {!contentEditPaneVisible && (
+                        <Toc
+                            data={tableOfContents}
+                        />
+                    )}
+                    <div
+                        ref={leftContentRef}
+                        className={styles.editContent}
                     />
                 </div>
                 <ReportBuilder
@@ -599,6 +622,8 @@ function ReportEdit(props: Props) {
                     onOrganizationOptionsChange={setOrganizationOptions}
                     contentDataToFileMap={contentDataToFileMap}
                     setContentDataToFileMap={setContentDataToFileMap}
+                    leftContentRef={leftContentRef}
+                    onContentEditChange={setContentEditPaneVisibility}
                 />
             </div>
         </div>

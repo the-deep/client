@@ -53,6 +53,7 @@ function UrlEdit<NAME extends string>(props: Props<NAME>) {
             >
                 <TextInput
                     value={value?.url}
+                    label="Url"
                     name="url"
                     onChange={onFieldChange}
                     error={error?.url}

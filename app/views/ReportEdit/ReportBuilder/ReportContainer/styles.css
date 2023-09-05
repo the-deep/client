@@ -4,6 +4,7 @@
     flex-direction: column;
     flex-wrap: wrap;
     gap: var(--dui-spacing-medium);
+    transition: 0.2s all ease-in-out;
     border: var(--dui-width-separator-thin) solid transparent;
     padding: var(--dui-spacing-small);
 
@@ -80,10 +81,21 @@
     &.errored {
         border-color: var(--dui-color-danger);
     }
+
+    &.selected {
+        border-color: transparent;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    }
 }
 
-.modal-body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--dui-spacing-large);
+.edit-container {
+    background-color: transparent;
+    overflow-y: auto;
+
+    .edit-content-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-large);
+        overflow-y: auto;
+    }
 }

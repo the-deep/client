@@ -15,8 +15,19 @@
 
         .left-content {
             flex-shrink: 0;
+            transition: 200ms width ease-in-out;
             border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-            width: 20rem;
+            width: 24rem;
+            overflow-y: auto;
+            resize: horizontal;
+
+            .edit-content {
+                overflow-y: auto;
+            }
+
+            &.large {
+                width: 32rem;
+            }
         }
 
         .right-content {
