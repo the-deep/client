@@ -13,20 +13,20 @@ import {
     useForm,
 } from '@togglecorp/toggle-form';
 
+import { EnumOptions } from '#types/common';
+import { enumKeySelector, enumLabelSelector } from '#utils/common';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
 import OrganizationMultiSelectInput, {
     BasicOrganization,
 } from '#components/selections/NewOrganizationMultiSelectInput';
-
-import { EnumFix } from '#utils/types';
-import {
-    enumKeySelector,
-    enumLabelSelector,
-} from '#utils/common';
 import {
     AssessmentDashboardFilterDataInputType,
     AssessmentFilterOptionsQuery,
     AssessmentFilterOptionsQueryVariables,
+    AssessmentRegistryAffectedGroupTypeEnum,
+    AssessmentRegistryCoordinationTypeEnum,
+    AssessmentRegistryFrequencyTypeEnum,
+    AssessmentRegistrySectorTypeEnum,
 } from '#generated/types';
 
 import styles from './styles.module.css';
@@ -64,7 +64,7 @@ const ASSESSMENT_FILTER_OPTIONS = gql`
     }
 `;
 
-export type FilterForm = EnumFix<AssessmentDashboardFilterDataInputType, 'sectors' | 'affectedGroup' | 'coordinationType' | 'frequency'>;
+export type FilterForm = AssessmentDashboardFilterDataInputType;
 
 type FormSchema = ObjectSchema<FilterForm>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
@@ -119,6 +119,24 @@ function Filters(props: Props) {
         setPristine,
     } = useForm(schema, initialValue ?? {} as FilterForm);
 
+    const [
+        sectorOptions,
+        affectedGroupOptions,
+        frequencyOptions,
+        coordinationOptions,
+    ] = useMemo(() => ([
+        data?.sectorOptions?.enumValues as EnumOptions<AssessmentRegistrySectorTypeEnum>,
+        data?.affectedGroupOptions?.enumValues as EnumOptions<
+            AssessmentRegistryAffectedGroupTypeEnum
+        >,
+        data?.assessmentFrequencyOptions?.enumValues as EnumOptions<
+            AssessmentRegistryFrequencyTypeEnum
+        >,
+        data?.coordinationTypeOptions?.enumValues as EnumOptions<
+            AssessmentRegistryCoordinationTypeEnum
+        >,
+    ]), [data]);
+
     const isFilterEmpty = useMemo(() => (
         doesObjectHaveNoData(value, [''])
     ), [value]);
@@ -165,8 +183,8 @@ function Filters(props: Props) {
                 label="Lead organizations"
             />
             <GeoMultiSelectInput
-                name="leadOrganization"
-                value={value.leadOrganization}
+                name="location"
+                value={value.location}
                 onChange={setFieldValue}
                 options={geoAreaOptions}
                 onOptionsChange={setGeoAreaOptions}
@@ -177,7 +195,7 @@ function Filters(props: Props) {
             <MultiSelectInput
                 name="sectors"
                 onChange={setFieldValue}
-                options={data?.sectorOptions?.enumValues}
+                options={sectorOptions}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 value={value.sectors}
@@ -188,7 +206,7 @@ function Filters(props: Props) {
             <MultiSelectInput
                 name="affectedGroup"
                 onChange={setFieldValue}
-                options={data?.affectedGroupOptions?.enumValues}
+                options={affectedGroupOptions}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 value={value.affectedGroup}
@@ -199,7 +217,7 @@ function Filters(props: Props) {
             <MultiSelectInput
                 name="frequency"
                 onChange={setFieldValue}
-                options={data?.assessmentFrequencyOptions?.enumValues}
+                options={frequencyOptions}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 value={value.frequency}
@@ -210,7 +228,7 @@ function Filters(props: Props) {
             <MultiSelectInput
                 name="coordinationType"
                 onChange={setFieldValue}
-                options={data?.coordinationTypeOptions?.enumValues}
+                options={coordinationOptions}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 value={value.coordinationType}
