@@ -32,7 +32,7 @@ import {
 
 import Statistics from './Statistics';
 import Filters, { FilterForm } from './Filters';
-import GeographicalAreaAssessments from './GeographicalAreaAssessments';
+import WhatAssessed from './WhatAssessed';
 
 import styles from './styles.css';
 
@@ -281,13 +281,13 @@ function AryDashboard(props: Props) {
                 <TabPanel
                     name="what"
                 >
-                    <GeographicalAreaAssessments
+                    <WhatAssessed
                         data={data}
                         startDate={startDate}
                         endDate={endDate}
-                        navigationDisabled={loading}
                         onStartDateChange={setStartDate}
                         onEndDateChange={setEndDate}
+                        readOnly={loading}
                     />
                 </TabPanel>
                 <TabPanel
