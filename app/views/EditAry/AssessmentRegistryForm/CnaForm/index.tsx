@@ -121,7 +121,7 @@ function CnaForm(props: Props) {
 
     const answerMapIndex = listToMap(
         cnaValue,
-        (k) => k.question,
+        (k) => k.question ?? '??',
         (_, __, index) => index,
     );
 
