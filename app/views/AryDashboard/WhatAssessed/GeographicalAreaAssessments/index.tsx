@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useRef } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { _cs, isDefined, isTruthyString } from '@togglecorp/fujs';
 import Map, {
     MapContainer,
@@ -23,11 +23,6 @@ import {
 
 import { mapboxStyle } from '#base/configs/env';
 import { AryDashboardFilterQuery } from '#generated/types';
-import { getTimeseriesWithoutGaps } from '#utils/temporal';
-import { DEEP_START_DATE, todaysDate } from '#utils/common';
-import useSizeTracking from '#hooks/useSizeTracking';
-import BrushLineChart from '#views/ExploreDeepContent/BrushLineChart';
-import EntityCreationLineChart from '#views/ExploreDeepContent/EntityCreationLineChart';
 
 import styles from './styles.css';
 
@@ -69,6 +64,10 @@ const adminLevels = [
         id: '2',
         title: 'Province',
     },
+    {
+        id: '3',
+        title: 'District',
+    },
 ];
 
 interface KeyValue {
@@ -86,11 +85,6 @@ interface Props {
     className?: string;
     defaultZoom?: number;
     data?: AryDashboardFilterQuery;
-    startDate: number;
-    endDate: number;
-    onStartDateChange: ((newDate: number | undefined) => void) | undefined;
-    onEndDateChange: ((newDate: number | undefined) => void) | undefined;
-    readOnly?: boolean;
     navigationDisabled?: boolean;
 }
 
@@ -99,21 +93,12 @@ function GeographicalAreaAssessments(props: Props) {
         className,
         defaultZoom = 2,
         data,
-        startDate,
-        endDate,
-        onStartDateChange,
-        onEndDateChange,
         navigationDisabled,
-        readOnly,
     } = props;
 
     const [activeAdminLevel, setActiveAdminLevel] = useState<string>('1');
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
-    const barContainerRef = useRef<HTMLDivElement>(null);
-    const {
-        width,
-    } = useSizeTracking(barContainerRef) ?? {};
 
     const mapOptions: Partial<MapboxOptions> = useMemo(() => ({
         zoom: defaultZoom,
@@ -193,28 +178,6 @@ function GeographicalAreaAssessments(props: Props) {
         value: tooltipData.value,
     }), []);
 
-    const handleDateRangeChange = useCallback(
-        (foo: number | undefined, bar: number | undefined) => {
-            if (onStartDateChange) {
-                onStartDateChange(foo);
-            }
-            if (onEndDateChange) {
-                onEndDateChange(bar);
-            }
-        },
-        [onStartDateChange, onEndDateChange],
-    );
-
-    const timeseriesWithoutGaps = useMemo(
-        () => getTimeseriesWithoutGaps(
-            data?.project?.assessmentDashboardStatistics?.assessmentByOverTime ?? undefined,
-            'month',
-            DEEP_START_DATE,
-            todaysDate,
-        ),
-        [data?.project?.assessmentDashboardStatistics?.assessmentByOverTime],
-    );
-
     return (
         <div className={_cs(className)}>
             <SegmentInput
@@ -279,25 +242,6 @@ function GeographicalAreaAssessments(props: Props) {
                     )}
                 </MapSource>
             </Map>
-            <div ref={barContainerRef}>
-                <BrushLineChart
-                    width={width ?? 0}
-                    height={160}
-                    data={timeseriesWithoutGaps}
-                    endDate={endDate}
-                    startDate={startDate}
-                    onChange={handleDateRangeChange}
-                    readOnly={readOnly}
-                />
-            </div>
-            <EntityCreationLineChart
-                className={styles.lineChart}
-                heading="Number of Assessment Over Time"
-                // eslint-disable-next-line max-len
-                timeseries={data?.project?.assessmentDashboardStatistics?.assessmentByOverTime ?? undefined}
-                startDate={startDate}
-                endDate={endDate}
-            />
         </div>
     );
 }
