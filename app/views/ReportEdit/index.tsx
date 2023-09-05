@@ -63,6 +63,34 @@ import schema, {
 } from './schema';
 import styles from './styles.css';
 
+const TEXT_STYLE_FRAGMENT = gql`
+    fragment TextStyle on AnalysisReportTextStyleType {
+        align
+        color
+        family
+        size
+        weight
+    }
+`;
+
+const PADDING_STYLE_FRAGMENT = gql`
+    fragment PaddingStyle on AnalysisReportPaddingStyleType {
+        top
+        bottom
+        right
+        left
+    }
+`;
+
+const BORDER_STYLE_FRAGMENT = gql`
+    fragment BorderStyle on AnalysisReportBorderStyleType {
+        color
+        opacity
+        style
+        width
+    }
+`;
+
 const PILLARS_FOR_REPORT = gql`
     query PillarsForReport(
         $projectId: ID!,
@@ -96,6 +124,9 @@ const PILLARS_FOR_REPORT = gql`
 
 const REPORT_DETAILS = gql`
     ${ORGANIZATION_FRAGMENT}
+    ${TEXT_STYLE_FRAGMENT}
+    ${BORDER_STYLE_FRAGMENT}
+    ${PADDING_STYLE_FRAGMENT}
     query ReportDetails(
         $projectId: ID!,
         $reportId: ID!,
@@ -121,6 +152,18 @@ const REPORT_DETAILS = gql`
                     width
                     height
                     contentType
+                    style {
+                        border {
+                            ...BorderStyle
+                        }
+                        padding {
+                            ...PaddingStyle
+                        }
+                        background {
+                            color
+                            opacity
+                        }
+                    }
                     contentData {
                         clientId
                         data
@@ -140,13 +183,29 @@ const REPORT_DETAILS = gql`
                         heading {
                             content
                             variant
+                            style {
+                                content {
+                                    ...TextStyle
+                                }
+                            }
                         }
                         image {
                             altText
                             caption
+                            style {
+                                caption {
+                                    ...TextStyle
+                                }
+                                fit
+                            }
                         }
                         text {
                             content
+                            style {
+                                content {
+                                    ...TextStyle
+                                }
+                            }
                         }
                         url {
                             url

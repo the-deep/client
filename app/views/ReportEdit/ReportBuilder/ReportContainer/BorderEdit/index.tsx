@@ -1,4 +1,5 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     type SetValueArg,
     type Error,
@@ -7,21 +8,22 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     NumberInput,
+    Heading,
     PendingMessage,
-    SegmentInput,
+    SelectInput,
     ColorInput,
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 
-import {
-    AnalysisReportBorderStyleStyleEnum,
-    ReportBorderDetailsQuery,
-} from '#generated/types';
 import { EnumOptions } from '#types/common';
 import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
+import {
+    AnalysisReportBorderStyleStyleEnum,
+    ReportBorderDetailsQuery,
+} from '#generated/types';
 import {
     type BorderStyleFormType,
 } from '../../../schema';
@@ -74,48 +76,53 @@ function BorderEdit<NAME extends string>(props: Props<NAME>) {
     >;
 
     return (
-        <>
+        <div className={styles.borderEdit}>
             {loading && <PendingMessage />}
-            <ColorInput
-                name="color"
-                value={value?.color}
-                className={styles.colorInput}
-                onChange={onFieldChange}
-                /* FIXME Add error, label and disabled in color input
-                error={error?.color}
-                label="Color"
-                disabled={disabled}
-                */
-            />
-            <NumberInput
-                name="width"
-                label="Width"
-                value={value?.width}
-                onChange={onFieldChange}
-                error={error?.width}
-                disabled={disabled}
-            />
-            <NumberInput
-                name="opacity"
-                label="Opacity"
-                value={value?.opacity}
-                onChange={onFieldChange}
-                error={error?.opacity}
-                disabled={disabled}
-            />
-            <SegmentInput
-                name="style"
-                label="Variant"
-                value={value?.style}
-                onChange={onFieldChange}
-                options={options ?? undefined}
-                keySelector={enumKeySelector}
-                labelSelector={enumLabelSelector}
-                error={error?.style}
-                disabled={disabled}
-                spacing="compact"
-            />
-        </>
+            <Heading size="extraSmall">Border</Heading>
+            <div className={styles.inputs}>
+                <ColorInput
+                    name="color"
+                    value={value?.color}
+                    className={_cs(styles.input, styles.colorInput)}
+                    onChange={onFieldChange}
+                    /* FIXME Add error, label and disabled in color input
+                    error={error?.color}
+                    label="Color"
+                    disabled={disabled}
+                    */
+                />
+                <NumberInput
+                    name="width"
+                    label="Width"
+                    className={styles.input}
+                    value={value?.width}
+                    onChange={onFieldChange}
+                    error={error?.width}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    name="opacity"
+                    label="Opacity"
+                    value={value?.opacity}
+                    className={styles.input}
+                    onChange={onFieldChange}
+                    error={error?.opacity}
+                    disabled={disabled}
+                />
+                <SelectInput
+                    name="style"
+                    label="Variant"
+                    value={value?.style}
+                    className={_cs(styles.input, styles.selectInput)}
+                    onChange={onFieldChange}
+                    options={options ?? undefined}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    error={error?.style}
+                    disabled={disabled}
+                />
+            </div>
+        </div>
     );
 }
 

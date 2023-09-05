@@ -55,19 +55,19 @@ function ContainerStylesEdit<NAME extends string>(props: Props<NAME>) {
             withoutBorder
         >
             {additionalStylingSettings}
-            <PaddingEdit
-                name="padding"
-                value={value?.padding}
-                onChange={onFieldChange}
-                disabled={disabled}
-                error={error?.padding}
-            />
             <BorderEdit
                 name="border"
                 value={value?.border}
                 onChange={onFieldChange}
                 disabled={disabled}
                 error={error?.border}
+            />
+            <PaddingEdit
+                name="padding"
+                value={value?.padding}
+                onChange={onFieldChange}
+                disabled={disabled}
+                error={error?.padding}
             />
             <BackgroundEdit
                 name="background"

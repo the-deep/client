@@ -26,6 +26,7 @@ interface Props {
         BasicOrganization[] | undefined | null
     >>;
     error?: Error<PartialFormType>;
+    disabled?: boolean;
 }
 
 function MetadataEdit(props: Props) {
@@ -36,6 +37,7 @@ function MetadataEdit(props: Props) {
         error: riskyError,
         organizationOptions,
         onOrganizationOptionsChange,
+        disabled,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -48,6 +50,7 @@ function MetadataEdit(props: Props) {
                 value={value?.title}
                 onChange={setFieldValue}
                 error={error?.title}
+                disabled={disabled}
             />
             <TextInput
                 name="subTitle"
@@ -55,6 +58,7 @@ function MetadataEdit(props: Props) {
                 value={value?.subTitle}
                 onChange={setFieldValue}
                 error={error?.subTitle}
+                disabled={disabled}
             />
             <TextInput
                 name="slug"
@@ -63,6 +67,7 @@ function MetadataEdit(props: Props) {
                 value={value?.slug}
                 onChange={setFieldValue}
                 error={error?.slug}
+                disabled={disabled}
             />
             <NewOrganizationMultiSelectInput
                 className={styles.input}
@@ -73,6 +78,7 @@ function MetadataEdit(props: Props) {
                 onOptionsChange={onOrganizationOptionsChange}
                 label="Organizations"
                 error={getErrorString(error?.organizations)}
+                disabled={disabled}
             />
         </div>
     );

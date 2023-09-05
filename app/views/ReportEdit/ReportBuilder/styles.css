@@ -30,6 +30,10 @@
             }
         }
 
+        &.read-only {
+            border-color: transparent;
+        }
+
         &.error {
             border-color: var(--dui-color-danger);
         }

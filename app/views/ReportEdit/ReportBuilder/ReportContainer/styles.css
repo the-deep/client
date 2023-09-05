@@ -73,6 +73,10 @@
         }
     }
 
+    &.read-only {
+        border-color: transparent;
+    }
+
     &.errored {
         border-color: var(--dui-color-danger);
     }
@@ -81,5 +85,5 @@
 .modal-body {
     display: flex;
     flex-direction: column;
-    gap: var(--dui-spacing-medium);
+    gap: var(--dui-spacing-large);
 }

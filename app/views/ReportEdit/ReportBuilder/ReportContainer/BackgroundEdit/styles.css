@@ -1,3 +1,24 @@
-.color-input {
-    flex-shrink: 0;
+.background-edit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-small);
+
+    .inputs {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-medium);
+
+        .input {
+            width: 6rem;
+
+            .icon {
+                font-size: var(--dui-font-size-extra-large);
+            }
+        }
+
+        .color-input {
+            flex-shrink: 0;
+            width: 2rem;
+        }
+    }
 }

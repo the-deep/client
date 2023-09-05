@@ -1,7 +1,7 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 import { removeNull } from '@togglecorp/toggle-form';
 import {
-    Heading,
     Message,
     Kraken,
 } from '@the-deep/deep-ui';
@@ -14,15 +14,9 @@ import {
 
 import { ContentDataFileMap } from '../../../index';
 import { ContentDataType } from '../../../schema';
+import { resolveTextStyle } from '../../../utils';
 
 import styles from './styles.css';
-
-const variantToSizeMapping = {
-    H1: 'extraLarge',
-    H2: 'large',
-    H3: 'medium',
-    H4: 'small',
-} as const;
 
 interface Props {
     contentType: AnalysisReportContainerContentTypeEnum;
@@ -46,14 +40,59 @@ function Content(props: Props) {
             heading: {
                 content,
                 variant,
+                style,
             } = {},
         } = configuration;
+
+        if (variant === 'H4') {
+            return (
+                <h4
+                    className={_cs(
+                        styles.heading,
+                        styles.headingFour,
+                    )}
+                    style={resolveTextStyle(style?.content)}
+                >
+                    {content ?? 'Title goes here'}
+                </h4>
+            );
+        }
+        if (variant === 'H3') {
+            return (
+                <h3
+                    className={_cs(
+                        styles.heading,
+                        styles.headingThree,
+                    )}
+                    style={resolveTextStyle(style?.content)}
+                >
+                    {content ?? 'Title goes here'}
+                </h3>
+            );
+        }
+        if (variant === 'H2') {
+            return (
+                <h2
+                    className={_cs(
+                        styles.heading,
+                        styles.headingTwo,
+                    )}
+                    style={resolveTextStyle(style?.content)}
+                >
+                    {content ?? 'Title goes here'}
+                </h2>
+            );
+        }
         return (
-            <Heading
-                size={variant ? variantToSizeMapping[variant] : 'extraLarge'}
+            <h1
+                className={_cs(
+                    styles.heading,
+                    styles.headingOne,
+                )}
+                style={resolveTextStyle(style?.content)}
             >
                 {content ?? 'Title goes here'}
-            </Heading>
+            </h1>
         );
     }
 
@@ -61,13 +100,18 @@ function Content(props: Props) {
         const {
             text: {
                 content,
+                style,
             } = {},
         } = configuration;
 
         return (
-            <ReactMarkdown className={styles.markdown}>
-                {content ?? 'Content goes here'}
-            </ReactMarkdown>
+            <div
+                style={resolveTextStyle(style?.content)}
+            >
+                <ReactMarkdown className={styles.markdown}>
+                    {content ?? 'Content goes here'}
+                </ReactMarkdown>
+            </div>
         );
     }
 

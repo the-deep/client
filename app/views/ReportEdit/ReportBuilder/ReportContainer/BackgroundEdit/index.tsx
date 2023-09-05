@@ -7,6 +7,7 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     NumberInput,
+    Heading,
     ColorInput,
 } from '@the-deep/deep-ui';
 
@@ -39,27 +40,30 @@ function BackgroundEdit<NAME extends string>(props: Props<NAME>) {
     >(name, onChange, {});
 
     return (
-        <>
-            <NumberInput
-                name="opacity"
-                label="opacity"
-                value={value?.opacity}
-                onChange={onFieldChange}
-                error={error?.opacity}
-                disabled={disabled}
-            />
-            <ColorInput
-                name="color"
-                value={value?.color}
-                onChange={onFieldChange}
-                className={styles.colorInput}
-                /* FIXME: Add these fields to Color Input
-                error={error?.color}
-                label="Color"
-                disabled={disabled}
-                */
-            />
-        </>
+        <div className={styles.backgroundEdit}>
+            <Heading size="extraSmall">Background</Heading>
+            <div className={styles.inputs}>
+                <NumberInput
+                    name="opacity"
+                    label="opacity"
+                    value={value?.opacity}
+                    onChange={onFieldChange}
+                    error={error?.opacity}
+                    disabled={disabled}
+                />
+                <ColorInput
+                    name="color"
+                    value={value?.color}
+                    onChange={onFieldChange}
+                    className={styles.colorInput}
+                    /* FIXME: Add these fields to Color Input
+                    error={error?.color}
+                    label="Color"
+                    disabled={disabled}
+                    */
+                />
+            </div>
+        </div>
     );
 }
 

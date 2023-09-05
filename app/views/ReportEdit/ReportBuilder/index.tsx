@@ -132,12 +132,18 @@ function ReportBuilder(props: Props) {
     ), [error]);
 
     return (
-        <div className={_cs(className, styles.reportBuilder)}>
+        <div
+            className={_cs(
+                className,
+                styles.reportBuilder,
+            )}
+        >
             <div className={styles.report}>
                 <div
                     className={_cs(
-                        errorInMetadata && styles.error,
                         styles.headingContainer,
+                        readOnly && styles.readOnly,
+                        errorInMetadata && styles.error,
                     )}
                 >
                     <Header
@@ -155,13 +161,16 @@ function ReportBuilder(props: Props) {
                             />
                         ))}
                     />
-                    <QuickActionButton
-                        name={undefined}
-                        onClick={showContentEditModal}
-                        className={styles.editButton}
-                    >
-                        <IoPencil />
-                    </QuickActionButton>
+                    {!readOnly && (
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={showContentEditModal}
+                            className={styles.editButton}
+                            disabled={disabled}
+                        >
+                            <IoPencil />
+                        </QuickActionButton>
+                    )}
                 </div>
                 <NonFieldError error={getErrorObject(error)?.containers} />
                 <ListView
@@ -187,6 +196,7 @@ function ReportBuilder(props: Props) {
                         onOrganizationOptionsChange={onOrganizationOptionsChange}
                         error={error}
                         value={value}
+                        disabled={disabled}
                     />
                 </Modal>
             )}

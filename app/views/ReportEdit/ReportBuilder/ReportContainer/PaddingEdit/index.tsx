@@ -7,11 +7,15 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     NumberInput,
+    Heading,
 } from '@the-deep/deep-ui';
+import { MdPadding } from 'react-icons/md';
 
 import {
     type PaddingStyleFormType,
 } from '../../../schema';
+
+import styles from './styles.css';
 
 interface Props<NAME extends string> {
     name: NAME;
@@ -37,40 +41,59 @@ function PaddingEdit<NAME extends string>(props: Props<NAME>) {
     const error = getErrorObject(riskyError);
 
     return (
-        <>
-            <NumberInput
-                name="top"
-                label="Top"
-                value={value?.top}
-                onChange={onFieldChange}
-                error={error?.top}
-                disabled={disabled}
-            />
-            <NumberInput
-                name="right"
-                label="Right"
-                value={value?.right}
-                onChange={onFieldChange}
-                error={error?.right}
-                disabled={disabled}
-            />
-            <NumberInput
-                name="bottom"
-                label="Bottom"
-                value={value?.bottom}
-                onChange={onFieldChange}
-                error={error?.bottom}
-                disabled={disabled}
-            />
-            <NumberInput
-                name="left"
-                label="Left"
-                value={value?.left}
-                onChange={onFieldChange}
-                error={error?.left}
-                disabled={disabled}
-            />
-        </>
+        <div className={styles.paddingEdit}>
+            <Heading size="extraSmall">Padding</Heading>
+            <div className={styles.inputs}>
+                <NumberInput
+                    className={styles.input}
+                    name="top"
+                    label="Top"
+                    value={value?.top}
+                    icons={(
+                        <MdPadding className={styles.icon} />
+                    )}
+                    onChange={onFieldChange}
+                    error={error?.top}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    className={styles.input}
+                    name="right"
+                    label="Right"
+                    value={value?.right}
+                    icons={(
+                        <MdPadding className={styles.icon} />
+                    )}
+                    onChange={onFieldChange}
+                    error={error?.right}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    className={styles.input}
+                    name="bottom"
+                    label="Bottom"
+                    value={value?.bottom}
+                    icons={(
+                        <MdPadding className={styles.icon} />
+                    )}
+                    onChange={onFieldChange}
+                    error={error?.bottom}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    className={styles.input}
+                    name="left"
+                    label="Left"
+                    value={value?.left}
+                    icons={(
+                        <MdPadding className={styles.icon} />
+                    )}
+                    onChange={onFieldChange}
+                    error={error?.left}
+                    disabled={disabled}
+                />
+            </div>
+        </div>
     );
 }
 

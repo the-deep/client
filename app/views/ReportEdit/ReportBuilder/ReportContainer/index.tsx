@@ -329,6 +329,7 @@ function ReportContainer(props: Props) {
                 className,
                 styles.reportContainer,
                 isErrored && styles.errored,
+                readOnly && styles.readOnly,
             )}
             style={{
                 ...containerStyles,
