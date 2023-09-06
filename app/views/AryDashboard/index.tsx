@@ -288,6 +288,7 @@ function AryDashboard(props: Props) {
                         onStartDateChange={setStartDate}
                         onEndDateChange={setEndDate}
                         readOnly={loading}
+                        projectId={activeProject}
                     />
                 </TabPanel>
                 <TabPanel
