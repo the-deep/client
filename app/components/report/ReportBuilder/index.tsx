@@ -43,6 +43,7 @@ const metadataFields: (keyof PartialFormType)[] = [
     'slug',
     'title',
     'subTitle',
+    'isPublic',
 ];
 
 const reportContainerKeySelector = (item: ReportContainerType) => item.clientId;
@@ -153,7 +154,9 @@ function ReportBuilder(props: Props) {
     );
 
     const errorInMetadata = useMemo(() => (
-        metadataFields.some((field) => analyzeErrors(getErrorObject(error)?.[field]))
+        metadataFields.some((field) => analyzeErrors(
+            getErrorObject(error)?.[field],
+        ))
     ), [error]);
 
     return (

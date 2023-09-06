@@ -11,7 +11,6 @@ import GalleryFileUpload from '#components/GalleryFileUpload';
 import {
     CreateReportFileMutation,
     CreateReportFileMutationVariables,
-    AnalysisReportUploadInputType,
     AnalysisReportUploadType,
     GalleryFileType,
 } from '#generated/types';
@@ -99,9 +98,6 @@ function AryFileUpload(props: Props) {
 
     const [
         uploadAttachment,
-        {
-            loading,
-        },
     ] = useMutation<CreateReportFileMutation, CreateReportFileMutationVariables>(
         CREATE_REPORT_FILE,
         {
@@ -171,6 +167,8 @@ function AryFileUpload(props: Props) {
         <GalleryFileUpload
             onSuccess={handleFileInputChange}
             projectIds={projectId ? [projectId] : undefined}
+            disabled={disabled}
+            acceptFileType={acceptFileType}
         />
     );
 }

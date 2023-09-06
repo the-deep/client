@@ -46,18 +46,18 @@ export type BasicOrganization = {
     shortName?: string;
     logo?: {
         file?: {
-            url?: string;
-        };
-    };
+            url?: string | null;
+        } | null;
+    } | null;
     mergedAs?: {
         id: string;
         title: string;
         shortName?: string;
         logo?: {
             file?: {
-                url?: string;
-            };
-        };
+                url?: string | null;
+            } | null;
+        } | null;
     } | null | undefined;
 };
 
@@ -88,9 +88,9 @@ export function organizationTitleSelector(org: BasicOrganization) {
 
 export function organizationLogoSelector(org: BasicOrganization) {
     if (org.mergedAs) {
-        return org.mergedAs.logo?.file?.url;
+        return org.mergedAs.logo?.file?.url ?? undefined;
     }
-    return org.logo?.file?.url;
+    return org.logo?.file?.url ?? undefined;
 }
 
 export function organizationShortNameSelector(org: BasicOrganization) {

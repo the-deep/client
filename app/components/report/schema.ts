@@ -20,8 +20,27 @@ import {
     AnalysisReportTextStyleType,
 } from '#generated/types';
 
-import { DeepReplace } from '#utils/types';
+type DeepNonNullable<T> = T extends object ? (
+    T extends (infer K)[] ? (
+        DeepNonNullable<K>[]
+    ) : (
+        { [P in keyof T]-?: DeepNonNullable<T[P]> }
+    )
+) : NonNullable<T>;
 
+export type DeepReplace<T, A, B> = (
+    DeepNonNullable<T> extends DeepNonNullable<A>
+        ? B
+        : (
+            T extends (infer Z)[]
+                ? DeepReplace<Z, A, B>[]
+                : (
+                    T extends object
+                        ? { [K in keyof T]: DeepReplace<T[K], A, B> }
+                        : T
+                )
+        )
+)
 type InitialFormType = PartialForm<PurgeNull<AnalysisReportInputType>, 'clientId'>;
 type InitialReportContainerType = NonNullable<InitialFormType['containers']>[number];
 type InitialContentDataType = NonNullable<InitialReportContainerType['contentData']>[number];

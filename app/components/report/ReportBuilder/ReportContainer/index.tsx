@@ -33,7 +33,6 @@ import {
 } from 'react-icons/io5';
 
 import Portal from '#components/Portal';
-import { reorder } from '#utils/common';
 import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
 import {
@@ -64,6 +63,12 @@ import {
 import styles from './styles.css';
 
 const widthSelector = (item: { width: number }) => item.width;
+export function reorder<T>(
+    data: T[],
+    orderKey = 'order',
+) {
+    return data.map((v, i) => ({ ...v, [orderKey]: i + 1 }));
+}
 
 export interface Props {
     className?: string;
