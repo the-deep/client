@@ -107,7 +107,7 @@ function EntityCreationLineChart(props: Props) {
             borderBelowHeader
         >
             {loading && <PendingMessage />}
-            <ResponsiveContainer className={styles.responsiveContainer}>
+            <ResponsiveContainer debounce={300} className={styles.responsiveContainer}>
                 <AreaChart
                     data={timeseriesWithoutGaps}
                 >
