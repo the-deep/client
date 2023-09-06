@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { _cs, isTruthyString } from '@togglecorp/fujs';
+import { PurgeNull } from '@togglecorp/toggle-form';
 import Map, {
     MapBounds,
     MapContainer,
@@ -22,38 +23,13 @@ import {
     SegmentInput,
     TextOutput,
 } from '@the-deep/deep-ui';
-import { gql, useQuery } from '@apollo/client';
 
 import { mapboxStyle } from '#base/configs/env';
 import { useRequest } from '#base/utils/restRequest';
 import { GeoAreaBounds } from '#types';
-import {
-    AryDashboardFilterQuery, RegionDetailQuery, RegionDetailQueryVariables,
-} from '#generated/types';
+import { AryDashboardFilterQuery } from '#generated/types';
 
 import styles from './styles.css';
-
-const REGION_DETAIL = gql`
-    query RegionDetail($regionId: ID!) {
-        region(id: $regionId) {
-            id
-            title
-            centroid
-            adminLevels {
-                geojsonFile {
-                    name
-                    url
-                }
-                id
-                level
-                boundsFile {
-                    name
-                    url
-                }
-            }
-        }
-    }
-`;
 
 const scaleFactor = 1;
 const sourceOptions: mapboxgl.GeoJSONSourceRaw = {
@@ -87,15 +63,15 @@ const tooltipOptions: PopupOptions = {
 // need to discuss how many level to show
 const adminLevels = [
     {
-        id: '1',
+        id: '0',
         title: 'Country',
     },
     {
-        id: '2',
+        id: '1',
         title: 'Province',
     },
     {
-        id: '3',
+        id: '2',
         title: 'District',
     },
 ];
@@ -117,7 +93,7 @@ const adminLevelLabelSelector = (d: AdminLevel) => d.title;
 interface Props {
     className?: string;
     defaultZoom?: number;
-    data?: AryDashboardFilterQuery;
+    data: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>;
     navigationDisabled?: boolean;
 }
 
@@ -129,34 +105,37 @@ function GeographicalAreaAssessments(props: Props) {
         navigationDisabled,
     } = props;
 
-    const [activeAdminLevel, setActiveAdminLevel] = useState<string>('1');
+    const [activeAdminLevel, setActiveAdminLevel] = useState<string>('0');
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
-    const [regionValue, setRegionValue] = useState<string>();
+    const [regionValue, setRegionValue] = useState<
+        string
+    >();
 
     const mapOptions: Partial<MapboxOptions> = useMemo(() => ({
         zoom: defaultZoom,
         center: [50, 10],
     }), [defaultZoom]);
 
-    const variables = useMemo(
-        (): RegionDetailQueryVariables => ({ regionId: regionValue ?? '' }),
-        [regionValue],
+    const selectedRegion = useMemo(
+        () => data?.regions?.find(
+            (region) => region?.id === regionValue,
+        ), [
+            regionValue,
+            data?.regions,
+        ],
     );
 
-    const {
-        loading,
-        data: regionResponse,
-    } = useQuery<RegionDetailQuery, RegionDetailQueryVariables>(
-        REGION_DETAIL,
-        {
-            skip: !variables,
-            variables,
-        },
+    const adminLevelGeojson = useMemo(
+        () => selectedRegion?.adminLevels?.find(
+            (admin) => String(admin.level) === activeAdminLevel,
+        ), [activeAdminLevel, selectedRegion],
     );
 
+    // NOTE: this always select bound of country or admin level zero
     const selectedRegionBoundFile = useMemo(
-        () => regionResponse?.region?.adminLevels?.[0].boundsFile, [regionResponse],
+        () => selectedRegion?.adminLevels?.[0]?.boundsFile,
+        [selectedRegion],
     );
 
     const {
@@ -183,11 +162,20 @@ function GeographicalAreaAssessments(props: Props) {
         return [minX, minY, maxX, maxY];
     }, [boundsResponse]);
 
-    const adminLevelGeojson = useMemo(
-        () => regionResponse?.region?.adminLevels?.find(
-            (adminLevel) => adminLevel.id === activeAdminLevel,
-        ), [activeAdminLevel, regionResponse],
-    );
+    const selectedAdminLevelTitle = useMemo(() => (
+        adminLevels?.find(
+            (item) => item.id === activeAdminLevel,
+        )?.title
+    ), [activeAdminLevel]);
+
+    const attributes = useMemo(() => (
+        data?.assessmentDashboardStatistics?.assessmentGeographicAreas?.map(
+            (selection) => ({
+                id: selection.geoId,
+                value: true,
+            }),
+        ) ?? []
+    ), [data?.assessmentDashboardStatistics?.assessmentGeographicAreas]);
 
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(
         () => ({
@@ -202,21 +190,6 @@ function GeographicalAreaAssessments(props: Props) {
             },
         }), [],
     );
-
-    const attributes = useMemo(() => (
-        data?.project?.assessmentDashboardStatistics?.assessmentGeographicAreas?.map(
-            (selection) => ({
-                id: selection?.geoId,
-                value: true,
-            }),
-        ) ?? []
-    ), [data?.project?.assessmentDashboardStatistics?.assessmentGeographicAreas]);
-
-    const selectedAdminLevelTitle = useMemo(() => (
-        adminLevels?.find(
-            (item) => item.id === activeAdminLevel,
-        )?.title
-    ), [activeAdminLevel]);
 
     const handleMouseEnter = useCallback((feature: MapboxGeoJSONFeature, lngLat: LngLat) => {
         if (feature.properties && isTruthyString(feature.properties.title)) {
@@ -251,8 +224,8 @@ function GeographicalAreaAssessments(props: Props) {
                 onChange={setRegionValue}
                 keySelector={adminLevelKeySelector}
                 labelSelector={adminLevelLabelSelector}
-                options={data?.project?.regions}
-                disabled={boundsPending || loading}
+                options={data?.regions}
+                disabled={boundsPending}
             />
             <SegmentInput
                 className={styles.adminLevels}
@@ -262,7 +235,7 @@ function GeographicalAreaAssessments(props: Props) {
                 keySelector={adminLevelKeySelector}
                 labelSelector={adminLevelLabelSelector}
                 options={adminLevels ?? undefined}
-                disabled={navigationDisabled || loading}
+                disabled={navigationDisabled}
             />
             <Map
                 mapStyle={mapboxStyle}
