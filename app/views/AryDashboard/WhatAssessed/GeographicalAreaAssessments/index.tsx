@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback } from 'react';
-import { _cs, isTruthyString } from '@togglecorp/fujs';
+import { _cs, compareNumber, isDefined, isTruthyString } from '@togglecorp/fujs';
 import { PurgeNull } from '@togglecorp/toggle-form';
 import Map, {
     MapBounds,
@@ -28,6 +28,7 @@ import { mapboxStyle } from '#base/configs/env';
 import { useRequest } from '#base/utils/restRequest';
 import { GeoAreaBounds } from '#types';
 import { AryDashboardFilterQuery } from '#generated/types';
+import { getMaximum } from '#utils/common';
 
 import styles from './styles.css';
 
@@ -35,22 +36,6 @@ const scaleFactor = 1;
 const sourceOptions: mapboxgl.GeoJSONSourceRaw = {
     type: 'geojson',
     promoteId: 'pk', // NOTE mapbox requires each feature property to have a unique identifier. Right now the server adds pk to each property so we are using it.
-};
-
-const fillLayerOptions: Omit<Layer, 'id'> = {
-    type: 'fill',
-    paint: {
-        'fill-opacity': ['case',
-            ['boolean', ['feature-state', 'hovered'], false],
-            0.7,
-            0.5,
-        ],
-        'fill-color': ['case',
-            ['boolean', ['feature-state', 'selected'], false],
-            '#1a3ed0',
-            '#a9bedc',
-        ],
-    },
 };
 
 const tooltipOptions: PopupOptions = {
@@ -81,7 +66,7 @@ interface GeoAreaBoundsResponse {
 }
 interface KeyValue {
     key: string;
-    value: string;
+    value: number;
 }
 
 type AdminLevel = NonNullable<typeof adminLevels>[number];
@@ -128,7 +113,7 @@ function GeographicalAreaAssessments(props: Props) {
 
     const adminLevelGeojson = useMemo(
         () => selectedRegion?.adminLevels?.find(
-            (admin) => String(admin.level) === activeAdminLevel,
+            (admin) => admin.level === Number(activeAdminLevel),
         ), [activeAdminLevel, selectedRegion],
     );
 
@@ -162,27 +147,38 @@ function GeographicalAreaAssessments(props: Props) {
         return [minX, minY, maxX, maxY];
     }, [boundsResponse]);
 
-    const selectedAdminLevelTitle = useMemo(() => (
-        adminLevels?.find(
-            (item) => item.id === activeAdminLevel,
-        )?.title
-    ), [activeAdminLevel]);
+    const getAssessmentCount = useCallback(
+        (
+            adminId: string | number,
+        ) => data?.assessmentDashboardStatistics?.assessmentGeographicAreas?.find(
+            (item) => item.geoId === Number(adminId),
+        )?.count ?? 0,
+        [data?.assessmentDashboardStatistics?.assessmentGeographicAreas],
+    );
 
-    const attributes = useMemo(() => (
+    const assessmentCountAttribute = useMemo(() => (
         data?.assessmentDashboardStatistics?.assessmentGeographicAreas?.map(
             (selection) => ({
                 id: selection.geoId,
-                value: true,
+                value: selection.count,
             }),
         ) ?? []
     ), [data?.assessmentDashboardStatistics?.assessmentGeographicAreas]);
+
+    const assessmentMaxCount = useMemo(
+        () => getMaximum(
+            data?.assessmentDashboardStatistics?.assessmentGeographicAreas,
+            (a, b) => compareNumber(a.count, b.count),
+        )?.count, [data?.assessmentDashboardStatistics?.assessmentGeographicAreas],
+    );
 
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(
         () => ({
             type: 'line',
             paint: {
                 'line-color': '#1a3ed0',
-                'line-width': ['case',
+                'line-width': [
+                    'case',
                     ['boolean', ['feature-state', 'hovered'], false],
                     scaleFactor + 2,
                     scaleFactor,
@@ -191,19 +187,43 @@ function GeographicalAreaAssessments(props: Props) {
         }), [],
     );
 
+    const fillLayerOptions = useMemo<Omit<Layer, 'id'>>(
+        () => ({
+            type: 'fill',
+            paint: {
+                'fill-opacity': ['case',
+                    ['boolean', ['feature-state', 'hovered'], false],
+                    0.2,
+                    0.8,
+                ],
+                'fill-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['number', ['feature-state', 'assessmentCount'], 0],
+                    0,
+                    '#ffffff',
+                    assessmentMaxCount,
+                    '#00125b',
+                ],
+            },
+        }), [assessmentMaxCount],
+    );
+
     const handleMouseEnter = useCallback((feature: MapboxGeoJSONFeature, lngLat: LngLat) => {
-        if (feature.properties && isTruthyString(feature.properties.title)) {
+        if (
+            feature.properties
+        && isTruthyString(feature.properties.title)
+        && isDefined(feature.id)
+        ) {
             setHoverLngLat(lngLat);
             setHoverFeatureProperties([{
-                key: selectedAdminLevelTitle ?? 'Title',
-                value: feature.properties.title,
+                key: feature.properties.title,
+                value: getAssessmentCount(feature.id),
             }]);
         } else {
             setHoverFeatureProperties([]);
         }
-    }, [
-        selectedAdminLevelTitle,
-    ]);
+    }, [getAssessmentCount]);
 
     const handleMouseLeave = useCallback(() => {
         setHoverLngLat(undefined);
@@ -269,8 +289,8 @@ function GeographicalAreaAssessments(props: Props) {
                         layerOptions={lineLayerOptions}
                     />
                     <MapState
-                        attributes={attributes}
-                        attributeKey="selected"
+                        attributes={assessmentCountAttribute}
+                        attributeKey="assessmentCount"
                     />
                     {hoverLngLat && (
                         <MapTooltip
