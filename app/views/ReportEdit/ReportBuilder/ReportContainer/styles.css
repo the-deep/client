@@ -18,6 +18,7 @@
         top: 50%;
         left: 0;
         transform: translateY(-50%);
+        border-left-width: 0;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
     }
@@ -26,6 +27,7 @@
         top: 50%;
         right: 0;
         transform: translateY(-50%);
+        border-right-width: 0;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
@@ -34,6 +36,7 @@
         top: 0;
         left: 50%;
         transform: translateX(-50%);
+        border-top-width: 0;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
     }
@@ -42,6 +45,7 @@
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
+        border-bottom-width: 0;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
     }
@@ -60,8 +64,24 @@
         justify-content: center;
     }
 
+    .mask {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0.5;
+        background-color: var(--dui-color-background-information);
+        width: 100%;
+        height: 100%;
+        mix-blend-mode: multiply;
+    }
+
     &:hover {
-        border-color: var(--dui-color-separator);
+        border-color: var(--dui-color-accent);
+
+        .mask {
+            display: block;
+        }
 
         .add-button {
             display: block;

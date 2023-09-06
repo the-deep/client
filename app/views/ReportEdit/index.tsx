@@ -124,6 +124,10 @@ const PILLARS_FOR_REPORT = gql`
     }
 `;
 
+// NOTE: The same schema is being used to generate snapshot
+// So, if we need to change anything here, lets change it in
+// server/apps/common/schema_snapshots.py
+// SnapshotQuery::AnalysisReport
 const REPORT_DETAILS = gql`
     ${ORGANIZATION_FRAGMENT}
     ${TEXT_STYLE_FRAGMENT}
@@ -313,10 +317,12 @@ function ReportEdit(props: Props) {
 
     const {
         value,
+        pristine,
         validate,
         setError,
         setValue,
         error,
+        setPristine,
         setFieldValue,
     } = useForm(
         schema,
@@ -411,6 +417,10 @@ function ReportEdit(props: Props) {
             variables: reportVariables,
             onCompleted: (response) => {
                 if (!response.project?.analysisReport) {
+                    alert.show(
+                        'Failed to load analysis report.',
+                        { variant: 'error' },
+                    );
                     return;
                 }
                 const valueToSet = removeNull(response.project.analysisReport);
@@ -513,6 +523,7 @@ function ReportEdit(props: Props) {
                         { variant: 'error' },
                     );
                 } else if (ok) {
+                    setPristine(true);
                     alert.show(
                         'Successfully update report.',
                         { variant: 'success' },
@@ -586,6 +597,7 @@ function ReportEdit(props: Props) {
                                 setError,
                                 handleSubmit,
                             )}
+                            disabled={pristine}
                             variant="primary"
                         >
                             Save

@@ -361,6 +361,7 @@ function ReportContainer(props: Props) {
             }}
         >
             <NonFieldError error={error} />
+            <div className={styles.mask} />
             {!readOnly && (
                 <>
                     <QuickActionButton
@@ -368,7 +369,7 @@ function ReportContainer(props: Props) {
                         name={undefined}
                         onClick={handleAddBeforeClick}
                         disabled={disableAddButtons || disabled}
-                        variant="secondary"
+                        variant="tertiary"
                         spacing="compact"
                     >
                         <IoAdd />
@@ -378,7 +379,7 @@ function ReportContainer(props: Props) {
                         name={undefined}
                         onClick={handleAddAfterClick}
                         disabled={disableAddButtons || disabled}
-                        variant="secondary"
+                        variant="tertiary"
                         spacing="compact"
                     >
                         <IoAdd />
@@ -388,7 +389,7 @@ function ReportContainer(props: Props) {
                         name={undefined}
                         onClick={handleAddAboveClick}
                         disabled={disabled}
-                        variant="secondary"
+                        variant="tertiary"
                         spacing="compact"
                     >
                         <IoAdd />
@@ -398,7 +399,7 @@ function ReportContainer(props: Props) {
                         name={undefined}
                         onClick={handleAddBelowClick}
                         disabled={disabled}
-                        variant="secondary"
+                        variant="tertiary"
                         spacing="compact"
                     >
                         <IoAdd />
@@ -442,6 +443,7 @@ function ReportContainer(props: Props) {
                         <>
                             <QuickActionDropdownMenu
                                 label={width}
+                                variant="tertiary"
                             >
                                 <SegmentInput
                                     name="width"
@@ -459,6 +461,7 @@ function ReportContainer(props: Props) {
                                 name={undefined}
                                 title="Edit Content"
                                 onClick={handleContentEdit}
+                                variant="tertiary"
                             >
                                 <IoPencil />
                             </QuickActionButton>
@@ -467,6 +470,7 @@ function ReportContainer(props: Props) {
                                 title="Remove Content"
                                 message="Are you sure you want to delete this content?"
                                 onConfirm={handleItemRemove}
+                                variant="tertiary"
                             >
                                 <IoTrashOutline />
                             </QuickActionConfirmButton>
@@ -490,7 +494,7 @@ function ReportContainer(props: Props) {
                         footerActions={(
                             <Button
                                 name={undefined}
-                                variant="secondary"
+                                variant="tertiary"
                                 onClick={handleContentEditClose}
                             >
                                 Close

@@ -1,6 +1,10 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { ListView } from '@the-deep/deep-ui';
+import {
+    ListView,
+    Header,
+} from '@the-deep/deep-ui';
+import { IoMenuOutline } from 'react-icons/io5';
 
 import {
     AnalysisReportHeadingConfigurationVariantEnum,
@@ -60,16 +64,27 @@ function Toc(props: Props) {
     }), []);
 
     return (
-        <ListView
-            className={_cs(className, styles.toc)}
-            keySelector={containerKeySelector}
-            renderer={TocItem}
-            rendererParams={tocRendererParams}
-            data={data}
-            filtered={false}
-            pending={false}
-            errored={false}
-        />
+        <div className={_cs(styles.toc, className)}>
+            <Header
+                className={styles.header}
+                headingSectionClassName={styles.headingSection}
+                icons={(
+                    <IoMenuOutline className={styles.icon} />
+                )}
+                heading="Table of Contents"
+                headingSize="medium"
+            />
+            <ListView
+                className={styles.list}
+                keySelector={containerKeySelector}
+                renderer={TocItem}
+                rendererParams={tocRendererParams}
+                data={data}
+                filtered={false}
+                pending={false}
+                errored={false}
+            />
+        </div>
     );
 }
 
