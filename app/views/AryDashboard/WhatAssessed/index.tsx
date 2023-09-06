@@ -11,7 +11,6 @@ import EntityCreationLineChart from '#views/ExploreDeepContent/EntityCreationLin
 import GeographicalAreaAssessments from './GeographicalAreaAssessments';
 
 interface Props {
-    className?: string;
     data?: AryDashboardFilterQuery;
     startDate: number;
     endDate: number;
@@ -22,7 +21,6 @@ interface Props {
 
 function WhatAssessed(props: Props) {
     const {
-        className,
         data,
         startDate,
         endDate,
@@ -74,14 +72,14 @@ function WhatAssessed(props: Props) {
                     onChange={handleDateRangeChange}
                 />
             </div>
-            <EntityCreationLineChart
-                className={_cs(className)}
+            {/* <EntityCreationLineChart
                 heading="Number of Assessment Over Time"
                 // eslint-disable-next-line max-len
-                timeseries={data?.project?.assessmentDashboardStatistics?.assessmentByOverTime ?? undefined}
+                timeseries={
+                data?.project?.assessmentDashboardStatistics?.assessmentByOverTime ?? undefined}
                 startDate={startDate}
                 endDate={endDate}
-            />
+            /> */}
         </>
     );
 }
