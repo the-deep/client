@@ -35,7 +35,7 @@ import {
 
 import ReportContainer, { Props as ReportContainerProps } from './ReportContainer';
 import MetadataEdit from './MetadataEdit';
-import { ContentDataFileMap } from '../index';
+import { ContentDataFileMap } from '../utils';
 
 import styles from './styles.css';
 
@@ -209,7 +209,7 @@ function ReportBuilder(props: Props) {
                     pending={false}
                 />
             </div>
-            {contentEditModalVisible && leftContentRef?.current && (
+            {setFieldValue && contentEditModalVisible && leftContentRef?.current && (
                 <Portal element={leftContentRef.current}>
                     <Container
                         className={styles.editContainer}

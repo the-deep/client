@@ -48,7 +48,6 @@ import {
     type ContentDataType,
     type ContainerStyleFormType,
 } from '../../schema';
-import { ContentDataFileMap } from '../../index';
 
 import ContentAddModal from './ContentAddModal';
 import HeadingEdit from './HeadingEdit';
@@ -58,6 +57,7 @@ import TextEdit from './TextEdit';
 import ImageEdit from './ImageEdit';
 import Content from './Content';
 import {
+    type ContentDataFileMap,
     resolveContainerStyle,
 } from '../../utils';
 
@@ -77,7 +77,7 @@ export interface Props {
     error: Error<ReportContainerType> | undefined;
     contentType: AnalysisReportContainerContentTypeEnum | undefined;
     configuration: ContentConfigType | undefined;
-    setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    setFieldValue: ((...entries: EntriesAsList<PartialFormType>) => void);
     contentDataToFileMap: ContentDataFileMap | undefined;
     style: ContainerStyleFormType | undefined;
     setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;

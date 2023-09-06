@@ -12,9 +12,11 @@ import {
     AnalysisReportContainerContentConfigurationType,
 } from '#generated/types';
 
-import { ContentDataFileMap } from '../../../index';
 import { ContentDataType } from '../../../schema';
-import { resolveTextStyle } from '../../../utils';
+import {
+    resolveTextStyle,
+    type ContentDataFileMap,
+} from '../../../utils';
 
 import styles from './styles.css';
 

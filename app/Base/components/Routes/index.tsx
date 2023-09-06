@@ -53,6 +53,12 @@ function Routes(props: Props) {
                 </Route>
                 <Route
                     exact
+                    path={routes.publicReportView.path}
+                >
+                    {routes.publicReportView.load({ className })}
+                </Route>
+                <Route
+                    exact
                     path={routes.projectCreate.path}
                 >
                     {routes.projectCreate.load({ className })}

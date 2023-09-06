@@ -99,3 +99,8 @@ export function resolveTextStyle(
         fontSize: size,
     };
 }
+
+export type ContentDataFileMap = Record<string, {
+    url: string | undefined;
+    name: string | undefined;
+}>;

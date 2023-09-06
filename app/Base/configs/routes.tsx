@@ -263,6 +263,16 @@ const reportEditRoute = wrap({
     },
 });
 
+const publicReportViewRoute = wrap({
+    path: '/reports/:reportSlug/',
+    title: 'View Report',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/PublicReportView')),
+    componentProps: {
+    },
+    visibility: 'is-anything',
+});
+
 const newReportRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/reports/new/',
@@ -661,6 +671,7 @@ const routes = {
     export: exportRoute,
     exportCreate: exportCreateRoute,
     reportEdit: reportEditRoute,
+    publicReportView: publicReportViewRoute,
     newReport: newReportRoute,
     assessmentExportCreate: newAssessmentExportCreateRoute,
     entryEdit: entryEditRoute,

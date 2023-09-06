@@ -31,8 +31,22 @@
         }
 
         .right-content {
+            display: flex;
+            flex-direction: column;
             flex-grow: 1;
             overflow-y: auto;
+
+            .top-bar {
+                flex-shrink: 0;
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                background-color: var(--dui-color-foreground);
+                padding: var(--dui-spacing-medium);
+                padding-right: var(--dui-spacing-super-large);
+            }
+
+            .report-builder {
+                flex-grow: 1;
+            }
         }
     }
 }

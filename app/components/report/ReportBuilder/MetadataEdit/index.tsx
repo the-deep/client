@@ -1,6 +1,9 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { TextInput } from '@the-deep/deep-ui';
+import {
+    Checkbox,
+    TextInput,
+} from '@the-deep/deep-ui';
 import {
     type EntriesAsList,
     type Error,
@@ -78,6 +81,15 @@ function MetadataEdit(props: Props) {
                 onOptionsChange={onOrganizationOptionsChange}
                 label="Organizations"
                 error={getErrorString(error?.organizations)}
+                disabled={disabled}
+            />
+            <Checkbox
+                name="isPublic"
+                label="Shared Publicly"
+                value={value?.isPublic}
+                onChange={setFieldValue}
+                // FIXME: Error is not implemented on checkbox
+                // error={error?.isPublic}
                 disabled={disabled}
             />
         </div>

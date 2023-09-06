@@ -7,6 +7,7 @@ import React, {
 import {
     _cs,
     randomString,
+    compareDate,
     listToMap,
     compareNumber,
 } from '@togglecorp/fujs';
@@ -27,9 +28,13 @@ import {
 } from '@apollo/client';
 import {
     useAlert,
+    ConfirmButton,
+    Element,
+    QuickActionButton,
     Button,
     PendingMessage,
 } from '@the-deep/deep-ui';
+import { IoShareSocialOutline } from 'react-icons/io5';
 
 import BackLink from '#components/BackLink';
 import routes from '#base/configs/routes';
@@ -49,6 +54,8 @@ import {
     CreateReportMutationVariables,
     UpdateReportMutation,
     UpdateReportMutationVariables,
+    PublishReportMutation,
+    PublishReportMutationVariables,
     ReportDetailsQuery,
     ReportDetailsQueryVariables,
 } from '#generated/types';
@@ -57,12 +64,13 @@ import {
     transformToFormError,
 } from '#base/utils/errorTransform';
 
-import ReportBuilder from './ReportBuilder';
-import Toc from './Toc';
+import ReportBuilder from '#components/report/ReportBuilder';
+import Toc from '#components/report/Toc';
 import schema, {
     type PartialFormType,
     type ReportContainerType,
-} from './schema';
+} from '#components/report/schema';
+import { ContentDataFileMap } from '#components/report/utils';
 import styles from './styles.css';
 
 const TEXT_STYLE_FRAGMENT = gql`
@@ -218,6 +226,12 @@ const REPORT_DETAILS = gql`
                         }
                     }
                 }
+                isPublic
+                modifiedAt
+                latestSnapshot {
+                    id
+                    publishedOn
+                }
             }
         }
     }
@@ -263,10 +277,23 @@ const UPDATE_REPORT = gql`
     }
 `;
 
-export type ContentDataFileMap = Record<string, {
-    url: string | undefined;
-    name: string | undefined;
-}>;
+const PUBLISH_REPORT = gql`
+    mutation PublishReport(
+        $projectId: ID!
+        $reportId: ID!
+    ) {
+        project(id: $projectId) {
+            analysisReportSnapshotCreate(
+                data: {
+                    report: $reportId,
+                },
+            ) {
+                errors
+                ok
+            }
+        }
+    }
+`;
 
 interface Props {
     className?: string;
@@ -410,6 +437,7 @@ function ReportEdit(props: Props) {
 
     const {
         loading: reportLoading,
+        data,
     } = useQuery<ReportDetailsQuery, ReportDetailsQueryVariables>(
         REPORT_DETAILS,
         {
@@ -533,6 +561,37 @@ function ReportEdit(props: Props) {
         },
     );
 
+    const [
+        triggerSnapshotCreate,
+        {
+            loading: snapshotCreationLoading,
+        },
+    ] = useMutation<PublishReportMutation, PublishReportMutationVariables>(
+        PUBLISH_REPORT,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.project?.analysisReportSnapshotCreate) {
+                    return;
+                }
+                const {
+                    errors,
+                    ok,
+                } = response.project.analysisReportSnapshotCreate;
+                if (errors) {
+                    alert.show(
+                        'Failed to publish current report.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    alert.show(
+                        'Successfully published report.',
+                        { variant: 'success' },
+                    );
+                }
+            },
+        },
+    );
+
     const tableOfContents = useMemo(() => (
         value?.containers?.filter((item) => item.contentType === 'HEADING')
     ), [value?.containers]);
@@ -576,6 +635,29 @@ function ReportEdit(props: Props) {
         contentEditPaneVisible,
         setContentEditPaneVisibility,
     ] = useState(false);
+
+    const selectedReport = data?.project?.analysisReport;
+    const publishConfirmMessage = (compareDate(
+        selectedReport?.modifiedAt,
+        selectedReport?.latestSnapshot?.publishedOn,
+    )) > 0 ? (
+            'Are you sure you want to published the report?'
+        ) : (
+            `Looks like the latest version of report is already published.
+            Are you sure you want to published the report?`
+        );
+
+    const copyToClipboard = useCallback(() => {
+        const url = `${window.location.protocol}//${window.location.host}${generatePath(routes.tagging.path, { projectId })}`;
+        navigator.clipboard.writeText(url);
+
+        alert.show(
+            'Successfully copied URL to clipboard.',
+            {
+                variant: 'info',
+            },
+        );
+    }, [projectId, alert]);
 
     return (
         <div className={_cs(className, styles.reportEdit)}>
@@ -623,20 +705,49 @@ function ReportEdit(props: Props) {
                         className={styles.editContent}
                     />
                 </div>
-                <ReportBuilder
-                    className={styles.rightContent}
-                    value={value}
-                    error={error}
-                    setFieldValue={setFieldValue}
-                    disabled={false}
-                    readOnly={false}
-                    organizationOptions={organizationOptions}
-                    onOrganizationOptionsChange={setOrganizationOptions}
-                    contentDataToFileMap={contentDataToFileMap}
-                    setContentDataToFileMap={setContentDataToFileMap}
-                    leftContentRef={leftContentRef}
-                    onContentEditChange={setContentEditPaneVisibility}
-                />
+                <div className={styles.rightContent}>
+                    {reportId && (
+                        <Element
+                            className={styles.topBar}
+                            actions={(
+                                <>
+
+                                    <QuickActionButton
+                                        name={undefined}
+                                        variant="secondary"
+                                        title="Share to other users"
+                                        onClick={copyToClipboard}
+                                    >
+                                        <IoShareSocialOutline />
+                                    </QuickActionButton>
+                                    <ConfirmButton
+                                        name={undefined}
+                                        onClick={triggerSnapshotCreate}
+                                        message={publishConfirmMessage}
+                                        disabled={!pristine || snapshotCreationLoading}
+                                        variant="secondary"
+                                    >
+                                        Publish
+                                    </ConfirmButton>
+                                </>
+                            )}
+                        />
+                    )}
+                    <ReportBuilder
+                        className={styles.reportBuilder}
+                        value={value}
+                        error={error}
+                        setFieldValue={setFieldValue}
+                        disabled={false}
+                        readOnly={false}
+                        organizationOptions={organizationOptions}
+                        onOrganizationOptionsChange={setOrganizationOptions}
+                        contentDataToFileMap={contentDataToFileMap}
+                        setContentDataToFileMap={setContentDataToFileMap}
+                        leftContentRef={leftContentRef}
+                        onContentEditChange={setContentEditPaneVisibility}
+                    />
+                </div>
             </div>
         </div>
     );

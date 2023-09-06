@@ -1,0 +1,4 @@
+.public-report-view {
+    display: flex;
+    flex-direction: column;
+}
