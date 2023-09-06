@@ -33,6 +33,7 @@ import {
 import Statistics from './Statistics';
 import Filters, { FilterForm } from './Filters';
 import WhatAssessed from './WhatAssessed';
+import HowAssessed from './HowAssessed';
 
 import styles from './styles.css';
 
@@ -69,6 +70,7 @@ const ARY_DASHBOARD_FILTER = gql`
                     code
                     adminLevelId
                     assessmentIds
+                    region,
                 }
                 assessmentByOverTime {
                     count
@@ -195,7 +197,7 @@ function AryDashboard(props: Props) {
 
     const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
     const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
-    const filterData = removeNull(data?.project?.assessmentDashboardStatistics);
+    const filterData = removeNull(data?.project);
 
     return (
         <Container
@@ -231,7 +233,7 @@ function AryDashboard(props: Props) {
             headerDescription={activeProject && (
                 <Statistics
                     projectId={activeProject}
-                    data={filterData}
+                    data={filterData?.assessmentDashboardStatistics}
                 />
             )}
         >
@@ -282,19 +284,18 @@ function AryDashboard(props: Props) {
                     name="what"
                 >
                     <WhatAssessed
-                        data={data}
+                        data={filterData}
                         startDate={startDate}
                         endDate={endDate}
                         onStartDateChange={setStartDate}
                         onEndDateChange={setEndDate}
                         readOnly={loading}
-                        projectId={activeProject}
                     />
                 </TabPanel>
                 <TabPanel
                     name="how"
                 >
-                    How was it assessed?
+                    <HowAssessed />
                 </TabPanel>
                 <TabPanel
                     name="quality"
