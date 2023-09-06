@@ -1,4 +1,29 @@
 .public-report-view {
     display: flex;
-    flex-direction: column;
+
+    .left-content {
+        flex-shrink: 0;
+        border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        width: 24rem;
+        resize: horizontal;
+    }
+
+    .report-builder {
+        flex-grow: 1;
+        flex-shrink: 0;
+        padding: var(--dui-spacing-super-large) 0;
+    }
+
+    @media screen and (max-width: 720px) {
+        flex-direction: column;
+
+        .left-content {
+            width: 100%;
+        }
+
+        .report-builder {
+            flex-shrink: unset;
+            padding: var(--dui-spacing-medium) var(--dui-spacing-small);
+        }
+    }
 }

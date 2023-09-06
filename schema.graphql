@@ -87,9 +87,179 @@ type YearlySnapshot {
   deepExploreStats: YearlySnapshotData!
 }
 
+type MergedAsOrganization {
+    id: String!
+    title: String!
+    verified: Boolean
+    shortName: String
+}
+
+type Organization {
+    id: String!
+    title: String!
+    verified: Boolean
+    shortName: String
+    mergedAs: MergedAsOrganization
+}
+
+enum BorderStyleEnum {
+  DASHED
+  DOTTED
+  DOUBLE
+  NONE
+  SOLID
+}
+
+type BorderStyle {
+  width: Int
+  color: String
+  opacity: Int
+  style: BorderStyleEnum
+}
+
+type PaddingStyle {
+  top: Int
+  bottom: Int
+  right: Int
+  left: Int
+}
+
+type BackgroundStyle {
+  color: String
+  opacity: Int
+}
+
+enum Align {
+  CENTER
+  END
+  JUSTIFIED
+  START
+}
+
+type TextStyle {
+  align: Align
+  color: String
+  family: String
+  size: Int
+  weight: Int
+}
+
+type FileType {
+  id: String!
+}
+
+type ContentUploadType {
+  id: String!
+  file: FileType
+}
+
+type ContentDataType {
+  id: String!
+  clientId: String!
+  data: GenericScalar
+  upload: ContentUploadType
+}
+
+type ReportContainerStyle {
+  border: BorderStyle
+  padding: PaddingStyle
+  background: BackgroundStyle
+}
+
+type HeadingConfigurationStyleType {
+  content: TextStyle
+}
+
+enum HeadingVariant {
+  H1
+  H2
+  H3
+  H4
+}
+
+type HeadingConfigurationType {
+  content: String
+  variant: HeadingVariant
+  style: HeadingConfigurationStyleType
+}
+
+enum ImageFit {
+  CONTAIN
+  COVER
+  FILL
+  NONE
+  SCALE_DOWN
+}
+
+type ImageConfigurationStyleType {
+  caption: TextStyle
+  fit: ImageFit
+}
+
+type ImageConfigurationType {
+  altText: String
+  caption: String
+  style: ImageConfigurationStyleType
+}
+
+type TextConfigurationStyleType {
+  content: TextStyle
+}
+
+type TextConfigurationType {
+  content: String
+  style: TextConfigurationStyleType
+}
+
+type UrlConfigurationType {
+  url: String
+}
+
+type ContentConfigurationType {
+  heading: HeadingConfigurationType
+  image: ImageConfigurationType
+  text: TextConfigurationType
+  url: UrlConfigurationType
+}
+
+enum ReportContentEnum {
+  HEADING
+  IMAGE
+  TEXT
+  URL
+}
+
+type ReportContainer {
+  id: String!
+  clientId: String!
+  row: Int
+  column: Int
+  width: Int
+  height: Int
+  contentType: ReportContentEnum
+  style: ReportContainerStyle
+  contentData: [ContentDataType!]
+  contentConfiguration: ContentConfigurationType
+  isPublic: Boolean
+  modifiedAt: String
+}
+
+type PublicReportDetails {
+  id: String!
+  analysis: String!
+  title: String!
+  subTitle: String
+  slug: String!
+  organizations: [Organization!]
+  containers: [ReportContainer!]
+  isPublic: Boolean
+  modifiedAt: String
+}
+
 type Query {
   completeTimeseries(pathName: String!): CompleteTimeseries!
   yearlySnapshot(pathName: String!): YearlySnapshot!
+  publicReportDetails(pathName: String!): PublicReportDetails!
 }
 
 directive @rest(

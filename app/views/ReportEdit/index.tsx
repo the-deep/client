@@ -44,6 +44,9 @@ import {
 } from '#components/selections/NewOrganizationMultiSelectInput';
 import {
     ORGANIZATION_FRAGMENT,
+    TEXT_STYLE_FRAGMENT,
+    PADDING_STYLE_FRAGMENT,
+    BORDER_STYLE_FRAGMENT,
 } from '#gqlFragments';
 
 import {
@@ -72,34 +75,6 @@ import schema, {
 } from '#components/report/schema';
 import { ContentDataFileMap } from '#components/report/utils';
 import styles from './styles.css';
-
-const TEXT_STYLE_FRAGMENT = gql`
-    fragment TextStyle on AnalysisReportTextStyleType {
-        align
-        color
-        family
-        size
-        weight
-    }
-`;
-
-const PADDING_STYLE_FRAGMENT = gql`
-    fragment PaddingStyle on AnalysisReportPaddingStyleType {
-        top
-        bottom
-        right
-        left
-    }
-`;
-
-const BORDER_STYLE_FRAGMENT = gql`
-    fragment BorderStyle on AnalysisReportBorderStyleType {
-        color
-        opacity
-        style
-        width
-    }
-`;
 
 const PILLARS_FOR_REPORT = gql`
     query PillarsForReport(

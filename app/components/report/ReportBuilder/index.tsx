@@ -61,7 +61,7 @@ interface Props {
     >>;
     contentDataToFileMap: ContentDataFileMap | undefined;
     setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
-    leftContentRef: React.RefObject<HTMLDivElement>;
+    leftContentRef: React.RefObject<HTMLDivElement> | undefined;
     onContentEditChange: (newVal: boolean) => void;
 }
 

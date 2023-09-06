@@ -297,3 +297,31 @@ export const LAST_ACTIVE_PROJECT_FRAGMENT = gql`
         isRejected
     }
 `;
+
+export const TEXT_STYLE_FRAGMENT = gql`
+    fragment TextStyle on AnalysisReportTextStyleType {
+        align
+        color
+        family
+        size
+        weight
+    }
+`;
+
+export const PADDING_STYLE_FRAGMENT = gql`
+    fragment PaddingStyle on AnalysisReportPaddingStyleType {
+        top
+        bottom
+        right
+        left
+    }
+`;
+
+export const BORDER_STYLE_FRAGMENT = gql`
+    fragment BorderStyle on AnalysisReportBorderStyleType {
+        color
+        opacity
+        style
+        width
+    }
+`;

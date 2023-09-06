@@ -88,7 +88,7 @@ export interface Props {
     setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
     readOnly?: boolean;
     disabled?: boolean;
-    leftContentRef: React.RefObject<HTMLDivElement>;
+    leftContentRef: React.RefObject<HTMLDivElement> | undefined;
     onContentEditChange: (newVal: boolean) => void;
 }
 

@@ -55,6 +55,15 @@
             grid-template-columns: repeat(12, 1fr);
             grid-gap: var(--dui-spacing-super-small);
         }
+
+        @media screen and (max-width: 720px) {
+            width: unset;
+
+            .containers {
+                display: flex;
+                flex-direction: column;
+            }
+        }
     }
 }
 
