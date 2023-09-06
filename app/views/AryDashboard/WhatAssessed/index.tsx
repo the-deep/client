@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { PurgeNull } from '@togglecorp/toggle-form';
 
 import { getTimeseriesWithoutGaps } from '#utils/temporal';
 import useSizeTracking from '#hooks/useSizeTracking';
@@ -11,7 +11,7 @@ import EntityCreationLineChart from '#views/ExploreDeepContent/EntityCreationLin
 import GeographicalAreaAssessments from './GeographicalAreaAssessments';
 
 interface Props {
-    data?: AryDashboardFilterQuery;
+    data: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>;
     startDate: number;
     endDate: number;
     onStartDateChange: ((newDate: number | undefined) => void) | undefined;
@@ -47,12 +47,12 @@ function WhatAssessed(props: Props) {
 
     const timeseriesWithoutGaps = useMemo(
         () => getTimeseriesWithoutGaps(
-            data?.project?.assessmentDashboardStatistics?.assessmentByOverTime ?? undefined,
+            data?.assessmentDashboardStatistics?.assessmentByOverTime,
             'month',
             DEEP_START_DATE,
             todaysDate,
         ),
-        [data?.project?.assessmentDashboardStatistics?.assessmentByOverTime],
+        [data?.assessmentDashboardStatistics?.assessmentByOverTime],
     );
 
     return (
@@ -72,14 +72,12 @@ function WhatAssessed(props: Props) {
                     onChange={handleDateRangeChange}
                 />
             </div>
-            {/* <EntityCreationLineChart
+            <EntityCreationLineChart
                 heading="Number of Assessment Over Time"
-                // eslint-disable-next-line max-len
-                timeseries={
-                data?.project?.assessmentDashboardStatistics?.assessmentByOverTime ?? undefined}
+                timeseries={data?.assessmentDashboardStatistics?.assessmentByOverTime ?? undefined}
                 startDate={startDate}
                 endDate={endDate}
-            /> */}
+            />
         </>
     );
 }
