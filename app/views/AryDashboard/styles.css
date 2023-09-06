@@ -2,6 +2,7 @@
     background-color: var(--dui-color-foreground);
     padding-right: unset;
     padding-left: unset;
+    overflow-y: auto;
 
     .header {
         padding-right: var(--dui-spacing-super-large);
@@ -37,5 +38,6 @@
         padding-right: var(--dui-spacing-super-large);
         padding-left: var(--dui-spacing-super-large);
         gap: var(--dui-spacing-large);
+        overflow: unset;
     }
 }
