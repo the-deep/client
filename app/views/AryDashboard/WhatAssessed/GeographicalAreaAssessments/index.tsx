@@ -236,27 +236,31 @@ function GeographicalAreaAssessments(props: Props) {
     }), []);
 
     return (
-        <div className={_cs(className)}>
-            <SelectInput
-                placeholder="Select Region"
-                name="region"
-                value={regionValue}
-                onChange={setRegionValue}
-                keySelector={adminLevelKeySelector}
-                labelSelector={adminLevelLabelSelector}
-                options={data?.regions}
-                disabled={boundsPending}
-            />
-            <SegmentInput
-                className={styles.adminLevels}
-                name="adminLevels"
-                value={activeAdminLevel}
-                onChange={setActiveAdminLevel}
-                keySelector={adminLevelKeySelector}
-                labelSelector={adminLevelLabelSelector}
-                options={adminLevels ?? undefined}
-                disabled={navigationDisabled}
-            />
+        <div className={_cs(className, styles.geographicalAreaAssessments)}>
+            <div className={styles.regionSelectors}>
+                <SelectInput
+                    placeholder="Select Region"
+                    name="region"
+                    value={regionValue}
+                    onChange={setRegionValue}
+                    keySelector={adminLevelKeySelector}
+                    labelSelector={adminLevelLabelSelector}
+                    options={data?.regions}
+                    disabled={boundsPending}
+                    variant="general"
+                />
+                <SegmentInput
+                    className={styles.adminLevels}
+                    name="adminLevels"
+                    value={activeAdminLevel}
+                    onChange={setActiveAdminLevel}
+                    keySelector={adminLevelKeySelector}
+                    labelSelector={adminLevelLabelSelector}
+                    options={adminLevels ?? undefined}
+                    disabled={navigationDisabled}
+                    spacing="compact"
+                />
+            </div>
             <Map
                 mapStyle={mapboxStyle}
                 mapOptions={mapOptions}
