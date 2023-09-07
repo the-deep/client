@@ -100,6 +100,7 @@ const ARY_DASHBOARD_FILTER = gql`
                     }
                     id
                     level
+                    title
                     boundsFile {
                         name
                         url
