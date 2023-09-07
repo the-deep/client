@@ -24,7 +24,6 @@ import {
     PopupOptions,
 } from 'mapbox-gl';
 import {
-    List,
     SelectInput,
     SegmentInput,
     TextOutput,
@@ -95,7 +94,6 @@ type AdminLevel = {
     title: string;
 };
 
-const keySelector = (d: KeyValue) => d.key;
 const adminLevelKeySelector = (d: AdminLevel) => d.id;
 const adminLevelLabelSelector = (d: AdminLevel) => d.title;
 
@@ -137,7 +135,7 @@ function GeographicalAreaMethodology(props: Props) {
     } = props;
 
     const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
-    const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
+    const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue>();
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
     const [regionValue, setRegionValue] = useState<string>();
     const [methodologyType, setMethodologyType] = useState<string>();
@@ -252,41 +250,41 @@ function GeographicalAreaMethodology(props: Props) {
         }
 
         if (methodologyType === 'DATA_COLLECTION' && isDefined(collectionTechnique)) {
-            const filterValue = methodologyData?.value?.filter(
+            const attributeValue = methodologyData?.value?.filter(
                 (technique) => technique.dataCollectionTechnique === collectionTechnique,
             )?.map((selection) => ({
                 id: selection.geoId,
                 value: selection.count,
             }));
 
-            return filterValue;
+            return attributeValue;
         }
         if (methodologyType === 'SAMPLING_APROACH' && isDefined(collectionTechnique)) {
-            const filterValue = methodologyData?.value?.filter(
+            const attributeValue = methodologyData?.value?.filter(
                 (technique) => technique.samplingApproach === collectionTechnique,
             )?.map((selection) => ({
                 id: selection.geoId,
                 value: selection.count,
             }));
-            return filterValue;
+            return attributeValue;
         }
         if (methodologyType === 'UNIT_OF_ANALYSIS' && isDefined(collectionTechnique)) {
-            const filterValue = methodologyData?.value?.filter(
+            const attributeValue = methodologyData?.value?.filter(
                 (technique) => technique.unitOfAnanlysis === collectionTechnique,
             )?.map((selection) => ({
                 id: selection.geoId,
                 value: selection.count,
             }));
-            return filterValue;
+            return attributeValue;
         }
         if (methodologyType === 'UNIT_OF_REPORTING' && isDefined(collectionTechnique)) {
-            const filterValue = methodologyData?.value?.filter(
+            const attributeValue = methodologyData?.value?.filter(
                 (technique) => technique.unitOfReporting === collectionTechnique,
             )?.map((selection) => ({
                 id: selection.geoId,
                 value: selection.count,
             }));
-            return filterValue;
+            return attributeValue;
         }
         return [];
     }, [
@@ -296,8 +294,8 @@ function GeographicalAreaMethodology(props: Props) {
     ]);
 
     const getAssessmentCount = useCallback(
-        (adminId: string | number) => assessmentCountAttribute?.find(
-            (item) => item.id === adminId,
+        (adminId: string) => assessmentCountAttribute?.find(
+            (item) => String(item.id) === adminId,
         )?.value ?? 0,
         [assessmentCountAttribute],
     );
@@ -336,8 +334,8 @@ function GeographicalAreaMethodology(props: Props) {
             paint: {
                 'fill-opacity': ['case',
                     ['boolean', ['feature-state', 'hovered'], false],
-                    0.4,
-                    1,
+                    0.2,
+                    0.8,
                 ],
                 'fill-color': [
                     'interpolate',
@@ -346,7 +344,7 @@ function GeographicalAreaMethodology(props: Props) {
                     0,
                     '#f5f5f5',
                     assessmentMaxCount ?? 1,
-                    '#b48ead',
+                    '#00125b',
                 ],
             },
         }), [assessmentMaxCount],
@@ -359,24 +357,19 @@ function GeographicalAreaMethodology(props: Props) {
             && isDefined(feature.id)
         ) {
             setHoverLngLat(lngLat);
-            setHoverFeatureProperties([{
+            setHoverFeatureProperties({
                 key: feature.properties.title,
-                value: getAssessmentCount(feature.id),
-            }]);
+                value: getAssessmentCount(String(feature?.properties?.pk)),
+            });
         } else {
-            setHoverFeatureProperties([]);
+            setHoverFeatureProperties(undefined);
         }
     }, [getAssessmentCount]);
 
     const handleMouseLeave = useCallback(() => {
         setHoverLngLat(undefined);
-        setHoverFeatureProperties([]);
+        setHoverFeatureProperties(undefined);
     }, []);
-
-    const rendererParams = useCallback((_: string, tooltipData: KeyValue) => ({
-        label: tooltipData.key,
-        value: tooltipData.value,
-    }), []);
 
     return (
         <div className={_cs(className, styles.geographicalAreaAssessments)}>
@@ -473,11 +466,9 @@ function GeographicalAreaMethodology(props: Props) {
                                 trackPointer
                                 hidden={false}
                             >
-                                <List
-                                    data={hoverFeatureProperties}
-                                    renderer={TextOutput}
-                                    keySelector={keySelector}
-                                    rendererParams={rendererParams}
+                                <TextOutput
+                                    value={hoverFeatureProperties?.value}
+                                    label={hoverFeatureProperties?.key}
                                 />
                             </MapTooltip>
                         )}

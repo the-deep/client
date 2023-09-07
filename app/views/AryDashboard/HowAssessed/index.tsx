@@ -98,14 +98,14 @@ const ARY_DASHBOARD_HOW_ASSESSED = gql`
 
 interface Props {
     className?: string;
-    filterVariables?: AryDashboardFilterQueryVariables;
+    filters?: AryDashboardFilterQueryVariables;
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
 }
 
 function HowAssessed(props: Props) {
     const {
         className,
-        filterVariables,
+        filters,
         regions,
     } = props;
 
@@ -122,8 +122,8 @@ function HowAssessed(props: Props) {
     } = useQuery<AryDashboardHowAssedQuery, AryDashboardHowAssedQueryVariables>(
         ARY_DASHBOARD_HOW_ASSESSED,
         {
-            skip: isNotDefined(filterVariables),
-            variables: filterVariables,
+            skip: isNotDefined(filters),
+            variables: filters,
         },
     );
 
