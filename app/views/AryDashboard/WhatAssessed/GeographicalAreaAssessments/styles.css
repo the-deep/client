@@ -1,6 +1,6 @@
 .geographical-area-assessments {
     position: relative;
-    z-index: 0;
+    z-index: 1;
 
     .map {
         width: auto;
@@ -13,7 +13,7 @@
         top: 0;
         left: 0;
         align-items: baseline;
-        z-index: 1;
+        z-index: 2;
         border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         border-bottom-right-radius: var(--dui-border-radius-card);
         background-color: #fff;
