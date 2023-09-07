@@ -285,7 +285,10 @@ function AryDashboard(props: Props) {
                 <TabPanel
                     name="how"
                 >
-                    <HowAssessed />
+                    <HowAssessed
+                        regions={filterData?.regions}
+                        filterVariables={variables}
+                    />
                 </TabPanel>
                 <TabPanel
                     name="quality"
