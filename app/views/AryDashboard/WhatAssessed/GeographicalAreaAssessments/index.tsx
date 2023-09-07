@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback } from 'react';
-import { _cs, compareNumber, isDefined, isTruthyString } from '@togglecorp/fujs';
+import { _cs, compareNumber, isDefined, isNotDefined, isTruthyString } from '@togglecorp/fujs';
 import { PurgeNull } from '@togglecorp/toggle-form';
 import Map, {
     MapBounds,
@@ -44,23 +44,6 @@ const tooltipOptions: PopupOptions = {
     offset: 12,
 };
 
-// NOTE add static to show options for only admin level
-// need to discuss how many level to show
-const adminLevels = [
-    {
-        id: '0',
-        title: 'Country',
-    },
-    {
-        id: '1',
-        title: 'Province',
-    },
-    {
-        id: '2',
-        title: 'District',
-    },
-];
-
 interface GeoAreaBoundsResponse {
     bounds: GeoAreaBounds;
 }
@@ -69,7 +52,10 @@ interface KeyValue {
     value: number;
 }
 
-type AdminLevel = NonNullable<typeof adminLevels>[number];
+type AdminLevel = {
+    id: string;
+    title: string;
+};
 
 const keySelector = (d: KeyValue) => d.key;
 const adminLevelKeySelector = (d: AdminLevel) => d.id;
@@ -123,12 +109,22 @@ function GeographicalAreaAssessments(props: Props) {
         [selectedRegion],
     );
 
+    const adminLevels = useMemo(
+        () => selectedRegion?.adminLevels?.map(
+            (admin) => ({
+                id: String(admin.level),
+                title: admin.title,
+            }),
+        ), [selectedRegion],
+    );
+
     const {
         pending: boundsPending,
         response: boundsResponse,
     } = useRequest<GeoAreaBoundsResponse>({
         url: selectedRegionBoundFile?.url ?? undefined,
         method: 'GET',
+        skip: isNotDefined(selectedRegionBoundFile?.url),
     });
 
     const bounds: [number, number, number, number] | undefined = useMemo(() => {
@@ -256,63 +252,65 @@ function GeographicalAreaAssessments(props: Props) {
                     onChange={setActiveAdminLevel}
                     keySelector={adminLevelKeySelector}
                     labelSelector={adminLevelLabelSelector}
-                    options={adminLevels ?? undefined}
+                    options={adminLevels}
                     disabled={navigationDisabled}
                     spacing="compact"
                 />
             </div>
-            <Map
-                mapStyle={mapboxStyle}
-                mapOptions={mapOptions}
-                scaleControlShown={false}
-                navControlShown={false}
-            >
-                <MapContainer
-                    className={_cs(className, styles.map)}
-                />
-                {bounds && (
-                    <MapBounds
-                        bounds={bounds}
-                        padding={10}
-                        duration={100}
-                    />
-                )}
-                <MapSource
-                    sourceKey="regions"
-                    sourceOptions={sourceOptions}
-                    geoJson={adminLevelGeojson?.geojsonFile?.url ?? ''}
+            {isDefined(adminLevelGeojson) && (
+                <Map
+                    mapStyle={mapboxStyle}
+                    mapOptions={mapOptions}
+                    scaleControlShown={false}
+                    navControlShown={false}
                 >
-                    <MapLayer
-                        layerKey="fill"
-                        layerOptions={fillLayerOptions}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
+                    <MapContainer
+                        className={_cs(className, styles.map)}
                     />
-                    <MapLayer
-                        layerKey="line"
-                        layerOptions={lineLayerOptions}
-                    />
-                    <MapState
-                        attributes={assessmentCountAttribute}
-                        attributeKey="assessmentCount"
-                    />
-                    {hoverLngLat && (
-                        <MapTooltip
-                            coordinates={hoverLngLat}
-                            tooltipOptions={tooltipOptions}
-                            trackPointer
-                            hidden={false}
-                        >
-                            <List
-                                data={hoverFeatureProperties}
-                                renderer={TextOutput}
-                                keySelector={keySelector}
-                                rendererParams={rendererParams}
-                            />
-                        </MapTooltip>
+                    {bounds && (
+                        <MapBounds
+                            bounds={bounds}
+                            padding={10}
+                            duration={100}
+                        />
                     )}
-                </MapSource>
-            </Map>
+                    <MapSource
+                        sourceKey="regions"
+                        sourceOptions={sourceOptions}
+                        geoJson={adminLevelGeojson?.geojsonFile?.url}
+                    >
+                        <MapLayer
+                            layerKey="fill"
+                            layerOptions={fillLayerOptions}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                        />
+                        <MapLayer
+                            layerKey="line"
+                            layerOptions={lineLayerOptions}
+                        />
+                        <MapState
+                            attributes={assessmentCountAttribute}
+                            attributeKey="assessmentCount"
+                        />
+                        {hoverLngLat && (
+                            <MapTooltip
+                                coordinates={hoverLngLat}
+                                tooltipOptions={tooltipOptions}
+                                trackPointer
+                                hidden={false}
+                            >
+                                <List
+                                    data={hoverFeatureProperties}
+                                    renderer={TextOutput}
+                                    keySelector={keySelector}
+                                    rendererParams={rendererParams}
+                                />
+                            </MapTooltip>
+                        )}
+                    </MapSource>
+                </Map>
+            )}
         </div>
     );
 }
