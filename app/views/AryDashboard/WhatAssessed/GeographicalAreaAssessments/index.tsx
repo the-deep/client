@@ -76,7 +76,7 @@ function GeographicalAreaAssessments(props: Props) {
         navigationDisabled,
     } = props;
 
-    const [activeAdminLevel, setActiveAdminLevel] = useState<string>('0');
+    const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
     const [regionValue, setRegionValue] = useState<
@@ -99,7 +99,7 @@ function GeographicalAreaAssessments(props: Props) {
 
     const adminLevelGeojson = useMemo(
         () => selectedRegion?.adminLevels?.find(
-            (admin) => admin.level === Number(activeAdminLevel),
+            (admin) => admin.id === activeAdminLevel,
         ), [activeAdminLevel, selectedRegion],
     );
 
@@ -112,7 +112,7 @@ function GeographicalAreaAssessments(props: Props) {
     const adminLevels = useMemo(
         () => selectedRegion?.adminLevels?.map(
             (admin) => ({
-                id: String(admin.level),
+                id: admin.id,
                 title: admin.title,
             }),
         ), [selectedRegion],
@@ -172,7 +172,7 @@ function GeographicalAreaAssessments(props: Props) {
         () => ({
             type: 'line',
             paint: {
-                'line-color': '#1a3ed0',
+                'line-color': '#717171',
                 'line-width': [
                     'case',
                     ['boolean', ['feature-state', 'hovered'], false],
@@ -187,18 +187,13 @@ function GeographicalAreaAssessments(props: Props) {
         () => ({
             type: 'fill',
             paint: {
-                'fill-opacity': ['case',
-                    ['boolean', ['feature-state', 'hovered'], false],
-                    0.2,
-                    0.8,
-                ],
                 'fill-color': [
                     'interpolate',
                     ['linear'],
                     ['number', ['feature-state', 'assessmentCount'], 0],
                     0,
                     '#ffffff',
-                    assessmentMaxCount,
+                    assessmentMaxCount ?? 1,
                     '#00125b',
                 ],
             },

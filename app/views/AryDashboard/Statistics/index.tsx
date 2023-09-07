@@ -14,18 +14,14 @@ import styles from './styles.module.css';
 
 interface Props {
     className?: string;
-    projectId: string;
     data: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['assessmentDashboardStatistics'];
 }
 
 function Statistics(props: Props) {
     const {
         className,
-        projectId,
         data,
     } = props;
-    // eslint-disable-next-line no-console
-    console.log('here', projectId);
 
     const getCoordinationValue = useCallback(
         (coordinationType: AssessmentRegistryCoordinationTypeEnum) => {
