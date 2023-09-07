@@ -77,17 +77,6 @@ const ARY_DASHBOARD_FILTER = gql`
                     date
                 }
             }
-            geoAreas {
-                results {
-                    adminLevelLevel
-                    adminLevelTitle
-                    id
-                    parentTitles
-                    regionTitle
-                    title
-                }
-                totalCount
-            }
             regions {
                 id
                 title
@@ -136,14 +125,17 @@ function AryDashboard(props: Props) {
         setEndDate,
     ] = useState<number | undefined>(todaysDateTime);
 
-    const variables = useMemo((): AryDashboardFilterQueryVariables => ({
-        projectId: activeProject ?? '',
-        filter: {
-            dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
-            dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
-            assessment: filters as AssessmentDashboardFilterDataInputType,
-        },
-    }), [
+    const variables = useMemo(() => (
+        activeProject
+            ? ({
+                projectId: activeProject,
+                filter: {
+                    dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
+                    dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
+                    assessment: filters as AssessmentDashboardFilterDataInputType,
+                },
+            }) : undefined
+    ), [
         activeProject,
         startDate,
         endDate,
@@ -153,11 +145,10 @@ function AryDashboard(props: Props) {
     const {
         loading,
         data,
-        refetch,
     } = useQuery<AryDashboardFilterQuery, AryDashboardFilterQueryVariables>(
         ARY_DASHBOARD_FILTER,
         {
-            skip: isNotDefined(project),
+            skip: isNotDefined(variables),
             variables,
         },
     );
@@ -190,11 +181,10 @@ function AryDashboard(props: Props) {
     const handleToDateChange = useCallback((newDate: string | undefined) => {
         if (isDefined(newDate)) {
             handleEndDateChange(new Date(newDate).getTime());
-            refetch();
         } else {
             handleEndDateChange(undefined);
         }
-    }, [handleEndDateChange, refetch]);
+    }, [handleEndDateChange]);
 
     const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
     const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
@@ -231,9 +221,8 @@ function AryDashboard(props: Props) {
                     toValue={endDateString}
                 />
             )}
-            headerDescription={activeProject && (
+            headerDescription={(
                 <Statistics
-                    projectId={activeProject}
                     data={filterData?.assessmentDashboardStatistics}
                 />
             )}
@@ -272,7 +261,7 @@ function AryDashboard(props: Props) {
                         name="information"
                         transparentBorder
                     >
-                        What do we know and donot know?
+                        What do we know and do not know?
                     </Tab>
                     <Tab
                         name="findings"
@@ -306,7 +295,7 @@ function AryDashboard(props: Props) {
                 <TabPanel
                     name="information"
                 >
-                    What do we know and donot know?
+                    What do we know and do not know?
                 </TabPanel>
                 <TabPanel
                     name="findings"
