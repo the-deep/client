@@ -1,0 +1,51 @@
+.box-bar-chart {
+    display: table;
+
+    .row {
+        display: table-row;
+
+        .cell {
+            display: table-cell;
+            padding: var(--dui-spacing-small);
+            vertical-align: middle;
+        }
+
+        .label {
+            border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            width: 7rem;
+            text-align: right;
+            color: var(--dui-color-text-label);
+        }
+
+        .count {
+            width: 14rem;
+            text-align: left;
+            color: var(--dui-color-text-label);
+
+            .bar {
+                background-color: var(--dui-color-complement1);
+                height: 24px;
+            }
+        }
+
+        .box {
+            height: 2rem;
+            text-align: center;
+            color: var(--dui-color-text-label);
+        }
+
+        .top-cell {
+            position: relative;
+            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            text-align: center;
+            color: var(--dui-color-text-label);
+
+            &:before {
+                position: absolute;
+                bottom: calc(-1 * 2 * var(--dui-spacing-small));
+                left: 50%;
+                content: '\'';
+            }
+        }
+    }
+}
