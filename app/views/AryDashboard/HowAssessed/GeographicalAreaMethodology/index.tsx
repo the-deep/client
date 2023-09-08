@@ -242,7 +242,7 @@ function GeographicalAreaMethodology(props: Props) {
     const assessmentCountAttribute = useMemo(() => {
         if (isDefined(methodologyType) && isNotDefined(collectionTechnique)) {
             return (
-                methodologyData?.value?.map((selection) => ({
+                methodologyData.value?.map((selection) => ({
                     id: selection.geoId,
                     value: selection.count,
                 }))
@@ -250,7 +250,7 @@ function GeographicalAreaMethodology(props: Props) {
         }
 
         if (methodologyType === 'DATA_COLLECTION' && isDefined(collectionTechnique)) {
-            const attributeValue = methodologyData?.value?.filter(
+            const attributeValue = methodologyData.value?.filter(
                 (technique) => technique.dataCollectionTechnique === collectionTechnique,
             )?.map((selection) => ({
                 id: selection.geoId,
@@ -260,7 +260,7 @@ function GeographicalAreaMethodology(props: Props) {
             return attributeValue;
         }
         if (methodologyType === 'SAMPLING_APROACH' && isDefined(collectionTechnique)) {
-            const attributeValue = methodologyData?.value?.filter(
+            const attributeValue = methodologyData.value?.filter(
                 (technique) => technique.samplingApproach === collectionTechnique,
             )?.map((selection) => ({
                 id: selection.geoId,
@@ -269,7 +269,7 @@ function GeographicalAreaMethodology(props: Props) {
             return attributeValue;
         }
         if (methodologyType === 'UNIT_OF_ANALYSIS' && isDefined(collectionTechnique)) {
-            const attributeValue = methodologyData?.value?.filter(
+            const attributeValue = methodologyData.value?.filter(
                 (technique) => technique.unitOfAnanlysis === collectionTechnique,
             )?.map((selection) => ({
                 id: selection.geoId,
@@ -278,7 +278,7 @@ function GeographicalAreaMethodology(props: Props) {
             return attributeValue;
         }
         if (methodologyType === 'UNIT_OF_REPORTING' && isDefined(collectionTechnique)) {
-            const attributeValue = methodologyData?.value?.filter(
+            const attributeValue = methodologyData.value?.filter(
                 (technique) => technique.unitOfReporting === collectionTechnique,
             )?.map((selection) => ({
                 id: selection.geoId,
@@ -359,7 +359,7 @@ function GeographicalAreaMethodology(props: Props) {
             setHoverLngLat(lngLat);
             setHoverFeatureProperties({
                 key: feature.properties.title,
-                value: getAssessmentCount(String(feature?.properties?.pk)),
+                value: getAssessmentCount(String(feature.properties.pk)),
             });
         } else {
             setHoverFeatureProperties(undefined);
@@ -416,7 +416,7 @@ function GeographicalAreaMethodology(props: Props) {
                             onChange={setCollectionTechnique}
                             keySelector={enumKeySelector}
                             labelSelector={enumLabelSelector}
-                            options={methodologyData?.options}
+                            options={methodologyData.options}
                             disabled={boundsPending || isNotDefined(adminLevelGeojson)}
                             variant="general"
                         />

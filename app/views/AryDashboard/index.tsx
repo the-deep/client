@@ -177,8 +177,8 @@ function AryDashboard(props: Props) {
 
     const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
     const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
-    const projectStartDate = removeNull(data?.project?.startDate);
     const projectData = removeNull(data?.project);
+    const projectStartDate = projectData?.startDate;
 
     return (
         <Container
