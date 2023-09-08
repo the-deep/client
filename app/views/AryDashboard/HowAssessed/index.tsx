@@ -100,6 +100,8 @@ interface Props {
     className?: string;
     filters?: AryDashboardFilterQueryVariables;
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
+    selectedRegion?: string;
+    setSelectedRegion: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 function HowAssessed(props: Props) {
@@ -107,6 +109,8 @@ function HowAssessed(props: Props) {
         className,
         filters,
         regions,
+        selectedRegion,
+        setSelectedRegion,
     } = props;
 
     const {
@@ -126,7 +130,6 @@ function HowAssessed(props: Props) {
             variables: filters,
         },
     );
-
     const statisticsData = removeNull(data?.project?.assessmentDashboardStatistics);
 
     return (
@@ -136,6 +139,9 @@ function HowAssessed(props: Props) {
                 options={options}
                 regions={regions}
                 navigationDisabled={loading || responsePending}
+                selectedRegionId={selectedRegion}
+                setSelectedRegionId={setSelectedRegion}
+
             />
         </div>
     );
