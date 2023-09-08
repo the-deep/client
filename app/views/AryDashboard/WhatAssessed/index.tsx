@@ -68,6 +68,8 @@ interface Props {
     endDate: number;
     onStartDateChange: ((newDate: number | undefined) => void) | undefined;
     onEndDateChange: ((newDate: number | undefined) => void) | undefined;
+    selectedRegion?: string;
+    setSelectedRegion: React.Dispatch<React.SetStateAction<string | undefined>>;
     readOnly?: boolean;
 }
 
@@ -79,6 +81,8 @@ function WhatAssessed(props: Props) {
         endDate,
         onStartDateChange,
         onEndDateChange,
+        selectedRegion,
+        setSelectedRegion,
         readOnly,
     } = props;
 
@@ -131,6 +135,8 @@ function WhatAssessed(props: Props) {
             <GeographicalAreaAssessments
                 data={statisticsData}
                 regions={regions}
+                selectedRegionId={selectedRegion}
+                setSelectedRegionId={setSelectedRegion}
                 navigationDisabled={readOnly || loading}
             />
 
