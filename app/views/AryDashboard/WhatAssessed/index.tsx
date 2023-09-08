@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
-import { isNotDefined } from '@togglecorp/fujs';
+import { formatDateToString, isNotDefined } from '@togglecorp/fujs';
 
-import { getTimeseriesWithoutGaps, resolveTime } from '#utils/temporal';
+import { getTimeseriesWithoutGaps } from '#utils/temporal';
 import useSizeTracking from '#hooks/useSizeTracking';
-import { DEEP_START_DATE, todaysDate } from '#utils/common';
+import { todaysDate } from '#utils/common';
 import BrushLineChart from '#components/BrushLineChart';
 import EntityCreationLineChart from '#components/EntityCreationLineChart';
 import {
@@ -64,7 +64,7 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
 interface Props {
     filters?: AryDashboardFilterQueryVariables;
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
-    startDate?: string;
+    startDate: number;
     endDate: number;
     onStartDateChange: ((newDate: number | undefined) => void) | undefined;
     onEndDateChange: ((newDate: number | undefined) => void) | undefined;
@@ -82,10 +82,7 @@ function WhatAssessed(props: Props) {
         readOnly,
     } = props;
 
-    const projectStartDate = useMemo(
-        () => resolveTime(startDate ?? DEEP_START_DATE, 'day').getTime(), [startDate],
-    );
-
+    const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
     const barContainerRef = useRef<HTMLDivElement>(null);
     const {
         width,
@@ -120,12 +117,12 @@ function WhatAssessed(props: Props) {
         () => getTimeseriesWithoutGaps(
             statisticsData?.assessmentByOverTime,
             'month',
-            startDate,
+            startDateString,
             todaysDate,
         ),
         [
             statisticsData?.assessmentByOverTime,
-            startDate,
+            startDateString,
         ],
     );
 
@@ -142,7 +139,7 @@ function WhatAssessed(props: Props) {
                     width={width ?? 0}
                     height={160}
                     data={timeseriesWithoutGaps}
-                    startDate={projectStartDate}
+                    startDate={startDate}
                     endDate={endDate}
                     onChange={handleDateRangeChange}
                 />
@@ -150,7 +147,7 @@ function WhatAssessed(props: Props) {
             <EntityCreationLineChart
                 heading="Number of Assessment Over Time"
                 timeseries={statisticsData?.assessmentByOverTime}
-                startDate={projectStartDate}
+                startDate={startDate}
                 endDate={endDate}
             />
         </>
