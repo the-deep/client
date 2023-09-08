@@ -18,7 +18,6 @@ import {
     PopupOptions,
 } from 'mapbox-gl';
 import {
-    List,
     SelectInput,
     SegmentInput,
     TextOutput,
@@ -27,7 +26,7 @@ import {
 import { mapboxStyle } from '#base/configs/env';
 import { useRequest } from '#base/utils/restRequest';
 import { GeoAreaBounds } from '#types';
-import { AryDashboardFilterQuery } from '#generated/types';
+import { AryDashboardFilterQuery, AryDashboardWhatAssessedQuery } from '#generated/types';
 import { getMaximum } from '#utils/common';
 
 import styles from './styles.css';
@@ -57,27 +56,28 @@ type AdminLevel = {
     title: string;
 };
 
-const keySelector = (d: KeyValue) => d.key;
-const adminLevelKeySelector = (d: AdminLevel) => d.id;
-const adminLevelLabelSelector = (d: AdminLevel) => d.title;
+const keySelector = (d: AdminLevel) => d.id;
+const labelSelector = (d: AdminLevel) => d.title;
 
 interface Props {
     className?: string;
+    data: NonNullable<PurgeNull<AryDashboardWhatAssessedQuery['project']>>['assessmentDashboardStatistics'];
+    regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
     defaultZoom?: number;
-    data: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>;
     navigationDisabled?: boolean;
 }
 
 function GeographicalAreaAssessments(props: Props) {
     const {
         className,
-        defaultZoom = 2,
         data,
+        regions,
+        defaultZoom = 2,
         navigationDisabled,
     } = props;
 
-    const [activeAdminLevel, setActiveAdminLevel] = useState<string>('0');
-    const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
+    const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
+    const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue>();
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
     const [regionValue, setRegionValue] = useState<
         string
@@ -89,11 +89,11 @@ function GeographicalAreaAssessments(props: Props) {
     }), [defaultZoom]);
 
     const selectedRegion = useMemo(
-        () => data?.regions?.find(
+        () => regions?.find(
             (region) => region?.id === regionValue,
         ), [
             regionValue,
-            data?.regions,
+            regions,
         ],
     );
 
@@ -144,28 +144,26 @@ function GeographicalAreaAssessments(props: Props) {
     }, [boundsResponse]);
 
     const getAssessmentCount = useCallback(
-        (
-            adminId: string | number,
-        ) => data?.assessmentDashboardStatistics?.assessmentGeographicAreas?.find(
-            (item) => item.geoId === Number(adminId),
+        (adminId: string | number) => data?.assessmentGeographicAreas?.find(
+            (item) => String(item.geoId) === adminId,
         )?.count ?? 0,
-        [data?.assessmentDashboardStatistics?.assessmentGeographicAreas],
+        [data?.assessmentGeographicAreas],
     );
 
     const assessmentCountAttribute = useMemo(() => (
-        data?.assessmentDashboardStatistics?.assessmentGeographicAreas?.map(
+        data?.assessmentGeographicAreas?.map(
             (selection) => ({
                 id: selection.geoId,
                 value: selection.count,
             }),
         ) ?? []
-    ), [data?.assessmentDashboardStatistics?.assessmentGeographicAreas]);
+    ), [data?.assessmentGeographicAreas]);
 
     const assessmentMaxCount = useMemo(
         () => getMaximum(
-            data?.assessmentDashboardStatistics?.assessmentGeographicAreas,
+            data?.assessmentGeographicAreas,
             (a, b) => compareNumber(a.count, b.count),
-        )?.count, [data?.assessmentDashboardStatistics?.assessmentGeographicAreas],
+        )?.count, [data?.assessmentGeographicAreas],
     );
 
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(
@@ -208,28 +206,23 @@ function GeographicalAreaAssessments(props: Props) {
     const handleMouseEnter = useCallback((feature: MapboxGeoJSONFeature, lngLat: LngLat) => {
         if (
             feature.properties
-        && isTruthyString(feature.properties.title)
-        && isDefined(feature.id)
+            && isTruthyString(feature.properties.title)
+            && isDefined(feature.properties.pk)
         ) {
             setHoverLngLat(lngLat);
-            setHoverFeatureProperties([{
+            setHoverFeatureProperties({
                 key: feature.properties.title,
-                value: getAssessmentCount(feature.id),
-            }]);
+                value: getAssessmentCount(String(feature?.properties?.pk)),
+            });
         } else {
-            setHoverFeatureProperties([]);
+            setHoverFeatureProperties(undefined);
         }
     }, [getAssessmentCount]);
 
     const handleMouseLeave = useCallback(() => {
         setHoverLngLat(undefined);
-        setHoverFeatureProperties([]);
+        setHoverFeatureProperties(undefined);
     }, []);
-
-    const rendererParams = useCallback((_: string, tooltipData: KeyValue) => ({
-        label: tooltipData.key,
-        value: tooltipData.value,
-    }), []);
 
     return (
         <div className={_cs(className, styles.geographicalAreaAssessments)}>
@@ -239,9 +232,9 @@ function GeographicalAreaAssessments(props: Props) {
                     name="region"
                     value={regionValue}
                     onChange={setRegionValue}
-                    keySelector={adminLevelKeySelector}
-                    labelSelector={adminLevelLabelSelector}
-                    options={data?.regions}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
+                    options={regions}
                     disabled={boundsPending}
                     variant="general"
                 />
@@ -250,30 +243,30 @@ function GeographicalAreaAssessments(props: Props) {
                     name="adminLevels"
                     value={activeAdminLevel}
                     onChange={setActiveAdminLevel}
-                    keySelector={adminLevelKeySelector}
-                    labelSelector={adminLevelLabelSelector}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
                     options={adminLevels}
                     disabled={navigationDisabled}
                     spacing="compact"
                 />
             </div>
-            {isDefined(adminLevelGeojson) && (
-                <Map
-                    mapStyle={mapboxStyle}
-                    mapOptions={mapOptions}
-                    scaleControlShown={false}
-                    navControlShown={false}
-                >
-                    <MapContainer
-                        className={_cs(className, styles.map)}
+            <Map
+                mapStyle={mapboxStyle}
+                mapOptions={mapOptions}
+                scaleControlShown={false}
+                navControlShown={false}
+            >
+                <MapContainer
+                    className={_cs(className, styles.map)}
+                />
+                {bounds && (
+                    <MapBounds
+                        bounds={bounds}
+                        padding={10}
+                        duration={100}
                     />
-                    {bounds && (
-                        <MapBounds
-                            bounds={bounds}
-                            padding={10}
-                            duration={100}
-                        />
-                    )}
+                )}
+                {isDefined(adminLevelGeojson) && (
                     <MapSource
                         sourceKey="regions"
                         sourceOptions={sourceOptions}
@@ -300,17 +293,15 @@ function GeographicalAreaAssessments(props: Props) {
                                 trackPointer
                                 hidden={false}
                             >
-                                <List
-                                    data={hoverFeatureProperties}
-                                    renderer={TextOutput}
-                                    keySelector={keySelector}
-                                    rendererParams={rendererParams}
+                                <TextOutput
+                                    value={hoverFeatureProperties?.value}
+                                    label={hoverFeatureProperties?.key}
                                 />
                             </MapTooltip>
                         )}
                     </MapSource>
-                </Map>
-            )}
+                )}
+            </Map>
         </div>
     );
 }
