@@ -94,8 +94,8 @@ type AdminLevel = {
     title: string;
 };
 
-const adminLevelKeySelector = (d: AdminLevel) => d.id;
-const adminLevelLabelSelector = (d: AdminLevel) => d.title;
+const keySelector = (d: AdminLevel) => d.id;
+const labelSelector = (d: AdminLevel) => d.title;
 
 interface MethodologyType {
     options?: {
@@ -354,7 +354,7 @@ function GeographicalAreaMethodology(props: Props) {
         if (
             feature.properties
             && isTruthyString(feature.properties.title)
-            && isDefined(feature.id)
+            && isDefined(feature.properties.pk)
         ) {
             setHoverLngLat(lngLat);
             setHoverFeatureProperties({
@@ -379,8 +379,8 @@ function GeographicalAreaMethodology(props: Props) {
                     name="region"
                     value={regionValue}
                     onChange={setRegionValue}
-                    keySelector={adminLevelKeySelector}
-                    labelSelector={adminLevelLabelSelector}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
                     options={regions}
                     disabled={boundsPending}
                     variant="general"
@@ -392,8 +392,8 @@ function GeographicalAreaMethodology(props: Props) {
                             name="adminLevels"
                             value={activeAdminLevel}
                             onChange={setActiveAdminLevel}
-                            keySelector={adminLevelKeySelector}
-                            labelSelector={adminLevelLabelSelector}
+                            keySelector={keySelector}
+                            labelSelector={labelSelector}
                             options={adminLevels}
                             disabled={navigationDisabled}
                             spacing="compact"
@@ -403,8 +403,8 @@ function GeographicalAreaMethodology(props: Props) {
                             name="methodologyType"
                             value={methodologyType}
                             onChange={setMethodologyType}
-                            keySelector={adminLevelKeySelector}
-                            labelSelector={adminLevelLabelSelector}
+                            keySelector={keySelector}
+                            labelSelector={labelSelector}
                             options={methodologyTechniques}
                             disabled={boundsPending || isNotDefined(adminLevelGeojson)}
                             variant="general"

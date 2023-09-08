@@ -1,18 +1,70 @@
 import React, { useCallback, useMemo, useRef } from 'react';
-import { PurgeNull } from '@togglecorp/toggle-form';
+import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
+import { gql, useQuery } from '@apollo/client';
+import { isNotDefined } from '@togglecorp/fujs';
 
-import { getTimeseriesWithoutGaps } from '#utils/temporal';
+import { getTimeseriesWithoutGaps, resolveTime } from '#utils/temporal';
 import useSizeTracking from '#hooks/useSizeTracking';
-import { AryDashboardFilterQuery } from '#generated/types';
-import { DEEP_START_DATE, todaysDate } from '#utils/common';
+import { todaysDate } from '#utils/common';
 import BrushLineChart from '#views/ExploreDeepContent/BrushLineChart';
 import EntityCreationLineChart from '#views/ExploreDeepContent/EntityCreationLineChart';
+import {
+    AryDashboardFilterQuery,
+    AryDashboardFilterQueryVariables,
+    AryDashboardWhatAssessedQuery,
+    AryDashboardWhatAssessedQueryVariables,
+} from '#generated/types';
 
 import GeographicalAreaAssessments from './GeographicalAreaAssessments';
 
+const ARY_DASHBOARD_WHAT_ASSESSED = gql`
+        query AryDashboardWhatAssessed(
+        $projectId: ID!,
+        $filter: AssessmentDashboardFilterInputType!,
+    ) {
+        project(id: $projectId) {
+            id
+            assessmentDashboardStatistics(filter: $filter){
+                totalAssessment
+                totalCollectionTechnique
+                totalMultisectorAssessment
+                totalSinglesectorAssessment
+                totalStakeholder
+                stakeholderCount {
+                    count
+                    stakeholder
+                }
+                collectionTechniqueCount {
+                    count
+                    dataCollectionTechnique
+                    dataCollectionTechniqueDisplay
+                }
+                assessmentCount {
+                    coordinatedJoint
+                    coordinatedJointDisplay
+                    count
+                }
+                assessmentGeographicAreas {
+                    geoId
+                    count
+                    code
+                    adminLevelId
+                    assessmentIds
+                    region,
+                }
+                assessmentByOverTime {
+                    count
+                    date
+                }
+            }
+        }
+    }
+`;
+
 interface Props {
-    data: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>;
-    startDate: number;
+    filters?: AryDashboardFilterQueryVariables;
+    regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
+    startDate: string;
     endDate: number;
     onStartDateChange: ((newDate: number | undefined) => void) | undefined;
     onEndDateChange: ((newDate: number | undefined) => void) | undefined;
@@ -21,17 +73,33 @@ interface Props {
 
 function WhatAssessed(props: Props) {
     const {
-        data,
+        regions,
+        filters,
         startDate,
         endDate,
         onStartDateChange,
         onEndDateChange,
         readOnly,
     } = props;
+
+    const projectStartDate = resolveTime(startDate, 'day').getTime();
     const barContainerRef = useRef<HTMLDivElement>(null);
     const {
         width,
     } = useSizeTracking(barContainerRef) ?? {};
+
+    const {
+        loading,
+        data,
+    } = useQuery<AryDashboardWhatAssessedQuery, AryDashboardWhatAssessedQueryVariables>(
+        ARY_DASHBOARD_WHAT_ASSESSED,
+        {
+            skip: isNotDefined(filters),
+            variables: filters,
+        },
+    );
+
+    const statisticsData = removeNull(data?.project?.assessmentDashboardStatistics);
 
     const handleDateRangeChange = useCallback(
         (foo: number | undefined, bar: number | undefined) => {
@@ -47,19 +115,23 @@ function WhatAssessed(props: Props) {
 
     const timeseriesWithoutGaps = useMemo(
         () => getTimeseriesWithoutGaps(
-            data?.assessmentDashboardStatistics?.assessmentByOverTime,
+            statisticsData?.assessmentByOverTime,
             'month',
-            DEEP_START_DATE,
+            startDate,
             todaysDate,
         ),
-        [data?.assessmentDashboardStatistics?.assessmentByOverTime],
+        [
+            statisticsData?.assessmentByOverTime,
+            startDate,
+        ],
     );
 
     return (
         <>
             <GeographicalAreaAssessments
-                data={data}
-                navigationDisabled={readOnly}
+                data={statisticsData}
+                regions={regions}
+                navigationDisabled={readOnly || loading}
             />
 
             <div ref={barContainerRef}>
@@ -68,14 +140,14 @@ function WhatAssessed(props: Props) {
                     height={160}
                     data={timeseriesWithoutGaps}
                     endDate={endDate}
-                    startDate={startDate}
+                    startDate={projectStartDate}
                     onChange={handleDateRangeChange}
                 />
             </div>
             <EntityCreationLineChart
                 heading="Number of Assessment Over Time"
-                timeseries={data?.assessmentDashboardStatistics?.assessmentByOverTime ?? undefined}
-                startDate={startDate}
+                timeseries={statisticsData?.assessmentByOverTime}
+                startDate={projectStartDate}
                 endDate={endDate}
             />
         </>
