@@ -44,6 +44,7 @@ const ARY_DASHBOARD_FILTER = gql`
     ) {
         project(id: $projectId) {
             id
+            startDate
             assessmentDashboardStatistics(filter: $filter){
                 totalAssessment
                 totalCollectionTechnique
@@ -63,18 +64,6 @@ const ARY_DASHBOARD_FILTER = gql`
                     coordinatedJoint
                     coordinatedJointDisplay
                     count
-                }
-                assessmentGeographicAreas {
-                    geoId
-                    count
-                    code
-                    adminLevelId
-                    assessmentIds
-                    region,
-                }
-                assessmentByOverTime {
-                    count
-                    date
                 }
             }
             regions {
@@ -188,7 +177,8 @@ function AryDashboard(props: Props) {
 
     const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
     const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
-    const filterData = removeNull(data?.project);
+    const projectStartDate = removeNull(data?.project?.startDate);
+    const projectData = removeNull(data?.project);
 
     return (
         <Container
@@ -223,7 +213,7 @@ function AryDashboard(props: Props) {
             )}
             headerDescription={(
                 <Statistics
-                    data={filterData?.assessmentDashboardStatistics}
+                    data={projectData?.assessmentDashboardStatistics}
                 />
             )}
         >
@@ -274,8 +264,9 @@ function AryDashboard(props: Props) {
                     name="what"
                 >
                     <WhatAssessed
-                        data={filterData}
-                        startDate={startDate}
+                        regions={projectData?.regions}
+                        filters={variables}
+                        startDate={projectStartDate}
                         endDate={endDate}
                         onStartDateChange={setStartDate}
                         onEndDateChange={setEndDate}
@@ -286,7 +277,7 @@ function AryDashboard(props: Props) {
                     name="how"
                 >
                     <HowAssessed
-                        regions={filterData?.regions}
+                        regions={projectData?.regions}
                         filters={variables}
                     />
                 </TabPanel>

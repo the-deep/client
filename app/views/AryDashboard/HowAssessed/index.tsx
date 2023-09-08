@@ -127,12 +127,12 @@ function HowAssessed(props: Props) {
         },
     );
 
-    const filterData = removeNull(data?.project?.assessmentDashboardStatistics);
+    const statisticsData = removeNull(data?.project?.assessmentDashboardStatistics);
 
     return (
         <div className={_cs(className)}>
             <GeographicalAreaMethodology
-                data={filterData}
+                data={statisticsData}
                 options={options}
                 regions={regions}
                 navigationDisabled={loading || responsePending}
