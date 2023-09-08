@@ -44,7 +44,7 @@ const ARY_DASHBOARD_FILTER = gql`
     ) {
         project(id: $projectId) {
             id
-            startDate
+            createdAt
             assessmentDashboardStatistics(filter: $filter){
                 totalAssessment
                 totalCollectionTechnique
@@ -178,7 +178,7 @@ function AryDashboard(props: Props) {
     const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
     const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
     const projectData = removeNull(data?.project);
-    const projectStartDate = projectData?.startDate;
+    const projectStartDate = resolveTime(new Date(data?.project?.createdAt ?? DEEP_START_DATE), 'day').getTime();
 
     return (
         <Container
