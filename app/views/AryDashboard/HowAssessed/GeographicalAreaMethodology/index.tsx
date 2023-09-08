@@ -122,6 +122,8 @@ interface Props {
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
     options?: GetMethodologyOptionsQuery;
     navigationDisabled?: boolean;
+    selectedRegionId?: string;
+    setSelectedRegionId: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 function GeographicalAreaMethodology(props: Props) {
@@ -131,13 +133,14 @@ function GeographicalAreaMethodology(props: Props) {
         data,
         regions,
         options,
+        selectedRegionId,
+        setSelectedRegionId,
         navigationDisabled,
     } = props;
 
     const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue>();
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
-    const [regionValue, setRegionValue] = useState<string>();
     const [methodologyType, setMethodologyType] = useState<string>();
     const [collectionTechnique, setCollectionTechnique] = useState<string>();
 
@@ -186,9 +189,9 @@ function GeographicalAreaMethodology(props: Props) {
 
     const selectedRegion = useMemo(
         () => regions?.find(
-            (region) => region?.id === regionValue,
+            (region) => region?.id === selectedRegionId,
         ), [
-            regionValue,
+            selectedRegionId,
             regions,
         ],
     );
@@ -377,15 +380,15 @@ function GeographicalAreaMethodology(props: Props) {
                 <SelectInput
                     placeholder="Select Region"
                     name="region"
-                    value={regionValue}
-                    onChange={setRegionValue}
+                    value={selectedRegionId}
+                    onChange={setSelectedRegionId}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
                     options={regions}
                     disabled={boundsPending}
                     variant="general"
                 />
-                {isDefined(regionValue) && (
+                {isDefined(selectedRegionId) && (
                     <>
                         <SegmentInput
                             className={styles.adminLevels}

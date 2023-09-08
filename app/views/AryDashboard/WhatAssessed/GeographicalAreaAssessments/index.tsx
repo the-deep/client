@@ -63,6 +63,8 @@ interface Props {
     className?: string;
     data: NonNullable<PurgeNull<AryDashboardWhatAssessedQuery['project']>>['assessmentDashboardStatistics'];
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
+    selectedRegionId?: string;
+    setSelectedRegionId: React.Dispatch<React.SetStateAction<string | undefined>>;
     defaultZoom?: number;
     navigationDisabled?: boolean;
 }
@@ -72,6 +74,8 @@ function GeographicalAreaAssessments(props: Props) {
         className,
         data,
         regions,
+        selectedRegionId,
+        setSelectedRegionId,
         defaultZoom = 2,
         navigationDisabled,
     } = props;
@@ -79,9 +83,6 @@ function GeographicalAreaAssessments(props: Props) {
     const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue>();
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
-    const [regionValue, setRegionValue] = useState<
-        string
-    >();
 
     const mapOptions: Partial<MapboxOptions> = useMemo(() => ({
         zoom: defaultZoom,
@@ -90,9 +91,9 @@ function GeographicalAreaAssessments(props: Props) {
 
     const selectedRegion = useMemo(
         () => regions?.find(
-            (region) => region?.id === regionValue,
+            (region) => region?.id === selectedRegionId,
         ), [
-            regionValue,
+            selectedRegionId,
             regions,
         ],
     );
@@ -230,8 +231,8 @@ function GeographicalAreaAssessments(props: Props) {
                 <SelectInput
                     placeholder="Select Region"
                     name="region"
-                    value={regionValue}
-                    onChange={setRegionValue}
+                    value={selectedRegionId}
+                    onChange={setSelectedRegionId}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
                     options={regions}
