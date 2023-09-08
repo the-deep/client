@@ -212,7 +212,7 @@ function GeographicalAreaAssessments(props: Props) {
             setHoverLngLat(lngLat);
             setHoverFeatureProperties({
                 key: feature.properties.title,
-                value: getAssessmentCount(String(feature?.properties?.pk)),
+                value: getAssessmentCount(String(feature.properties.pk)),
             });
         } else {
             setHoverFeatureProperties(undefined);
