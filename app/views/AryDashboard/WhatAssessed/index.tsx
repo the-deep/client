@@ -5,7 +5,7 @@ import { isNotDefined } from '@togglecorp/fujs';
 
 import { getTimeseriesWithoutGaps, resolveTime } from '#utils/temporal';
 import useSizeTracking from '#hooks/useSizeTracking';
-import { todaysDate } from '#utils/common';
+import { DEEP_START_DATE, todaysDate } from '#utils/common';
 import BrushLineChart from '#components/BrushLineChart';
 import EntityCreationLineChart from '#components/EntityCreationLineChart';
 import {
@@ -64,7 +64,7 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
 interface Props {
     filters?: AryDashboardFilterQueryVariables;
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
-    startDate: string;
+    startDate?: string;
     endDate: number;
     onStartDateChange: ((newDate: number | undefined) => void) | undefined;
     onEndDateChange: ((newDate: number | undefined) => void) | undefined;
@@ -82,7 +82,10 @@ function WhatAssessed(props: Props) {
         readOnly,
     } = props;
 
-    const projectStartDate = resolveTime(startDate, 'day').getTime();
+    const projectStartDate = useMemo(
+        () => resolveTime(startDate ?? DEEP_START_DATE, 'day').getTime(), [startDate],
+    );
+
     const barContainerRef = useRef<HTMLDivElement>(null);
     const {
         width,
@@ -139,8 +142,8 @@ function WhatAssessed(props: Props) {
                     width={width ?? 0}
                     height={160}
                     data={timeseriesWithoutGaps}
-                    endDate={endDate}
                     startDate={projectStartDate}
+                    endDate={endDate}
                     onChange={handleDateRangeChange}
                 />
             </div>
