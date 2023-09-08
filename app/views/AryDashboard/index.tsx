@@ -33,6 +33,7 @@ import {
 import Statistics from './Statistics';
 import Filters, { FilterForm } from './Filters';
 import WhatAssessed from './WhatAssessed';
+import MainFindings from './MainFindings';
 import HowAssessed from './HowAssessed';
 
 import styles from './styles.css';
@@ -344,7 +345,7 @@ function AryDashboard(props: Props) {
                     <TabPanel
                         name="findings"
                     >
-                        What are the main findings?
+                        <MainFindings />
                     </TabPanel>
                 </Tabs>
             </div>

@@ -1,0 +1,12 @@
+.main-findings {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: var(--dui-spacing-super-large);
+
+    .charts {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-super-large);
+    }
+}
