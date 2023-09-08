@@ -6,8 +6,8 @@ import { isNotDefined } from '@togglecorp/fujs';
 import { getTimeseriesWithoutGaps, resolveTime } from '#utils/temporal';
 import useSizeTracking from '#hooks/useSizeTracking';
 import { todaysDate } from '#utils/common';
-import BrushLineChart from '#views/ExploreDeepContent/BrushLineChart';
-import EntityCreationLineChart from '#views/ExploreDeepContent/EntityCreationLineChart';
+import BrushLineChart from '#components/BrushLineChart';
+import EntityCreationLineChart from '#components/EntityCreationLineChart';
 import {
     AryDashboardFilterQuery,
     AryDashboardFilterQueryVariables,

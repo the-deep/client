@@ -19,14 +19,14 @@ import {
 } from '#utils/common';
 import { getTimeseriesWithoutGaps } from '#utils/temporal';
 import useSizeTracking from '#hooks/useSizeTracking';
+import BrushLineChart from '#components/BrushLineChart';
+import EntityCreationLineChart from '#components/EntityCreationLineChart';
 
-import EntityCreationLineChart from '../EntityCreationLineChart';
 import TableView from './TableView';
 import PublicTableView from './PublicTableView';
 import { FormType as ProjectFilterType } from '../ProjectFilters';
 import MapView, { Projects as ProjectsByRegion } from './MapView';
 import PublicMapView from './PublicMapView';
-import BrushLineChart from '../BrushLineChart';
 
 import styles from './styles.css';
 
