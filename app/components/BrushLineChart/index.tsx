@@ -1,3 +1,4 @@
+import React, { useMemo, useCallback } from 'react';
 import {
     VictoryChart,
     VictoryBrushContainer,
@@ -5,7 +6,6 @@ import {
     VictoryAxis,
     VictoryArea,
 } from 'victory';
-import React, { useMemo, useCallback } from 'react';
 
 const today = new Date().getTime();
 
