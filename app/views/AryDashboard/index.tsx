@@ -105,6 +105,7 @@ function AryDashboard(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
     const [filters, setFilters] = useState<FilterForm | undefined>(undefined);
+    const [selectedRegion, setSelectedRegion] = useState<string>();
     const [
         startDate = lastYearDateTime,
         setStartDate,
@@ -139,6 +140,9 @@ function AryDashboard(props: Props) {
         {
             skip: isNotDefined(variables),
             variables,
+            onCompleted: (response) => {
+                setSelectedRegion(response.project?.regions?.[0].id);
+            },
         },
     );
 
@@ -270,6 +274,8 @@ function AryDashboard(props: Props) {
                         endDate={endDate}
                         onStartDateChange={setStartDate}
                         onEndDateChange={setEndDate}
+                        selectedRegion={selectedRegion}
+                        setSelectedRegion={setSelectedRegion}
                         readOnly={loading}
                     />
                 </TabPanel>
@@ -279,6 +285,8 @@ function AryDashboard(props: Props) {
                     <HowAssessed
                         regions={projectData?.regions}
                         filters={variables}
+                        selectedRegion={selectedRegion}
+                        setSelectedRegion={setSelectedRegion}
                     />
                 </TabPanel>
                 <TabPanel
