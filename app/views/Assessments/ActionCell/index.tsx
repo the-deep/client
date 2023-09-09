@@ -100,7 +100,7 @@ function ActionCell(props: Props) {
                     attrs={{
                         assessmentId,
                     }}
-                    route={routes.assessmentEdit}
+                    route={routes.newAssessmentEdit}
                     disabled={disabled}
                     title="Edit"
                 >

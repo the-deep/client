@@ -1,23 +1,19 @@
 .geographical-area-assessments {
+    display: flex;
     position: relative;
-    z-index: 1;
+    flex-direction: column;
 
     .map {
+        z-index: 0;
         width: auto;
         height: 50em;
     }
 
     .region-selectors {
         display: flex;
-        position: absolute;
-        top: 0;
-        left: 0;
-        align-items: baseline;
-        z-index: 2;
-        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-        border-bottom-right-radius: var(--dui-border-radius-card);
-        background-color: #fff;
-        padding: var(--dui-spacing-small);
+        align-items: center;
+        flex-shrink: 0;
+        padding: var(--dui-spacing-medium) 0;
         gap: var(--dui-spacing-small);
     }
 }

@@ -122,8 +122,10 @@ interface Props {
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
     options?: GetMethodologyOptionsQuery;
     navigationDisabled?: boolean;
-    selectedRegionId?: string;
-    setSelectedRegionId: React.Dispatch<React.SetStateAction<string | undefined>>;
+    selectedRegion?: string;
+    onRegionChange: (newVal: string | undefined) => void;
+    selectedAdminLevel?: string;
+    onAdminLevelChange: (newVal: string | undefined) => void;
 }
 
 function GeographicalAreaMethodology(props: Props) {
@@ -133,88 +135,78 @@ function GeographicalAreaMethodology(props: Props) {
         data,
         regions,
         options,
-        selectedRegionId,
-        setSelectedRegionId,
+        selectedRegion,
+        onRegionChange,
         navigationDisabled,
+        selectedAdminLevel,
+        onAdminLevelChange,
     } = props;
 
-    const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue>();
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
-    const [methodologyType, setMethodologyType] = useState<string>();
-    const [collectionTechnique, setCollectionTechnique] = useState<string>();
+    const [category, setCategory] = useState<string>('DATA_COLLECTION');
+    const [subCategory, setSubCategory] = useState<string>('SECONDARY_DATA_REVIEW');
 
-    const methodologyData: MethodologyType = useMemo(
-        () => {
-            if (methodologyType === 'DATA_COLLECTION') {
-                return {
-                    options: options?.dataCollectionTechniqueOptions?.enumValues,
-                    value: data?.assessmentByDataCollectionTechniqueAndGeolocation ?? [],
-                };
-            }
-            if (methodologyType === 'SAMPLING_APROACH') {
-                return {
-                    options: options?.samplingApproach?.enumValues,
-                    value: data?.assessmentBySamplingApproachAndGeolocation ?? [],
-                };
-            }
-            if (methodologyType === 'UNIT_OF_ANALYSIS') {
-                return {
-                    options: options?.unitOfAnanlysis?.enumValues,
-                    value: data?.assessmentByUnitOfAnalysisAndGeolocation ?? [],
-                };
-            }
-            if (methodologyType === 'UNIT_OF_REPORTING') {
-                return {
-                    options: options?.unitOfReporting?.enumValues,
-                    value: data?.assessmentByUnitOfReportingAndGeolocation ?? [],
-                };
-            }
-            if (methodologyType === 'PROXIMITY') {
-                return {
-                    options: options?.proximity?.enumValues,
-                    value: data?.assessmentByProximityAndGeolocation ?? [],
-                };
-            }
-            return {
-                options: [],
-                value: [],
-            };
-        }, [
+    const methodologyDataMap: Record<string, MethodologyType> = useMemo(
+        () => ({
+            DATA_COLLECTION: {
+                options: options?.dataCollectionTechniqueOptions?.enumValues,
+                value: data?.assessmentByDataCollectionTechniqueAndGeolocation ?? [],
+            },
+            SAMPLING_APROACH: {
+                options: options?.samplingApproach?.enumValues,
+                value: data?.assessmentBySamplingApproachAndGeolocation ?? [],
+            },
+            UNIT_OF_ANALYSIS: {
+                options: options?.unitOfAnanlysis?.enumValues,
+                value: data?.assessmentByUnitOfAnalysisAndGeolocation ?? [],
+            },
+            UNIT_OF_REPORTING: {
+                options: options?.unitOfReporting?.enumValues,
+                value: data?.assessmentByUnitOfReportingAndGeolocation ?? [],
+            },
+            PROXIMITY: {
+                options: options?.proximity?.enumValues,
+                value: data?.assessmentByProximityAndGeolocation ?? [],
+            },
+        }), [
             data,
             options,
-            methodologyType,
         ],
     );
 
-    const selectedRegion = useMemo(
+    const handleCategoryChange = useCallback((newCategory: string) => {
+        setCategory(newCategory);
+        const firstSubCategory = methodologyDataMap[newCategory].options?.[0].name;
+        if (firstSubCategory) {
+            setSubCategory(firstSubCategory);
+        }
+    }, [
+        methodologyDataMap,
+    ]);
+
+    const selectedRegionObject = useMemo(
         () => regions?.find(
-            (region) => region?.id === selectedRegionId,
+            (region) => region?.id === selectedRegion,
         ), [
-            selectedRegionId,
+            selectedRegion,
             regions,
         ],
     );
 
     const adminLevelGeojson = useMemo(
-        () => selectedRegion?.adminLevels?.find(
-            (admin) => admin.id === activeAdminLevel,
-        ), [activeAdminLevel, selectedRegion],
+        () => selectedRegionObject?.adminLevels?.find(
+            (admin) => admin.id === selectedAdminLevel,
+        ), [
+            selectedAdminLevel,
+            selectedRegionObject,
+        ],
     );
 
     // NOTE: this always select bound of country or admin level zero
     const selectedRegionBoundFile = useMemo(
-        () => selectedRegion?.adminLevels?.[0]?.boundsFile,
-        [selectedRegion],
-    );
-
-    const adminLevels = useMemo(
-        () => selectedRegion?.adminLevels?.map(
-            (admin) => ({
-                id: admin.id,
-                title: admin.title,
-            }),
-        ), [selectedRegion],
+        () => selectedRegionObject?.adminLevels?.[0]?.boundsFile,
+        [selectedRegionObject],
     );
 
     const {
@@ -243,18 +235,9 @@ function GeographicalAreaMethodology(props: Props) {
     }, [boundsResponse]);
 
     const assessmentCountAttribute = useMemo(() => {
-        if (isDefined(methodologyType) && isNotDefined(collectionTechnique)) {
-            return (
-                methodologyData.value?.map((selection) => ({
-                    id: selection.geoId,
-                    value: selection.count,
-                }))
-            ) ?? [];
-        }
-
-        if (methodologyType === 'DATA_COLLECTION' && isDefined(collectionTechnique)) {
-            const attributeValue = methodologyData.value?.filter(
-                (technique) => technique.dataCollectionTechnique === collectionTechnique,
+        if (category === 'DATA_COLLECTION' && isDefined(subCategory)) {
+            const attributeValue = methodologyDataMap[category].value?.filter(
+                (technique) => technique.dataCollectionTechnique === subCategory,
             )?.map((selection) => ({
                 id: selection.geoId,
                 value: selection.count,
@@ -262,27 +245,27 @@ function GeographicalAreaMethodology(props: Props) {
 
             return attributeValue;
         }
-        if (methodologyType === 'SAMPLING_APROACH' && isDefined(collectionTechnique)) {
-            const attributeValue = methodologyData.value?.filter(
-                (technique) => technique.samplingApproach === collectionTechnique,
+        if (category === 'SAMPLING_APROACH' && isDefined(subCategory)) {
+            const attributeValue = methodologyDataMap[category].value?.filter(
+                (technique) => technique.samplingApproach === subCategory,
             )?.map((selection) => ({
                 id: selection.geoId,
                 value: selection.count,
             }));
             return attributeValue;
         }
-        if (methodologyType === 'UNIT_OF_ANALYSIS' && isDefined(collectionTechnique)) {
-            const attributeValue = methodologyData.value?.filter(
-                (technique) => technique.unitOfAnanlysis === collectionTechnique,
+        if (category === 'UNIT_OF_ANALYSIS' && isDefined(subCategory)) {
+            const attributeValue = methodologyDataMap[category].value?.filter(
+                (technique) => technique.unitOfAnanlysis === subCategory,
             )?.map((selection) => ({
                 id: selection.geoId,
                 value: selection.count,
             }));
             return attributeValue;
         }
-        if (methodologyType === 'UNIT_OF_REPORTING' && isDefined(collectionTechnique)) {
-            const attributeValue = methodologyData.value?.filter(
-                (technique) => technique.unitOfReporting === collectionTechnique,
+        if (category === 'UNIT_OF_REPORTING' && isDefined(subCategory)) {
+            const attributeValue = methodologyDataMap[category].value?.filter(
+                (technique) => technique.unitOfReporting === subCategory,
             )?.map((selection) => ({
                 id: selection.geoId,
                 value: selection.count,
@@ -291,9 +274,9 @@ function GeographicalAreaMethodology(props: Props) {
         }
         return [];
     }, [
-        collectionTechnique,
-        methodologyType,
-        methodologyData,
+        subCategory,
+        category,
+        methodologyDataMap,
     ]);
 
     const getAssessmentCount = useCallback(
@@ -380,49 +363,54 @@ function GeographicalAreaMethodology(props: Props) {
                 <SelectInput
                     placeholder="Select Region"
                     name="region"
-                    value={selectedRegionId}
-                    onChange={setSelectedRegionId}
+                    value={selectedRegion}
+                    onChange={onRegionChange}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
                     options={regions}
                     disabled={boundsPending}
                     variant="general"
+                    nonClearable
                 />
-                {isDefined(selectedRegionId) && (
+                {isDefined(selectedRegion) && (
                     <>
                         <SegmentInput
                             className={styles.adminLevels}
                             name="adminLevels"
-                            value={activeAdminLevel}
-                            onChange={setActiveAdminLevel}
+                            value={selectedAdminLevel}
+                            onChange={onAdminLevelChange}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
-                            options={adminLevels}
+                            options={selectedRegionObject?.adminLevels}
                             disabled={navigationDisabled}
                             spacing="compact"
                         />
                         <SelectInput
                             placeholder="Select"
                             name="methodologyType"
-                            value={methodologyType}
-                            onChange={setMethodologyType}
+                            value={category}
+                            onChange={handleCategoryChange}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                             options={methodologyTechniques}
                             disabled={boundsPending || isNotDefined(adminLevelGeojson)}
                             variant="general"
+                            nonClearable
                         />
-                        <SelectInput
-                            placeholder="Select collection technique"
-                            name="collectionTechnique"
-                            value={collectionTechnique}
-                            onChange={setCollectionTechnique}
-                            keySelector={enumKeySelector}
-                            labelSelector={enumLabelSelector}
-                            options={methodologyData.options}
-                            disabled={boundsPending || isNotDefined(adminLevelGeojson)}
-                            variant="general"
-                        />
+                        {category && (
+                            <SelectInput
+                                placeholder="Select sub category"
+                                name="collectionTechnique"
+                                value={subCategory}
+                                onChange={setSubCategory}
+                                keySelector={enumKeySelector}
+                                labelSelector={enumLabelSelector}
+                                options={methodologyDataMap[category].options}
+                                disabled={boundsPending || isNotDefined(adminLevelGeojson)}
+                                variant="general"
+                                nonClearable
+                            />
+                        )}
                     </>
                 )}
             </div>
