@@ -63,10 +63,12 @@ interface Props {
     className?: string;
     data: NonNullable<PurgeNull<AryDashboardWhatAssessedQuery['project']>>['assessmentDashboardStatistics'];
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
-    selectedRegionId?: string;
-    setSelectedRegionId: React.Dispatch<React.SetStateAction<string | undefined>>;
+    selectedRegion?: string;
+    onRegionChange: (newVal: string | undefined) => void;
     defaultZoom?: number;
     navigationDisabled?: boolean;
+    selectedAdminLevel?: string;
+    onAdminLevelChange: (newVal: string | undefined) => void;
 }
 
 function GeographicalAreaAssessments(props: Props) {
@@ -74,13 +76,14 @@ function GeographicalAreaAssessments(props: Props) {
         className,
         data,
         regions,
-        selectedRegionId,
-        setSelectedRegionId,
+        selectedRegion,
+        onRegionChange,
         defaultZoom = 2,
         navigationDisabled,
+        selectedAdminLevel,
+        onAdminLevelChange,
     } = props;
 
-    const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue>();
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
 
@@ -89,34 +92,25 @@ function GeographicalAreaAssessments(props: Props) {
         center: [50, 10],
     }), [defaultZoom]);
 
-    const selectedRegion = useMemo(
+    const selectedRegionObject = useMemo(
         () => regions?.find(
-            (region) => region?.id === selectedRegionId,
+            (region) => region?.id === selectedRegion,
         ), [
-            selectedRegionId,
+            selectedRegion,
             regions,
         ],
     );
 
     const adminLevelGeojson = useMemo(
-        () => selectedRegion?.adminLevels?.find(
-            (admin) => admin.level === Number(activeAdminLevel),
-        ), [activeAdminLevel, selectedRegion],
+        () => selectedRegionObject?.adminLevels?.find(
+            (admin) => admin.id === selectedAdminLevel,
+        ), [selectedAdminLevel, selectedRegionObject],
     );
 
     // NOTE: this always select bound of country or admin level zero
     const selectedRegionBoundFile = useMemo(
-        () => selectedRegion?.adminLevels?.[0]?.boundsFile,
-        [selectedRegion],
-    );
-
-    const adminLevels = useMemo(
-        () => selectedRegion?.adminLevels?.map(
-            (admin) => ({
-                id: String(admin.level),
-                title: admin.title,
-            }),
-        ), [selectedRegion],
+        () => selectedRegionObject?.adminLevels?.[0]?.boundsFile,
+        [selectedRegionObject],
     );
 
     const {
@@ -197,7 +191,7 @@ function GeographicalAreaAssessments(props: Props) {
                     ['number', ['feature-state', 'assessmentCount'], 0],
                     0,
                     '#f5f5f5',
-                    assessmentMaxCount,
+                    assessmentMaxCount ?? 1,
                     '#00125b',
                 ],
             },
@@ -231,22 +225,23 @@ function GeographicalAreaAssessments(props: Props) {
                 <SelectInput
                     placeholder="Select Region"
                     name="region"
-                    value={selectedRegionId}
-                    onChange={setSelectedRegionId}
+                    value={selectedRegion}
+                    onChange={onRegionChange}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
                     options={regions}
                     disabled={boundsPending}
                     variant="general"
+                    nonClearable
                 />
                 <SegmentInput
                     className={styles.adminLevels}
                     name="adminLevels"
-                    value={activeAdminLevel}
-                    onChange={setActiveAdminLevel}
+                    value={selectedAdminLevel}
+                    onChange={onAdminLevelChange}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
-                    options={adminLevels}
+                    options={selectedRegionObject?.adminLevels}
                     disabled={navigationDisabled}
                     spacing="compact"
                 />
