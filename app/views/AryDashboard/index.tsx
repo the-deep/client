@@ -106,6 +106,8 @@ function AryDashboard(props: Props) {
     const activeProject = project?.id;
     const [filters, setFilters] = useState<FilterForm | undefined>(undefined);
     const [selectedRegion, setSelectedRegion] = useState<string>();
+    const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
+
     const [
         startDate = lastYearDateTime,
         setStartDate,
@@ -142,9 +144,41 @@ function AryDashboard(props: Props) {
             variables,
             onCompleted: (response) => {
                 setSelectedRegion(response.project?.regions?.[0].id);
+
+                if (isDefined(activeAdminLevel)) {
+                    return;
+                }
+                const adminLevels = response.project?.regions?.[0].adminLevels;
+                // NOTE: Selected 2nd admin level by default
+                if ((adminLevels?.length ?? 0) > 1) {
+                    setActiveAdminLevel(adminLevels?.[1]?.id);
+                    return;
+                }
+                // NOTE: Setting 2nd admin level as fallback
+                if ((adminLevels?.length ?? 0) >= 1) {
+                    setActiveAdminLevel(adminLevels?.[0]?.id);
+                }
             },
         },
     );
+
+    const handleRegionChange = useCallback((newRegion: string | undefined) => {
+        setSelectedRegion(newRegion);
+        const adminLevels = data?.project?.regions
+            ?.find((item) => item.id === newRegion)?.adminLevels;
+
+        // NOTE: Selected 2nd admin level by default
+        if ((adminLevels?.length ?? 0) > 1) {
+            setActiveAdminLevel(adminLevels?.[1]?.id);
+            return;
+        }
+        // NOTE: Setting 2nd admin level as fallback
+        if ((adminLevels?.length ?? 0) >= 1) {
+            setActiveAdminLevel(adminLevels?.[0]?.id);
+            return;
+        }
+        setActiveAdminLevel(undefined);
+    }, [data?.project?.regions]);
 
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
@@ -215,96 +249,105 @@ function AryDashboard(props: Props) {
                     toValue={endDateString}
                 />
             )}
+            headerDescriptionClassName={styles.headerDescription}
             headerDescription={(
-                <Statistics
-                    data={projectData?.assessmentDashboardStatistics}
-                />
+                <>
+                    {activeProject && (
+                        <Filters
+                            projectId={activeProject}
+                            onFiltersChange={setFilters}
+                            initialValue={filters}
+                        />
+                    )}
+                    <Statistics
+                        data={projectData?.assessmentDashboardStatistics}
+                    />
+                </>
             )}
         >
-            {activeProject && (
-                <Filters
-                    projectId={activeProject}
-                    onFiltersChange={setFilters}
-                    initialValue={filters}
-                />
-            )}
-            <Tabs
-                defaultHash="what"
-                useHash
-            >
-                <TabList>
-                    <Tab
+            <div className={styles.container}>
+                <Tabs
+                    defaultHash="what"
+                    useHash
+                >
+                    <TabList className={styles.contentHeader}>
+                        <Tab
+                            name="what"
+                            transparentBorder
+                        >
+                            What was assessed?
+                        </Tab>
+                        <Tab
+                            name="how"
+                            transparentBorder
+                        >
+                            How was it assessed?
+                        </Tab>
+                        <Tab
+                            name="quality"
+                            transparentBorder
+                        >
+                            What is the quality of assessments?
+                        </Tab>
+                        <Tab
+                            name="information"
+                            transparentBorder
+                        >
+                            What do we know and do not know?
+                        </Tab>
+                        <Tab
+                            name="findings"
+                            transparentBorder
+                        >
+                            What are the main findings?
+                        </Tab>
+                    </TabList>
+                    <TabPanel
                         name="what"
-                        transparentBorder
                     >
-                        What was assessed?
-                    </Tab>
-                    <Tab
+                        <WhatAssessed
+                            regions={projectData?.regions}
+                            filters={variables}
+                            startDate={projectStartDate}
+                            endDate={endDate}
+                            onStartDateChange={setStartDate}
+                            onEndDateChange={setEndDate}
+                            selectedRegion={selectedRegion}
+                            selectedAdminLevel={activeAdminLevel}
+                            onAdminLevelChange={setActiveAdminLevel}
+                            onRegionChange={handleRegionChange}
+                            readOnly={loading}
+                        />
+                    </TabPanel>
+                    <TabPanel
                         name="how"
-                        transparentBorder
                     >
-                        How was it assessed?
-                    </Tab>
-                    <Tab
+                        <HowAssessed
+                            regions={projectData?.regions}
+                            filters={variables}
+                            selectedRegion={selectedRegion}
+                            onRegionChange={handleRegionChange}
+                            selectedAdminLevel={activeAdminLevel}
+                            onAdminLevelChange={setActiveAdminLevel}
+                        />
+                    </TabPanel>
+                    <TabPanel
                         name="quality"
-                        transparentBorder
                     >
                         What is the quality of assessments?
-                    </Tab>
-                    <Tab
+                    </TabPanel>
+                    <TabPanel
                         name="information"
-                        transparentBorder
                     >
                         What do we know and do not know?
-                    </Tab>
-                    <Tab
+                    </TabPanel>
+                    <TabPanel
                         name="findings"
-                        transparentBorder
                     >
                         What are the main findings?
-                    </Tab>
-                </TabList>
-                <TabPanel
-                    name="what"
-                >
-                    <WhatAssessed
-                        regions={projectData?.regions}
-                        filters={variables}
-                        startDate={projectStartDate}
-                        endDate={endDate}
-                        onStartDateChange={setStartDate}
-                        onEndDateChange={setEndDate}
-                        selectedRegion={selectedRegion}
-                        setSelectedRegion={setSelectedRegion}
-                        readOnly={loading}
-                    />
-                </TabPanel>
-                <TabPanel
-                    name="how"
-                >
-                    <HowAssessed
-                        regions={projectData?.regions}
-                        filters={variables}
-                        selectedRegion={selectedRegion}
-                        setSelectedRegion={setSelectedRegion}
-                    />
-                </TabPanel>
-                <TabPanel
-                    name="quality"
-                >
-                    What is the quality of assessments?
-                </TabPanel>
-                <TabPanel
-                    name="information"
-                >
-                    What do we know and do not know?
-                </TabPanel>
-                <TabPanel
-                    name="findings"
-                >
-                    What are the main findings?
-                </TabPanel>
-            </Tabs>
+                    </TabPanel>
+                </Tabs>
+            </div>
         </Container>
     );
 }
