@@ -218,12 +218,6 @@ function Project(props: Props) {
                 </Route>
                 <Route
                     exact
-                    path={routes.assessmentEdit.path}
-                >
-                    {routes.assessmentEdit.load({ className })}
-                </Route>
-                <Route
-                    exact
                     path={routes.newAssessmentEdit.path}
                 >
                     {routes.newAssessmentEdit.load({ className })}

@@ -16,6 +16,7 @@ import {
 } from '#generated/types';
 
 import GeographicalAreaAssessments from './GeographicalAreaAssessments';
+import styles from './styles.css';
 
 const ARY_DASHBOARD_WHAT_ASSESSED = gql`
         query AryDashboardWhatAssessed(
@@ -69,7 +70,9 @@ interface Props {
     onStartDateChange: ((newDate: number | undefined) => void) | undefined;
     onEndDateChange: ((newDate: number | undefined) => void) | undefined;
     selectedRegion?: string;
-    setSelectedRegion: React.Dispatch<React.SetStateAction<string | undefined>>;
+    onRegionChange: (newVal: string | undefined) => void;
+    selectedAdminLevel?: string;
+    onAdminLevelChange: (newVal: string | undefined) => void;
     readOnly?: boolean;
 }
 
@@ -82,7 +85,9 @@ function WhatAssessed(props: Props) {
         onStartDateChange,
         onEndDateChange,
         selectedRegion,
-        setSelectedRegion,
+        selectedAdminLevel,
+        onAdminLevelChange,
+        onRegionChange,
         readOnly,
     } = props;
 
@@ -131,13 +136,15 @@ function WhatAssessed(props: Props) {
     );
 
     return (
-        <>
+        <div className={styles.whatAssessed}>
             <GeographicalAreaAssessments
                 data={statisticsData}
                 regions={regions}
-                selectedRegionId={selectedRegion}
-                setSelectedRegionId={setSelectedRegion}
+                selectedRegion={selectedRegion}
+                onRegionChange={onRegionChange}
                 navigationDisabled={readOnly || loading}
+                selectedAdminLevel={selectedAdminLevel}
+                onAdminLevelChange={onAdminLevelChange}
             />
 
             <div ref={barContainerRef}>
@@ -156,7 +163,7 @@ function WhatAssessed(props: Props) {
                 startDate={startDate}
                 endDate={endDate}
             />
-        </>
+        </div>
     );
 }
 export default WhatAssessed;

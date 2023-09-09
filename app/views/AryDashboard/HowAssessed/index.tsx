@@ -13,6 +13,7 @@ import {
 } from '#generated/types';
 
 import GeographicalAreaMethodology from './GeographicalAreaMethodology';
+import styles from './styles.css';
 
 const GET_METHODOLOGY_OPTIONS = gql`
     query GetMethodologyOptions {
@@ -101,7 +102,9 @@ interface Props {
     filters?: AryDashboardFilterQueryVariables;
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
     selectedRegion?: string;
-    setSelectedRegion: React.Dispatch<React.SetStateAction<string | undefined>>;
+    onRegionChange: (newVal: string | undefined) => void;
+    selectedAdminLevel?: string;
+    onAdminLevelChange: (newVal: string | undefined) => void;
 }
 
 function HowAssessed(props: Props) {
@@ -110,7 +113,9 @@ function HowAssessed(props: Props) {
         filters,
         regions,
         selectedRegion,
-        setSelectedRegion,
+        onRegionChange,
+        selectedAdminLevel,
+        onAdminLevelChange,
     } = props;
 
     const {
@@ -133,15 +138,16 @@ function HowAssessed(props: Props) {
     const statisticsData = removeNull(data?.project?.assessmentDashboardStatistics);
 
     return (
-        <div className={_cs(className)}>
+        <div className={_cs(className, styles.howAssessed)}>
             <GeographicalAreaMethodology
                 data={statisticsData}
                 options={options}
                 regions={regions}
                 navigationDisabled={loading || responsePending}
-                selectedRegionId={selectedRegion}
-                setSelectedRegionId={setSelectedRegion}
-
+                selectedRegion={selectedRegion}
+                onRegionChange={onRegionChange}
+                selectedAdminLevel={selectedAdminLevel}
+                onAdminLevelChange={onAdminLevelChange}
             />
         </div>
     );
