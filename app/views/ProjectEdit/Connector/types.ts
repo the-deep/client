@@ -190,7 +190,7 @@ export const reliefWebCountryList: Country[] = [
     { key: 'VNM', label: 'Vietnam' },
     { key: 'PSX', label: 'West Bank' },
     { key: 'SAH', label: 'Western Sahara' },
-    { key: 'MAR', label: 'Western Sahara' },
+    { key: 'MAR', label: 'Morocco' },
     { key: 'YEM', label: 'Yemen' },
     { key: 'ZMB', label: 'Zambia' },
     { key: 'ZWE', label: 'Zimbabwe' },

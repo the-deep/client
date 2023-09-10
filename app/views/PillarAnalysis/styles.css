@@ -97,6 +97,10 @@
             }
         }
 
+        .header-description {
+            display: flex;
+            gap: var(--dui-spacing-small);
+        }
 
         .filter-container {
             display: flex;
@@ -166,7 +170,6 @@
                 background-color: var(--dui-color-background-information);
                 padding: 0;
                 overflow: auto;
-
                 .entry-list-header {
                     padding: 0;
 

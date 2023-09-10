@@ -1,24 +1,6 @@
 import React from 'react';
-import { isDefined, isNotDefined } from '@togglecorp/fujs';
+import { isDefined } from '@togglecorp/fujs';
 import devLang from './dev-lang.json';
-
-function insertBetweenItems<T, Q>(list: T[] | undefined, obj: Q) {
-    if (isNotDefined(list)) {
-        return [];
-    }
-    if (list.length <= 1) {
-        return list;
-    }
-    const [firstItem, ...otherItem] = list;
-
-    const newList: (T | Q)[] = [firstItem];
-    otherItem.forEach((item) => {
-        newList.push(obj);
-        newList.push(item);
-    });
-
-    return newList;
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasReactElement(list: any[]): boolean {
@@ -46,7 +28,7 @@ function renderElement<T extends React.ReactNode>(r: KeyValue<T>) {
 
 function format(
     str: string,
-    params: Record<string, string | string[] | number | React.ReactNode>,
+    params: Record<string, string[] | React.ReactNode>,
 ) {
     // TODO: Support escaping { and }
 
@@ -62,22 +44,11 @@ function format(
             };
         }
 
-        // NOTE: colon signifies use of list
-        const indexOfColon = test[1].indexOf(':');
-
-        if (indexOfColon === -1) {
-            const key = test[1];
-            return {
-                key,
-                value: params[key],
-            };
-        }
-
-        const key = test[1].substr(0, indexOfColon);
-        const concatenator = test[1].substr(indexOfColon + 1);
-        const value = insertBetweenItems(params[key] as unknown[], concatenator);
-
-        return value.map((v, i) => ({ key: `${key}-${i}`, value: v }));
+        const key = test[1];
+        return {
+            key,
+            value: params[key],
+        };
     });
 
     // If params contains a react element,
