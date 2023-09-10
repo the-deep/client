@@ -25,6 +25,8 @@ const resolutionToDateFormat = {
     year: 'yyyy',
 };
 
+function defaultLabelSelector<T extends string | number>(item: T) { return item; }
+
 interface Props<
     ITEM,
     CATEGORY,
@@ -32,13 +34,16 @@ interface Props<
 > {
     className?: string;
     variant?: 'bubble' | 'box';
-    data: ITEM[];
+    data: ITEM[] | undefined;
     categorySelector: (item: ITEM) => CATEGORY;
     dateSelector: (item: ITEM) => string;
     countSelector: (item: ITEM) => COUNT;
     colorSelector?: (item: number, min: number, max: number) => string;
     colors?: string[];
+    startDate?: number;
+    endDate?: number;
     type?: 'interpolate' | 'categorical';
+    categoryLabelSelector?: (item: CATEGORY) => string;
 }
 
 function BubbleBarChart<
@@ -49,11 +54,14 @@ function BubbleBarChart<
     const {
         className,
         variant = 'bubble',
-        data,
+        data = [],
         categorySelector,
         dateSelector,
+        categoryLabelSelector = defaultLabelSelector,
         countSelector,
         colorSelector,
+        startDate,
+        endDate,
         colors = [
             '#f7fbff',
             '#08306b',
@@ -71,8 +79,11 @@ function BubbleBarChart<
     ]);
 
     const resolution: Resolution = useMemo(() => {
-        const firstDate = getDateSafe(dateSelector(sortedData[0]));
-        const lastDate = getDateSafe(dateSelector(sortedData[sortedData.length - 1]));
+        if (sortedData.length <= 0) {
+            return 'day';
+        }
+        const firstDate = getDateSafe(startDate ?? dateSelector(sortedData[0]));
+        const lastDate = getDateSafe(endDate ?? dateSelector(sortedData[sortedData.length - 1]));
 
         const noOfDaysBetweenDates = (
             lastDate.getTime() - firstDate.getTime()
@@ -89,13 +100,18 @@ function BubbleBarChart<
         }
         return 'year';
     }, [
+        startDate,
+        endDate,
         sortedData,
         dateSelector,
     ]);
 
     const finalData = useMemo(() => {
-        const firstDate = dateSelector(sortedData[0]);
-        const lastDate = dateSelector(sortedData[sortedData.length - 1]);
+        if (sortedData.length <= 0) {
+            return [];
+        }
+        const firstDate = getDateSafe(startDate ?? dateSelector(sortedData[0]));
+        const lastDate = getDateSafe(endDate ?? dateSelector(sortedData[sortedData.length - 1]));
 
         const categories = unique(sortedData, categorySelector)
             .map((categoryItem) => {
@@ -103,7 +119,7 @@ function BubbleBarChart<
                     (item) => (categorySelector(categoryItem) === categorySelector(item)),
                 );
                 return {
-                    label: categorySelector(categoryItem),
+                    label: categoryLabelSelector(categorySelector(categoryItem)),
                     total: sum(itemsWithSelectedCategory.map(countSelector)),
                     timeseries: getTimeseriesWithoutGaps(
                         // FIXME: Send selectors to this function as well
@@ -123,7 +139,10 @@ function BubbleBarChart<
 
         return sortedCategories;
     }, [
+        startDate,
+        endDate,
         categorySelector,
+        categoryLabelSelector,
         resolution,
         countSelector,
         dateSelector,

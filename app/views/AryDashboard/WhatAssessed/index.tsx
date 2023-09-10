@@ -1,7 +1,10 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
-import { formatDateToString } from '@togglecorp/fujs';
+import {
+    formatDateToString,
+    listToMap,
+} from '@togglecorp/fujs';
 
 import { getTimeseriesWithoutGaps } from '#utils/temporal';
 import useSizeTracking from '#hooks/useSizeTracking';
@@ -16,6 +19,9 @@ import {
     AssessmentOverTimeQueryVariables,
 } from '#generated/types';
 
+import BubbleBarChart from '#components/charts/BubbleBarChart';
+import { organizationTitleSelector } from '#components/selections/NewOrganizationMultiSelectInput';
+
 import GeographicalAreaAssessments from './GeographicalAreaAssessments';
 import { FilterForm } from '../Filters';
 import styles from './styles.css';
@@ -28,25 +34,6 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
         project(id: $projectId) {
             id
             assessmentDashboardStatistics(filter: $filter){
-                totalAssessment
-                totalCollectionTechnique
-                totalMultisectorAssessment
-                totalSinglesectorAssessment
-                totalStakeholder
-                stakeholderCount {
-                    count
-                    stakeholder
-                }
-                collectionTechniqueCount {
-                    count
-                    dataCollectionTechnique
-                    dataCollectionTechniqueDisplay
-                }
-                assessmentCount {
-                    coordinatedJoint
-                    coordinatedJointDisplay
-                    count
-                }
                 assessmentGeographicAreas {
                     geoId
                     count
@@ -54,6 +41,18 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
                     adminLevelId
                     assessmentIds
                     region
+                }
+                assessmentByLeadOrganization {
+                    organization {
+                        id
+                        mergedAs {
+                            id
+                            title
+                        }
+                        title
+                    }
+                    count
+                    date
                 }
                 assessmentByOverTime {
                     count
@@ -123,9 +122,9 @@ function WhatAssessed(props: Props) {
     const variables: AryDashboardWhatAssessedQueryVariables = useMemo(() => ({
         projectId,
         filter: {
+            ...filters,
             dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
             dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
-            ...filters,
         },
     }), [
         projectId,
@@ -200,6 +199,19 @@ function WhatAssessed(props: Props) {
         ],
     );
 
+    const organizationLabelSelector = useCallback((orgId: string) => {
+        const orgMap = listToMap(
+            statisticsData?.assessmentByLeadOrganization,
+            (item) => item.organization.id,
+            (item) => item.organization,
+        );
+        const selectedOrg = orgMap?.[orgId];
+        if (!selectedOrg) {
+            return orgId;
+        }
+        return organizationTitleSelector(selectedOrg);
+    }, [statisticsData?.assessmentByLeadOrganization]);
+
     return (
         <div className={styles.whatAssessed}>
             <GeographicalAreaAssessments
@@ -211,7 +223,6 @@ function WhatAssessed(props: Props) {
                 selectedAdminLevel={selectedAdminLevel}
                 onAdminLevelChange={onAdminLevelChange}
             />
-
             <div ref={barContainerRef}>
                 <BrushLineChart
                     width={width ?? 0}
@@ -225,6 +236,15 @@ function WhatAssessed(props: Props) {
             <EntityCreationLineChart
                 heading="Number of Assessment Over Time"
                 timeseries={statisticsData?.assessmentByOverTime}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                data={statisticsData?.assessmentByLeadOrganization}
+                countSelector={(item) => item.count}
+                dateSelector={(item) => item.date}
+                categorySelector={(item) => item.organization?.id}
+                categoryLabelSelector={organizationLabelSelector}
                 startDate={startDate}
                 endDate={endDate}
             />

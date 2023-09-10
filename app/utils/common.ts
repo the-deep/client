@@ -287,7 +287,11 @@ export function mergeItems<T, K extends string>(
 }
 
 export const DEEP_START_DATE = '2018-01-01';
-export const todaysDate = formatDateToString(new Date(), 'yyyy-MM-dd');
+
+const date = new Date();
+const newDate = date.getDate() + 1;
+date.setDate(newDate);
+export const todaysDate = formatDateToString(date, 'yyyy-MM-dd');
 
 const lastYearDate = new Date();
 lastYearDate.setDate(lastYearDate.getDate() - 365);
