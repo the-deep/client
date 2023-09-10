@@ -163,8 +163,22 @@ function MainFindings(props: Props) {
                 />
                 <BoxBarChart
                     data={boxChartDummyData}
-                    rowSelector={(item) => item.column}
-                    columnSelector={(item) => item.row}
+                    columns={[
+                        {
+                            key: 'CCCM',
+                            label: 'CCCM',
+                        },
+                        {
+                            key: 'Health',
+                            label: 'Health',
+                        },
+                        {
+                            key: 'Random',
+                            label: 'Random',
+                        },
+                    ]}
+                    rowSelector={(item) => item.row}
+                    columnSelector={(item) => item.column}
                     countSelector={(item) => item.count}
                 />
             </div>
