@@ -1,0 +1,20 @@
+.region-selectors {
+    display: flex;
+}
+
+.geographical-area-assessments {
+    position: relative;
+
+    .map {
+        width: auto;
+        height: 50em;
+    }
+
+    .admin-selectors {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: var(--dui-spacing-medium) 0;
+        gap: var(--dui-spacing-small);
+    }
+}
