@@ -34,6 +34,7 @@ import Statistics from './Statistics';
 import Filters, { FilterForm } from './Filters';
 import WhatAssessed from './WhatAssessed';
 import HowAssessed from './HowAssessed';
+import QualityAssessment from './QualityAssessment';
 
 import styles from './styles.css';
 
@@ -334,7 +335,14 @@ function AryDashboard(props: Props) {
                     <TabPanel
                         name="quality"
                     >
-                        What is the quality of assessments?
+                        <QualityAssessment
+                            regions={projectData?.regions}
+                            filters={variables}
+                            selectedRegion={selectedRegion}
+                            onRegionChange={handleRegionChange}
+                            selectedAdminLevel={activeAdminLevel}
+                            onAdminLevelChange={setActiveAdminLevel}
+                        />
                     </TabPanel>
                     <TabPanel
                         name="information"

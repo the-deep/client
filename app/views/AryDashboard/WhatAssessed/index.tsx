@@ -26,25 +26,6 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
         project(id: $projectId) {
             id
             assessmentDashboardStatistics(filter: $filter){
-                totalAssessment
-                totalCollectionTechnique
-                totalMultisectorAssessment
-                totalSinglesectorAssessment
-                totalStakeholder
-                stakeholderCount {
-                    count
-                    stakeholder
-                }
-                collectionTechniqueCount {
-                    count
-                    dataCollectionTechnique
-                    dataCollectionTechniqueDisplay
-                }
-                assessmentCount {
-                    coordinatedJoint
-                    coordinatedJointDisplay
-                    count
-                }
                 assessmentGeographicAreas {
                     geoId
                     count

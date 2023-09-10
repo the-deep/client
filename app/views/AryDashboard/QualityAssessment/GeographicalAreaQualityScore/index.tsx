@@ -1,6 +1,17 @@
-import React, { useMemo, useState, useCallback } from 'react';
-import { _cs, compareNumber, isDefined, isNotDefined, isTruthyString } from '@togglecorp/fujs';
+import React, { useCallback, useMemo, useState } from 'react';
 import { PurgeNull } from '@togglecorp/toggle-form';
+import {
+    SegmentInput,
+    SelectInput,
+    TextOutput,
+} from '@the-deep/deep-ui';
+import {
+    _cs,
+    compareNumber,
+    isDefined,
+    isNotDefined,
+    isTruthyString,
+} from '@togglecorp/fujs';
 import Map, {
     MapBounds,
     MapContainer,
@@ -17,16 +28,11 @@ import {
     MapboxOptions,
     PopupOptions,
 } from 'mapbox-gl';
-import {
-    SelectInput,
-    SegmentInput,
-    TextOutput,
-} from '@the-deep/deep-ui';
 
+import { AryDashboadQualityAssessmentQuery, AryDashboardFilterQuery } from '#generated/types';
+import { GeoAreaBounds } from '#types';
 import { mapboxStyle } from '#base/configs/env';
 import { useRequest } from '#base/utils/restRequest';
-import { GeoAreaBounds } from '#types';
-import { AryDashboardFilterQuery, AryDashboardWhatAssessedQuery } from '#generated/types';
 import { getMaximum } from '#utils/common';
 
 import styles from './styles.css';
@@ -61,27 +67,26 @@ const labelSelector = (d: AdminLevel) => d.title;
 
 interface Props {
     className?: string;
-    data: NonNullable<PurgeNull<AryDashboardWhatAssessedQuery['project']>>['assessmentDashboardStatistics'];
+    defaultZoom?: number;
+    data: NonNullable<PurgeNull<AryDashboadQualityAssessmentQuery['project']>>['assessmentDashboardStatistics'];
     regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
+    navigationDisabled?: boolean;
     selectedRegion?: string;
     onRegionChange: (newVal: string | undefined) => void;
-    defaultZoom?: number;
-    navigationDisabled?: boolean;
     selectedAdminLevel?: string;
     onAdminLevelChange: (newVal: string | undefined) => void;
 }
-
-function GeographicalAreaAssessments(props: Props) {
+function GeographicalAreaQualityScore(props: Props) {
     const {
         className,
         data,
         regions,
         selectedRegion,
         onRegionChange,
-        defaultZoom = 2,
         navigationDisabled,
         selectedAdminLevel,
         onAdminLevelChange,
+        defaultZoom = 2,
     } = props;
 
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue>();
@@ -104,10 +109,13 @@ function GeographicalAreaAssessments(props: Props) {
     const adminLevelGeojson = useMemo(
         () => selectedRegionObject?.adminLevels?.find(
             (admin) => admin.id === selectedAdminLevel,
-        ), [selectedAdminLevel, selectedRegionObject],
+        ), [
+            selectedAdminLevel,
+            selectedRegionObject,
+        ],
     );
 
-    // NOTE: this always select bound of country or admin level zero
+    // NOTE: this always select bound of finalScorery or admin level zero
     const selectedRegionBoundFile = useMemo(
         () => selectedRegionObject?.adminLevels?.[0]?.boundsFile,
         [selectedRegionObject],
@@ -139,26 +147,26 @@ function GeographicalAreaAssessments(props: Props) {
     }, [boundsResponse]);
 
     const getAssessmentCount = useCallback(
-        (adminId: string | number) => data?.assessmentGeographicAreas?.find(
+        (adminId: string | number) => data?.medianQualityScoreByGeoArea?.find(
             (item) => String(item.geoId) === adminId,
-        )?.count ?? 0,
-        [data?.assessmentGeographicAreas],
+        )?.finalScore ?? 0,
+        [data?.medianQualityScoreByGeoArea],
     );
 
     const assessmentCountAttribute = useMemo(() => (
-        data?.assessmentGeographicAreas?.map(
+        data?.medianQualityScoreByGeoArea?.map(
             (selection) => ({
                 id: selection.geoId,
-                value: selection.count,
+                value: selection.finalScore,
             }),
         ) ?? []
-    ), [data?.assessmentGeographicAreas]);
+    ), [data?.medianQualityScoreByGeoArea]);
 
     const assessmentMaxCount = useMemo(
         () => getMaximum(
-            data?.assessmentGeographicAreas,
-            (a, b) => compareNumber(a.count, b.count),
-        )?.count, [data?.assessmentGeographicAreas],
+            data?.medianQualityScoreByGeoArea,
+            (a, b) => compareNumber(a.finalScore, b.finalScore),
+        )?.finalScore, [data?.medianQualityScoreByGeoArea],
     );
 
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(
@@ -221,7 +229,7 @@ function GeographicalAreaAssessments(props: Props) {
 
     return (
         <div className={_cs(className, styles.geographicalAreaAssessments)}>
-            <div className={styles.regionSelectors}>
+            <div className={styles.adminSelectors}>
                 <SelectInput
                     placeholder="Select Region"
                     name="region"
@@ -302,4 +310,4 @@ function GeographicalAreaAssessments(props: Props) {
     );
 }
 
-export default GeographicalAreaAssessments;
+export default GeographicalAreaQualityScore;
