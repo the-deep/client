@@ -6,7 +6,7 @@ import {
 import { PurgeNull } from '@togglecorp/toggle-form';
 
 import {
-    AryDashboardFilterQuery,
+    AryDashboardStatisticsQuery,
     AssessmentRegistryCoordinationTypeEnum,
 } from '#generated/types';
 
@@ -14,7 +14,7 @@ import styles from './styles.module.css';
 
 interface Props {
     className?: string;
-    data: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['assessmentDashboardStatistics'];
+    data: NonNullable<PurgeNull<AryDashboardStatisticsQuery['project']>>['assessmentDashboardStatistics'];
 }
 
 function Statistics(props: Props) {
