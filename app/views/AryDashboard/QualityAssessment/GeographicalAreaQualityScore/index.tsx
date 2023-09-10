@@ -28,7 +28,7 @@ import {
     PopupOptions,
 } from 'mapbox-gl';
 
-import { AryDashboadQualityAssessmentQuery, AryDashboardFilterQuery } from '#generated/types';
+import { AryDashboardQualityAssessmentQuery, ProjectMetadataForAryQuery } from '#generated/types';
 import { GeoAreaBounds } from '#types';
 import { mapboxStyle } from '#base/configs/env';
 import { useRequest } from '#base/utils/restRequest';
@@ -77,13 +77,13 @@ const labelSelector = (d: AdminLevel) => d.title;
 interface Props {
     className?: string;
     defaultZoom?: number;
-    data: NonNullable<PurgeNull<AryDashboadQualityAssessmentQuery['project']>>['assessmentDashboardStatistics'];
-    regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
-    navigationDisabled?: boolean;
+    data: NonNullable<PurgeNull<AryDashboardQualityAssessmentQuery['project']>>['assessmentDashboardStatistics'];
+    regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
     selectedRegion?: string;
     onRegionChange: (newVal: string | undefined) => void;
     selectedAdminLevel?: string;
     onAdminLevelChange: (newVal: string | undefined) => void;
+    navigationDisabled?: boolean;
 }
 function GeographicalAreaQualityScore(props: Props) {
     const {
@@ -155,13 +155,6 @@ function GeographicalAreaQualityScore(props: Props) {
         return [minX, minY, maxX, maxY];
     }, [boundsResponse]);
 
-    const getAssessmentCount = useCallback(
-        (adminId: string | number) => data?.medianQualityScoreByGeoArea?.find(
-            (item) => String(item.geoId) === adminId,
-        )?.finalScore ?? 0,
-        [data?.medianQualityScoreByGeoArea],
-    );
-
     const assessmentCountAttribute = useMemo(() => (
         data?.medianQualityScoreByGeoArea?.map(
             (selection) => ({
@@ -170,6 +163,13 @@ function GeographicalAreaQualityScore(props: Props) {
             }),
         ) ?? []
     ), [data?.medianQualityScoreByGeoArea]);
+
+    const getAssessmentCount = useCallback(
+        (adminId: string | number) => assessmentCountAttribute?.find(
+            (item) => String(item.id) === adminId,
+        )?.value ?? 0,
+        [assessmentCountAttribute],
+    );
 
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(
         () => ({
@@ -190,10 +190,15 @@ function GeographicalAreaQualityScore(props: Props) {
         () => ({
             type: 'fill',
             paint: {
+                'fill-opacity': ['case',
+                    ['boolean', ['feature-state', 'hovered'], false],
+                    0.2,
+                    0.8,
+                ],
                 'fill-color': [
                     'step',
                     ['number', ['feature-state', 'assessmentCount'], 0],
-                    '#f5f5f5', // this case should not occur
+                    '#f5f5f5',
                     0.00000001,
                     VERY_POOR_COLOR,
                     VERY_POOR,
