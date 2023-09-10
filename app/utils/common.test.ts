@@ -4,7 +4,6 @@ import {
 
 import {
     sortByOrder,
-    hslToHex,
     reorder,
     getMaximum,
     breadcrumb,
@@ -218,8 +217,4 @@ test('removeDomain', () => {
     expect(removeDomain('https://staging.thedeep.io')).toStrictEqual('');
     expect(removeDomain('http://staging.thedeep.io/random/a')).toStrictEqual('/random/a');
     expect(removeDomain('http://staging.thedeep.io/random/a?x=123')).toStrictEqual('/random/a?x=123');
-});
-
-test('hslToHex', () => {
-    expect(hslToHex(228, 78, 46)).toStrictEqual('#1a3ed1');
 });
