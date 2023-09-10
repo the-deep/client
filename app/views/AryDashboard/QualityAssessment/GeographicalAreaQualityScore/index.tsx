@@ -7,7 +7,6 @@ import {
 } from '@the-deep/deep-ui';
 import {
     _cs,
-    compareNumber,
     isDefined,
     isNotDefined,
     isTruthyString,
@@ -33,7 +32,6 @@ import { AryDashboadQualityAssessmentQuery, AryDashboardFilterQuery } from '#gen
 import { GeoAreaBounds } from '#types';
 import { mapboxStyle } from '#base/configs/env';
 import { useRequest } from '#base/utils/restRequest';
-import { getMaximum } from '#utils/common';
 
 import styles from './styles.css';
 
@@ -48,6 +46,17 @@ const tooltipOptions: PopupOptions = {
     closeButton: false,
     offset: 12,
 };
+
+const VERY_POOR_COLOR = '#ff7d7d';
+const POOR_COLOR = '#ffc2c2';
+const FAIR_COLOR = '#fbfbbd';
+const GOOD_COLOR = '#78c7a2';
+const VERY_GOOD_COLOR = '#a5d9c1';
+
+const VERY_POOR = 2;
+const POOR = 4;
+const FAIR = 6;
+const GOOD = 8;
 
 interface GeoAreaBoundsResponse {
     bounds: GeoAreaBounds;
@@ -162,13 +171,6 @@ function GeographicalAreaQualityScore(props: Props) {
         ) ?? []
     ), [data?.medianQualityScoreByGeoArea]);
 
-    const assessmentMaxCount = useMemo(
-        () => getMaximum(
-            data?.medianQualityScoreByGeoArea,
-            (a, b) => compareNumber(a.finalScore, b.finalScore),
-        )?.finalScore, [data?.medianQualityScoreByGeoArea],
-    );
-
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(
         () => ({
             type: 'line',
@@ -188,22 +190,23 @@ function GeographicalAreaQualityScore(props: Props) {
         () => ({
             type: 'fill',
             paint: {
-                'fill-opacity': ['case',
-                    ['boolean', ['feature-state', 'hovered'], false],
-                    0.2,
-                    0.8,
-                ],
                 'fill-color': [
-                    'interpolate',
-                    ['linear'],
+                    'step',
                     ['number', ['feature-state', 'assessmentCount'], 0],
-                    0,
-                    '#f5f5f5',
-                    assessmentMaxCount ?? 1,
-                    '#00125b',
+                    '#f5f5f5', // this case should not occur
+                    0.00000001,
+                    VERY_POOR_COLOR,
+                    VERY_POOR,
+                    POOR_COLOR,
+                    POOR,
+                    FAIR_COLOR,
+                    FAIR,
+                    GOOD_COLOR,
+                    GOOD,
+                    VERY_GOOD_COLOR,
                 ],
             },
-        }), [assessmentMaxCount],
+        }), [],
     );
 
     const handleMouseEnter = useCallback((feature: MapboxGeoJSONFeature, lngLat: LngLat) => {
