@@ -17,6 +17,7 @@ import {
 
 import GeographicalAreaMethodology from './GeographicalAreaMethodology';
 import { FilterForm } from '../Filters';
+
 import styles from './styles.css';
 
 const GET_METHODOLOGY_OPTIONS = gql`
@@ -103,6 +104,7 @@ const ARY_DASHBOARD_HOW_ASSESSED = gql`
 
 interface Props {
     className?: string;
+    projectId: string;
     filters?: FilterForm;
     regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
     selectedRegion?: string;
@@ -110,16 +112,15 @@ interface Props {
     selectedAdminLevel?: string;
     onAdminLevelChange: (newVal: string | undefined) => void;
     startDate: number;
-    projectId: string;
     endDate: number;
 }
 
 function HowAssessed(props: Props) {
     const {
         className,
+        projectId,
         filters,
         startDate,
-        projectId,
         endDate,
         regions,
         selectedRegion,
@@ -138,9 +139,9 @@ function HowAssessed(props: Props) {
     const variables: AryDashboardHowAssessedQueryVariables = useMemo(() => ({
         projectId,
         filter: {
+            ...filters,
             dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
             dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
-            ...filters,
         },
     }), [
         projectId,
@@ -151,11 +152,12 @@ function HowAssessed(props: Props) {
 
     const {
         loading: responsePending,
-        data,
+        previousData,
+        data = previousData,
     } = useQuery<AryDashboardHowAssessedQuery, AryDashboardHowAssessedQueryVariables>(
         ARY_DASHBOARD_HOW_ASSESSED,
         {
-            skip: isNotDefined(filters),
+            skip: isNotDefined(variables),
             variables,
         },
     );
@@ -167,11 +169,11 @@ function HowAssessed(props: Props) {
                 data={statisticsData}
                 options={options}
                 regions={regions}
-                navigationDisabled={loading || responsePending}
                 selectedRegion={selectedRegion}
                 onRegionChange={onRegionChange}
                 selectedAdminLevel={selectedAdminLevel}
                 onAdminLevelChange={onAdminLevelChange}
+                navigationDisabled={loading || responsePending}
             />
         </div>
     );
