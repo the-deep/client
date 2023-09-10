@@ -1,0 +1,6 @@
+.quality-assessment {
+    display: flex;
+    flex-direction: column;
+    padding: var(--dui-spacing-large);
+    gap: var(--dui-spacing-large);
+}
