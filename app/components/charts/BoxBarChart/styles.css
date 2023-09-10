@@ -1,5 +1,6 @@
 .box-bar-chart {
     display: table;
+    border-spacing: var(--dui-spacing-small);
 
     .row {
         display: table-row;
@@ -23,12 +24,13 @@
             color: var(--dui-color-text-label);
 
             .bar {
-                background-color: var(--dui-color-complement1);
+                background-color: #08306b;
                 height: 24px;
             }
         }
 
         .box {
+            margin: var(--dui-spacing-medium);
             height: 2rem;
             text-align: center;
             color: var(--dui-color-text-label);

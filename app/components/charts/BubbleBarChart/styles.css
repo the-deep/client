@@ -1,7 +1,5 @@
 .bubble-bar-chart {
     display: table;
-    overflow: hidden;
-    table-layout: fixed;
 
     .row {
         display: table-row;
@@ -26,7 +24,7 @@
             color: var(--dui-color-text-label);
 
             .bar {
-                background-color: var(--dui-color-complement1);
+                background-color: #08306b;
                 height: 24px;
             }
         }
