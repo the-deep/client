@@ -211,8 +211,7 @@ function AryDashboard(props: Props) {
 
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
-            setEndDate(newDate);
-            // setEndDate(Math.min(newDate, todaysDateTime));
+            setEndDate(Math.min(newDate, todaysDateTime));
         } else {
             setEndDate(undefined);
         }
