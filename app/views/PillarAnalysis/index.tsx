@@ -12,6 +12,7 @@ import {
 } from '@apollo/client';
 import {
     _cs,
+    unique,
     doesObjectHaveNoData,
     isDefined,
     mapToList,
@@ -23,6 +24,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     IoAdd,
+    IoSwapVerticalOutline,
     IoCheckmark,
     IoClose,
     IoFunnel,
@@ -34,6 +36,7 @@ import {
     useBooleanState,
     PendingMessage,
     Heading,
+    SelectInput,
     useAlert,
     Button,
     QuickActionButton,
@@ -126,6 +129,36 @@ import EntryContext from './context';
 import AutoClustering from './AutoClustering';
 
 import styles from './styles.css';
+
+const orderingOptions = [
+    {
+        key: 'lead__published_on',
+        label: 'Lead published: Ascending',
+    },
+    {
+        key: '-lead__published_on',
+        label: 'Lead published: Descending',
+    },
+    {
+        key: 'created_at',
+        label: 'Entry created date: Ascending',
+    },
+    {
+        key: '-created_at',
+        label: 'Entry created date: Descending',
+    },
+    {
+        key: 'lead__title',
+        label: 'Source title: Ascending',
+    },
+    {
+        key: '-lead__title',
+        label: 'Source title: Descending',
+    },
+];
+
+const orderingKeySelector = (item: { key: string }) => item.key;
+const orderingLabelSelector = (item: { label: string }) => item.label;
 
 interface BooleanOption {
     key: 'true' | 'false';
@@ -340,9 +373,11 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $page: Int,
             $pageSize: Int,
             $controlled: Boolean,
+            $ordering: String,
             $createdAtGte: DateTime,
             $createdAtLte: DateTime,
             $createdBy: [ID!],
+            $usedEntries: [ID!],
             $entryTypes: [EntryTagTypeEnum!],
             $filterableData: [EntryFilterDataInputType!]
             $leadAssignees: [ID!],
@@ -382,6 +417,8 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                     leadAuthoringOrganizationTypes: $leadAuthoringOrganizationTypes,
                     leadSourceOrganizations: $leadSourceOrganizations,
                     leadAuthorOrganizations: $leadAuthorOrganizations,
+                    ordering: $ordering,
+                    excludeEntries: $usedEntries,
                 ) {
                     totalCount
                     results {
@@ -397,7 +434,7 @@ export type DiscardedTags = NonNullable<NonNullable<PillarAnalysisDetailsQuery['
 // This is an aribtrary number
 const STATEMENTS_LIMIT = 20;
 
-type TabNames = 'entries' | 'discarded';
+type TabNames = 'entries' | 'discarded' | 'assigned';
 
 const maxItemsPerPage = 25;
 
@@ -726,6 +763,19 @@ function PillarAnalysis() {
         [sourcesFilters],
     );
 
+    const usedEntries = useMemo(() => {
+        const entries = value.statements
+            ?.map((item) => item.entries)
+            .flat()
+            .map((item) => item?.entry)
+            .flat()
+            .filter(isDefined);
+
+        return unique(entries ?? [], (item) => item);
+    }, [value.statements]);
+
+    const [entryOrdering, setEntryOrdering] = useState<string>('-created_at');
+
     const variables = useMemo(
         (): ProjectEntriesForAnalysisQueryVariables | undefined => (
             (projectId) ? {
@@ -733,10 +783,19 @@ function PillarAnalysis() {
                 pillarId,
                 page: activePage,
                 pageSize: maxItemsPerPage,
+                ordering: entryOrdering,
+                usedEntries,
                 ...entriesFilter,
             } : undefined
         ),
-        [projectId, activePage, entriesFilter, pillarId],
+        [
+            projectId,
+            activePage,
+            entriesFilter,
+            entryOrdering,
+            usedEntries,
+            pillarId,
+        ],
     );
 
     const {
@@ -971,6 +1030,39 @@ function PillarAnalysis() {
             setError,
             validate,
             updateAnalysisPillars,
+        ],
+    );
+
+    const assignedEntryCardRendererParams = useCallback(
+        (key: string): SourceEntryItemProps => ({
+            entryId: key,
+            entry: entriesMapping[key],
+            excerpt: entriesMapping[key]?.excerpt,
+            image: entriesMapping[key]?.image,
+            createdAt: entriesMapping[key]?.createdAt,
+            // tabularFieldData: data.tabularFieldData,
+            entryType: entriesMapping[key]?.entryType,
+            // authoringOrganization: data.lead.authors[0].shortName,
+            pillarId,
+            pillarModifiedDate: projectDetailsResponse?.project?.analysisPillar?.modifiedAt,
+            discardedTags,
+            onEntryDiscard: getEntries,
+            projectId,
+            framework: frameworkDetails,
+            geoAreaOptions,
+            setGeoAreaOptions,
+            onEntryDataChange: getAnalysisDetails,
+        }), [
+            pillarId,
+            projectId,
+            getEntries,
+            discardedTags,
+            projectDetailsResponse?.project?.analysisPillar?.modifiedAt,
+            frameworkDetails,
+            geoAreaOptions,
+            setGeoAreaOptions,
+            getAnalysisDetails,
+            entriesMapping,
         ],
     );
 
@@ -1239,6 +1331,33 @@ function PillarAnalysis() {
                                 headingClassName={styles.tabListHeading}
                                 headingSize="small"
                                 contentClassName={styles.content}
+                                headerDescription={activeTab === 'entries' && (
+                                    <div className={styles.headerDescription}>
+                                        <SelectInput
+                                            icons={(
+                                                <IoSwapVerticalOutline />
+                                            )}
+                                            name={undefined}
+                                            value={entryOrdering}
+                                            onChange={setEntryOrdering}
+                                            keySelector={orderingKeySelector}
+                                            options={orderingOptions}
+                                            labelSelector={orderingLabelSelector}
+                                            variant="general"
+                                            nonClearable
+                                        />
+                                        <AutoClustering
+                                            pillarId={pillarId}
+                                            projectId={projectId}
+                                            entriesFilter={entriesFilter}
+                                            onEntriesMappingChange={setEntriesMapping}
+                                            entriesCount={entriesResponse?.totalCount}
+                                            onStatementsFromClustersSet={
+                                                handleStatementsFromClustersSet
+                                            }
+                                        />
+                                    </div>
+                                )}
                                 heading={(
                                     <TabList className={styles.tabList}>
                                         <Tab
@@ -1252,6 +1371,12 @@ function PillarAnalysis() {
                                             )}
                                         </Tab>
                                         <Tab
+                                            name="assigned"
+                                            className={styles.tab}
+                                        >
+                                            {`Assigned (${usedEntries?.length ?? 0})`}
+                                        </Tab>
+                                        <Tab
                                             name="discarded"
                                             className={styles.tab}
                                         >
@@ -1261,16 +1386,6 @@ function PillarAnalysis() {
                                                 { entriesCount: discardedEntriesCount },
                                             )}
                                         </Tab>
-                                        <AutoClustering
-                                            pillarId={pillarId}
-                                            projectId={projectId}
-                                            entriesFilter={entriesFilter}
-                                            onEntriesMappingChange={setEntriesMapping}
-                                            entriesCount={entriesResponse?.totalCount}
-                                            onStatementsFromClustersSet={
-                                                handleStatementsFromClustersSet
-                                            }
-                                        />
                                     </TabList>
                                 )}
                             >
@@ -1304,6 +1419,30 @@ function PillarAnalysis() {
                                         maxItemsPerPage={maxItemsPerPage}
                                         onActivePageChange={setActivePage}
                                         itemsPerPageControlHidden
+                                    />
+                                </TabPanel>
+                                <TabPanel
+                                    name="assigned"
+                                    activeClassName={styles.tabPanel}
+                                >
+                                    <ListView
+                                        className={styles.entriesList}
+                                        data={usedEntries}
+                                        keySelector={(item) => item}
+                                        renderer={SourceEntryItem}
+                                        rendererParams={assignedEntryCardRendererParams}
+                                        pending={pendingEntries}
+                                        errored={false}
+                                        filtered={isFiltered(sourcesFilterValue)}
+                                        emptyIcon={(
+                                            <Kraken
+                                                variant="experiment"
+                                            />
+                                        )}
+                                        emptyMessage="Entries not found."
+                                        filteredEmptyMessage="No matching entries were found."
+                                        messageIconShown
+                                        messageShown
                                     />
                                 </TabPanel>
                                 <TabPanel
