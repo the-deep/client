@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
-    unique,
     compareNumber,
     listToMap,
     listToGroupList,
@@ -23,6 +22,10 @@ interface Props<
     columnSelector: (item: T) => COLUMN;
     countSelector: (item: T) => number;
     colorSelector?: (item: number, min: number, max: number) => string;
+    columns: {
+        key: COLUMN;
+        label: string;
+    }[];
     colors?: string[];
     type?: 'interpolate' | 'categorical';
 }
@@ -38,6 +41,7 @@ function BoxBarChart<
         rowSelector,
         columnSelector,
         countSelector,
+        columns,
         colorSelector,
         colors = [
             '#f7fbff',
@@ -45,13 +49,6 @@ function BoxBarChart<
         ],
         type = 'interpolate',
     } = props;
-
-    const allColumns = useMemo(() => (
-        unique(data.map(columnSelector))
-    ), [
-        data,
-        columnSelector,
-    ]);
 
     const finalData = useMemo(() => {
         const itemsGroupedByRow = listToGroupList(
@@ -65,11 +62,11 @@ function BoxBarChart<
                 columnSelector,
                 countSelector,
             );
-            const columns = allColumns.map((col) => countByCol[col] ?? 0);
+            const columnsForRow = columns.map((col) => countByCol[col.key] ?? 0);
             return {
                 rowLabel: item,
-                columns,
-                total: sum(columns),
+                columnsForRow,
+                total: sum(columnsForRow),
             };
         });
         const sortedData = [...transformedData];
@@ -81,11 +78,11 @@ function BoxBarChart<
         countSelector,
         rowSelector,
         data,
-        allColumns,
+        columns,
     ]);
 
     const maxCount = useMemo(() => (
-        Math.max(...finalData.map((item) => item.columns).flat())
+        Math.max(...finalData.map((item) => item.columnsForRow).flat())
     ), [finalData]);
 
     const maxAmongEntities = useMemo(() => (
@@ -98,7 +95,7 @@ function BoxBarChart<
         }
         return getColorScaleFunction({
             min: 0,
-            max: maxCount,
+            max: maxCount === 0 ? 1 : maxCount,
         }, colors)(value);
     }, [
         type,
@@ -116,16 +113,16 @@ function BoxBarChart<
         >
             <div className={styles.row}>
                 <div />
-                {allColumns.map((columnLabel) => (
+                {columns.map((column) => (
                     <div
                         className={_cs(
                             styles.cell,
                             styles.topCell,
                             styles.box,
                         )}
-                        key={columnLabel}
+                        key={column.key}
                     >
-                        {columnLabel}
+                        {column.label}
                     </div>
                 ))}
                 <div />
@@ -138,7 +135,7 @@ function BoxBarChart<
                     <div className={_cs(styles.cell, styles.label)}>
                         {item.rowLabel}
                     </div>
-                    {item.columns.map((countItem, index) => {
+                    {item.columnsForRow.map((countItem, index) => {
                         const bgColor = getColorForValue(countItem);
 
                         return (
