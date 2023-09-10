@@ -7,7 +7,7 @@ import {
     compareDate,
     getColorOnBgColor,
 } from '@togglecorp/fujs';
-import { DateOutput } from '@the-deep/deep-ui';
+import { DateOutput, Header } from '@the-deep/deep-ui';
 
 import {
     getTimeseriesWithoutGaps,
@@ -44,6 +44,7 @@ interface Props<
     endDate?: number;
     type?: 'interpolate' | 'categorical';
     categoryLabelSelector?: (item: CATEGORY) => string;
+    heading?: string;
 }
 
 function BubbleBarChart<
@@ -62,6 +63,7 @@ function BubbleBarChart<
         colorSelector,
         startDate,
         endDate,
+        heading,
         colors = [
             '#f7fbff',
             '#08306b',
@@ -173,83 +175,89 @@ function BubbleBarChart<
     ]);
 
     return (
-        <div
-            className={_cs(
-                className,
-                styles.bubbleBarChart,
-                variant === 'box' && styles.boxChart,
-            )}
-        >
-            {finalData.map((item) => (
-                <div
-                    key={item.label}
-                    className={styles.row}
-                >
-                    <div className={_cs(styles.cell, styles.label)}>
-                        {item.label}
-                    </div>
-                    {item.timeseries.map((countItem) => (variant === 'box' ? (
-                        <div
-                            className={_cs(styles.cell, styles.box)}
-                            style={{
-                                backgroundColor: getColorForValue(countItem.total),
-                                color: getColorOnBgColor(
-                                    getColorForValue(countItem.total),
-                                ),
-                            }}
-                            key={countItem.date}
-                        >
-                            {countItem.total}
-                        </div>
-                    ) : (
-                        <div
-                            className={_cs(styles.cell, styles.circleContainer)}
-                            key={countItem.date}
-                        >
-                            <div className={styles.circle}>
-                                <div
-                                    title={String(countItem.total)}
-                                    style={{
-                                        backgroundColor: getColorForValue(countItem.total),
-                                        width: countItem.total ? `${(countItem.total / maxCount) * 24 + 8}px` : undefined,
-                                        height: countItem.total ? `${(countItem.total / maxCount) * 24 + 8}px` : undefined,
-                                        borderRadius: '50%',
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    )))}
-                    <div className={_cs(styles.cell, styles.count)}>
-                        <div
-                            className={styles.bar}
-                            title={`Total: ${item.total}`}
-                            style={{
-                                width: `${(item.total / maxAmongEntities) * 100}%`,
-                            }}
-                        />
-                    </div>
-                </div>
-            ))}
-            <div className={_cs(styles.row, styles.bottomRow)}>
-                <div />
-                {finalData?.[0]?.timeseries.map((countItem) => (
+        <>
+            <Header
+                headingSize="small"
+                heading={heading}
+            />
+            <div
+                className={_cs(
+                    className,
+                    styles.bubbleBarChart,
+                    variant === 'box' && styles.boxChart,
+                )}
+            >
+                {finalData.map((item) => (
                     <div
-                        className={_cs(
-                            styles.cell,
-                            styles.circleContainer,
-                            styles.bottomCell,
-                        )}
-                        key={countItem.date}
+                        key={item.label}
+                        className={styles.row}
                     >
-                        <DateOutput
-                            value={countItem.date}
-                            format={resolutionToDateFormat[resolution]}
-                        />
+                        <div className={_cs(styles.cell, styles.label)}>
+                            {item.label}
+                        </div>
+                        {item.timeseries.map((countItem) => (variant === 'box' ? (
+                            <div
+                                className={_cs(styles.cell, styles.box)}
+                                style={{
+                                    backgroundColor: getColorForValue(countItem.total),
+                                    color: getColorOnBgColor(
+                                        getColorForValue(countItem.total),
+                                    ),
+                                }}
+                                key={countItem.date}
+                            >
+                                {countItem.total}
+                            </div>
+                        ) : (
+                            <div
+                                className={_cs(styles.cell, styles.circleContainer)}
+                                key={countItem.date}
+                            >
+                                <div className={styles.circle}>
+                                    <div
+                                        title={String(countItem.total)}
+                                        style={{
+                                            backgroundColor: getColorForValue(countItem.total),
+                                            width: countItem.total ? `${(countItem.total / maxCount) * 24 + 8}px` : undefined,
+                                            height: countItem.total ? `${(countItem.total / maxCount) * 24 + 8}px` : undefined,
+                                            borderRadius: '50%',
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        )))}
+                        <div className={_cs(styles.cell, styles.count)}>
+                            <div
+                                className={styles.bar}
+                                title={`Total: ${item.total}`}
+                                style={{
+                                    width: `${(item.total / maxAmongEntities) * 100}%`,
+                                }}
+                            />
+                        </div>
                     </div>
                 ))}
-                <div />
+                <div className={_cs(styles.row, styles.bottomRow)}>
+                    <div />
+                    {finalData?.[0]?.timeseries.map((countItem) => (
+                        <div
+                            className={_cs(
+                                styles.cell,
+                                styles.circleContainer,
+                                styles.bottomCell,
+                            )}
+                            key={countItem.date}
+                        >
+                            <DateOutput
+                                value={countItem.date}
+                                format={resolutionToDateFormat[resolution]}
+                            />
+                        </div>
+                    ))}
+                    <div />
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 
