@@ -93,8 +93,6 @@ export function getTimestamps(
             myDate.setFullYear(sanitizedStartDate.getFullYear() + increment);
         } else if (resolution === 'month') {
             myDate.setMonth(sanitizedStartDate.getMonth() + increment);
-        } else if (resolution === 'week') {
-            myDate.setDate(sanitizedStartDate.getDate() + increment);
         } else {
             myDate.setDate(sanitizedStartDate.getDate() + increment);
         }

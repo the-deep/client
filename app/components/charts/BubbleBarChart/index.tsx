@@ -163,7 +163,7 @@ function BubbleBarChart<
         }
         return getColorScaleFunction({
             min: 0,
-            max: maxCount,
+            max: (maxCount === 0) ? 1 : maxCount,
         }, colors)(value);
     }, [
         type,
@@ -180,7 +180,7 @@ function BubbleBarChart<
                 variant === 'box' && styles.boxChart,
             )}
         >
-            {finalData?.map((item) => (
+            {finalData.map((item) => (
                 <div
                     key={item.label}
                     className={styles.row}
