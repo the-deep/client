@@ -24,6 +24,7 @@ import { organizationTitleSelector } from '#components/selections/NewOrganizatio
 
 import GeographicalAreaAssessments from './GeographicalAreaAssessments';
 import { FilterForm } from '../Filters';
+
 import styles from './styles.css';
 
 const ARY_DASHBOARD_WHAT_ASSESSED = gql`
@@ -57,6 +58,26 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
                 assessmentByOverTime {
                     count
                     date
+                }
+                assessmentPerFrameworkPiller {
+                    count
+                    date
+                    focus
+                }
+                assessmentPerAffectedGroup {
+                    affectedGroup
+                    count
+                    date
+                }
+                assessmentPerHumanitarianSector {
+                    count
+                    date
+                    sector
+                }
+                assessmentPerProtectionManagement {
+                    count
+                    date
+                    protectionManagement
                 }
             }
         }
@@ -214,24 +235,26 @@ function WhatAssessed(props: Props) {
 
     return (
         <div className={styles.whatAssessed}>
-            <GeographicalAreaAssessments
-                data={statisticsData}
-                regions={regions}
-                selectedRegion={selectedRegion}
-                onRegionChange={onRegionChange}
-                navigationDisabled={readOnly || loading}
-                selectedAdminLevel={selectedAdminLevel}
-                onAdminLevelChange={onAdminLevelChange}
-            />
-            <div ref={barContainerRef}>
-                <BrushLineChart
-                    width={width ?? 0}
-                    height={160}
-                    data={timeseriesWithoutGaps}
-                    startDate={startDate}
-                    endDate={endDate}
-                    onChange={handleDateRangeChange}
+            <div>
+                <GeographicalAreaAssessments
+                    data={statisticsData}
+                    regions={regions}
+                    selectedRegion={selectedRegion}
+                    onRegionChange={onRegionChange}
+                    navigationDisabled={readOnly || loading}
+                    selectedAdminLevel={selectedAdminLevel}
+                    onAdminLevelChange={onAdminLevelChange}
                 />
+                <div ref={barContainerRef}>
+                    <BrushLineChart
+                        width={width ?? 0}
+                        height={160}
+                        data={timeseriesWithoutGaps}
+                        startDate={startDate}
+                        endDate={endDate}
+                        onChange={handleDateRangeChange}
+                    />
+                </div>
             </div>
             <EntityCreationLineChart
                 heading="Number of Assessment Over Time"
@@ -240,11 +263,48 @@ function WhatAssessed(props: Props) {
                 endDate={endDate}
             />
             <BubbleBarChart
+                heading="Number of Assessments by Lead Stakeholders (Top Ten)"
                 data={statisticsData?.assessmentByLeadOrganization}
                 countSelector={(item) => item.count}
                 dateSelector={(item) => item.date}
                 categorySelector={(item) => item.organization?.id}
                 categoryLabelSelector={organizationLabelSelector}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                heading="Number of Assessments Per Framework Pillar"
+                data={statisticsData?.assessmentPerFrameworkPiller}
+                countSelector={(item) => item.count}
+                dateSelector={(item) => item.date}
+                categorySelector={(item) => item?.focus}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                heading="Number of Assessments per Affected Group"
+                data={statisticsData?.assessmentPerAffectedGroup}
+                countSelector={(item) => item.count}
+                dateSelector={(item) => item.date}
+                categorySelector={(item) => item?.affectedGroup}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                heading="Number of Assessments per Humanitarian Sector"
+                data={statisticsData?.assessmentPerHumanitarianSector}
+                countSelector={(item) => item.count}
+                dateSelector={(item) => item.date}
+                categorySelector={(item) => item?.sector}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                heading="Number of Assessments per Protection Information Management Systems"
+                data={statisticsData?.assessmentPerProtectionManagement}
+                countSelector={(item) => item.count}
+                dateSelector={(item) => item.date}
+                categorySelector={(item) => item?.protectionManagement}
                 startDate={startDate}
                 endDate={endDate}
             />

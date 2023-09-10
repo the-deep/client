@@ -121,17 +121,16 @@ interface Props {
     data: NonNullable<PurgeNull<AryDashboardHowAssessedQuery['project']>>['assessmentDashboardStatistics'];
     regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
     options?: GetMethodologyOptionsQuery;
-    navigationDisabled?: boolean;
     selectedRegion?: string;
     onRegionChange: (newVal: string | undefined) => void;
     selectedAdminLevel?: string;
     onAdminLevelChange: (newVal: string | undefined) => void;
+    navigationDisabled?: boolean;
 }
 
 function GeographicalAreaMethodology(props: Props) {
     const {
         className,
-        defaultZoom = 2,
         data,
         regions,
         options,
@@ -140,6 +139,7 @@ function GeographicalAreaMethodology(props: Props) {
         navigationDisabled,
         selectedAdminLevel,
         onAdminLevelChange,
+        defaultZoom = 2,
     } = props;
 
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue>();
