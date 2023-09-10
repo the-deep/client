@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
     unique,
@@ -14,7 +14,8 @@ import {
     getDateSafe,
     type Resolution,
 } from '#utils/temporal';
-import { hslToHex } from '#utils/common';
+import { getColorScaleFunction } from '#utils/colors';
+
 import styles from './styles.css';
 
 const resolutionToDateFormat = {
@@ -35,6 +36,9 @@ interface Props<
     categorySelector: (item: ITEM) => CATEGORY;
     dateSelector: (item: ITEM) => string;
     countSelector: (item: ITEM) => COUNT;
+    colorSelector?: (item: number, min: number, max: number) => string;
+    colors?: string[];
+    type?: 'interpolate' | 'categorical';
 }
 
 function BubbleBarChart<
@@ -49,6 +53,12 @@ function BubbleBarChart<
         categorySelector,
         dateSelector,
         countSelector,
+        colorSelector,
+        colors = [
+            '#f7fbff',
+            '#08306b',
+        ],
+        type = 'interpolate',
     } = props;
 
     const sortedData = useMemo(() => {
@@ -128,6 +138,21 @@ function BubbleBarChart<
         Math.max(...finalData.map((item) => item.total))
     ), [finalData]);
 
+    const getColorForValue = useCallback((value: number) => {
+        if (type === 'categorical' && colorSelector) {
+            return colorSelector(value, 0, maxCount);
+        }
+        return getColorScaleFunction({
+            min: 0,
+            max: maxCount,
+        }, colors)(value);
+    }, [
+        type,
+        colorSelector,
+        maxCount,
+        colors,
+    ]);
+
     return (
         <div
             className={_cs(
@@ -148,9 +173,9 @@ function BubbleBarChart<
                         <div
                             className={_cs(styles.cell, styles.box)}
                             style={{
-                                backgroundColor: `hsl(228, 78%, ${(100 - (countItem.total / maxCount) * 46)}%)`,
+                                backgroundColor: getColorForValue(countItem.total),
                                 color: getColorOnBgColor(
-                                    hslToHex(228, 78, (100 - (countItem.total / maxCount) * 46)),
+                                    getColorForValue(countItem.total),
                                 ),
                             }}
                             key={countItem.date}
@@ -166,9 +191,9 @@ function BubbleBarChart<
                                 <div
                                     title={String(countItem.total)}
                                     style={{
-                                        backgroundColor: 'var(--dui-color-accent)',
-                                        width: `${(countItem.total / maxCount) * 32}px`,
-                                        height: `${(countItem.total / maxCount) * 32}px`,
+                                        backgroundColor: getColorForValue(countItem.total),
+                                        width: countItem.total ? `${(countItem.total / maxCount) * 24 + 8}px` : undefined,
+                                        height: countItem.total ? `${(countItem.total / maxCount) * 24 + 8}px` : undefined,
                                         borderRadius: '50%',
                                     }}
                                 />

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
     unique,
@@ -9,34 +9,41 @@ import {
     getColorOnBgColor,
 } from '@togglecorp/fujs';
 
-import { hslToHex } from '#utils/common';
+import { getColorScaleFunction } from '#utils/colors';
 import styles from './styles.css';
 
 interface Props<
     T,
     ROW extends string | number,
     COLUMN extends string | number,
-    COUNT extends number,
 > {
     className?: string;
     data: T[];
     rowSelector: (item: T) => ROW;
     columnSelector: (item: T) => COLUMN;
-    countSelector: (item: T) => COUNT;
+    countSelector: (item: T) => number;
+    colorSelector?: (item: number, min: number, max: number) => string;
+    colors?: string[];
+    type?: 'interpolate' | 'categorical';
 }
 
 function BoxBarChart<
     T,
     ROW extends string | number,
     COLUMN extends string | number,
-    COUNT extends number,
->(props: Props<T, ROW, COLUMN, COUNT>) {
+>(props: Props<T, ROW, COLUMN>) {
     const {
         className,
         data,
         rowSelector,
         columnSelector,
         countSelector,
+        colorSelector,
+        colors = [
+            '#f7fbff',
+            '#08306b',
+        ],
+        type = 'interpolate',
     } = props;
 
     const allColumns = useMemo(() => (
@@ -85,6 +92,21 @@ function BoxBarChart<
         Math.max(...finalData.map((item) => item.total))
     ), [finalData]);
 
+    const getColorForValue = useCallback((value: number) => {
+        if (type === 'categorical' && colorSelector) {
+            return colorSelector(value, 0, maxCount);
+        }
+        return getColorScaleFunction({
+            min: 0,
+            max: maxCount,
+        }, colors)(value);
+    }, [
+        type,
+        colorSelector,
+        maxCount,
+        colors,
+    ]);
+
     return (
         <div
             className={_cs(
@@ -116,21 +138,23 @@ function BoxBarChart<
                     <div className={_cs(styles.cell, styles.label)}>
                         {item.rowLabel}
                     </div>
-                    {item.columns.map((countItem, index) => (
-                        <div
-                            className={_cs(styles.box, styles.cell)}
-                            // eslint-disable-next-line react/no-array-index-key
-                            key={`${countItem}-${index}`}
-                            style={{
-                                backgroundColor: `hsl(228, 78%, ${(100 - (countItem / maxCount) * 46)}%)`,
-                                color: getColorOnBgColor(
-                                    hslToHex(228, 78, (100 - (countItem / maxCount) * 46)),
-                                ),
-                            }}
-                        >
-                            {countItem}
-                        </div>
-                    ))}
+                    {item.columns.map((countItem, index) => {
+                        const bgColor = getColorForValue(countItem);
+
+                        return (
+                            <div
+                                className={_cs(styles.box, styles.cell)}
+                                // eslint-disable-next-line react/no-array-index-key
+                                key={`${countItem}-${index}`}
+                                style={{
+                                    backgroundColor: bgColor,
+                                    color: getColorOnBgColor(bgColor, '#515151', '#f0f0f0'),
+                                }}
+                            >
+                                {countItem}
+                            </div>
+                        );
+                    })}
                     <div className={_cs(styles.cell, styles.count)}>
                         <div
                             className={styles.bar}
