@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
-import { formatDateToString, isNotDefined } from '@togglecorp/fujs';
+import { formatDateToString } from '@togglecorp/fujs';
 
 import { getTimeseriesWithoutGaps } from '#utils/temporal';
 import useSizeTracking from '#hooks/useSizeTracking';
@@ -9,17 +9,19 @@ import { todaysDate } from '#utils/common';
 import BrushLineChart from '#components/BrushLineChart';
 import EntityCreationLineChart from '#components/EntityCreationLineChart';
 import {
-    AryDashboardFilterQuery,
-    AryDashboardFilterQueryVariables,
+    ProjectMetadataForAryQuery,
     AryDashboardWhatAssessedQuery,
     AryDashboardWhatAssessedQueryVariables,
+    AssessmentOverTimeQuery,
+    AssessmentOverTimeQueryVariables,
 } from '#generated/types';
 
 import GeographicalAreaAssessments from './GeographicalAreaAssessments';
+import { FilterForm } from '../Filters';
 import styles from './styles.css';
 
 const ARY_DASHBOARD_WHAT_ASSESSED = gql`
-        query AryDashboardWhatAssessed(
+    query AryDashboardWhatAssessed(
         $projectId: ID!,
         $filter: AssessmentDashboardFilterInputType!,
     ) {
@@ -32,7 +34,7 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
                     code
                     adminLevelId
                     assessmentIds
-                    region,
+                    region
                 }
                 assessmentByOverTime {
                     count
@@ -43,11 +45,29 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
     }
 `;
 
+const ASSESSMENT_OVER_TIME = gql`
+    query AssessmentOverTime(
+        $projectId: ID!,
+        $filter: AssessmentDashboardFilterInputType!,
+    ) {
+        project(id: $projectId) {
+            id
+            assessmentDashboardStatistics(filter: $filter){
+                assessmentByOverTime {
+                    count
+                    date
+                }
+            }
+        }
+    }
+`;
+
 interface Props {
-    filters?: AryDashboardFilterQueryVariables;
-    regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
+    filters?: FilterForm;
+    regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
     startDate: number;
     endDate: number;
+    projectStartDate: number;
     onStartDateChange: ((newDate: number | undefined) => void) | undefined;
     onEndDateChange: ((newDate: number | undefined) => void) | undefined;
     selectedRegion?: string;
@@ -55,6 +75,7 @@ interface Props {
     selectedAdminLevel?: string;
     onAdminLevelChange: (newVal: string | undefined) => void;
     readOnly?: boolean;
+    projectId: string;
 }
 
 function WhatAssessed(props: Props) {
@@ -67,27 +88,71 @@ function WhatAssessed(props: Props) {
         onEndDateChange,
         selectedRegion,
         selectedAdminLevel,
+        projectStartDate,
         onAdminLevelChange,
         onRegionChange,
+        projectId,
         readOnly,
     } = props;
 
-    const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
+    const startDateString = formatDateToString(new Date(projectStartDate), 'yyyy-MM-dd');
     const barContainerRef = useRef<HTMLDivElement>(null);
     const {
         width,
     } = useSizeTracking(barContainerRef) ?? {};
 
+    const variables: AryDashboardWhatAssessedQueryVariables = useMemo(() => ({
+        projectId,
+        filter: {
+            dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
+            dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
+            ...filters,
+        },
+    }), [
+        projectId,
+        startDate,
+        endDate,
+        filters,
+    ]);
+
     const {
+        previousData,
         loading,
-        data,
+        data = previousData,
     } = useQuery<AryDashboardWhatAssessedQuery, AryDashboardWhatAssessedQueryVariables>(
         ARY_DASHBOARD_WHAT_ASSESSED,
         {
-            skip: isNotDefined(filters),
-            variables: filters,
+            variables,
         },
     );
+
+    const assessmentOverTimeVariables: AssessmentOverTimeQueryVariables | undefined = useMemo(
+        () => ({
+            projectId,
+            filter: {
+                ...filters,
+                dateFrom: startDateString,
+                dateTo: todaysDate,
+            },
+        }),
+        [
+            filters,
+            projectId,
+            startDateString,
+        ],
+    );
+
+    const {
+        data: assessmentOverTime,
+    } = useQuery<AssessmentOverTimeQuery, AssessmentOverTimeQueryVariables>(
+        ASSESSMENT_OVER_TIME,
+        {
+            variables: assessmentOverTimeVariables,
+        },
+    );
+
+    const assessmentTimeseries = assessmentOverTime
+        ?.project?.assessmentDashboardStatistics?.assessmentByOverTime;
 
     const statisticsData = removeNull(data?.project?.assessmentDashboardStatistics);
 
@@ -105,13 +170,13 @@ function WhatAssessed(props: Props) {
 
     const timeseriesWithoutGaps = useMemo(
         () => getTimeseriesWithoutGaps(
-            statisticsData?.assessmentByOverTime,
+            assessmentTimeseries ?? [],
             'month',
             startDateString,
             todaysDate,
         ),
         [
-            statisticsData?.assessmentByOverTime,
+            assessmentTimeseries,
             startDateString,
         ],
     );

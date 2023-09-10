@@ -1,18 +1,22 @@
-import React from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import React, { useMemo } from 'react';
+import {
+    _cs,
+    isNotDefined,
+    formatDateToString,
+} from '@togglecorp/fujs';
 import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 
 import {
-    AryDashboardFilterQuery,
-    AryDashboardFilterQueryVariables,
-    AryDashboardHowAssedQuery,
-    AryDashboardHowAssedQueryVariables,
+    ProjectMetadataForAryQuery,
+    AryDashboardHowAssessedQuery,
+    AryDashboardHowAssessedQueryVariables,
     GetMethodologyOptionsQuery,
     GetMethodologyOptionsQueryVariables,
 } from '#generated/types';
 
 import GeographicalAreaMethodology from './GeographicalAreaMethodology';
+import { FilterForm } from '../Filters';
 import styles from './styles.css';
 
 const GET_METHODOLOGY_OPTIONS = gql`
@@ -50,7 +54,7 @@ const GET_METHODOLOGY_OPTIONS = gql`
     }
 `;
 const ARY_DASHBOARD_HOW_ASSESSED = gql`
-    query AryDashboardHowAssed(
+    query AryDashboardHowAssessed(
         $projectId: ID!,
         $filter: AssessmentDashboardFilterInputType!,
     ) {
@@ -99,18 +103,24 @@ const ARY_DASHBOARD_HOW_ASSESSED = gql`
 
 interface Props {
     className?: string;
-    filters?: AryDashboardFilterQueryVariables;
-    regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
+    filters?: FilterForm;
+    regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
     selectedRegion?: string;
     onRegionChange: (newVal: string | undefined) => void;
     selectedAdminLevel?: string;
     onAdminLevelChange: (newVal: string | undefined) => void;
+    startDate: number;
+    projectId: string;
+    endDate: number;
 }
 
 function HowAssessed(props: Props) {
     const {
         className,
         filters,
+        startDate,
+        projectId,
+        endDate,
         regions,
         selectedRegion,
         onRegionChange,
@@ -125,14 +135,28 @@ function HowAssessed(props: Props) {
         GET_METHODOLOGY_OPTIONS,
     );
 
+    const variables: AryDashboardHowAssessedQueryVariables = useMemo(() => ({
+        projectId,
+        filter: {
+            dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
+            dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
+            ...filters,
+        },
+    }), [
+        projectId,
+        startDate,
+        endDate,
+        filters,
+    ]);
+
     const {
         loading: responsePending,
         data,
-    } = useQuery<AryDashboardHowAssedQuery, AryDashboardHowAssedQueryVariables>(
+    } = useQuery<AryDashboardHowAssessedQuery, AryDashboardHowAssessedQueryVariables>(
         ARY_DASHBOARD_HOW_ASSESSED,
         {
             skip: isNotDefined(filters),
-            variables: filters,
+            variables,
         },
     );
     const statisticsData = removeNull(data?.project?.assessmentDashboardStatistics);
