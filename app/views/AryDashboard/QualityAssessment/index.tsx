@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { _cs, formatDateToString, isNotDefined } from '@togglecorp/fujs';
 
 import {
-    AryDashboadQualityAssessmentQuery,
-    AryDashboadQualityAssessmentQueryVariables,
-    AryDashboardFilterQuery,
-    AryDashboardFilterQueryVariables,
+    AryDashboardQualityAssessmentQuery,
+    AryDashboardQualityAssessmentQueryVariables,
+    ProjectMetadataForAryQuery,
 } from '#generated/types';
+
 import GeographicalAreaQualityScore from './GeographicalAreaQualityScore';
+import { FilterForm } from '../Filters';
+
 import styles from './styles.css';
 
 const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
-    query AryDashboadQualityAssessment(
+    query AryDashboardQualityAssessment(
         $projectId: ID!,
         $filter: AssessmentDashboardFilterInputType!,
     ) {
@@ -32,32 +34,52 @@ const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
 `;
 interface Props {
     className?: string;
-    filters?: AryDashboardFilterQueryVariables;
-    regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
+    projectId: string;
+    filters?: FilterForm;
+    regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
     selectedRegion?: string;
     onRegionChange: (newVal: string | undefined) => void;
     selectedAdminLevel?: string;
     onAdminLevelChange: (newVal: string | undefined) => void;
+    startDate: number;
+    endDate: number;
 }
 
 function QualityAssessment(props: Props) {
     const {
         className,
+        projectId,
         filters,
         regions,
         selectedRegion,
         onRegionChange,
         selectedAdminLevel,
         onAdminLevelChange,
+        startDate,
+        endDate,
     } = props;
+
+    const variables: AryDashboardQualityAssessmentQueryVariables = useMemo(() => ({
+        projectId,
+        filter: {
+            ...filters,
+            dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
+            dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
+        },
+    }), [
+        projectId,
+        startDate,
+        endDate,
+        filters,
+    ]);
 
     const {
         loading,
         data,
-    } = useQuery<AryDashboadQualityAssessmentQuery, AryDashboadQualityAssessmentQueryVariables>(
+    } = useQuery<AryDashboardQualityAssessmentQuery, AryDashboardQualityAssessmentQueryVariables>(
         ARY_DASHBOARD_QUALITY_ASSESSMENT, {
-            skip: isNotDefined(filters),
-            variables: filters,
+            skip: isNotDefined(variables),
+            variables,
         },
     );
 
@@ -68,11 +90,11 @@ function QualityAssessment(props: Props) {
             <GeographicalAreaQualityScore
                 data={statisticsData}
                 regions={regions}
-                navigationDisabled={loading}
                 selectedRegion={selectedRegion}
                 onRegionChange={onRegionChange}
                 selectedAdminLevel={selectedAdminLevel}
                 onAdminLevelChange={onAdminLevelChange}
+                navigationDisabled={loading}
             />
         </div>
     );
