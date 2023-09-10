@@ -127,7 +127,7 @@ function BoxBarChart<
                 ))}
                 <div />
             </div>
-            {finalData?.map((item) => (
+            {finalData.map((item) => (
                 <div
                     key={item.rowLabel}
                     className={styles.row}
