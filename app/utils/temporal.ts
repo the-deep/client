@@ -145,8 +145,8 @@ export function getTimeseriesWithoutGaps(
         count: number;
     }[] | undefined,
     resolution: 'day' | 'month' | 'year' | 'week',
-    startDate?: string,
-    endDate?: string,
+    startDate?: string | Date | number,
+    endDate?: string | Date | number,
 ) {
     const values = (timeseries ?? [])
         .filter((item) => isDefined(item.date))
