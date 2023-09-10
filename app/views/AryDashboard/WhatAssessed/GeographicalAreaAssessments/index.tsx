@@ -26,7 +26,10 @@ import {
 import { mapboxStyle } from '#base/configs/env';
 import { useRequest } from '#base/utils/restRequest';
 import { GeoAreaBounds } from '#types';
-import { AryDashboardFilterQuery, AryDashboardWhatAssessedQuery } from '#generated/types';
+import {
+    ProjectMetadataForAryQuery,
+    AryDashboardWhatAssessedQuery,
+} from '#generated/types';
 import { getMaximum } from '#utils/common';
 
 import styles from './styles.css';
@@ -62,7 +65,7 @@ const labelSelector = (d: AdminLevel) => d.title;
 interface Props {
     className?: string;
     data: NonNullable<PurgeNull<AryDashboardWhatAssessedQuery['project']>>['assessmentDashboardStatistics'];
-    regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
+    regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
     selectedRegion?: string;
     onRegionChange: (newVal: string | undefined) => void;
     defaultZoom?: number;

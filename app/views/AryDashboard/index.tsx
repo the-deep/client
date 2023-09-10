@@ -25,9 +25,10 @@ import {
 import { resolveTime } from '#utils/temporal';
 import ProjectContext from '#base/context/ProjectContext';
 import {
-    AryDashboardFilterQuery,
-    AryDashboardFilterQueryVariables,
-    AssessmentDashboardFilterDataInputType,
+    ProjectMetadataForAryQuery,
+    ProjectMetadataForAryQueryVariables,
+    AryDashboardStatisticsQuery,
+    AryDashboardStatisticsQueryVariables,
 } from '#generated/types';
 
 import Statistics from './Statistics';
@@ -38,14 +39,13 @@ import HowAssessed from './HowAssessed';
 
 import styles from './styles.css';
 
-const ARY_DASHBOARD_FILTER = gql`
-    query AryDashboardFilter(
+const ARY_DASHBOARD_STATISTICS = gql`
+    query AryDashboardStatistics(
         $projectId: ID!,
         $filter: AssessmentDashboardFilterInputType!,
     ) {
         project(id: $projectId) {
             id
-            createdAt
             assessmentDashboardStatistics(filter: $filter){
                 totalAssessment
                 totalCollectionTechnique
@@ -67,6 +67,17 @@ const ARY_DASHBOARD_FILTER = gql`
                     count
                 }
             }
+        }
+    }
+`;
+
+const PROJECT_METADATA_FOR_ARY = gql`
+    query ProjectMetadataForAry(
+        $projectId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            createdAt
             regions {
                 id
                 title
@@ -125,7 +136,7 @@ function AryDashboard(props: Props) {
                 filter: {
                     dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
                     dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
-                    assessment: filters as AssessmentDashboardFilterDataInputType,
+                    assessment: filters,
                 },
             }) : undefined
     ), [
@@ -136,13 +147,13 @@ function AryDashboard(props: Props) {
     ]);
 
     const {
-        loading,
-        data,
-    } = useQuery<AryDashboardFilterQuery, AryDashboardFilterQueryVariables>(
-        ARY_DASHBOARD_FILTER,
+        loading: metadataLoading,
+        data: projectMetadataResponse,
+    } = useQuery<ProjectMetadataForAryQuery, ProjectMetadataForAryQueryVariables>(
+        PROJECT_METADATA_FOR_ARY,
         {
-            skip: isNotDefined(variables),
-            variables,
+            skip: !activeProject,
+            variables: activeProject ? { projectId: activeProject } : undefined,
             onCompleted: (response) => {
                 setSelectedRegion(response.project?.regions?.[0].id);
 
@@ -163,9 +174,25 @@ function AryDashboard(props: Props) {
         },
     );
 
+    const {
+        previousData,
+        loading,
+        data = previousData,
+    } = useQuery<AryDashboardStatisticsQuery, AryDashboardStatisticsQueryVariables>(
+        ARY_DASHBOARD_STATISTICS,
+        {
+            skip: isNotDefined(variables),
+            variables,
+        },
+    );
+
+    const projectMetadata = useMemo(
+        () => removeNull(projectMetadataResponse?.project),
+        [projectMetadataResponse?.project],
+    );
     const handleRegionChange = useCallback((newRegion: string | undefined) => {
         setSelectedRegion(newRegion);
-        const adminLevels = data?.project?.regions
+        const adminLevels = projectMetadata?.regions
             ?.find((item) => item.id === newRegion)?.adminLevels;
 
         // NOTE: Selected 2nd admin level by default
@@ -179,7 +206,7 @@ function AryDashboard(props: Props) {
             return;
         }
         setActiveAdminLevel(undefined);
-    }, [data?.project?.regions]);
+    }, [projectMetadata]);
 
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
@@ -216,8 +243,11 @@ function AryDashboard(props: Props) {
 
     const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
     const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
+
     const projectData = removeNull(data?.project);
-    const projectStartDate = resolveTime(new Date(data?.project?.createdAt ?? DEEP_START_DATE), 'day').getTime();
+    const projectStartDate = useMemo(() => (
+        resolveTime(new Date(projectMetadata?.createdAt ?? DEEP_START_DATE), 'day').getTime()
+    ), [projectMetadata?.createdAt]);
 
     return (
         <Container
@@ -306,31 +336,40 @@ function AryDashboard(props: Props) {
                     <TabPanel
                         name="what"
                     >
-                        <WhatAssessed
-                            regions={projectData?.regions}
-                            filters={variables}
-                            startDate={projectStartDate}
-                            endDate={endDate}
-                            onStartDateChange={setStartDate}
-                            onEndDateChange={setEndDate}
-                            selectedRegion={selectedRegion}
-                            selectedAdminLevel={activeAdminLevel}
-                            onAdminLevelChange={setActiveAdminLevel}
-                            onRegionChange={handleRegionChange}
-                            readOnly={loading}
-                        />
+                        {activeProject && (
+                            <WhatAssessed
+                                regions={projectMetadata?.regions}
+                                filters={filters}
+                                projectId={activeProject}
+                                projectStartDate={projectStartDate}
+                                startDate={startDate}
+                                endDate={endDate}
+                                onStartDateChange={setStartDate}
+                                onEndDateChange={setEndDate}
+                                selectedRegion={selectedRegion}
+                                selectedAdminLevel={activeAdminLevel}
+                                onAdminLevelChange={setActiveAdminLevel}
+                                onRegionChange={handleRegionChange}
+                                readOnly={loading || metadataLoading}
+                            />
+                        )}
                     </TabPanel>
                     <TabPanel
                         name="how"
                     >
-                        <HowAssessed
-                            regions={projectData?.regions}
-                            filters={variables}
-                            selectedRegion={selectedRegion}
-                            onRegionChange={handleRegionChange}
-                            selectedAdminLevel={activeAdminLevel}
-                            onAdminLevelChange={setActiveAdminLevel}
-                        />
+                        {activeProject && (
+                            <HowAssessed
+                                regions={projectMetadata?.regions}
+                                filters={filters}
+                                selectedRegion={selectedRegion}
+                                onRegionChange={handleRegionChange}
+                                selectedAdminLevel={activeAdminLevel}
+                                onAdminLevelChange={setActiveAdminLevel}
+                                startDate={startDate}
+                                projectId={activeProject}
+                                endDate={endDate}
+                            />
+                        )}
                     </TabPanel>
                     <TabPanel
                         name="quality"

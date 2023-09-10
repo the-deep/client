@@ -33,8 +33,8 @@ import { mapboxStyle } from '#base/configs/env';
 import { useRequest } from '#base/utils/restRequest';
 import { GeoAreaBounds } from '#types';
 import {
-    AryDashboardFilterQuery,
-    AryDashboardHowAssedQuery,
+    AryDashboardHowAssessedQuery,
+    ProjectMetadataForAryQuery,
     AssessmentRegistryDataCollectionTechniqueTypeEnum,
     AssessmentRegistryProximityTypeEnum,
     AssessmentRegistrySamplingApproachTypeEnum,
@@ -118,8 +118,8 @@ interface MethodologyType {
 interface Props {
     className?: string;
     defaultZoom?: number;
-    data: NonNullable<PurgeNull<AryDashboardHowAssedQuery['project']>>['assessmentDashboardStatistics'];
-    regions: NonNullable<PurgeNull<AryDashboardFilterQuery['project']>>['regions'];
+    data: NonNullable<PurgeNull<AryDashboardHowAssessedQuery['project']>>['assessmentDashboardStatistics'];
+    regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
     options?: GetMethodologyOptionsQuery;
     navigationDisabled?: boolean;
     selectedRegion?: string;

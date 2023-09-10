@@ -165,7 +165,7 @@ export function getTimeseriesWithoutGaps(
         }),
     ).sort((a, b) => compareNumber(a.date, b.date));
 
-    if (!timeseriesData || timeseriesData.length <= 0) {
+    if (!timeseriesData || timeseriesData.length < 0) {
         return [];
     }
 

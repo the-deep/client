@@ -5,6 +5,8 @@ import {
 } from '@togglecorp/fujs';
 import {
     ContainerCard,
+    Message,
+    Kraken,
     PendingMessage,
 } from '@the-deep/deep-ui';
 import {
@@ -107,67 +109,74 @@ function EntityCreationLineChart(props: Props) {
             borderBelowHeader
         >
             {loading && <PendingMessage />}
-            <ResponsiveContainer debounce={300} className={styles.responsiveContainer}>
-                <AreaChart
-                    data={timeseriesWithoutGaps}
-                >
-                    <defs>
-                        <linearGradient
-                            id="stat"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                        >
-                            <stop
-                                offset="5%"
-                                stopColor="var(--dui-color-accent)"
-                                stopOpacity={0.6}
-                            />
-                            <stop
-                                offset="95%"
-                                stopColor="var(--dui-color-accent)"
-                                stopOpacity={0}
-                            />
-                        </linearGradient>
-                    </defs>
-                    <XAxis
-                        dataKey="date"
-                        type="number"
-                        scale="time"
-                        domain={['dataMin', 'dataMax']}
-                        allowDuplicatedCategory={false}
-                        tick={{ strokeWidth: 1 }}
-                        tickFormatter={timeFormatter}
-                        minTickGap={20}
-                        interval="preserveStartEnd"
-                        padding={{ left: 10, right: 30 }}
-                        hide
-                    />
-                    <YAxis
-                        axisLine={false}
-                        tickLine={false}
-                        type="number"
-                        dataKey="total"
-                        padding={{ top: 0, bottom: 0 }}
-                        hide
-                    />
-                    <Tooltip
-                        labelFormatter={timeFormatter}
-                        formatter={timeSpentLabelFormatter}
-                    />
-                    <Area
-                        type={chartType === 'step' ? 'step' : 'linear'}
-                        dataKey="total"
-                        stroke="var(--dui-color-accent)"
-                        fillOpacity={1}
-                        fill="url(#stat)"
-                        strokeWidth={2}
-                        connectNulls
-                        activeDot
-                    />
-                </AreaChart>
-            </ResponsiveContainer>
+            {(timeseries?.length ?? 0) > 0 ? (
+                <ResponsiveContainer debounce={300} className={styles.responsiveContainer}>
+                    <AreaChart
+                        data={timeseriesWithoutGaps}
+                    >
+                        <defs>
+                            <linearGradient
+                                id="stat"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                            >
+                                <stop
+                                    offset="5%"
+                                    stopColor="var(--dui-color-accent)"
+                                    stopOpacity={0.6}
+                                />
+                                <stop
+                                    offset="95%"
+                                    stopColor="var(--dui-color-accent)"
+                                    stopOpacity={0}
+                                />
+                            </linearGradient>
+                        </defs>
+                        <XAxis
+                            dataKey="date"
+                            type="number"
+                            scale="time"
+                            domain={['dataMin', 'dataMax']}
+                            allowDuplicatedCategory={false}
+                            tick={{ strokeWidth: 1 }}
+                            tickFormatter={timeFormatter}
+                            minTickGap={20}
+                            interval="preserveStartEnd"
+                            padding={{ left: 10, right: 30 }}
+                            hide
+                        />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            type="number"
+                            dataKey="total"
+                            padding={{ top: 0, bottom: 0 }}
+                            hide
+                        />
+                        <Tooltip
+                            labelFormatter={timeFormatter}
+                            formatter={timeSpentLabelFormatter}
+                        />
+                        <Area
+                            type={chartType === 'step' ? 'step' : 'linear'}
+                            dataKey="total"
+                            stroke="var(--dui-color-accent)"
+                            fillOpacity={1}
+                            fill="url(#stat)"
+                            strokeWidth={2}
+                            connectNulls
+                            activeDot
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
+            ) : (
+                <Message
+                    message="Data not found"
+                    icon={<Kraken variant="whip" />}
+                />
+            )}
         </ContainerCard>
     );
 }
