@@ -20,7 +20,6 @@ import { removeNull } from '@togglecorp/toggle-form';
 import {
     todaysDate,
     DEEP_START_DATE,
-    lastYearStartDate,
 } from '#utils/common';
 import { resolveTime } from '#utils/temporal';
 import ProjectContext from '#base/context/ProjectContext';
@@ -101,9 +100,7 @@ const PROJECT_METADATA_FOR_ARY = gql`
     }
 `;
 
-const lastYearDateTime = resolveTime(lastYearStartDate, 'day').getTime();
 const todaysDateTime = resolveTime(todaysDate, 'day').getTime();
-const deepStartDateTime = resolveTime(DEEP_START_DATE, 'day').getTime();
 
 interface Props {
     className?: string;
@@ -121,9 +118,9 @@ function AryDashboard(props: Props) {
     const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
 
     const [
-        startDate = lastYearDateTime,
+        startDate = todaysDateTime,
         setStartDate,
-    ] = useState<number | undefined>(lastYearDateTime);
+    ] = useState<number | undefined>(todaysDateTime);
     const [
         endDate = todaysDateTime,
         setEndDate,
@@ -155,6 +152,11 @@ function AryDashboard(props: Props) {
             skip: !activeProject,
             variables: activeProject ? { projectId: activeProject } : undefined,
             onCompleted: (response) => {
+                const projectStartDate = resolveTime(
+                    new Date(response.project?.createdAt ?? todaysDateTime),
+                    'day',
+                ).getTime();
+                setStartDate(projectStartDate);
                 setSelectedRegion(response.project?.regions?.[0].id);
 
                 if (isDefined(activeAdminLevel)) {
@@ -208,6 +210,11 @@ function AryDashboard(props: Props) {
         setActiveAdminLevel(undefined);
     }, [projectMetadata]);
 
+    const projectData = removeNull(data?.project);
+    const projectStartDate = useMemo(() => (
+        resolveTime(new Date(projectMetadata?.createdAt ?? DEEP_START_DATE), 'day').getTime()
+    ), [projectMetadata?.createdAt]);
+
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
             setEndDate(Math.min(newDate, todaysDateTime));
@@ -218,11 +225,11 @@ function AryDashboard(props: Props) {
 
     const handleStartDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
-            setStartDate(Math.max(newDate, deepStartDateTime));
+            setStartDate(Math.max(newDate, projectStartDate));
         } else {
             setStartDate(undefined);
         }
-    }, []);
+    }, [projectStartDate]);
 
     const handleFromDateChange = useCallback((newDate: string | undefined) => {
         if (isDefined(newDate)) {
@@ -242,11 +249,6 @@ function AryDashboard(props: Props) {
 
     const startDateString = formatDateToString(new Date(startDate), 'yyyy-MM-dd');
     const endDateString = formatDateToString(new Date(endDate), 'yyyy-MM-dd');
-
-    const projectData = removeNull(data?.project);
-    const projectStartDate = useMemo(() => (
-        resolveTime(new Date(projectMetadata?.createdAt ?? DEEP_START_DATE), 'day').getTime()
-    ), [projectMetadata?.createdAt]);
 
     return (
         <Container
