@@ -158,7 +158,7 @@ function GeographicalAreaQualityScore(props: Props) {
     const assessmentCountAttribute = useMemo(() => (
         data?.medianQualityScoreByGeoArea?.map(
             (selection) => ({
-                id: selection.geoId,
+                id: selection.geoArea,
                 value: selection.finalScore,
             }),
         ) ?? []

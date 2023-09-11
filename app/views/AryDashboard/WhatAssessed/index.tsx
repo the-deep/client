@@ -32,7 +32,7 @@ const dateSelector = (item: { date: string}) => item.date;
 
 type Statistics = NonNullable<NonNullable<AryDashboardWhatAssessedQuery['project']>['assessmentDashboardStatistics']>;
 const orgIdSelector = (item: NonNullable<Statistics['assessmentByLeadOrganization']>[number]) => item.organization.id;
-const focusSelector = (item: NonNullable<Statistics['assessmentPerFrameworkPiller']>[number]) => item.focus ?? '??';
+const focusSelector = (item: NonNullable<Statistics['assessmentPerFrameworkPillar']>[number]) => item.focus ?? '??';
 const affectedGroupSelector = (item: NonNullable<Statistics['assessmentPerAffectedGroup']>[number]) => item.affectedGroup ?? '??';
 const sectorSelector = (item: NonNullable<Statistics['assessmentPerHumanitarianSector']>[number]) => item.sector ?? '??';
 const protectionSelector = (item: NonNullable<Statistics['assessmentPerProtectionManagement']>[number]) => item.protectionManagement ?? '??';
@@ -46,7 +46,7 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
             id
             assessmentDashboardStatistics(filter: $filter){
                 assessmentGeographicAreas {
-                    geoId
+                    geoArea
                     count
                     code
                     adminLevelId
@@ -69,7 +69,7 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
                     count
                     date
                 }
-                assessmentPerFrameworkPiller {
+                assessmentPerFrameworkPillar {
                     count
                     date
                     focus
@@ -112,6 +112,7 @@ const ASSESSMENT_OVER_TIME = gql`
 `;
 
 interface Props {
+    projectId: string;
     filters?: FilterForm;
     regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
     startDate: number;
@@ -124,12 +125,12 @@ interface Props {
     selectedAdminLevel?: string;
     onAdminLevelChange: (newVal: string | undefined) => void;
     readOnly?: boolean;
-    projectId: string;
     options?: ProjectMetadataForAryQuery;
 }
 
 function WhatAssessed(props: Props) {
     const {
+        projectId,
         regions,
         filters,
         startDate,
@@ -141,16 +142,13 @@ function WhatAssessed(props: Props) {
         projectStartDate,
         onAdminLevelChange,
         onRegionChange,
-        projectId,
         options,
         readOnly,
     } = props;
 
     const startDateString = formatDateToString(new Date(projectStartDate), 'yyyy-MM-dd');
     const barContainerRef = useRef<HTMLDivElement>(null);
-    const {
-        width,
-    } = useSizeTracking(barContainerRef) ?? {};
+    const { width } = useSizeTracking(barContainerRef) ?? {};
 
     const variables: AryDashboardWhatAssessedQueryVariables = useMemo(() => ({
         projectId,
@@ -323,7 +321,7 @@ function WhatAssessed(props: Props) {
             />
             <BubbleBarChart
                 heading="Number of Assessments Per Framework Pillar"
-                data={statisticsData?.assessmentPerFrameworkPiller}
+                data={statisticsData?.assessmentPerFrameworkPillar}
                 countSelector={countSelector}
                 categories={focusOptions}
                 dateSelector={dateSelector}
