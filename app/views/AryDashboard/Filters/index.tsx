@@ -7,7 +7,6 @@ import {
     Button,
     MultiSelectInput,
 } from '@the-deep/deep-ui';
-import { useQuery, gql } from '@apollo/client';
 import {
     ObjectSchema,
     useForm,
@@ -20,9 +19,8 @@ import OrganizationMultiSelectInput, {
     BasicOrganization,
 } from '#components/selections/NewOrganizationMultiSelectInput';
 import {
+    ProjectMetadataForAryQuery,
     AssessmentDashboardFilterDataInputType,
-    AssessmentFilterOptionsQuery,
-    AssessmentFilterOptionsQueryVariables,
     AssessmentRegistryAffectedGroupTypeEnum,
     AssessmentRegistryCoordinationTypeEnum,
     AssessmentRegistryFrequencyTypeEnum,
@@ -30,39 +28,6 @@ import {
 } from '#generated/types';
 
 import styles from './styles.module.css';
-
-const ASSESSMENT_FILTER_OPTIONS = gql`
-    query AssessmentFilterOptions {
-        sectorOptions: __type(name: "AssessmentRegistrySectorTypeEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        affectedGroupOptions: __type(name: "AssessmentRegistryAffectedGroupTypeEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        assessmentFrequencyOptions: __type(name: "AssessmentRegistryFrequencyTypeEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        coordinationTypeOptions: __type(name: "AssessmentRegistryCoordinationTypeEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-    }
-`;
 
 export type FilterForm = AssessmentDashboardFilterDataInputType;
 
@@ -83,6 +48,7 @@ const schema: FormSchema = {
 interface Props {
     className?: string;
     projectId: string;
+    options?: ProjectMetadataForAryQuery;
     initialValue: FilterForm | undefined;
     onFiltersChange: (filters: FilterForm | undefined) => void;
 }
@@ -92,15 +58,9 @@ function Filters(props: Props) {
         initialValue,
         onFiltersChange,
         className,
+        options,
         projectId,
     } = props;
-
-    const {
-        data,
-        loading,
-    } = useQuery<AssessmentFilterOptionsQuery, AssessmentFilterOptionsQueryVariables>(
-        ASSESSMENT_FILTER_OPTIONS,
-    );
 
     const [
         organizationOptions,
@@ -125,17 +85,17 @@ function Filters(props: Props) {
         frequencyOptions,
         coordinationOptions,
     ] = useMemo(() => ([
-        data?.sectorOptions?.enumValues as EnumOptions<AssessmentRegistrySectorTypeEnum>,
-        data?.affectedGroupOptions?.enumValues as EnumOptions<
+        options?.sectorOptions?.enumValues as EnumOptions<AssessmentRegistrySectorTypeEnum>,
+        options?.affectedGroupOptions?.enumValues as EnumOptions<
             AssessmentRegistryAffectedGroupTypeEnum
         >,
-        data?.assessmentFrequencyOptions?.enumValues as EnumOptions<
+        options?.assessmentFrequencyOptions?.enumValues as EnumOptions<
             AssessmentRegistryFrequencyTypeEnum
         >,
-        data?.coordinationTypeOptions?.enumValues as EnumOptions<
+        options?.coordinationTypeOptions?.enumValues as EnumOptions<
             AssessmentRegistryCoordinationTypeEnum
         >,
-    ]), [data]);
+    ]), [options]);
 
     const isFilterEmpty = useMemo(() => (
         doesObjectHaveNoData(value, [''])
@@ -170,7 +130,6 @@ function Filters(props: Props) {
                 onChange={setFieldValue}
                 options={organizationOptions}
                 onOptionsChange={setOrganizationOptions}
-                disabled={loading}
                 label="Stakeholders"
             />
             <OrganizationMultiSelectInput
@@ -179,7 +138,6 @@ function Filters(props: Props) {
                 onChange={setFieldValue}
                 options={organizationOptions}
                 onOptionsChange={setOrganizationOptions}
-                disabled={loading}
                 label="Lead organizations"
             />
             <GeoMultiSelectInput
@@ -188,7 +146,6 @@ function Filters(props: Props) {
                 onChange={setFieldValue}
                 options={geoAreaOptions}
                 onOptionsChange={setGeoAreaOptions}
-                disabled={loading}
                 label="Location"
                 projectId={projectId}
             />
@@ -201,7 +158,6 @@ function Filters(props: Props) {
                 value={value.sectors}
                 label="Sectors"
                 placeholder="Sectors"
-                disabled={loading}
             />
             <MultiSelectInput
                 name="affectedGroup"
@@ -212,7 +168,6 @@ function Filters(props: Props) {
                 value={value.affectedGroup}
                 label="Affected Groups"
                 placeholder="Affected Groups"
-                disabled={loading}
             />
             <MultiSelectInput
                 name="frequency"
@@ -223,7 +178,6 @@ function Filters(props: Props) {
                 value={value.frequency}
                 label="Assessment Frequency"
                 placeholder="Assessment Frequency"
-                disabled={loading}
             />
             <MultiSelectInput
                 name="coordinationType"
@@ -234,7 +188,6 @@ function Filters(props: Props) {
                 value={value.coordinationType}
                 label="Coordination Types"
                 placeholder="Coordination Types"
-                disabled={loading}
             />
             <Button
                 name={undefined}

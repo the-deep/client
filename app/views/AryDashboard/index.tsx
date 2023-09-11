@@ -98,6 +98,48 @@ const PROJECT_METADATA_FOR_ARY = gql`
                 }
             }
         }
+        focusOptions: __type(name: "AssessmentRegistryFocusTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sectorOptions: __type(name: "AssessmentRegistrySectorTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        affectedGroupOptions: __type(name: "AssessmentRegistryAffectedGroupTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        assessmentFrequencyOptions: __type(name: "AssessmentRegistryFrequencyTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        coordinationTypeOptions: __type(name: "AssessmentRegistryCoordinationTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        protectionOptions: __type(name: "AssessmentRegistryProtectionInfoTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
     }
 `;
 
@@ -290,6 +332,7 @@ function AryDashboard(props: Props) {
                             projectId={activeProject}
                             onFiltersChange={setFilters}
                             initialValue={filters}
+                            options={projectMetadataResponse}
                         />
                     )}
                     <Statistics
@@ -352,6 +395,7 @@ function AryDashboard(props: Props) {
                                 selectedAdminLevel={activeAdminLevel}
                                 onAdminLevelChange={setActiveAdminLevel}
                                 onRegionChange={handleRegionChange}
+                                options={projectMetadataResponse}
                                 readOnly={loading || metadataLoading}
                             />
                         )}

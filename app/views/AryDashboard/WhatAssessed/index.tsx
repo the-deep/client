@@ -3,7 +3,7 @@ import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import {
     formatDateToString,
-    listToMap,
+    unique,
 } from '@togglecorp/fujs';
 
 import { getTimeseriesWithoutGaps } from '#utils/temporal';
@@ -26,6 +26,16 @@ import GeographicalAreaAssessments from './GeographicalAreaAssessments';
 import { FilterForm } from '../Filters';
 
 import styles from './styles.css';
+
+const countSelector = (item: { count: number }) => item.count;
+const dateSelector = (item: { date: string}) => item.date;
+
+type Statistics = NonNullable<NonNullable<AryDashboardWhatAssessedQuery['project']>['assessmentDashboardStatistics']>;
+const orgIdSelector = (item: NonNullable<Statistics['assessmentByLeadOrganization']>[number]) => item.organization.id;
+const focusSelector = (item: NonNullable<Statistics['assessmentPerFrameworkPiller']>[number]) => item.focus ?? '??';
+const affectedGroupSelector = (item: NonNullable<Statistics['assessmentPerAffectedGroup']>[number]) => item.affectedGroup ?? '??';
+const sectorSelector = (item: NonNullable<Statistics['assessmentPerHumanitarianSector']>[number]) => item.sector ?? '??';
+const protectionSelector = (item: NonNullable<Statistics['assessmentPerProtectionManagement']>[number]) => item.protectionManagement ?? '??';
 
 const ARY_DASHBOARD_WHAT_ASSESSED = gql`
     query AryDashboardWhatAssessed(
@@ -115,6 +125,7 @@ interface Props {
     onAdminLevelChange: (newVal: string | undefined) => void;
     readOnly?: boolean;
     projectId: string;
+    options?: ProjectMetadataForAryQuery;
 }
 
 function WhatAssessed(props: Props) {
@@ -131,6 +142,7 @@ function WhatAssessed(props: Props) {
         onAdminLevelChange,
         onRegionChange,
         projectId,
+        options,
         readOnly,
     } = props;
 
@@ -220,18 +232,55 @@ function WhatAssessed(props: Props) {
         ],
     );
 
-    const organizationLabelSelector = useCallback((orgId: string) => {
-        const orgMap = listToMap(
-            statisticsData?.assessmentByLeadOrganization,
-            (item) => item.organization.id,
-            (item) => item.organization,
-        );
-        const selectedOrg = orgMap?.[orgId];
-        if (!selectedOrg) {
-            return orgId;
-        }
-        return organizationTitleSelector(selectedOrg);
-    }, [statisticsData?.assessmentByLeadOrganization]);
+    const leadOrganizations = useMemo(() => (
+        unique(
+            statisticsData?.assessmentByLeadOrganization?.map((item) => ({
+                key: item.organization.id,
+                label: organizationTitleSelector(item.organization),
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [statisticsData?.assessmentByLeadOrganization]);
+
+    const sectorOptions = useMemo(() => (
+        unique(
+            options?.sectorOptions?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.sectorOptions]);
+
+    const protectionOptions = useMemo(() => (
+        unique(
+            options?.protectionOptions?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.protectionOptions]);
+
+    const focusOptions = useMemo(() => (
+        unique(
+            options?.focusOptions?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.focusOptions]);
+
+    const affectedGroupOptions = useMemo(() => (
+        unique(
+            options?.affectedGroupOptions?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.affectedGroupOptions]);
 
     return (
         <div className={styles.whatAssessed}>
@@ -265,46 +314,50 @@ function WhatAssessed(props: Props) {
             <BubbleBarChart
                 heading="Number of Assessments by Lead Stakeholders (Top Ten)"
                 data={statisticsData?.assessmentByLeadOrganization}
-                countSelector={(item) => item.count}
-                dateSelector={(item) => item.date}
-                categorySelector={(item) => item.organization?.id}
-                categoryLabelSelector={organizationLabelSelector}
+                countSelector={countSelector}
+                dateSelector={dateSelector}
+                categorySelector={orgIdSelector}
+                categories={leadOrganizations}
                 startDate={startDate}
                 endDate={endDate}
             />
             <BubbleBarChart
                 heading="Number of Assessments Per Framework Pillar"
                 data={statisticsData?.assessmentPerFrameworkPiller}
-                countSelector={(item) => item.count}
-                dateSelector={(item) => item.date}
-                categorySelector={(item) => item?.focus}
+                countSelector={countSelector}
+                categories={focusOptions}
+                dateSelector={dateSelector}
+                categorySelector={focusSelector}
                 startDate={startDate}
                 endDate={endDate}
             />
             <BubbleBarChart
                 heading="Number of Assessments per Affected Group"
                 data={statisticsData?.assessmentPerAffectedGroup}
-                countSelector={(item) => item.count}
-                dateSelector={(item) => item.date}
-                categorySelector={(item) => item?.affectedGroup}
+                categories={affectedGroupOptions}
+                countSelector={countSelector}
+                dateSelector={dateSelector}
+                categorySelector={affectedGroupSelector}
                 startDate={startDate}
                 endDate={endDate}
             />
             <BubbleBarChart
                 heading="Number of Assessments per Humanitarian Sector"
                 data={statisticsData?.assessmentPerHumanitarianSector}
-                countSelector={(item) => item.count}
-                dateSelector={(item) => item.date}
-                categorySelector={(item) => item?.sector}
+                countSelector={countSelector}
+                categories={sectorOptions}
+                dateSelector={dateSelector}
+                categorySelector={sectorSelector}
                 startDate={startDate}
                 endDate={endDate}
             />
             <BubbleBarChart
                 heading="Number of Assessments per Protection Information Management Systems"
                 data={statisticsData?.assessmentPerProtectionManagement}
-                countSelector={(item) => item.count}
-                dateSelector={(item) => item.date}
-                categorySelector={(item) => item?.protectionManagement}
+                countSelector={countSelector}
+                categories={protectionOptions}
+                dateSelector={dateSelector}
+                categorySelector={protectionSelector}
                 startDate={startDate}
                 endDate={endDate}
             />
