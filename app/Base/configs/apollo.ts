@@ -63,6 +63,9 @@ const apolloOptions: ApolloClientOptions<NormalizedCacheObject> = {
             ExploreDashboardStatType: {
                 keyFields: [],
             },
+            AssessmentDashboardStatisticsType: {
+                keyFields: [],
+            },
         },
     }),
     assumeImmutableResults: true,
