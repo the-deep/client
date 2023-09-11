@@ -269,16 +269,18 @@ function HowAssessed(props: Props) {
 
     return (
         <div className={_cs(className, styles.howAssessed)}>
-            <GeographicalAreaMethodology
-                data={statisticsData}
-                options={options}
-                regions={regions}
-                selectedRegion={selectedRegion}
-                onRegionChange={onRegionChange}
-                selectedAdminLevel={selectedAdminLevel}
-                onAdminLevelChange={onAdminLevelChange}
-                navigationDisabled={loading || responsePending}
-            />
+            <div className={styles.item}>
+                <GeographicalAreaMethodology
+                    data={statisticsData}
+                    options={options}
+                    regions={regions}
+                    selectedRegion={selectedRegion}
+                    onRegionChange={onRegionChange}
+                    selectedAdminLevel={selectedAdminLevel}
+                    onAdminLevelChange={onAdminLevelChange}
+                    navigationDisabled={loading || responsePending}
+                />
+            </div>
             <BubbleBarChart
                 heading="Number of Assessments Per Data Collection Technique"
                 data={statisticsData?.assessmentPerDatatechnique}
