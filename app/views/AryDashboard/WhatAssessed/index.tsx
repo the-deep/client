@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
 import {
+    listToMap,
     formatDateToString,
     unique,
 } from '@togglecorp/fujs';
@@ -20,6 +21,7 @@ import {
 } from '#generated/types';
 
 import BubbleBarChart from '#components/charts/BubbleBarChart';
+import BoxBarChart from '#components/charts/BoxBarChart';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationMultiSelectInput';
 
 import GeographicalAreaAssessments from './GeographicalAreaAssessments';
@@ -32,10 +34,10 @@ const dateSelector = (item: { date: string}) => item.date;
 
 type Statistics = NonNullable<NonNullable<AryDashboardWhatAssessedQuery['project']>['assessmentDashboardStatistics']>;
 const orgIdSelector = (item: NonNullable<Statistics['assessmentByLeadOrganization']>[number]) => item.organization.id;
-const focusSelector = (item: NonNullable<Statistics['assessmentPerFrameworkPillar']>[number]) => item.focus ?? '??';
-const affectedGroupSelector = (item: NonNullable<Statistics['assessmentPerAffectedGroup']>[number]) => item.affectedGroup ?? '??';
-const sectorSelector = (item: NonNullable<Statistics['assessmentPerHumanitarianSector']>[number]) => item.sector ?? '??';
-const protectionSelector = (item: NonNullable<Statistics['assessmentPerProtectionManagement']>[number]) => item.protectionManagement ?? '??';
+const focusSelector = (item: { focus: string }) => item.focus;
+const affectedGroupSelector = (item: { affectedGroup: string }) => item.affectedGroup;
+const sectorSelector = (item: { sector: string }) => item.sector;
+const protectionSelector = (item: { protectionManagement: string }) => item.protectionManagement;
 
 const ARY_DASHBOARD_WHAT_ASSESSED = gql`
     query AryDashboardWhatAssessed(
@@ -65,10 +67,6 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
                     count
                     date
                 }
-                assessmentByOverTime {
-                    count
-                    date
-                }
                 assessmentPerFrameworkPillar {
                     count
                     date
@@ -88,6 +86,28 @@ const ARY_DASHBOARD_WHAT_ASSESSED = gql`
                     count
                     date
                     protectionManagement
+                }
+                assessmentPerAffectedGroupAndGeoarea {
+                    date
+                    count
+                    affectedGroup
+                    geoArea {
+                        id
+                        title
+                    }
+                }
+                assessmentPerAffectedGroupAndSector {
+                    affectedGroup
+                    count
+                    sector
+                }
+                assessmentPerSectorAndGeoarea {
+                    count
+                    sector
+                    geoArea {
+                        id
+                        title
+                    }
                 }
             }
         }
@@ -272,17 +292,84 @@ function WhatAssessed(props: Props) {
 
     const affectedGroupOptions = useMemo(() => (
         unique(
-            options?.affectedGroupOptions?.enumValues?.map((item) => ({
-                key: item.name,
-                label: item.description ?? item.name ?? '??',
-            })) ?? [],
+            options?.affectedGroupOptions?.enumValues?.map((item) => {
+                const label = item.description ?? item.name ?? '??';
+                /*
+                if (label.indexOf('/') >= 0) {
+                    label = label.match(/\/(?<last>[^/]+)$/)?.groups?.last ?? '??';
+                }
+                */
+
+                return ({
+                    key: item.name,
+                    label,
+                });
+            }) ?? [],
             (item) => item.key,
         )
     ), [options?.affectedGroupOptions]);
 
+    const affectedGroupsMap = useMemo(() => (
+        listToMap(
+            affectedGroupOptions,
+            (item) => item.key,
+            (item) => item.label,
+        )
+    ), [affectedGroupOptions]);
+
+    const affectedGroupsForAreas = useMemo(() => (
+        unique(
+            statisticsData?.assessmentPerAffectedGroupAndGeoarea?.map((item) => ({
+                key: item.affectedGroup,
+                label: item.affectedGroup ? affectedGroupsMap?.[item.affectedGroup] : '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [
+        statisticsData,
+        affectedGroupsMap,
+    ]);
+
+    const affectedGroupsForSectors = useMemo(() => (
+        unique(
+            statisticsData?.assessmentPerAffectedGroupAndSector?.map((item) => ({
+                key: item.affectedGroup ?? '??',
+                label: item.affectedGroup ? affectedGroupsMap?.[item.affectedGroup] : '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [
+        statisticsData,
+        affectedGroupsMap,
+    ]);
+
+    const areasForSectors = useMemo(() => (
+        unique(
+            statisticsData?.assessmentPerSectorAndGeoarea?.map((item) => ({
+                key: item.geoArea.id,
+                label: item.geoArea.title,
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [
+        statisticsData,
+    ]);
+
+    const areasForAffectedGroups = useMemo(() => (
+        unique(
+            statisticsData?.assessmentPerAffectedGroupAndGeoarea?.map((item) => ({
+                key: item.geoArea.id,
+                label: item.geoArea.title,
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [
+        statisticsData,
+    ]);
+
     return (
         <div className={styles.whatAssessed}>
-            <div>
+            <div className={styles.item}>
                 <GeographicalAreaAssessments
                     data={statisticsData}
                     regions={regions}
@@ -305,7 +392,7 @@ function WhatAssessed(props: Props) {
             </div>
             <EntityCreationLineChart
                 heading="Number of Assessment Over Time"
-                timeseries={statisticsData?.assessmentByOverTime}
+                timeseries={assessmentTimeseries ?? []}
                 startDate={startDate}
                 endDate={endDate}
             />
@@ -358,6 +445,34 @@ function WhatAssessed(props: Props) {
                 categorySelector={protectionSelector}
                 startDate={startDate}
                 endDate={endDate}
+            />
+            <BoxBarChart
+                heading="Number of Assessments per Humanitarian Sector and Geographical Area"
+                data={statisticsData?.assessmentPerSectorAndGeoarea}
+                columns={sectorOptions}
+                countSelector={countSelector}
+                rows={areasForSectors}
+                columnSelector={sectorSelector}
+                // FIXME: Update after changes in server are reflected
+                rowSelector={(item) => item.geoArea.id}
+            />
+            <BoxBarChart
+                heading="Number of Assessments per Affected Groups and Geographical Area"
+                data={statisticsData?.assessmentPerAffectedGroupAndGeoarea}
+                columns={affectedGroupsForAreas}
+                countSelector={countSelector}
+                rows={areasForAffectedGroups}
+                columnSelector={affectedGroupSelector}
+                rowSelector={(item) => item.geoArea.id}
+            />
+            <BoxBarChart
+                heading="Number of Assessments per Affected Groups and Sectors"
+                data={statisticsData?.assessmentPerAffectedGroupAndSector}
+                columns={affectedGroupsForSectors}
+                countSelector={countSelector}
+                rows={sectorOptions}
+                columnSelector={affectedGroupSelector}
+                rowSelector={sectorSelector}
             />
         </div>
     );

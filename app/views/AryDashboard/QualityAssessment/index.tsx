@@ -137,7 +137,7 @@ function QualityAssessment(props: Props) {
     );
     return (
         <div className={_cs(className, styles.qualityAssessment)}>
-            <div>
+            <div className={styles.item}>
                 <GeographicalAreaQualityScore
                     data={statisticsData}
                     regions={regions}
