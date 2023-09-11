@@ -3,6 +3,7 @@ import {
     _cs,
     isNotDefined,
     formatDateToString,
+    unique,
 } from '@togglecorp/fujs';
 import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
@@ -14,11 +15,24 @@ import {
     GetMethodologyOptionsQuery,
     GetMethodologyOptionsQueryVariables,
 } from '#generated/types';
+import BubbleBarChart from '#components/charts/BubbleBarChart';
 
 import GeographicalAreaMethodology from './GeographicalAreaMethodology';
 import { FilterForm } from '../Filters';
 
 import styles from './styles.css';
+
+const countSelector = (item: { count: number }) => item.count;
+const dateSelector = (item: { date: string}) => item.date;
+const samplingSizeSelector = (item: { samplingSize: number }) => item.samplingSize;
+
+type Statistics = NonNullable<NonNullable<AryDashboardHowAssessedQuery['project']>['assessmentDashboardStatistics']>;
+const dataTechniqueSelector = (item: NonNullable<Statistics['assessmentPerDatatechnique']>[number]) => item.dataCollectionTechnique ?? '??';
+const analysisSelector = (item: NonNullable<Statistics['assessmentPerUnitOfAnalysis']>[number]) => item.unitOfAnalysis ?? '??';
+const reportingSelector = (item: NonNullable<Statistics['assessmentPerUnitOfReporting']>[number]) => item.unitOfReporting ?? '??';
+const samplingApproachSelector = (item: NonNullable<Statistics['assessmentPerSamplingApproach']>[number]) => item.samplingApproach ?? '??';
+const proximitySelector = (item: NonNullable<Statistics['assessmentPerProximity']>[number]) => item.proximity ?? '??';
+const samplingDataTechniqueSelector = (item: NonNullable<Statistics['sampleSizePerDataCollectionTechnique']>[number]) => item.dataCollectionTechnique ?? '??';
 
 const GET_METHODOLOGY_OPTIONS = gql`
     query GetMethodologyOptions {
@@ -97,6 +111,36 @@ const ARY_DASHBOARD_HOW_ASSESSED = gql`
                     region
                     proximity
                 }
+                assessmentPerDatatechnique {
+                    count
+                    dataCollectionTechnique
+                    date
+                }
+                assessmentPerUnitOfAnalysis {
+                    count
+                    date
+                    unitOfAnalysis
+                }
+                assessmentPerUnitOfReporting {
+                    count
+                    date
+                    unitOfReporting
+                }
+                assessmentPerSamplingApproach {
+                    count
+                    date
+                    samplingApproach
+                }
+                assessmentPerProximity {
+                    count
+                    date
+                    proximity
+                }
+                sampleSizePerDataCollectionTechnique {
+                    dataCollectionTechnique
+                    date
+                    samplingSize
+                }
             }
         }
     }
@@ -163,6 +207,66 @@ function HowAssessed(props: Props) {
     );
     const statisticsData = removeNull(data?.project?.assessmentDashboardStatistics);
 
+    const dataTechniqueOptions = useMemo(() => (
+        unique(
+            options?.dataCollectionTechniqueOptions?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.dataCollectionTechniqueOptions]);
+
+    const analysisOptions = useMemo(() => (
+        unique(
+            options?.unitOfAnanlysis?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.unitOfAnanlysis]);
+
+    const reportingOptions = useMemo(() => (
+        unique(
+            options?.unitOfReporting?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.unitOfReporting]);
+
+    const samplingApproachOptions = useMemo(() => (
+        unique(
+            options?.samplingApproach?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.samplingApproach]);
+
+    const proximityOptions = useMemo(() => (
+        unique(
+            options?.proximity?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.proximity]);
+
+    const sampleDataTechniqueOptions = useMemo(() => (
+        unique(
+            options?.dataCollectionTechniqueOptions?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? item.name ?? '??',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.dataCollectionTechniqueOptions]);
+
     return (
         <div className={_cs(className, styles.howAssessed)}>
             <GeographicalAreaMethodology
@@ -174,6 +278,66 @@ function HowAssessed(props: Props) {
                 selectedAdminLevel={selectedAdminLevel}
                 onAdminLevelChange={onAdminLevelChange}
                 navigationDisabled={loading || responsePending}
+            />
+            <BubbleBarChart
+                heading="Number of Assessments Per Data Collection Technique"
+                data={statisticsData?.assessmentPerDatatechnique}
+                countSelector={countSelector}
+                categories={dataTechniqueOptions}
+                dateSelector={dateSelector}
+                categorySelector={dataTechniqueSelector}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                heading="Number of Assessments Per Unit of Analysis"
+                data={statisticsData?.assessmentPerUnitOfAnalysis}
+                countSelector={countSelector}
+                categories={analysisOptions}
+                dateSelector={dateSelector}
+                categorySelector={analysisSelector}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                heading="Number of Assessments Per Unit of Reporting"
+                data={statisticsData?.assessmentPerUnitOfReporting}
+                countSelector={countSelector}
+                categories={reportingOptions}
+                dateSelector={dateSelector}
+                categorySelector={reportingSelector}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                heading="Number of Assessments Per Sampling Approach"
+                data={statisticsData?.assessmentPerSamplingApproach}
+                countSelector={countSelector}
+                categories={samplingApproachOptions}
+                dateSelector={dateSelector}
+                categorySelector={samplingApproachSelector}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                heading="Number of Assessments Per Proximity"
+                data={statisticsData?.assessmentPerProximity}
+                countSelector={countSelector}
+                categories={proximityOptions}
+                dateSelector={dateSelector}
+                categorySelector={proximitySelector}
+                startDate={startDate}
+                endDate={endDate}
+            />
+            <BubbleBarChart
+                heading="Sampling Size of Assessments per Data Collection Technique"
+                data={statisticsData?.sampleSizePerDataCollectionTechnique}
+                countSelector={samplingSizeSelector}
+                categories={sampleDataTechniqueOptions}
+                dateSelector={dateSelector}
+                categorySelector={samplingDataTechniqueSelector}
+                startDate={startDate}
+                endDate={endDate}
             />
         </div>
     );
