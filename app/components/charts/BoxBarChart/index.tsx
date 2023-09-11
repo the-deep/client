@@ -52,7 +52,7 @@ function BoxBarChart<
 
     const finalData = useMemo(() => {
         const itemsGroupedByRow = listToGroupList(
-            data,
+            data ?? [],
             rowSelector,
             (item) => item,
         );
