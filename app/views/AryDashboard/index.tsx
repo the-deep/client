@@ -424,13 +424,16 @@ function AryDashboard(props: Props) {
                             <QualityAssessment
                                 projectId={activeProject}
                                 filters={filters}
-                                startDate={startDate}
-                                endDate={endDate}
                                 regions={projectMetadata?.regions}
                                 selectedRegion={selectedRegion}
                                 onRegionChange={handleRegionChange}
                                 selectedAdminLevel={activeAdminLevel}
                                 onAdminLevelChange={setActiveAdminLevel}
+                                projectStartDate={projectStartDate}
+                                startDate={startDate}
+                                endDate={endDate}
+                                onStartDateChange={setStartDate}
+                                onEndDateChange={setEndDate}
                             />
                         )}
                     </TabPanel>
