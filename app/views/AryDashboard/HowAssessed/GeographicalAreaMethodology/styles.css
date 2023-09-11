@@ -14,7 +14,7 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        padding: var(--dui-spacing-medium) 0;
+        padding: var(--dui-spacing-medium);
         gap: var(--dui-spacing-small);
     }
 }

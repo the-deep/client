@@ -103,6 +103,7 @@ function GeographicalAreaQualityScore(props: Props) {
 
     const mapOptions: Partial<MapboxOptions> = useMemo(() => ({
         zoom: defaultZoom,
+        scrollZoom: false,
         center: [50, 10],
     }), [defaultZoom]);
 
