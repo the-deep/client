@@ -69,6 +69,9 @@ const apolloOptions: ApolloClientOptions<NormalizedCacheObject> = {
             AssistedTaggingMutationType: {
                 keyFields: [],
             },
+            AssessmentDashboardStatisticsType: {
+                keyFields: [],
+            },
         },
     }),
     assumeImmutableResults: true,
