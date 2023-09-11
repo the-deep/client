@@ -7,6 +7,7 @@ import {
     sum,
     getColorOnBgColor,
 } from '@togglecorp/fujs';
+import { ContainerCard } from '@the-deep/deep-ui';
 
 import { getColorScaleFunction } from '#utils/colors';
 import styles from './styles.css';
@@ -17,11 +18,16 @@ interface Props<
     COLUMN extends string | number,
 > {
     className?: string;
-    data: T[];
+    data: T[] | undefined;
     rowSelector: (item: T) => ROW;
     columnSelector: (item: T) => COLUMN;
     countSelector: (item: T) => number;
     colorSelector?: (item: number, min: number, max: number) => string;
+    heading?: string;
+    rows: {
+        key: ROW;
+        label: string;
+    }[];
     columns: {
         key: COLUMN;
         label: string;
@@ -39,8 +45,10 @@ function BoxBarChart<
         className,
         data,
         rowSelector,
+        heading,
         columnSelector,
         countSelector,
+        rows,
         columns,
         colorSelector,
         colors = [
@@ -56,15 +64,15 @@ function BoxBarChart<
             rowSelector,
             (item) => item,
         );
-        const transformedData = Object.keys(itemsGroupedByRow).map((item) => {
+        const transformedData = rows.map((item) => {
             const countByCol = listToMap(
-                itemsGroupedByRow[item],
+                itemsGroupedByRow[item.key] ?? [],
                 columnSelector,
                 countSelector,
             );
             const columnsForRow = columns.map((col) => countByCol[col.key] ?? 0);
             return {
-                rowLabel: item,
+                rowLabel: item.label,
                 columnsForRow,
                 total: sum(columnsForRow),
             };
@@ -78,6 +86,7 @@ function BoxBarChart<
         countSelector,
         rowSelector,
         data,
+        rows,
         columns,
     ]);
 
@@ -105,11 +114,17 @@ function BoxBarChart<
     ]);
 
     return (
-        <div
+        <ContainerCard
             className={_cs(
                 className,
                 styles.boxBarChart,
             )}
+            heading={heading}
+            headingSize="extraSmall"
+            spacing="loose"
+            contentClassName={styles.content}
+            borderBelowHeader
+            borderBelowHeaderWidth="thin"
         >
             <div className={styles.row}>
                 <div />
@@ -163,7 +178,7 @@ function BoxBarChart<
                     </div>
                 </div>
             ))}
-        </div>
+        </ContainerCard>
     );
 }
 
