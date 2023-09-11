@@ -104,7 +104,7 @@ interface MethodologyType {
     }[] | null;
     value: {
         adminLevelId: number
-        geoId: number;
+        geoArea: number;
         count: number;
         region: number;
         dataCollectionTechnique?: AssessmentRegistryDataCollectionTechniqueTypeEnum;
@@ -239,7 +239,7 @@ function GeographicalAreaMethodology(props: Props) {
             const attributeValue = methodologyDataMap[category].value?.filter(
                 (technique) => technique.dataCollectionTechnique === subCategory,
             )?.map((selection) => ({
-                id: selection.geoId,
+                id: selection.geoArea,
                 value: selection.count,
             }));
 
@@ -249,7 +249,7 @@ function GeographicalAreaMethodology(props: Props) {
             const attributeValue = methodologyDataMap[category].value?.filter(
                 (technique) => technique.samplingApproach === subCategory,
             )?.map((selection) => ({
-                id: selection.geoId,
+                id: selection.geoArea,
                 value: selection.count,
             }));
             return attributeValue;
@@ -258,7 +258,7 @@ function GeographicalAreaMethodology(props: Props) {
             const attributeValue = methodologyDataMap[category].value?.filter(
                 (technique) => technique.unitOfAnanlysis === subCategory,
             )?.map((selection) => ({
-                id: selection.geoId,
+                id: selection.geoArea,
                 value: selection.count,
             }));
             return attributeValue;
@@ -267,7 +267,7 @@ function GeographicalAreaMethodology(props: Props) {
             const attributeValue = methodologyDataMap[category].value?.filter(
                 (technique) => technique.unitOfReporting === subCategory,
             )?.map((selection) => ({
-                id: selection.geoId,
+                id: selection.geoArea,
                 value: selection.count,
             }));
             return attributeValue;

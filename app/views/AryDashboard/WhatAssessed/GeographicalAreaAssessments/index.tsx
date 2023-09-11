@@ -143,7 +143,7 @@ function GeographicalAreaAssessments(props: Props) {
 
     const getAssessmentCount = useCallback(
         (adminId: string | number) => data?.assessmentGeographicAreas?.find(
-            (item) => String(item.geoId) === adminId,
+            (item) => String(item.geoArea) === adminId,
         )?.count ?? 0,
         [data?.assessmentGeographicAreas],
     );
@@ -151,7 +151,7 @@ function GeographicalAreaAssessments(props: Props) {
     const assessmentCountAttribute = useMemo(() => (
         data?.assessmentGeographicAreas?.map(
             (selection) => ({
-                id: selection.geoId,
+                id: selection.geoArea,
                 value: selection.count,
             }),
         ) ?? []
