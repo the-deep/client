@@ -6,6 +6,8 @@ import { _cs, formatDateToString, isNotDefined } from '@togglecorp/fujs';
 import {
     AryDashboardQualityAssessmentQuery,
     AryDashboardQualityAssessmentQueryVariables,
+    MedianQualityScoreOverTimeQuery,
+    MedianQualityScoreOverTimeQueryVariables,
     ProjectMetadataForAryQuery,
 } from '#generated/types';
 import useSizeTracking from '#hooks/useSizeTracking';
@@ -33,6 +35,19 @@ const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
                     geoArea
                     region
                 }
+            }
+        }
+    }
+`;
+
+const MEDIAN_QUALITY_SCORE_OVER_TIME = gql`
+    query medianQualityScoreOverTime(
+        $projectId: ID!,
+        $filter: AssessmentDashboardFilterInputType!,
+    ) {
+        project(id: $projectId) {
+            id
+            assessmentDashboardStatistics(filter: $filter){
                 medianQualityScoreOverTime {
                     date
                     finalScore
@@ -102,6 +117,31 @@ function QualityAssessment(props: Props) {
         },
     );
 
+    const medianScoreOverTimeVariables: AssessmentOverTimeQueryVariables | undefined = useMemo(
+        () => ({
+            projectId,
+            filter: {
+                ...filters,
+                dateFrom: startDateString,
+                dateTo: todaysDate,
+            },
+        }),
+        [
+            filters,
+            projectId,
+            startDateString,
+        ],
+    );
+
+    const {
+        data: medianScoreOverTime,
+    } = useQuery<MedianQualityScoreOverTimeQuery, MedianQualityScoreOverTimeQueryVariables>(
+        MEDIAN_QUALITY_SCORE_OVER_TIME,
+        {
+            variables: medianScoreOverTimeVariables,
+        },
+    );
+
     const statisticsData = removeNull(data?.project?.assessmentDashboardStatistics);
 
     const handleDateRangeChange = useCallback(
@@ -116,22 +156,26 @@ function QualityAssessment(props: Props) {
         [onStartDateChange, onEndDateChange],
     );
 
-    const overTimeData = useMemo(
-        () => statisticsData?.medianQualityScoreOverTime?.map((item) => ({
-            date: item.date,
-            count: item.finalScore,
-        })) ?? [],
-        [statisticsData?.medianQualityScoreOverTime],
+    const medianScoreTimeSeries = useMemo(
+        () => medianScoreOverTime?.project?.assessmentDashboardStatistics
+            ?.medianQualityScoreOverTime?.map(
+                (item) => ({
+                    date: item.date,
+                    count: item.finalScore,
+                }),
+            ) ?? [],
+        [medianScoreOverTime?.project?.assessmentDashboardStatistics?.medianQualityScoreOverTime],
     );
+
     const timeseriesWithoutGaps = useMemo(
         () => getTimeseriesWithoutGaps(
-            overTimeData,
+            medianScoreTimeSeries,
             'month',
             startDateString,
             todaysDate,
         ),
         [
-            overTimeData,
+            medianScoreTimeSeries,
             startDateString,
         ],
     );
@@ -160,7 +204,7 @@ function QualityAssessment(props: Props) {
             </div>
             <EntityCreationLineChart
                 heading="Number of Assessment Over Time"
-                timeseries={overTimeData}
+                timeseries={medianScoreTimeSeries}
                 startDate={startDate}
                 endDate={endDate}
             />
