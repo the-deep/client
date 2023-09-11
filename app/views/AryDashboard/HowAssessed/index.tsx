@@ -79,35 +79,35 @@ const ARY_DASHBOARD_HOW_ASSESSED = gql`
                 assessmentByDataCollectionTechniqueAndGeolocation {
                     adminLevelId
                     count
-                    geoId
+                    geoArea
                     region
                     dataCollectionTechnique
                 }
                 assessmentBySamplingApproachAndGeolocation {
                     adminLevelId
                     count
-                    geoId
+                    geoArea
                     region
                     samplingApproach
                 }
                 assessmentByUnitOfAnalysisAndGeolocation {
                     adminLevelId
                     count
-                    geoId
+                    geoArea
                     region
                     unitOfAnalysis
                 }
                 assessmentByUnitOfReportingAndGeolocation {
                     adminLevelId
                     count
-                    geoId
+                    geoArea
                     region
                     unitOfReporting
                 }
                 assessmentByProximityAndGeolocation {
                     adminLevelId
                     count
-                    geoId
+                    geoArea
                     region
                     proximity
                 }
