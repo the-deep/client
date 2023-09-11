@@ -187,6 +187,8 @@ function BubbleBarChart<
                 styles.content,
                 variant === 'box' && styles.boxChart,
             )}
+            borderBelowHeader
+            borderBelowHeaderWidth="thin"
         >
             {finalData.map((item) => (
                 <div
