@@ -42,6 +42,8 @@ const CHART_COLORS = [
 const countSelector = (item: { finalScore: number }) => item.finalScore;
 const dateSelector = (item: { date: string}) => item.date;
 const scoreTypeSelector = (item: { scoreType : string }) => item.scoreType;
+const affectedGroupSelector = (item: { affectedGroup: string }) => item.affectedGroup;
+const sectorSelector = (item: { sector: string }) => item.sector;
 
 const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
     query AryDashboardQualityAssessment(
@@ -61,15 +63,46 @@ const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
                     scoreType
                 }
                 medianScoreBySectorAndAffectedGroup {
-                    affectedGroups
+                    affectedGroup
                     finalScore
                     sector
+                }
+                medianQualityScoreByGeoareaAndSector {
+                    date
+                    finalScore
+                    geoArea {
+                        id
+                        title
+                        adminLevelLevel
+                    }
+                    sector
+                }
+                medianQualityScoreByGeoareaAndAffectedGroup {
+                    affectedGroup
+                    date
+                    finalScore
+                    geoArea {
+                        title
+                        id
+                        adminLevelTitle
+                    }
                 }
                 medianQualityScoreByGeoArea {
                     adminLevelId
                     finalScore
                     geoArea
                     region
+                }
+                medianQualityScoreByAnalyticalDensityDate {
+                    date
+                    finalScore
+                    sector
+                    sectorDisplay
+                }
+                medianQualityScoreOfAnalyticalDensity {
+                    finalScore
+                    sector
+                    sectorDisplay
                 }
             }
         }
@@ -219,22 +252,42 @@ function QualityAssessment(props: Props) {
         ],
     );
 
+    const sectorColumn = useMemo(() => (
+        unique(
+            options?.sectorOptions?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? '',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.sectorOptions]);
+
+    const affectedGroupColumn = useMemo(() => (
+        unique(
+            options?.affectedGroupOptions?.enumValues?.map((item) => ({
+                key: item.name,
+                label: item.description ?? '',
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [options?.affectedGroupOptions]);
+
     const scoreOptions = removeNull(options?.project?.assessmentRegistryOptions?.scoreOptions);
     const medianScoreWithAnalyticalStatement = useMemo(
         () => {
-            const items = listToGroupList(
+            const groupByScore = listToGroupList(
                 statisticsData?.medianQualityScoreOfEachDimensionByDate,
                 (item) => item.scoreType,
                 (item) => item,
             );
-            const b = Object.keys(items ?? {}).map((item) => {
-                const total = median(items?.[item].map((foo) => foo.finalScore) ?? []);
+            const scoreWithMedian = Object.keys(groupByScore ?? {}).map((item) => {
+                const total = median(groupByScore?.[item].map((foo) => foo.finalScore) ?? []);
                 return {
                     scoreType: item,
                     median: total,
                 };
             });
-            const scoreWithCriteria = b?.map(
+            const scoreWithCriteria = scoreWithMedian?.map(
                 (medianScore) => {
                     const matchingOption = scoreOptions?.find(
                         (option) => option.scoreCriteria === medianScore.scoreType,
@@ -258,7 +311,6 @@ function QualityAssessment(props: Props) {
             statisticsData?.medianQualityScoreOfEachDimensionByDate,
         ],
     );
-    console.log('here', medianScoreWithAnalyticalStatement);
 
     const groupScoreOptionsByAnalytical = listToGroupList(
         scoreOptions ?? [],
@@ -293,26 +345,6 @@ function QualityAssessment(props: Props) {
         }))
     ), [groupScoreOptionsByAnalytical.ANALYTICAL_WRITING]);
 
-    const sectorColumn = useMemo(() => (
-        unique(
-            options?.sectorOptions?.enumValues?.map((item) => ({
-                key: item.name,
-                label: item.description ?? '',
-            })) ?? [],
-            (item) => item.key,
-        )
-    ), [options?.sectorOptions]);
-
-    const affectedGroupColumn = useMemo(() => (
-        unique(
-            options?.affectedGroupOptions?.enumValues?.map((item) => ({
-                key: item.name,
-                label: item.description ?? '',
-            })) ?? [],
-            (item) => item.key,
-        )
-    ), [options?.affectedGroupOptions]);
-
     const areasForSectors = useMemo(() => (
         unique(
             statisticsData?.medianQualityScoreByGeoareaAndSector?.map((item) => ({
@@ -325,9 +357,42 @@ function QualityAssessment(props: Props) {
         statisticsData,
     ]);
 
+    const analyticalDensityOptions = useMemo(() => {
+        const groupBySector = listToGroupList(
+            statisticsData?.medianQualityScoreByAnalyticalDensityDate,
+            (d) => d.sector,
+            (item) => item,
+        );
+
+        const sectorWithScore = Object.keys(groupBySector ?? {}).map((item) => {
+            const total = median(groupBySector?.[item].map((foo) => foo.finalScore) ?? []);
+            return {
+                sector: item,
+                median: total,
+            };
+        });
+
+        const sectorsOptions = sectorWithScore?.map(
+            (medianScore) => {
+                const matchedOption = sectorColumn?.find(
+                    (option) => option.key === medianScore.sector,
+                );
+                return {
+                    ...removeNull(matchedOption),
+                    sector: medianScore.sector,
+                    finalScore: medianScore.median,
+                };
+            },
+        );
+        return sectorsOptions;
+    }, [
+        statisticsData?.medianQualityScoreByAnalyticalDensityDate,
+        sectorColumn,
+    ]);
+
     const areasForAffectedGroups = useMemo(() => (
         unique(
-            statisticsData?.medianQualityScoreByGeareaAndAffectedGroup?.map((item) => ({
+            statisticsData?.medianQualityScoreByGeoareaAndAffectedGroup?.map((item) => ({
                 key: item.geoArea.id,
                 label: item.geoArea.title,
             })) ?? [],
@@ -378,14 +443,33 @@ function QualityAssessment(props: Props) {
                 startDate={startDate}
                 endDate={endDate}
             />
-            <MedianRadarChart
-                heading="Fit for Purpose"
-                data={medianScoreWithAnalyticalStatement.FIT_FOR_PURPOSE}
-            />
-            <MedianRadarChart
-                heading="Analytical Rigor"
-                data={medianScoreWithAnalyticalStatement.ANALYTICAL_RIGOR}
-            />
+            <div className={styles.charts}>
+                <MedianRadarChart
+                    heading="Fit for Purpose"
+                    data={medianScoreWithAnalyticalStatement.FIT_FOR_PURPOSE}
+                    labelKey="scoreCriteriaDisplay"
+                />
+                <MedianRadarChart
+                    heading="Analytical Rigor"
+                    data={medianScoreWithAnalyticalStatement.ANALYTICAL_RIGOR}
+                    labelKey="scoreCriteriaDisplay"
+                />
+                <MedianRadarChart
+                    heading="Analytical Writing"
+                    data={medianScoreWithAnalyticalStatement.ANALYTICAL_WRITING}
+                    labelKey="scoreCriteriaDisplay"
+                />
+                <MedianRadarChart
+                    heading="TRUSTWORTHINESS"
+                    data={medianScoreWithAnalyticalStatement.TRUSTWORTHINESS}
+                    labelKey="scoreCriteriaDisplay"
+                />
+                <MedianRadarChart
+                    heading="Analytical Density"
+                    data={statisticsData?.medianQualityScoreOfAnalyticalDensity ?? []}
+                    labelKey="sectorDisplay"
+                />
+            </div>
             <BubbleBarChart
                 heading="Fit for Purpose"
                 data={statisticsData?.medianQualityScoreOfEachDimensionByDate}
@@ -434,25 +518,37 @@ function QualityAssessment(props: Props) {
                 colors={CHART_COLORS}
                 hideBarChart
             />
+            <BubbleBarChart
+                heading="Analytical Density per Sector"
+                data={statisticsData?.medianQualityScoreByAnalyticalDensityDate}
+                categorySelector={sectorSelector}
+                countSelector={countSelector}
+                categories={analyticalDensityOptions}
+                dateSelector={dateSelector}
+                startDate={startDate}
+                endDate={endDate}
+                colors={CHART_COLORS}
+                hideBarChart
+            />
             <BoxBarChart
                 heading="Median Quality Score by Geographical Area and Sector"
-                data={statisticsData?.medianQualityScoreByGeoareaAndSector ?? []}
+                data={statisticsData?.medianQualityScoreByGeoareaAndSector}
                 columns={sectorColumn}
                 rowSelector={(item) => item.geoArea.id}
                 rows={areasForSectors}
-                columnSelector={(item) => item.sector}
-                countSelector={(item) => item.finalScore}
+                columnSelector={sectorSelector}
+                countSelector={countSelector}
                 colors={CHART_COLORS}
                 hideBarChart
             />
             <BoxBarChart
                 heading="Median Quality Score by Geographical Area and Affected Group"
-                data={statisticsData?.medianQualityScoreByGeareaAndAffectedGroup ?? []}
+                data={statisticsData?.medianQualityScoreByGeoareaAndAffectedGroup}
                 columns={affectedGroupColumn}
                 rows={areasForAffectedGroups}
                 rowSelector={(item) => item.geoArea.id}
-                columnSelector={(item) => item.affectedGroup}
-                countSelector={(item) => item.finalScore}
+                columnSelector={affectedGroupSelector}
+                countSelector={countSelector}
                 colors={CHART_COLORS}
                 hideBarChart
             />
@@ -461,9 +557,9 @@ function QualityAssessment(props: Props) {
                 data={statisticsData?.medianScoreBySectorAndAffectedGroup}
                 columns={affectedGroupColumn}
                 rows={sectorsForAffectedGroups}
-                rowSelector={(item) => item.sector}
-                columnSelector={(item) => item.affectedGroups}
-                countSelector={(item) => item.finalScore}
+                rowSelector={sectorSelector}
+                columnSelector={affectedGroupSelector}
+                countSelector={countSelector}
                 colors={CHART_COLORS}
                 hideBarChart
             />
