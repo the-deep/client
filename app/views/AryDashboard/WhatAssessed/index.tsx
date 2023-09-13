@@ -472,7 +472,7 @@ function WhatAssessed(props: Props) {
                 countSelector={countSelector}
                 rows={sectorOptions}
                 columnSelector={affectedGroupSelector}
-                rowSelector={sectorSelector}
+                rowSelector={(item) => item.sector}
             />
             <BoxBarChart
                 heading="Number of Assessments per Affected Group and Humanitarian Sector"
