@@ -11,4 +11,11 @@
         border-radius: var(--dui-border-radius-card);
         background-color: var(--dui-color-foreground);
     }
+    .charts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+        grid-template-rows: auto auto;
+        gap: var(--dui-spacing-large);
+    }
+
 }
