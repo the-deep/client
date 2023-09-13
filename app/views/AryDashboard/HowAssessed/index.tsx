@@ -12,8 +12,6 @@ import {
     ProjectMetadataForAryQuery,
     AryDashboardHowAssessedQuery,
     AryDashboardHowAssessedQueryVariables,
-    GetMethodologyOptionsQuery,
-    GetMethodologyOptionsQueryVariables,
 } from '#generated/types';
 import BubbleBarChart from '#components/charts/BubbleBarChart';
 
@@ -34,40 +32,6 @@ const samplingApproachSelector = (item: NonNullable<Statistics['assessmentPerSam
 const proximitySelector = (item: NonNullable<Statistics['assessmentPerProximity']>[number]) => item.proximity ?? '??';
 const samplingDataTechniqueSelector = (item: NonNullable<Statistics['sampleSizePerDataCollectionTechnique']>[number]) => item.dataCollectionTechnique ?? '??';
 
-const GET_METHODOLOGY_OPTIONS = gql`
-    query GetMethodologyOptions {
-        dataCollectionTechniqueOptions: __type(name: "AssessmentRegistryDataCollectionTechniqueTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-        samplingApproach: __type(name: "AssessmentRegistrySamplingApproachTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-        proximity: __type(name: "AssessmentRegistryProximityTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-        unitOfAnanlysis: __type(name: "AssessmentRegistryUnitOfAnalysisTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-        unitOfReporting: __type(name: "AssessmentRegistryUnitOfReportingTypeEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
-    }
-`;
 const ARY_DASHBOARD_HOW_ASSESSED = gql`
     query AryDashboardHowAssessed(
         $projectId: ID!,
@@ -157,6 +121,7 @@ interface Props {
     onAdminLevelChange: (newVal: string | undefined) => void;
     startDate: number;
     endDate: number;
+    options?: ProjectMetadataForAryQuery;
 }
 
 function HowAssessed(props: Props) {
@@ -171,14 +136,8 @@ function HowAssessed(props: Props) {
         onRegionChange,
         selectedAdminLevel,
         onAdminLevelChange,
+        options,
     } = props;
-
-    const {
-        loading,
-        data: options,
-    } = useQuery<GetMethodologyOptionsQuery, GetMethodologyOptionsQueryVariables>(
-        GET_METHODOLOGY_OPTIONS,
-    );
 
     const variables: AryDashboardHowAssessedQueryVariables = useMemo(() => ({
         projectId,
@@ -278,7 +237,7 @@ function HowAssessed(props: Props) {
                     onRegionChange={onRegionChange}
                     selectedAdminLevel={selectedAdminLevel}
                     onAdminLevelChange={onAdminLevelChange}
-                    navigationDisabled={loading || responsePending}
+                    navigationDisabled={responsePending}
                 />
             </div>
             <BubbleBarChart
