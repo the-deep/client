@@ -97,6 +97,14 @@ const PROJECT_METADATA_FOR_ARY = gql`
                     }
                 }
             }
+            assessmentRegistryOptions {
+                scoreOptions {
+                    scoreCriteriaDisplay
+                    scoreCriteria
+                    analyticalStatementDisplay
+                    analyticalStatement
+                }
+            }
         }
         focusOptions: __type(name: "AssessmentRegistryFocusTypeEnum") {
             name
@@ -135,6 +143,36 @@ const PROJECT_METADATA_FOR_ARY = gql`
         }
         protectionOptions: __type(name: "AssessmentRegistryProtectionInfoTypeEnum") {
             name
+            enumValues {
+                name
+                description
+            }
+        }
+        dataCollectionTechniqueOptions: __type(name: "AssessmentRegistryDataCollectionTechniqueTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        samplingApproach: __type(name: "AssessmentRegistrySamplingApproachTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        proximity: __type(name: "AssessmentRegistryProximityTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        unitOfAnanlysis: __type(name: "AssessmentRegistryUnitOfAnalysisTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        unitOfReporting: __type(name: "AssessmentRegistryUnitOfReportingTypeEnum") {
             enumValues {
                 name
                 description
@@ -414,6 +452,7 @@ function AryDashboard(props: Props) {
                                 startDate={startDate}
                                 projectId={activeProject}
                                 endDate={endDate}
+                                options={projectMetadataResponse}
                             />
                         )}
                     </TabPanel>
@@ -434,6 +473,7 @@ function AryDashboard(props: Props) {
                                 endDate={endDate}
                                 onStartDateChange={setStartDate}
                                 onEndDateChange={setEndDate}
+                                options={projectMetadataResponse}
                             />
                         )}
                     </TabPanel>
