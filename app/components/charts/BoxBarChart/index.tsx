@@ -7,7 +7,10 @@ import {
     sum,
     getColorOnBgColor,
 } from '@togglecorp/fujs';
-import { ContainerCard } from '@the-deep/deep-ui';
+import {
+    ContainerCard,
+    NumberOutput,
+} from '@the-deep/deep-ui';
 
 import { getColorScaleFunction } from '#utils/colors';
 import styles from './styles.css';
@@ -33,6 +36,7 @@ interface Props<
         label: string;
     }[];
     colors?: string[];
+    hideBarChart?: boolean;
     type?: 'interpolate' | 'categorical';
 }
 
@@ -48,6 +52,7 @@ function BoxBarChart<
         heading,
         columnSelector,
         countSelector,
+        hideBarChart,
         rows,
         columns,
         colorSelector,
@@ -167,19 +172,25 @@ function BoxBarChart<
                                     color: getColorOnBgColor(bgColor, '#515151', '#f0f0f0'),
                                 }}
                             >
-                                {countItem}
+                                <NumberOutput
+                                    className={styles.numberOutput}
+                                    value={countItem}
+                                    precision={2}
+                                />
                             </div>
                         );
                     })}
-                    <div className={_cs(styles.cell, styles.count)}>
-                        <div
-                            className={styles.bar}
-                            title={`Total: ${item.total}`}
-                            style={{
-                                width: `${(item.total / maxAmongEntities) * 100}%`,
-                            }}
-                        />
-                    </div>
+                    {!hideBarChart && (
+                        <div className={_cs(styles.cell, styles.count)}>
+                            <div
+                                className={styles.bar}
+                                title={`Total: ${item.total}`}
+                                style={{
+                                    width: `${(item.total / maxAmongEntities) * 100}%`,
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
             ))}
         </ContainerCard>
