@@ -79,6 +79,12 @@ const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
                     finalScore
                     sector
                 }
+                medianQualityScoreByGeoArea {
+                    adminLevelId
+                    finalScore
+                    geoArea
+                    region
+                }
             }
         }
     }
@@ -309,6 +315,42 @@ function QualityAssessment(props: Props) {
         )
     ), [options?.affectedGroupOptions]);
 
+    const areasForSectors = useMemo(() => (
+        unique(
+            statisticsData?.medianQualityScoreByGeoareaAndSector?.map((item) => ({
+                key: item.geoArea.id,
+                label: item.geoArea.title,
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [
+        statisticsData,
+    ]);
+
+    const areasForAffectedGroups = useMemo(() => (
+        unique(
+            statisticsData?.medianQualityScoreByGeareaAndAffectedGroup?.map((item) => ({
+                key: item.geoArea.id,
+                label: item.geoArea.title,
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [
+        statisticsData,
+    ]);
+
+    const sectorsForAffectedGroups = useMemo(() => (
+        unique(
+            statisticsData?.medianScoreBySectorAndAffectedGroup?.map((item) => ({
+                key: item.sector,
+                label: item.sector,
+            })) ?? [],
+            (item) => item.key,
+        )
+    ), [
+        statisticsData,
+    ]);
+
     return (
         <div className={_cs(className, styles.qualityAssessment)}>
             <div className={styles.item}>
@@ -386,7 +428,8 @@ function QualityAssessment(props: Props) {
                 heading="Median Quality Score by Geographical Area and Sector"
                 data={statisticsData?.medianQualityScoreByGeoareaAndSector ?? []}
                 columns={sectorColumn}
-                rowSelector={(item) => item.geoArea.title}
+                rowSelector={(item) => item.geoArea.id}
+                rows={areasForSectors}
                 columnSelector={(item) => item.sector}
                 countSelector={(item) => item.finalScore}
                 colors={CHART_COLORS}
@@ -395,9 +438,9 @@ function QualityAssessment(props: Props) {
                 heading="Median Quality Score by Geographical Area and Affected Group"
                 data={statisticsData?.medianQualityScoreByGeareaAndAffectedGroup ?? []}
                 columns={affectedGroupColumn}
-                // FIXME need to fix type on server
-                rowSelector={(item) => item.geoArea?.title ?? ''}
-                columnSelector={(item) => item.affectedGroup ?? ''}
+                rows={areasForAffectedGroups}
+                rowSelector={(item) => item.geoArea.id}
+                columnSelector={(item) => item.affectedGroup}
                 countSelector={(item) => item.finalScore}
                 colors={CHART_COLORS}
             />
@@ -405,6 +448,7 @@ function QualityAssessment(props: Props) {
                 heading="Median Quality Score by Sector and Affected Group"
                 data={statisticsData?.medianScoreBySectorAndAffectedGroup ?? []}
                 columns={affectedGroupColumn}
+                rows={sectorsForAffectedGroups}
                 rowSelector={(item) => item.sector}
                 columnSelector={(item) => item.affectedGroups}
                 countSelector={(item) => item.finalScore}
