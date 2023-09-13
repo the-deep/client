@@ -177,6 +177,10 @@ function BubbleBarChart<
         colors,
     ]);
 
+    if (finalData.length === 0) {
+        return null;
+    }
+
     return (
         <ContainerCard
             className={_cs(styles.bubbleBarChart, className)}
