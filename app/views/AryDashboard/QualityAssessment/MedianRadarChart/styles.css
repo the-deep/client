@@ -1,0 +1,9 @@
+.median-radar-chart {
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .responsive-container {
+        width: 20rem;
+        height: 20rem;
+        overflow: hidden;
+    }
+}

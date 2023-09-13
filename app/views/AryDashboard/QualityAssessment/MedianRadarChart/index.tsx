@@ -4,22 +4,25 @@ import { _cs } from '@togglecorp/fujs';
 import React from 'react';
 import {
     PolarAngleAxis,
+    ResponsiveContainer,
     PolarGrid,
     PolarRadiusAxis,
     Radar,
     RadarChart,
 } from 'recharts';
 
+import styles from './styles.css';
+
 type AnalyticalData = {
-  [key: AssessmentRegistryScoreAnalyticalStatementTypeEnum]: {
-    analyticalStatement: AssessmentRegistryScoreAnalyticalStatementTypeEnum;
-    analyticalStatementDisplay: string;
-    date: string;
-    finalScore: number;
-    scoreCriteria: AssessmentRegistryScoreCriteriaTypeEnum;
-    scoreCriteriaDisplay: string;
-    scoreType: AssessmentRegistryScoreCriteriaTypeEnum;
-  };
+    [key: AssessmentRegistryScoreAnalyticalStatementTypeEnum]: {
+        analyticalStatement: AssessmentRegistryScoreAnalyticalStatementTypeEnum;
+        analyticalStatementDisplay: string;
+        date: string;
+        finalScore: number;
+        scoreCriteria: AssessmentRegistryScoreCriteriaTypeEnum;
+        scoreCriteriaDisplay: string;
+        scoreType: AssessmentRegistryScoreCriteriaTypeEnum;
+    };
 };
 
 interface Props {
@@ -37,27 +40,35 @@ function MedianRadarChart(props: Props) {
 
     return (
         <ContainerCard
-            className={_cs(className)}
+            className={_cs(styles.medianRadarChart, className)}
             heading={heading}
             headingSize="extraSmall"
             spacing="loose"
+            borderBelowHeader
+            borderBelowHeaderWidth="thin"
         >
-            <RadarChart
-                outerRadius="80"
-                width={350}
-                height={350}
-                data={data}
+            <ResponsiveContainer
+                debounce={300}
+                className={styles.responsiveContainer}
+                width={320}
+                height={320}
             >
-                <PolarGrid radialLines={false} gridType="circle" />
-                <PolarAngleAxis dataKey="scoreCriteriaDisplay" />
-                <PolarRadiusAxis />
-                <Radar
-                    dataKey="finalScore"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                    fillOpacity={0.6}
-                />
-            </RadarChart>
+                <RadarChart
+                    outerRadius="80"
+                    data={data}
+                >
+                    <PolarGrid radialLines={false} gridType="circle" />
+                    <PolarAngleAxis dataKey="scoreCriteriaDisplay" />
+                    <PolarRadiusAxis />
+                    <Radar
+                        dataKey="finalScore"
+                        stroke="#8884d8"
+                        fill="#8884d8"
+                        fillOpacity={0.6}
+                        dot
+                    />
+                </RadarChart>
+            </ResponsiveContainer>
         </ContainerCard>
     );
 }

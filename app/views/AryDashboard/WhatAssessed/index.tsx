@@ -472,17 +472,7 @@ function WhatAssessed(props: Props) {
                 countSelector={countSelector}
                 rows={sectorOptions}
                 columnSelector={affectedGroupSelector}
-                rowSelector={(item) => item.sector}
-            />
-            <BoxBarChart
-                heading="Number of Assessments per Affected Group and Humanitarian Sector"
-                data={statisticsData?.assessmentPerAffectedGroupAndSector ?? []}
-                rows={affectedGroupOptions}
-                columns={sectorOptions}
-                // FIXME need to fix type on server
-                rowSelector={(item) => item.sector ?? ''}
-                columnSelector={(item) => item.affectedGroup ?? ''}
-                countSelector={(item) => item.count}
+                rowSelector={sectorSelector}
             />
         </div>
     );
