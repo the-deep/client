@@ -113,6 +113,10 @@ function BoxBarChart<
         colors,
     ]);
 
+    if (finalData.length === 0) {
+        return null;
+    }
+
     return (
         <ContainerCard
             className={_cs(
