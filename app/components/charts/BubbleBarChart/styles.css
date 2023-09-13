@@ -1,6 +1,6 @@
 .bubble-bar-chart {
     flex-shrink: 0;
-    border: 1px solid var(--dui-color-separator);
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
     .content {
         display: table;

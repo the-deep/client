@@ -24,6 +24,7 @@
 
             .count {
                 width: 14rem;
+                min-width: 10rem;
                 text-align: left;
                 color: var(--dui-color-text-label);
 
@@ -38,6 +39,13 @@
                 height: 2rem;
                 text-align: center;
                 color: var(--dui-color-text-label);
+
+                .number-output {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                }
             }
 
             .top-cell {

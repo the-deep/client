@@ -48,6 +48,7 @@ interface Props<
     }[];
     type?: 'interpolate' | 'categorical';
     heading?: string;
+    hideBarChart?: boolean;
 }
 
 function BubbleBarChart<
@@ -66,6 +67,7 @@ function BubbleBarChart<
         colorSelector,
         startDate,
         endDate,
+        hideBarChart,
         heading,
         colors = [
             '#f7fbff',
@@ -233,15 +235,17 @@ function BubbleBarChart<
                             </div>
                         </div>
                     )))}
-                    <div className={_cs(styles.cell, styles.count)}>
-                        <div
-                            className={styles.bar}
-                            title={`Total: ${item.total}`}
-                            style={{
-                                width: `${(item.total / maxAmongEntities) * 100}%`,
-                            }}
-                        />
-                    </div>
+                    {!hideBarChart && (
+                        <div className={_cs(styles.cell, styles.count)}>
+                            <div
+                                className={styles.bar}
+                                title={`Total: ${item.total}`}
+                                style={{
+                                    width: `${(item.total / maxAmongEntities) * 100}%`,
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
             ))}
             <div className={_cs(styles.row, styles.bottomRow)}>
