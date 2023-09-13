@@ -3,6 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 import { PurgeNull, removeNull } from '@togglecorp/toggle-form';
 import {
     _cs,
+    median,
     formatDateToString,
     isNotDefined,
     listToGroupList,
@@ -30,12 +31,17 @@ import MedianRadarChart from './MedianRadarChart';
 
 import styles from './styles.css';
 
-const CHART_COLORS = ['#A5D9C1', '#FF7D7D'];
-type AryScoreOption = NonNullable<NonNullable<NonNullable<ProjectMetadataForAryQuery['project']>['assessmentRegistryOptions']>['scoreOptions']>[number];
+const CHART_COLORS = [
+    '#A5D9C1',
+    '#ffd8d8',
+    '#fae7a5',
+    '#e4f4ec',
+    '#FF7D7D',
+];
 
 const countSelector = (item: { finalScore: number }) => item.finalScore;
 const dateSelector = (item: { date: string}) => item.date;
-const scoreCategorySelector = (item: AryScoreOption): string => item.analyticalStatementDisplay ?? '';
+const scoreTypeSelector = (item: { scoreType : string }) => item.scoreType;
 
 const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
     query AryDashboardQualityAssessment(
@@ -53,26 +59,6 @@ const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
                     date
                     finalScore
                     scoreType
-                }
-                medianQualityScoreByGeoareaAndSector {
-                    date
-                    finalScore
-                    geoArea {
-                        id
-                        title
-                        adminLevelLevel
-                    }
-                    sector
-                }
-                medianQualityScoreByGeareaAndAffectedGroup {
-                    affectedGroup
-                    date
-                    finalScore
-                    geoArea {
-                        title
-                        id
-                        adminLevelTitle
-                    }
                 }
                 medianScoreBySectorAndAffectedGroup {
                     affectedGroups
@@ -236,7 +222,19 @@ function QualityAssessment(props: Props) {
     const scoreOptions = removeNull(options?.project?.assessmentRegistryOptions?.scoreOptions);
     const medianScoreWithAnalyticalStatement = useMemo(
         () => {
-            const scoreWithCriteria = statisticsData?.medianQualityScoreOfEachDimensionByDate?.map(
+            const items = listToGroupList(
+                statisticsData?.medianQualityScoreOfEachDimensionByDate,
+                (item) => item.scoreType,
+                (item) => item,
+            );
+            const b = Object.keys(items ?? {}).map((item) => {
+                const total = median(items?.[item].map((foo) => foo.finalScore) ?? []);
+                return {
+                    scoreType: item,
+                    median: total,
+                };
+            });
+            const scoreWithCriteria = b?.map(
                 (medianScore) => {
                     const matchingOption = scoreOptions?.find(
                         (option) => option.scoreCriteria === medianScore.scoreType,
@@ -245,8 +243,7 @@ function QualityAssessment(props: Props) {
                     return {
                         ...removeNullFromMatchedOptions,
                         scoreType: medianScore.scoreType,
-                        finalScore: medianScore.finalScore,
-                        date: medianScore.date,
+                        finalScore: medianScore.median,
                     };
                 },
             );
@@ -261,6 +258,7 @@ function QualityAssessment(props: Props) {
             statisticsData?.medianQualityScoreOfEachDimensionByDate,
         ],
     );
+    console.log('here', medianScoreWithAnalyticalStatement);
 
     const groupScoreOptionsByAnalytical = listToGroupList(
         scoreOptions ?? [],
@@ -384,45 +382,57 @@ function QualityAssessment(props: Props) {
                 heading="Fit for Purpose"
                 data={medianScoreWithAnalyticalStatement.FIT_FOR_PURPOSE}
             />
+            <MedianRadarChart
+                heading="Analytical Rigor"
+                data={medianScoreWithAnalyticalStatement.ANALYTICAL_RIGOR}
+            />
             <BubbleBarChart
-                data={medianScoreWithAnalyticalStatement.FIT_FOR_PURPOSE}
+                heading="Fit for Purpose"
+                data={statisticsData?.medianQualityScoreOfEachDimensionByDate}
+                categorySelector={scoreTypeSelector}
                 countSelector={countSelector}
                 categories={fitForPurposeOptions}
-                categorySelector={scoreCategorySelector}
                 dateSelector={dateSelector}
                 startDate={startDate}
                 endDate={endDate}
                 colors={CHART_COLORS}
+                hideBarChart
             />
             <BubbleBarChart
-                data={medianScoreWithAnalyticalStatement.TRUSTWORTHINESS}
+                heading="Trustworthiness"
+                data={statisticsData?.medianQualityScoreOfEachDimensionByDate}
+                categorySelector={scoreTypeSelector}
                 countSelector={countSelector}
                 categories={trustworthinessOptions}
-                categorySelector={scoreCategorySelector}
                 dateSelector={dateSelector}
                 startDate={startDate}
                 endDate={endDate}
                 colors={CHART_COLORS}
+                hideBarChart
             />
             <BubbleBarChart
-                data={medianScoreWithAnalyticalStatement.ANALYTICAL_RIGOR}
+                heading="Analytical Rigor"
+                data={statisticsData?.medianQualityScoreOfEachDimensionByDate}
+                categorySelector={scoreTypeSelector}
                 countSelector={countSelector}
                 categories={analyticalRigorOptions}
-                categorySelector={scoreCategorySelector}
                 dateSelector={dateSelector}
                 startDate={startDate}
                 endDate={endDate}
                 colors={CHART_COLORS}
+                hideBarChart
             />
             <BubbleBarChart
-                data={medianScoreWithAnalyticalStatement.ANALYTICAL_WRITING}
+                heading="Analytical Writing"
+                data={statisticsData?.medianQualityScoreOfEachDimensionByDate}
+                categorySelector={scoreTypeSelector}
                 countSelector={countSelector}
                 categories={analyticalWritingOptions}
-                categorySelector={scoreCategorySelector}
                 dateSelector={dateSelector}
                 startDate={startDate}
                 endDate={endDate}
                 colors={CHART_COLORS}
+                hideBarChart
             />
             <BoxBarChart
                 heading="Median Quality Score by Geographical Area and Sector"
@@ -433,6 +443,7 @@ function QualityAssessment(props: Props) {
                 columnSelector={(item) => item.sector}
                 countSelector={(item) => item.finalScore}
                 colors={CHART_COLORS}
+                hideBarChart
             />
             <BoxBarChart
                 heading="Median Quality Score by Geographical Area and Affected Group"
@@ -443,16 +454,18 @@ function QualityAssessment(props: Props) {
                 columnSelector={(item) => item.affectedGroup}
                 countSelector={(item) => item.finalScore}
                 colors={CHART_COLORS}
+                hideBarChart
             />
             <BoxBarChart
                 heading="Median Quality Score by Sector and Affected Group"
-                data={statisticsData?.medianScoreBySectorAndAffectedGroup ?? []}
+                data={statisticsData?.medianScoreBySectorAndAffectedGroup}
                 columns={affectedGroupColumn}
                 rows={sectorsForAffectedGroups}
                 rowSelector={(item) => item.sector}
                 columnSelector={(item) => item.affectedGroups}
                 countSelector={(item) => item.finalScore}
                 colors={CHART_COLORS}
+                hideBarChart
             />
         </div>
     );
