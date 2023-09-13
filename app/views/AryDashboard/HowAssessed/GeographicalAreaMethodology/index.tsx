@@ -40,7 +40,6 @@ import {
     AssessmentRegistrySamplingApproachTypeEnum,
     AssessmentRegistryUnitOfAnalysisTypeEnum,
     AssessmentRegistryUnitOfReportingTypeEnum,
-    GetMethodologyOptionsQuery,
 } from '#generated/types';
 import { enumKeySelector, enumLabelSelector, getMaximum } from '#utils/common';
 
@@ -120,7 +119,7 @@ interface Props {
     defaultZoom?: number;
     data: NonNullable<PurgeNull<AryDashboardHowAssessedQuery['project']>>['assessmentDashboardStatistics'];
     regions: NonNullable<PurgeNull<ProjectMetadataForAryQuery['project']>>['regions'];
-    options?: GetMethodologyOptionsQuery;
+    options?: ProjectMetadataForAryQuery;
     selectedRegion?: string;
     onRegionChange: (newVal: string | undefined) => void;
     selectedAdminLevel?: string;
