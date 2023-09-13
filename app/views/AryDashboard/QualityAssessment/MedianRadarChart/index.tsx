@@ -13,22 +13,20 @@ import {
 
 import styles from './styles.css';
 
-type AnalyticalData = {
-    [key: AssessmentRegistryScoreAnalyticalStatementTypeEnum]: {
-        analyticalStatement: AssessmentRegistryScoreAnalyticalStatementTypeEnum;
-        analyticalStatementDisplay: string;
-        date: string;
-        finalScore: number;
-        scoreCriteria: AssessmentRegistryScoreCriteriaTypeEnum;
-        scoreCriteriaDisplay: string;
-        scoreType: AssessmentRegistryScoreCriteriaTypeEnum;
-    };
-};
+interface AnalyticalData {
+    analyticalStatement?: AssessmentRegistryScoreAnalyticalStatementTypeEnum;
+    analyticalStatementDisplay?: string;
+    finalScore?: number;
+    scoreCriteria?: AssessmentRegistryScoreCriteriaTypeEnum;
+    scoreCriteriaDisplay?: string;
+    scoreType?: string;
+}
 
 interface Props {
     className?: string;
     heading?: string;
     data: AnalyticalData[];
+    labelKey?: string;
 }
 
 function MedianRadarChart(props: Props) {
@@ -36,6 +34,7 @@ function MedianRadarChart(props: Props) {
         className,
         heading,
         data,
+        labelKey,
     } = props;
 
     return (
@@ -50,15 +49,15 @@ function MedianRadarChart(props: Props) {
             <ResponsiveContainer
                 debounce={300}
                 className={styles.responsiveContainer}
-                width={320}
-                height={320}
+                width={300}
+                height={300}
             >
                 <RadarChart
-                    outerRadius="80"
+                    outerRadius="60"
                     data={data}
                 >
                     <PolarGrid radialLines={false} gridType="circle" />
-                    <PolarAngleAxis dataKey="scoreCriteriaDisplay" />
+                    <PolarAngleAxis dataKey={labelKey} />
                     <PolarRadiusAxis />
                     <Radar
                         dataKey="finalScore"
