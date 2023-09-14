@@ -623,7 +623,18 @@ function ReportEdit(props: Props) {
         );
 
     const copyToClipboard = useCallback(() => {
-        const url = `${window.location.protocol}//${window.location.host}${generatePath(routes.tagging.path, { projectId })}`;
+        if (!selectedReport?.slug || !selectedReport?.isPublic) {
+            alert.show(
+                'Failed to get link to share the report publicly. Make sure all the fields are correctly filled.',
+                {
+                    variant: 'error',
+                },
+            );
+            return;
+        }
+        const url = `${window.location.protocol}//${window.location.host}${generatePath(
+            routes.publicReportView.path, { reportSlug: selectedReport.slug },
+        )}`;
         navigator.clipboard.writeText(url);
 
         alert.show(
@@ -632,7 +643,11 @@ function ReportEdit(props: Props) {
                 variant: 'info',
             },
         );
-    }, [projectId, alert]);
+    }, [
+        selectedReport?.isPublic,
+        selectedReport?.slug,
+        alert,
+    ]);
 
     return (
         <div className={_cs(className, styles.reportEdit)}>
@@ -697,7 +712,7 @@ function ReportEdit(props: Props) {
                                     </QuickActionButton>
                                     <ConfirmButton
                                         name={undefined}
-                                        onClick={triggerSnapshotCreate}
+                                        onConfirm={triggerSnapshotCreate}
                                         message={publishConfirmMessage}
                                         disabled={!pristine || snapshotCreationLoading}
                                         variant="secondary"

@@ -366,7 +366,6 @@ function ReportContainer(props: Props) {
             }}
         >
             <NonFieldError error={error} />
-            <div className={styles.mask} />
             {!readOnly && (
                 <>
                     <QuickActionButton

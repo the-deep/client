@@ -155,7 +155,7 @@ function ReportBuilder(props: Props) {
 
     const errorInMetadata = useMemo(() => (
         metadataFields.some((field) => analyzeErrors(
-            getErrorObject(error)?.[field],
+            getErrorObject(getErrorObject(error)?.[field]),
         ))
     ), [error]);
 

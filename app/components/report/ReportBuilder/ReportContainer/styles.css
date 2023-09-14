@@ -64,6 +64,7 @@
         justify-content: center;
     }
 
+    /*
     .mask {
         display: none;
         position: absolute;
@@ -75,13 +76,16 @@
         height: 100%;
         mix-blend-mode: multiply;
     }
+    */
 
     &:hover {
         border-color: var(--dui-color-accent);
 
+        /*
         .mask {
             display: block;
         }
+        */
 
         .add-button {
             display: block;
