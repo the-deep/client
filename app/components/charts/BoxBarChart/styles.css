@@ -2,6 +2,9 @@
     border: 1px solid var(--dui-color-separator);
     overflow: auto;
 
+    .header-section {
+        overflow: visible;
+    }
     .content {
         display: table;
         width: 100%;

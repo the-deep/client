@@ -73,7 +73,6 @@ const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
                     geoArea {
                         id
                         title
-                        adminLevelLevel
                     }
                     sector
                 }
@@ -84,11 +83,9 @@ const ARY_DASHBOARD_QUALITY_ASSESSMENT = gql`
                     geoArea {
                         title
                         id
-                        adminLevelTitle
                     }
                 }
                 medianQualityScoreByGeoArea {
-                    adminLevelId
                     finalScore
                     geoArea
                     region
@@ -140,6 +137,7 @@ interface Props {
     endDate: number;
     projectStartDate: number;
     options?: ProjectMetadataForAryQuery;
+    loading?: boolean;
 }
 
 function QualityAssessment(props: Props) {
@@ -158,6 +156,7 @@ function QualityAssessment(props: Props) {
         endDate,
         projectStartDate,
         options,
+        loading,
     } = props;
 
     const startDateString = formatDateToString(new Date(projectStartDate), 'yyyy-MM-dd');
@@ -179,8 +178,9 @@ function QualityAssessment(props: Props) {
     ]);
 
     const {
-        loading,
-        data,
+        previousData,
+        loading: statisticsResponseLoading,
+        data = previousData,
     } = useQuery<AryDashboardQualityAssessmentQuery, AryDashboardQualityAssessmentQueryVariables>(
         ARY_DASHBOARD_QUALITY_ASSESSMENT, {
             skip: isNotDefined(variables),
@@ -206,7 +206,9 @@ function QualityAssessment(props: Props) {
     );
 
     const {
-        data: medianScoreOverTime,
+        loading: scoreOverTimeResponseLoading,
+        previousData: scoreOverTimePreviousData,
+        data: medianScoreOverTime = scoreOverTimePreviousData,
     } = useQuery<MedianQualityScoreOverTimeQuery, MedianQualityScoreOverTimeQueryVariables>(
         MEDIAN_QUALITY_SCORE_OVER_TIME,
         {
@@ -437,6 +439,7 @@ function QualityAssessment(props: Props) {
                         startDate={startDate}
                         endDate={endDate}
                         onChange={handleDateRangeChange}
+                        loading={scoreOverTimeResponseLoading}
                     />
                 </div>
             </div>
@@ -445,32 +448,38 @@ function QualityAssessment(props: Props) {
                 timeseries={medianScoreTimeSeries}
                 startDate={startDate}
                 endDate={endDate}
+                loading={scoreOverTimeResponseLoading}
             />
             <div className={styles.charts}>
                 <MedianRadarChart
                     heading="Fit for Purpose"
                     data={medianScoreWithAnalyticalStatement.FIT_FOR_PURPOSE}
                     labelKey="scoreCriteriaDisplay"
+                    loading={statisticsResponseLoading}
                 />
                 <MedianRadarChart
                     heading="Analytical Rigor"
                     data={medianScoreWithAnalyticalStatement.ANALYTICAL_RIGOR}
                     labelKey="scoreCriteriaDisplay"
+                    loading={statisticsResponseLoading}
                 />
                 <MedianRadarChart
                     heading="Analytical Writing"
                     data={medianScoreWithAnalyticalStatement.ANALYTICAL_WRITING}
                     labelKey="scoreCriteriaDisplay"
+                    loading={statisticsResponseLoading}
                 />
                 <MedianRadarChart
                     heading="TRUSTWORTHINESS"
                     data={medianScoreWithAnalyticalStatement.TRUSTWORTHINESS}
                     labelKey="scoreCriteriaDisplay"
+                    loading={statisticsResponseLoading}
                 />
                 <MedianRadarChart
                     heading="Analytical Density"
-                    data={statisticsData?.medianQualityScoreOfAnalyticalDensity ?? []}
+                    data={statisticsData?.medianQualityScoreOfAnalyticalDensity}
                     labelKey="sectorDisplay"
+                    loading={statisticsResponseLoading}
                 />
             </div>
             <BubbleBarChart
@@ -484,6 +493,7 @@ function QualityAssessment(props: Props) {
                 endDate={endDate}
                 colors={CHART_COLORS}
                 hideBarChart
+                loading={statisticsResponseLoading}
             />
             <BubbleBarChart
                 heading="Trustworthiness"
@@ -496,6 +506,7 @@ function QualityAssessment(props: Props) {
                 endDate={endDate}
                 colors={CHART_COLORS}
                 hideBarChart
+                loading={statisticsResponseLoading}
             />
             <BubbleBarChart
                 heading="Analytical Rigor"
@@ -508,6 +519,7 @@ function QualityAssessment(props: Props) {
                 endDate={endDate}
                 colors={CHART_COLORS}
                 hideBarChart
+                loading={statisticsResponseLoading}
             />
             <BubbleBarChart
                 heading="Analytical Writing"
@@ -520,6 +532,7 @@ function QualityAssessment(props: Props) {
                 endDate={endDate}
                 colors={CHART_COLORS}
                 hideBarChart
+                loading={statisticsResponseLoading}
             />
             <BubbleBarChart
                 heading="Analytical Density per Sector"
@@ -532,6 +545,7 @@ function QualityAssessment(props: Props) {
                 endDate={endDate}
                 colors={CHART_COLORS}
                 hideBarChart
+                loading={statisticsResponseLoading}
             />
             <BoxBarChart
                 heading="Median Quality Score by Geographical Area and Sector"
@@ -543,6 +557,7 @@ function QualityAssessment(props: Props) {
                 countSelector={countSelector}
                 colors={CHART_COLORS}
                 hideBarChart
+                loading={statisticsResponseLoading}
             />
             <BoxBarChart
                 heading="Median Quality Score by Geographical Area and Affected Group"
@@ -554,6 +569,7 @@ function QualityAssessment(props: Props) {
                 countSelector={countSelector}
                 colors={CHART_COLORS}
                 hideBarChart
+                loading={statisticsResponseLoading}
             />
             <BoxBarChart
                 heading="Median Quality Score by Sector and Affected Group"
@@ -565,6 +581,7 @@ function QualityAssessment(props: Props) {
                 countSelector={countSelector}
                 colors={CHART_COLORS}
                 hideBarChart
+                loading={statisticsResponseLoading}
             />
         </div>
     );
