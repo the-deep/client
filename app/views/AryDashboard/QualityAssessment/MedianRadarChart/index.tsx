@@ -1,5 +1,5 @@
 import { AssessmentRegistryScoreAnalyticalStatementTypeEnum, AssessmentRegistryScoreCriteriaTypeEnum } from '#generated/types';
-import { ContainerCard } from '@the-deep/deep-ui';
+import { ContainerCard, PendingMessage, Spinner } from '@the-deep/deep-ui';
 import { _cs } from '@togglecorp/fujs';
 import React from 'react';
 import {
@@ -25,16 +25,18 @@ interface AnalyticalData {
 interface Props {
     className?: string;
     heading?: string;
-    data: AnalyticalData[];
+    data?: AnalyticalData[];
     labelKey?: string;
+    loading?: boolean;
 }
 
 function MedianRadarChart(props: Props) {
     const {
         className,
         heading,
-        data,
+        data = [],
         labelKey,
+        loading,
     } = props;
 
     return (
@@ -42,10 +44,12 @@ function MedianRadarChart(props: Props) {
             className={_cs(styles.medianRadarChart, className)}
             heading={heading}
             headingSize="extraSmall"
+            headerIcons={loading && <Spinner />}
             spacing="loose"
             borderBelowHeader
             borderBelowHeaderWidth="thin"
         >
+            {(data.length === 0 && loading) && <PendingMessage />}
             <ResponsiveContainer
                 debounce={300}
                 className={styles.responsiveContainer}
