@@ -19,6 +19,7 @@ import { removeNull } from '@togglecorp/toggle-form';
 
 import {
     todaysDate,
+    lastYearStartDate,
     DEEP_START_DATE,
 } from '#utils/common';
 import { resolveTime } from '#utils/temporal';
@@ -237,7 +238,7 @@ function AryDashboard(props: Props) {
                     new Date(response.project?.createdAt ?? todaysDateTime),
                     'day',
                 ).getTime();
-                setStartDate(projectStartDate);
+                setStartDate(Math.max(projectStartDate, new Date(lastYearStartDate).getTime()));
                 setSelectedRegion(response.project?.regions?.[0].id);
 
                 if (isDefined(activeAdminLevel)) {

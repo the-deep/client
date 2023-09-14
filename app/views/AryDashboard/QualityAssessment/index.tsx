@@ -225,7 +225,10 @@ function QualityAssessment(props: Props) {
                 onEndDateChange(bar);
             }
         },
-        [onStartDateChange, onEndDateChange],
+        [
+            onStartDateChange,
+            onEndDateChange,
+        ],
     );
 
     const medianScoreTimeSeries = useMemo(

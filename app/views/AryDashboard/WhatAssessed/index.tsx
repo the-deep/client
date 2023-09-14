@@ -234,7 +234,10 @@ function WhatAssessed(props: Props) {
                 onEndDateChange(bar);
             }
         },
-        [onStartDateChange, onEndDateChange],
+        [
+            onStartDateChange,
+            onEndDateChange,
+        ],
     );
 
     const timeseriesWithoutGaps = useMemo(
