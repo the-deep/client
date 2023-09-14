@@ -1,3 +1,4 @@
+import { PendingMessage } from '@the-deep/deep-ui';
 import React, { useMemo, useCallback } from 'react';
 import {
     VictoryChart,
@@ -17,6 +18,7 @@ interface Props {
     onChange: (startDate: number | undefined, endDate: number | undefined) => void;
     data: { total: number, date: number }[];
     readOnly?: boolean;
+    loading?: boolean;
 }
 
 function BrushLineChart(props: Props) {
@@ -28,6 +30,7 @@ function BrushLineChart(props: Props) {
         endDate,
         onChange,
         readOnly = false,
+        loading,
     } = props;
 
     const maxCount = useMemo(() => Math.max(...data.map((datum) => datum.total)), [data]);
@@ -62,6 +65,7 @@ function BrushLineChart(props: Props) {
 
     return (
         <div>
+            {loading && <PendingMessage />}
             <svg style={{ height: 0 }}>
                 <defs>
                     <linearGradient

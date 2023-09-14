@@ -5,10 +5,14 @@ import {
     compareNumber,
     compareDate,
     getColorOnBgColor,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     DateOutput,
     ContainerCard,
+    Spinner,
+    PendingMessage,
+    Message,
 } from '@the-deep/deep-ui';
 
 import {
@@ -49,6 +53,7 @@ interface Props<
     type?: 'interpolate' | 'categorical';
     heading?: string;
     hideBarChart?: boolean;
+    loading?: boolean;
 }
 
 function BubbleBarChart<
@@ -74,6 +79,7 @@ function BubbleBarChart<
             '#08306b',
         ],
         type = 'interpolate',
+        loading,
     } = props;
 
     const sortedData = useMemo(() => {
@@ -179,15 +185,13 @@ function BubbleBarChart<
         colors,
     ]);
 
-    if (finalData.length === 0) {
-        return null;
-    }
-
     return (
         <ContainerCard
             className={_cs(styles.bubbleBarChart, className)}
             heading={heading}
             headingSize="extraSmall"
+            headerIcons={loading && <Spinner />}
+            headingSectionClassName={styles.headerSection}
             spacing="loose"
             contentClassName={_cs(
                 styles.content,
@@ -196,6 +200,8 @@ function BubbleBarChart<
             borderBelowHeader
             borderBelowHeaderWidth="thin"
         >
+            {(data.length === 0 && loading) && <PendingMessage />}
+            {isDefined(data) && finalData.length === 0 && <Message empty /> }
             {finalData.map((item) => (
                 <div
                     key={item.label}

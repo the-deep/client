@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, ReactNode } from 'react';
 import {
     _cs,
     formatDateToString,
@@ -37,7 +37,7 @@ type Timeseries = {
 
 interface Props {
     className?: string;
-    heading: string;
+    heading: ReactNode;
     timeseries: Timeseries[] | undefined;
     startDate: number;
     endDate: number;
