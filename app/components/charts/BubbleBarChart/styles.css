@@ -2,6 +2,10 @@
     flex-shrink: 0;
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
+    .header-section {
+        overflow: visible;
+    }
+
     .content {
         display: table;
 

@@ -154,7 +154,7 @@ function HowAssessed(props: Props) {
     ]);
 
     const {
-        loading: responsePending,
+        loading,
         previousData,
         data = previousData,
     } = useQuery<AryDashboardHowAssessedQuery, AryDashboardHowAssessedQueryVariables>(
@@ -237,7 +237,7 @@ function HowAssessed(props: Props) {
                     onRegionChange={onRegionChange}
                     selectedAdminLevel={selectedAdminLevel}
                     onAdminLevelChange={onAdminLevelChange}
-                    navigationDisabled={responsePending}
+                    navigationDisabled={loading}
                 />
             </div>
             <BubbleBarChart
@@ -249,6 +249,7 @@ function HowAssessed(props: Props) {
                 categorySelector={dataTechniqueSelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={loading}
             />
             <BubbleBarChart
                 heading="Number of Assessments Per Unit of Analysis"
@@ -259,6 +260,7 @@ function HowAssessed(props: Props) {
                 categorySelector={analysisSelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={loading}
             />
             <BubbleBarChart
                 heading="Number of Assessments Per Unit of Reporting"
@@ -269,6 +271,7 @@ function HowAssessed(props: Props) {
                 categorySelector={reportingSelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={loading}
             />
             <BubbleBarChart
                 heading="Number of Assessments Per Sampling Approach"
@@ -279,6 +282,7 @@ function HowAssessed(props: Props) {
                 categorySelector={samplingApproachSelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={loading}
             />
             <BubbleBarChart
                 heading="Number of Assessments Per Proximity"
@@ -289,6 +293,7 @@ function HowAssessed(props: Props) {
                 categorySelector={proximitySelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={loading}
             />
             <BubbleBarChart
                 heading="Sampling Size of Assessments per Data Collection Technique"
@@ -299,6 +304,7 @@ function HowAssessed(props: Props) {
                 categorySelector={samplingDataTechniqueSelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={loading}
             />
         </div>
     );

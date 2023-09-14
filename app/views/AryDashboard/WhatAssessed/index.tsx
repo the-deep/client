@@ -145,6 +145,7 @@ interface Props {
     selectedAdminLevel?: string;
     onAdminLevelChange: (newVal: string | undefined) => void;
     readOnly?: boolean;
+    loading?: boolean;
     options?: ProjectMetadataForAryQuery;
 }
 
@@ -163,6 +164,7 @@ function WhatAssessed(props: Props) {
         onAdminLevelChange,
         onRegionChange,
         options,
+        loading,
         readOnly,
     } = props;
 
@@ -186,7 +188,7 @@ function WhatAssessed(props: Props) {
 
     const {
         previousData,
-        loading,
+        loading: statisticsResponseLoading,
         data = previousData,
     } = useQuery<AryDashboardWhatAssessedQuery, AryDashboardWhatAssessedQueryVariables>(
         ARY_DASHBOARD_WHAT_ASSESSED,
@@ -212,7 +214,9 @@ function WhatAssessed(props: Props) {
     );
 
     const {
-        data: assessmentOverTime,
+        loading: assessmentOverTimeReponseLoading,
+        previousData: assessmentOverTimePreviousData,
+        data: assessmentOverTime = assessmentOverTimePreviousData,
     } = useQuery<AssessmentOverTimeQuery, AssessmentOverTimeQueryVariables>(
         ASSESSMENT_OVER_TIME,
         {
@@ -378,9 +382,9 @@ function WhatAssessed(props: Props) {
                     regions={regions}
                     selectedRegion={selectedRegion}
                     onRegionChange={onRegionChange}
-                    navigationDisabled={readOnly || loading}
                     selectedAdminLevel={selectedAdminLevel}
                     onAdminLevelChange={onAdminLevelChange}
+                    navigationDisabled={readOnly || loading}
                 />
                 <div ref={barContainerRef}>
                     <BrushLineChart
@@ -390,6 +394,7 @@ function WhatAssessed(props: Props) {
                         startDate={startDate}
                         endDate={endDate}
                         onChange={handleDateRangeChange}
+                        loading={assessmentOverTimeReponseLoading}
                     />
                 </div>
             </div>
@@ -398,6 +403,7 @@ function WhatAssessed(props: Props) {
                 timeseries={assessmentTimeseries ?? []}
                 startDate={startDate}
                 endDate={endDate}
+                loading={assessmentOverTimeReponseLoading}
             />
             <BubbleBarChart
                 heading="Number of Assessments by Lead Stakeholders (Top Ten)"
@@ -408,6 +414,7 @@ function WhatAssessed(props: Props) {
                 categories={leadOrganizations}
                 startDate={startDate}
                 endDate={endDate}
+                loading={statisticsResponseLoading}
             />
             <BubbleBarChart
                 heading="Number of Assessments Per Framework Pillar"
@@ -418,6 +425,7 @@ function WhatAssessed(props: Props) {
                 categorySelector={focusSelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={statisticsResponseLoading}
             />
             <BubbleBarChart
                 heading="Number of Assessments per Affected Group"
@@ -428,6 +436,7 @@ function WhatAssessed(props: Props) {
                 categorySelector={affectedGroupSelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={statisticsResponseLoading}
             />
             <BubbleBarChart
                 heading="Number of Assessments per Humanitarian Sector"
@@ -438,6 +447,7 @@ function WhatAssessed(props: Props) {
                 categorySelector={sectorSelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={statisticsResponseLoading}
             />
             <BubbleBarChart
                 heading="Number of Assessments per Protection Information Management Systems"
@@ -448,6 +458,7 @@ function WhatAssessed(props: Props) {
                 categorySelector={protectionSelector}
                 startDate={startDate}
                 endDate={endDate}
+                loading={statisticsResponseLoading}
             />
             <BoxBarChart
                 heading="Number of Assessments per Humanitarian Sector and Geographical Area"
@@ -456,8 +467,8 @@ function WhatAssessed(props: Props) {
                 countSelector={countSelector}
                 rows={areasForSectors}
                 columnSelector={sectorSelector}
-                // FIXME: Update after changes in server are reflected
                 rowSelector={(item) => item.geoArea.id}
+                loading={statisticsResponseLoading}
             />
             <BoxBarChart
                 heading="Number of Assessments per Affected Groups and Geographical Area"
@@ -467,6 +478,7 @@ function WhatAssessed(props: Props) {
                 rows={areasForAffectedGroups}
                 columnSelector={affectedGroupSelector}
                 rowSelector={(item) => item.geoArea.id}
+                loading={statisticsResponseLoading}
             />
             <BoxBarChart
                 heading="Number of Assessments per Affected Groups and Sectors"
@@ -476,6 +488,7 @@ function WhatAssessed(props: Props) {
                 rows={sectorOptions}
                 columnSelector={affectedGroupSelector}
                 rowSelector={sectorSelector}
+                loading={statisticsResponseLoading}
             />
         </div>
     );

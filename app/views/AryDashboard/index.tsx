@@ -435,7 +435,8 @@ function AryDashboard(props: Props) {
                                 onAdminLevelChange={setActiveAdminLevel}
                                 onRegionChange={handleRegionChange}
                                 options={projectMetadataResponse}
-                                readOnly={loading || metadataLoading}
+                                readOnly={metadataLoading}
+                                loading={loading}
                             />
                         )}
                     </TabPanel>
@@ -475,6 +476,7 @@ function AryDashboard(props: Props) {
                                 onStartDateChange={setStartDate}
                                 onEndDateChange={setEndDate}
                                 options={projectMetadataResponse}
+                                loading={loading}
                             />
                         )}
                     </TabPanel>

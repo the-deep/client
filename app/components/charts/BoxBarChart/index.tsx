@@ -6,10 +6,14 @@ import {
     listToGroupList,
     sum,
     getColorOnBgColor,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     ContainerCard,
+    Message,
     NumberOutput,
+    PendingMessage,
+    Spinner,
 } from '@the-deep/deep-ui';
 
 import { getColorScaleFunction } from '#utils/colors';
@@ -38,6 +42,7 @@ interface Props<
     colors?: string[];
     hideBarChart?: boolean;
     type?: 'interpolate' | 'categorical';
+    loading?: boolean;
 }
 
 function BoxBarChart<
@@ -61,6 +66,7 @@ function BoxBarChart<
             '#08306b',
         ],
         type = 'interpolate',
+        loading,
     } = props;
 
     const finalData = useMemo(() => {
@@ -118,10 +124,6 @@ function BoxBarChart<
         colors,
     ]);
 
-    if (finalData.length === 0) {
-        return null;
-    }
-
     return (
         <ContainerCard
             className={_cs(
@@ -130,27 +132,33 @@ function BoxBarChart<
             )}
             heading={heading}
             headingSize="extraSmall"
+            headerIcons={loading && <Spinner />}
+            headingSectionClassName={styles.headerSection}
             spacing="loose"
             borderBelowHeader
             borderBelowHeaderWidth="thin"
         >
+            {((data?.length ?? 0) === 0 && loading) && <PendingMessage />}
+            {finalData.length === 0 && <Message empty /> }
             <div className={styles.content}>
-                <div className={styles.row}>
-                    <div />
-                    {columns.map((column) => (
-                        <div
-                            className={_cs(
-                                styles.cell,
-                                styles.topCell,
-                                styles.box,
-                            )}
-                            key={column.key}
-                        >
-                            {column.label}
-                        </div>
-                    ))}
-                    <div />
-                </div>
+                {isDefined(data) && (
+                    <div className={styles.row}>
+                        <div />
+                        {columns.map((column) => (
+                            <div
+                                className={_cs(
+                                    styles.cell,
+                                    styles.topCell,
+                                    styles.box,
+                                )}
+                                key={column.key}
+                            >
+                                {column.label}
+                            </div>
+                        ))}
+                        <div />
+                    </div>
+                )}
                 {finalData.map((item) => (
                     <div
                         key={item.rowLabel}
