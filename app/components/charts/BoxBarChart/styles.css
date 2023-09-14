@@ -1,8 +1,10 @@
 .box-bar-chart {
     border: 1px solid var(--dui-color-separator);
+    overflow: auto;
 
     .content {
         display: table;
+        width: 100%;
         overflow-x: auto;
         border-spacing: var(--dui-spacing-small);
 

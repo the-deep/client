@@ -131,68 +131,69 @@ function BoxBarChart<
             heading={heading}
             headingSize="extraSmall"
             spacing="loose"
-            contentClassName={styles.content}
             borderBelowHeader
             borderBelowHeaderWidth="thin"
         >
-            <div className={styles.row}>
-                <div />
-                {columns.map((column) => (
+            <div className={styles.content}>
+                <div className={styles.row}>
+                    <div />
+                    {columns.map((column) => (
+                        <div
+                            className={_cs(
+                                styles.cell,
+                                styles.topCell,
+                                styles.box,
+                            )}
+                            key={column.key}
+                        >
+                            {column.label}
+                        </div>
+                    ))}
+                    <div />
+                </div>
+                {finalData.map((item) => (
                     <div
-                        className={_cs(
-                            styles.cell,
-                            styles.topCell,
-                            styles.box,
-                        )}
-                        key={column.key}
+                        key={item.rowLabel}
+                        className={styles.row}
                     >
-                        {column.label}
-                    </div>
-                ))}
-                <div />
-            </div>
-            {finalData.map((item) => (
-                <div
-                    key={item.rowLabel}
-                    className={styles.row}
-                >
-                    <div className={_cs(styles.cell, styles.label)}>
-                        {item.rowLabel}
-                    </div>
-                    {item.columnsForRow.map((countItem, index) => {
-                        const bgColor = getColorForValue(countItem);
+                        <div className={_cs(styles.cell, styles.label)}>
+                            {item.rowLabel}
+                        </div>
+                        {item.columnsForRow.map((countItem, index) => {
+                            const bgColor = getColorForValue(countItem);
 
-                        return (
-                            <div
-                                className={_cs(styles.box, styles.cell)}
-                                // eslint-disable-next-line react/no-array-index-key
-                                key={`${countItem}-${index}`}
-                                style={{
-                                    backgroundColor: bgColor,
-                                    color: getColorOnBgColor(bgColor, '#515151', '#f0f0f0'),
-                                }}
-                            >
-                                <NumberOutput
-                                    className={styles.numberOutput}
-                                    value={countItem}
-                                    precision={2}
+                            return (
+                                <div
+                                    className={_cs(styles.box, styles.cell)}
+                                    // eslint-disable-next-line react/no-array-index-key
+                                    key={`${countItem}-${index}`}
+                                    style={{
+                                        backgroundColor: bgColor,
+                                        color: getColorOnBgColor(bgColor, '#515151', '#f0f0f0'),
+                                    }}
+                                >
+                                    <NumberOutput
+                                        className={styles.numberOutput}
+                                        value={countItem}
+                                        precision={2}
+                                    />
+                                </div>
+                            );
+                        })}
+                        {!hideBarChart && (
+                            <div className={_cs(styles.cell, styles.count)}>
+                                <div
+                                    className={styles.bar}
+                                    title={`Total: ${item.total}`}
+                                    style={{
+                                        width: `${(item.total / maxAmongEntities) * 100}%`,
+                                    }}
                                 />
                             </div>
-                        );
-                    })}
-                    {!hideBarChart && (
-                        <div className={_cs(styles.cell, styles.count)}>
-                            <div
-                                className={styles.bar}
-                                title={`Total: ${item.total}`}
-                                style={{
-                                    width: `${(item.total / maxAmongEntities) * 100}%`,
-                                }}
-                            />
-                        </div>
-                    )}
-                </div>
-            ))}
+                        )}
+                    </div>
+                ))}
+            </div>
         </ContainerCard>
     );
 }
