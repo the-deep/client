@@ -1,7 +1,14 @@
-import React, { useCallback } from 'react';
-import { List, TabPanel } from '@the-deep/deep-ui';
+import React, { useMemo, useCallback } from 'react';
+import {
+    List,
+    ExpandableContainer,
+    TabPanel,
+    TextOutput,
+} from '@the-deep/deep-ui';
 import { EntriesAsList, Error } from '@togglecorp/toggle-form';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+} from '@togglecorp/fujs';
 
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 
@@ -70,6 +77,19 @@ function DimensionTabPanel(props: Props) {
         ],
     );
 
+    const dimensionStats = useMemo(() => (
+        value?.summaryDimensionMeta?.find((item) => item.sector === sector)
+    ), [value?.summaryDimensionMeta, sector]);
+
+    const pillarStats = value?.summaryPillarMeta;
+    const totalAssessed = pillarStats?.totalPeopleAssessed ?? 0;
+    const totalNotInNeed = totalAssessed - (dimensionStats?.totalPeopleAffected ?? 0);
+    const totalInNeed = dimensionStats?.totalInNeed ?? 0;
+    const totalModeratelyInNeed = dimensionStats?.totalModerate ?? 0;
+    const totalSeverelyInNeed = dimensionStats?.totalSevere ?? 0;
+    const totalCriticallyInNeed = dimensionStats?.totalCritical ?? 0;
+    const totalAffectedInNeed = totalAssessed - (totalInNeed + totalNotInNeed);
+
     return (
         <TabPanel
             key={sector}
@@ -82,6 +102,51 @@ function DimensionTabPanel(props: Props) {
                 renderer={DimensionItem}
                 rendererParams={dimensionRendererParams}
             />
+            <ExpandableContainer
+                heading="Summary"
+                headingSize="extraSmall"
+                withoutBorder
+                contentClassName={styles.summaryContent}
+                expansionTriggerArea="arrow"
+            >
+                <div className={styles.left}>
+                    <TextOutput
+                        label="Total Population Assessed"
+                        valueType="number"
+                        value={totalAssessed}
+                    />
+                    <TextOutput
+                        label="Total Not Affected / Not in Need"
+                        valueType="number"
+                        value={totalNotInNeed}
+                    />
+                    <TextOutput
+                        label="Total Affected / Not in Need"
+                        valueType="number"
+                        value={totalAffectedInNeed}
+                    />
+                    <TextOutput
+                        label="Total People in Need"
+                        valueType="number"
+                        value={totalInNeed}
+                    />
+                    <TextOutput
+                        label="Total People Moderately in Need"
+                        valueType="number"
+                        value={totalModeratelyInNeed}
+                    />
+                    <TextOutput
+                        label="Total People Severely in Need"
+                        valueType="number"
+                        value={totalSeverelyInNeed}
+                    />
+                    <TextOutput
+                        label="Total People Critically in Need"
+                        valueType="number"
+                        value={totalCriticallyInNeed}
+                    />
+                </div>
+            </ExpandableContainer>
         </TabPanel>
     );
 }

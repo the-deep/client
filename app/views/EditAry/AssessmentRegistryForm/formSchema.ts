@@ -206,6 +206,8 @@ export const schema: FormSchema = {
                     totalDead: [],
                     totalInjured: [],
                     totalMissing: [],
+                    percentageOfPeopleFacingHumAccessCons: [],
+                    totalPeopleFacingHumAccessCons: [],
                 }),
             },
             summarySubDimensionIssue: {

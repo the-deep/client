@@ -95,13 +95,13 @@ function PillarItem(props: Props) {
                     <NumberInput
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Total people assessed"
+                        label="Total people assessed"
+                        placeholder="Any"
                         name="totalPeopleAssessed"
                         onChange={onPillarMetaChange}
                         value={value?.summaryPillarMeta?.totalPeopleAssessed}
                         error={summaryPillarMetaError?.totalPeopleAssessed}
                         disabled={disabled}
-                        variant="general"
                     />
                 )}
                 {(data.pillar === 'EVENT_SHOCK') && (
@@ -110,34 +110,60 @@ function PillarItem(props: Props) {
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
                             name="totalDead"
-                            placeholder="Total death"
+                            label="Total death"
+                            placeholder="Any"
                             value={value?.summaryPillarMeta?.totalDead}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalDead}
                             disabled={disabled}
-                            variant="general"
                         />
                         <NumberInput
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
                             name="totalInjured"
-                            placeholder="Total injured"
+                            label="Total injured"
+                            placeholder="Any"
                             value={value?.summaryPillarMeta?.totalInjured}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalInjured}
                             disabled={disabled}
-                            variant="general"
                         />
                         <NumberInput
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
                             name="totalMissing"
-                            placeholder="Total missing"
+                            label="Total missing"
+                            placeholder="Any"
                             value={value?.summaryPillarMeta?.totalMissing}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalMissing}
                             disabled={disabled}
-                            variant="general"
+                        />
+                    </div>
+                )}
+                {(data.pillar === 'HUMANITARIAN_ACCESS') && (
+                    <div className={styles.headerActions}>
+                        <NumberInput
+                            className={styles.inputMetadata}
+                            inputSectionClassName={styles.inputSection}
+                            name="totalPeopleFacingHumAccessCons"
+                            label="People facing humanitarian access constraints"
+                            placeholder="Any"
+                            value={value?.summaryPillarMeta?.totalPeopleFacingHumAccessCons}
+                            onChange={onPillarMetaChange}
+                            error={summaryPillarMetaError?.totalPeopleFacingHumAccessCons}
+                            disabled={disabled}
+                        />
+                        <NumberInput
+                            className={styles.inputMetadata}
+                            inputSectionClassName={styles.inputSection}
+                            name="percentageOfPeopleFacingHumAccessCons"
+                            label="% of people facing humanitarian access constraints"
+                            placeholder="Any"
+                            value={value?.summaryPillarMeta?.percentageOfPeopleFacingHumAccessCons}
+                            onChange={onPillarMetaChange}
+                            error={summaryPillarMetaError?.percentageOfPeopleFacingHumAccessCons}
+                            disabled={disabled}
                         />
                     </div>
                 )}

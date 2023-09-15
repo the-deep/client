@@ -6,6 +6,10 @@
     min-width: 300px;
     gap: var(--dui-spacing-large);
 
+    .indicator {
+        font-size: var(--dui-font-size-extra-large);
+    }
+
     .issue-input {
         display: grid;
         gap: var(--dui-spacing-extra-large);
