@@ -3,4 +3,22 @@
     flex-direction: column;
     flex-grow: 1;
     overflow: auto;
+
+    .summary-content {
+        display: flex;
+        gap: var(--dui-spacing-large);
+
+        .left {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            width: 30rem;
+            font-size: var(--dui-font-size-large);
+            gap: var(--dui-spacing-small);
+        }
+
+        .right {
+            flex-grow: 1;
+        }
+    }
 }

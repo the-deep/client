@@ -5,7 +5,6 @@
     border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
     .expandable-container {
-
         .heading-container {
             align-self: center;
         }

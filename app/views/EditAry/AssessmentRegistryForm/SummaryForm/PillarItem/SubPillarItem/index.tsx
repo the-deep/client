@@ -1,6 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
+import {
+    listToMap,
+    isDefined,
+} from '@togglecorp/fujs';
 import { Header, Modal, QuickActionButton, useModalState } from '@the-deep/deep-ui';
-import { IoAddCircleOutline } from 'react-icons/io5';
+import {
+    IoAddCircleOutline,
+    IoEllipseSharp,
+} from 'react-icons/io5';
 import {
     EntriesAsList, Error,
 } from '@togglecorp/toggle-form';
@@ -16,6 +23,16 @@ import AddIssueModal from '../../AddIssueModal';
 import { PillarType } from '../..';
 
 import styles from './styles.css';
+
+const colorMap: Record<number, string> = {
+    1: '#ff7d7d',
+    2: '#ffc2c2',
+    3: '#fbfbbd',
+    4: '#a5d9c1',
+    5: '#78c7a2',
+    6: '#78c7a2',
+    7: '#78c7a2',
+};
 
 export interface Props {
     data: NonNullable<PillarType['subPillarInformation']>[number];
@@ -52,6 +69,22 @@ function SubPillarItem(props: Props) {
         closeModal,
     ] = useModalState(false);
 
+    const filledValues = useMemo(() => {
+        const valueMap = listToMap(value, (item) => item.clientId, () => true);
+        return Object.keys(issueItemToClientIdMap)
+            ?.filter((item) => item.startsWith(name))
+            ?.map(
+                (item) => (
+                    valueMap?.[issueItemToClientIdMap[item]]
+                        ? issueItemToClientIdMap[item] : undefined
+                ),
+            ).filter(isDefined);
+    }, [
+        value,
+        issueItemToClientIdMap,
+        name,
+    ]);
+
     const getFieldValue = useCallback(
         (n: string) => {
             const clientId = issueItemToClientIdMap[n];
@@ -78,6 +111,14 @@ function SubPillarItem(props: Props) {
         <div className={styles.subPillarItem}>
             <Header
                 heading={data.subPillarDisplay}
+                icons={(
+                    <IoEllipseSharp
+                        className={styles.indicator}
+                        style={{
+                            color: colorMap[filledValues.length] ?? '#ff7d7d',
+                        }}
+                    />
+                )}
                 headingSize="extraSmall"
                 actions={(
                     <QuickActionButton

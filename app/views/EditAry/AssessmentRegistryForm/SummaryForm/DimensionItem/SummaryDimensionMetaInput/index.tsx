@@ -44,12 +44,12 @@ function SummaryDimensionMetaInput(props: Props) {
                 <NumberInput
                     className={styles.inputMetadata}
                     inputSectionClassName={styles.inputSection}
-                    placeholder="Total people assessed"
+                    label="Total people affected"
+                    placeholder="Any"
                     name="totalPeopleAffected"
                     onChange={onValueChange}
                     value={value?.totalPeopleAffected}
                     error={error?.totalPeopleAffected}
-                    variant="general"
                     disabled={false}
                 />
             )}
@@ -58,19 +58,19 @@ function SummaryDimensionMetaInput(props: Props) {
                     <NumberInput
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Total Moderate"
+                        label="Total Moderate"
+                        placeholder="Any"
                         name="totalModerate"
                         onChange={onValueChange}
                         error={error?.totalModerate}
-                        variant="general"
                         value={value?.totalModerate}
                         disabled={false}
                     />
                     <NumberInput
-                        variant="general"
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Total Severe"
+                        placeholder="Any"
+                        label="Total Severe"
                         name="totalSevere"
                         onChange={onValueChange}
                         value={value?.totalSevere}
@@ -78,10 +78,10 @@ function SummaryDimensionMetaInput(props: Props) {
                         disabled={false}
                     />
                     <NumberInput
-                        variant="general"
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Total Critical"
+                        placeholder="Any"
+                        label="Total Critical"
                         name="totalCritical"
                         onChange={onValueChange}
                         value={value?.totalCritical}
@@ -89,11 +89,11 @@ function SummaryDimensionMetaInput(props: Props) {
                         disabled={false}
                     />
                     <NumberInput
-                        variant="general"
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Total in need"
-                        name="totalPeopleAffected"
+                        label="Total in need"
+                        placeholder="Any"
+                        name="totalInNeed"
                         onChange={onValueChange}
                         value={value?.totalInNeed}
                         error={error?.totalInNeed}
