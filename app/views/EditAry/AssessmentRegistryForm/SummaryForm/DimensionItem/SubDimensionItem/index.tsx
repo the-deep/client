@@ -1,6 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { EntriesAsList, Error } from '@togglecorp/toggle-form';
-import { IoAddCircleOutline } from 'react-icons/io5';
+import {
+    listToMap,
+    isDefined,
+} from '@togglecorp/fujs';
+import {
+    IoEllipseSharp,
+    IoAddCircleOutline,
+} from 'react-icons/io5';
 import { Header, Modal, QuickActionButton, useModalState } from '@the-deep/deep-ui';
 
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
@@ -15,6 +22,16 @@ import { DimensionType } from '../..';
 
 import styles from './styles.css';
 import AddIssueModal from '../../AddIssueModal';
+
+const colorMap: Record<number, string> = {
+    1: '#ff7d7d',
+    2: '#ffc2c2',
+    3: '#fbfbbd',
+    4: '#a5d9c1',
+    5: '#78c7a2',
+    6: '#78c7a2',
+    7: '#78c7a2',
+};
 
 export interface Props {
     data: NonNullable<DimensionType['subDimensionInformation']>[number];
@@ -44,7 +61,7 @@ function SubDimensionItem(props: Props) {
         onChange,
         dimensionIssuesOptions,
         setDimensionIssuesOptions,
-        dimensionIssueToClientIdMap: dimensionIssueToClienIdMap,
+        dimensionIssueToClientIdMap,
         setDimensionIssueToClientIdMap,
         sector,
         disabled,
@@ -57,26 +74,43 @@ function SubDimensionItem(props: Props) {
         closeModal,
     ] = useModalState(false);
 
+    const filledValues = useMemo(() => {
+        const valueMap = listToMap(value, (item) => item.clientId, () => true);
+        return Object.keys(dimensionIssueToClientIdMap)
+            ?.filter((item) => item.startsWith(`${sector}-${name}`))
+            ?.map(
+                (item) => (
+                    valueMap?.[dimensionIssueToClientIdMap[item]]
+                        ? dimensionIssueToClientIdMap[item] : undefined
+                ),
+            ).filter(isDefined);
+    }, [
+        sector,
+        value,
+        dimensionIssueToClientIdMap,
+        name,
+    ]);
+
     const getFieldValue = useCallback(
         (n: string) => {
-            const clientId = dimensionIssueToClienIdMap[n];
+            const clientId = dimensionIssueToClientIdMap[n];
             if (!clientId) {
                 return undefined;
             }
             const itemInValue = value?.find((item) => item.clientId === clientId);
             return itemInValue;
-        }, [value, dimensionIssueToClienIdMap],
+        }, [value, dimensionIssueToClientIdMap],
     );
 
     const getMainIndex = useCallback(
         (n: string) => {
-            const clientId = dimensionIssueToClienIdMap[n];
+            const clientId = dimensionIssueToClientIdMap[n];
             if (!clientId) {
                 return undefined;
             }
             const mainIndex = value?.findIndex((item) => item.clientId === clientId);
             return mainIndex;
-        }, [value, dimensionIssueToClienIdMap],
+        }, [value, dimensionIssueToClientIdMap],
     );
 
     return (
@@ -84,6 +118,14 @@ function SubDimensionItem(props: Props) {
             <Header
                 heading={data.subDimensionDisplay}
                 headingSize="extraSmall"
+                icons={(
+                    <IoEllipseSharp
+                        className={styles.indicator}
+                        style={{
+                            color: colorMap[filledValues.length] ?? '#ff7d7d',
+                        }}
+                    />
+                )}
                 actions={(
                     <QuickActionButton
                         name={data.subDimension}
