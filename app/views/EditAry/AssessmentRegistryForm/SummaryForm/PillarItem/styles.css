@@ -9,12 +9,18 @@
             height: 100%;
         }
     }
-    .heading-container {
-        align-self: center;
-    }
+    .header {
+        .heading-container {
+            align-self: center;
 
-    .header-actions {
-        display: flex;
+            .heading {
+                color: var(--dui-color-danger);
+            }
+        }
+
+        .header-actions {
+            display: flex;
+        }
     }
 
     .sub-pillar-item {
