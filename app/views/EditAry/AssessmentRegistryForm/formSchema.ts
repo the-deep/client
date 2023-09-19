@@ -194,7 +194,7 @@ export const schema: FormSchema = {
                         id: [defaultUndefinedType],
                         clientId: [requiredCondition],
                         summaryIssue: [requiredCondition],
-                        text: [],
+                        text: [requiredCondition],
                         order: [requiredCondition],
                     }),
                 }),

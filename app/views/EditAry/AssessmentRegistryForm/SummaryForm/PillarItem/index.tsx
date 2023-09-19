@@ -3,6 +3,7 @@ import {
     Error,
     EntriesAsList,
     getErrorObject,
+    analyzeErrors,
     useFormObject,
 } from '@togglecorp/toggle-form';
 import {
@@ -10,6 +11,7 @@ import {
     ListView,
     NumberInput,
 } from '@the-deep/deep-ui';
+import { _cs, isDefined } from '@togglecorp/fujs';
 
 import SubPillarItem, { Props as SubPillarItemProps } from './SubPillarItem';
 import {
@@ -35,7 +37,6 @@ export interface Props {
 const keySelector = (d: NonNullable<PillarType['subPillarInformation']>[number]) => d.subPillar;
 
 function PillarItem(props: Props) {
-    // TODO: need to change in server for meta data
     const {
         data,
         value,
@@ -150,10 +151,39 @@ function PillarItem(props: Props) {
         ],
     );
 
+    const isFaulty = useMemo(() => {
+        if (
+            isDefined(error)
+            && isDefined(error.summarySubPillarIssue)
+            && isDefined(issueItemToClientIdMap)
+        ) {
+            const errorSubPillar = Object.keys(issueItemToClientIdMap).reduce((acc, key) => {
+                const clientId = issueItemToClientIdMap[key];
+                const subPillarKey = key.split('-')?.[0];
+                const isFaultyInSubPillar = analyzeErrors(
+                    getErrorObject(error?.summarySubPillarIssue)?.[clientId],
+                );
+                acc[subPillarKey] = isFaultyInSubPillar;
+                return acc;
+            }, {} as Record<string, boolean>);
+
+            return data.subPillarInformation.some(
+                (subPillarObj) => errorSubPillar[subPillarObj.subPillar],
+            );
+        }
+        return false;
+    }, [
+        data,
+        error,
+        issueItemToClientIdMap,
+    ]);
+
     return (
         <ExpandableContainer
             className={styles.pillarItem}
+            headerClassName={styles.header}
             headingContainerClassName={styles.headingContainer}
+            headingClassName={_cs(isFaulty && styles.heading)}
             heading={data.pillarDisplay}
             headingSize="extraSmall"
             headerActions={headerActions}
