@@ -77,6 +77,7 @@ export interface Props {
     width?: number;
     height?: number;
     containerKey?: string;
+    reportId?: string;
     contentData: ContentDataType[] | undefined;
     allItems: ReportContainerType[] | undefined;
     error: Error<ReportContainerType> | undefined;
@@ -89,7 +90,8 @@ export interface Props {
     readOnly?: boolean;
     disabled?: boolean;
     leftContentRef: React.RefObject<HTMLDivElement> | undefined;
-    onContentEditChange: (newVal: boolean) => void;
+    onContentEditChange: (newVal: string | undefined) => void;
+    isBeingEdited: boolean;
 }
 
 function ReportContainer(props: Props) {
@@ -100,6 +102,7 @@ function ReportContainer(props: Props) {
         row = 1,
         column = 1,
         width = 1,
+        reportId,
         allItems,
         style,
         configuration,
@@ -111,6 +114,7 @@ function ReportContainer(props: Props) {
         contentDataToFileMap,
         setContentDataToFileMap,
         disabled,
+        isBeingEdited,
         onContentEditChange,
         leftContentRef,
     } = props;
@@ -148,30 +152,21 @@ function ReportContainer(props: Props) {
     );
 
     const [
-        contentEditModalVisible,
-        showContentEditModal,
-        hideContentEditModal,
-    ] = useModalState(false);
-
-    const [
         contentAddModalVisible,
         showContentAddModal,
         hideContentAddModal,
     ] = useModalState(false);
 
     const handleContentEdit = useCallback(() => {
-        showContentEditModal();
-        onContentEditChange(true);
+        onContentEditChange(containerKey);
     }, [
-        showContentEditModal,
+        containerKey,
         onContentEditChange,
     ]);
 
     const handleContentEditClose = useCallback(() => {
-        hideContentEditModal();
-        onContentEditChange(false);
+        onContentEditChange(undefined);
     }, [
-        hideContentEditModal,
         onContentEditChange,
     ]);
 
@@ -349,13 +344,24 @@ function ReportContainer(props: Props) {
 
     const containerStyles = resolveContainerStyle(style);
 
+    const heading = useMemo(() => {
+        if (contentType !== 'HEADING') {
+            return undefined;
+        }
+        return configuration?.heading?.content?.replace(' ', '-');
+    }, [
+        contentType,
+        configuration?.heading,
+    ]);
+
     return (
         <div
+            id={heading}
             className={_cs(
                 className,
                 styles.reportContainer,
                 isErrored && styles.errored,
-                contentEditModalVisible && styles.selected,
+                isBeingEdited && styles.selected,
                 readOnly && styles.readOnly,
             )}
             style={{
@@ -484,11 +490,12 @@ function ReportContainer(props: Props) {
             )}
             {!readOnly && contentAddModalVisible && (
                 <ContentAddModal
+                    reportId={reportId}
                     onCloseButtonClick={hideContentAddModal}
                     onSelect={handleContentAddClick}
                 />
             )}
-            {!readOnly && contentEditModalVisible && leftContentRef?.current && (
+            {!readOnly && isBeingEdited && leftContentRef?.current && (
                 <Portal element={leftContentRef.current}>
                     <Container
                         className={styles.editContainer}

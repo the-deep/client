@@ -567,6 +567,22 @@ function ReportEdit(props: Props) {
         },
     );
 
+    const handlePublishClick = useCallback(() => {
+        if (!projectId || !reportId) {
+            return;
+        }
+        triggerSnapshotCreate({
+            variables: {
+                projectId,
+                reportId,
+            },
+        });
+    }, [
+        reportId,
+        projectId,
+        triggerSnapshotCreate,
+    ]);
+
     const tableOfContents = useMemo(() => (
         value?.containers?.filter((item) => item.contentType === 'HEADING')
     ), [value?.containers]);
@@ -712,7 +728,7 @@ function ReportEdit(props: Props) {
                                     </QuickActionButton>
                                     <ConfirmButton
                                         name={undefined}
-                                        onConfirm={triggerSnapshotCreate}
+                                        onConfirm={handlePublishClick}
                                         message={publishConfirmMessage}
                                         disabled={!pristine || snapshotCreationLoading}
                                         variant="secondary"
@@ -725,6 +741,7 @@ function ReportEdit(props: Props) {
                     )}
                     <ReportBuilder
                         className={styles.reportBuilder}
+                        reportId={reportId}
                         value={value}
                         error={error}
                         setFieldValue={setFieldValue}

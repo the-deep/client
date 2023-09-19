@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ListView,
+    RawButton,
     Button,
     Header,
     useBooleanState,
@@ -27,23 +28,43 @@ const variantToStyleMapping = {
 interface TocItemProps {
     label: string | undefined;
     variant: AnalysisReportHeadingConfigurationVariantEnum | undefined;
+    hideNavbar: () => void;
 }
 
 function TocItem(props: TocItemProps) {
     const {
         label,
         variant,
+        hideNavbar,
     } = props;
 
+    const handleHeaderClick = useCallback(() => {
+        const containerIdForLabel = label?.replace(' ', '-');
+        if (!containerIdForLabel) {
+            return;
+        }
+        const elementToScrollTo = document.getElementById(containerIdForLabel);
+
+        if (elementToScrollTo) {
+            elementToScrollTo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            hideNavbar();
+        }
+    }, [
+        label,
+        hideNavbar,
+    ]);
+
     return (
-        <div
+        <RawButton
+            name={undefined}
+            onClick={handleHeaderClick}
             className={_cs(
                 styles.tocItem,
                 variant && variantToStyleMapping[variant],
             )}
         >
             {label}
-        </div>
+        </RawButton>
     );
 }
 
@@ -62,12 +83,13 @@ function Toc(props: Props) {
         data,
     } = props;
 
+    const [isNavShown, , hideNavbar, , toggleNavVisibility] = useBooleanState(false);
+
     const tocRendererParams = useCallback((_: string, item: ReportContainerType) => ({
         label: item.contentConfiguration?.heading?.content,
         variant: item.contentConfiguration?.heading?.variant,
-    }), []);
-
-    const [isNavShown, , , , toggleNavVisibility] = useBooleanState(false);
+        hideNavbar,
+    }), [hideNavbar]);
 
     return (
         <div className={_cs(styles.toc, className)}>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { isNotDefined } from '@togglecorp/fujs';
 import {
     Modal,
     RawButton,
@@ -13,11 +14,13 @@ import styles from './styles.css';
 interface Props {
     onCloseButtonClick: () => void;
     onSelect: (contentType: AnalysisReportContainerContentTypeEnum) => void;
+    reportId: string | undefined;
 }
 
 function ContentAddModal(props: Props) {
     const {
         onCloseButtonClick,
+        reportId,
         onSelect,
     } = props;
 
@@ -47,6 +50,8 @@ function ContentAddModal(props: Props) {
                 name="IMAGE"
                 onClick={onSelect}
                 className={styles.button}
+                title={isNotDefined(reportId) ? 'Image can be added only after the report is saved' : undefined}
+                disabled={isNotDefined(reportId)}
             >
                 Image
             </RawButton>

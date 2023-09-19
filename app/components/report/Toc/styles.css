@@ -6,7 +6,6 @@
     padding: 0 var(--dui-spacing-large);
 
     .header {
-        z-index: 1;
         border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         background-color: var(--dui-color-white);
         padding: var(--dui-spacing-medium) 0;
@@ -28,6 +27,7 @@
 
         .toc-item {
             padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+            text-align: left;
             font-size: var(--dui-font-size-large);
 
             &.heading-one {
@@ -65,6 +65,9 @@
     }
 
     @media screen and (max-width: 720px) {
+        .header {
+            z-index: 1;
+        }
         .menu {
             pointer-events: unset;
         }

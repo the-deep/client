@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
     listToMap,
@@ -20,7 +20,6 @@ import { IoPencil } from 'react-icons/io5';
 
 import Avatar from '#components/Avatar';
 import Portal from '#components/Portal';
-import { useModalState } from '#hooks/stateManagement';
 import {
     BasicOrganization,
     organizationTitleSelector,
@@ -52,6 +51,7 @@ interface Props {
     className?: string;
     value: PartialFormType;
     error: Error<PartialFormType>;
+    reportId: string | undefined;
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     readOnly?: boolean;
     disabled?: boolean;
@@ -68,6 +68,7 @@ interface Props {
 function ReportBuilder(props: Props) {
     const {
         className,
+        reportId,
         error,
         value,
         setFieldValue,
@@ -81,6 +82,8 @@ function ReportBuilder(props: Props) {
         leftContentRef,
     } = props;
 
+    const [containerToEdit, setContainerToEdit] = useState<string>();
+
     const orgMap = useMemo(() => (
         listToMap(
             organizationOptions,
@@ -89,27 +92,24 @@ function ReportBuilder(props: Props) {
         )
     ), [organizationOptions]);
 
-    const [
-        contentEditModalVisible,
-        showContentEditModal,
-        hideContentEditModal,
-    ] = useModalState(false);
-
     const handleContentEdit = useCallback(() => {
-        showContentEditModal();
+        setContainerToEdit('metadata');
         onContentEditChange(true);
     }, [
-        showContentEditModal,
         onContentEditChange,
     ]);
 
     const handleContentEditClose = useCallback(() => {
-        hideContentEditModal();
+        setContainerToEdit(undefined);
         onContentEditChange(false);
     }, [
-        hideContentEditModal,
         onContentEditChange,
     ]);
+
+    const handleContainerEdit = useCallback((containerId: string | undefined) => {
+        setContainerToEdit(containerId);
+        onContentEditChange(!!containerId);
+    }, [onContentEditChange]);
 
     const reportContainerRendererParams = useCallback(
         (
@@ -124,7 +124,8 @@ function ReportBuilder(props: Props) {
                 containerKey,
                 column: item.column,
                 width: item.width,
-                onContentEditChange,
+                onContentEditChange: handleContainerEdit,
+                isBeingEdited: containerToEdit === containerKey,
                 height: item.height,
                 allItems: value?.containers,
                 contentData: item?.contentData,
@@ -132,6 +133,7 @@ function ReportBuilder(props: Props) {
                 contentType: item.contentType,
                 leftContentRef,
                 style: item.style,
+                reportId,
                 error: itemError,
                 setFieldValue,
                 readOnly,
@@ -141,9 +143,11 @@ function ReportBuilder(props: Props) {
             });
         },
         [
+            reportId,
             contentDataToFileMap,
+            containerToEdit,
             setContentDataToFileMap,
-            onContentEditChange,
+            handleContainerEdit,
             leftContentRef,
             error,
             value?.containers,
@@ -212,7 +216,7 @@ function ReportBuilder(props: Props) {
                     pending={false}
                 />
             </div>
-            {setFieldValue && contentEditModalVisible && leftContentRef?.current && (
+            {setFieldValue && containerToEdit === 'metadata' && leftContentRef?.current && (
                 <Portal element={leftContentRef.current}>
                     <Container
                         className={styles.editContainer}

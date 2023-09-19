@@ -80,7 +80,7 @@ interface Props {
     disabled?: boolean;
 }
 
-function AryFileUpload(props: Props) {
+function ReportFileUpload(props: Props) {
     const {
         onSuccess,
         acceptFileType,
@@ -103,6 +103,10 @@ function AryFileUpload(props: Props) {
         {
             onCompleted: (response) => {
                 if (!response || !response.project?.analysisReportUploadCreate?.result) {
+                    alert.show(
+                        'Failed to upload file.',
+                        { variant: 'error' },
+                    );
                     return;
                 }
 
@@ -136,10 +140,18 @@ function AryFileUpload(props: Props) {
     const handleFileInputChange = useCallback(
         (value: NonNullable<GalleryFileType>) => {
             if (!value) {
+                alert.show(
+                    'Failed to upload file.',
+                    { variant: 'error' },
+                );
                 return;
             }
 
             if (!reportId || !projectId) {
+                alert.show(
+                    'Failed to upload file because report has not been created yet.',
+                    { variant: 'error' },
+                );
                 return;
             }
             uploadAttachment({
@@ -157,6 +169,7 @@ function AryFileUpload(props: Props) {
                 },
             });
         }, [
+            alert,
             reportId,
             uploadAttachment,
             projectId,
@@ -173,4 +186,4 @@ function AryFileUpload(props: Props) {
     );
 }
 
-export default AryFileUpload;
+export default ReportFileUpload;

@@ -289,6 +289,7 @@ function PublicReportView(props: Props) {
                     className={styles.reportBuilder}
                     value={finalData}
                     error={undefined}
+                    reportId={undefined}
                     setFieldValue={handleUpdate}
                     disabled
                     readOnly
