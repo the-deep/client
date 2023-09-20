@@ -19,9 +19,9 @@ import {
 
 import SelectIssueInput from './SelectIssueInput';
 import { DimensionType } from '../..';
+import AddIssueModal from '../../AddIssueModal';
 
 import styles from './styles.css';
-import AddIssueModal from '../../AddIssueModal';
 
 const colorMap: Record<number, string> = {
     1: '#ff7d7d',
