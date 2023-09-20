@@ -73,6 +73,77 @@ const PUBLIC_REPORT_DETAILS = gql`
                     shortName
                 }
             }
+            configuration {
+                containerStyle {
+                    border {
+                        width
+                        color
+                        opacity
+                        style
+                    }
+                    padding {
+                        top
+                        bottom
+                        left
+                        right
+                    }
+                    background {
+                        color
+                        opacity
+                    }
+                }
+                textContentStyle {
+                    content {
+                        align
+                        color
+                        family
+                        size
+                        weight
+                    }
+                }
+                imageContentStyle {
+                    caption {
+                        align
+                        color
+                        family
+                        size
+                        weight
+                    }
+                }
+                headingContentStyle {
+                    h1 {
+                        align
+                        color
+                        family
+                        size
+                        weight
+                    }
+                    h2 {
+                        align
+                        color
+                        family
+                        size
+                        weight
+                    }
+                    h3 {
+                        align
+                        color
+                        family
+                        size
+                        weight
+                    }
+                    h4 {
+                        align
+                        color
+                        family
+                        size
+                        weight
+                    }
+                }
+                bodyStyle {
+                    gap
+                }
+            }
             containers {
                 id
                 clientId

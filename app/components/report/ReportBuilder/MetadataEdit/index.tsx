@@ -3,10 +3,14 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Checkbox,
     TextInput,
+    NumberInput,
+    ExpandableContainer,
+    Heading,
 } from '@the-deep/deep-ui';
 import {
     type EntriesAsList,
     type Error,
+    useFormObject,
     getErrorObject,
     getErrorString,
 } from '@togglecorp/toggle-form';
@@ -17,7 +21,14 @@ import NewOrganizationMultiSelectInput, {
 
 import {
     type PartialFormType,
+    type TextContentStyleFormType,
+    type BodyStyleConfig,
+    type ImageContentStyleFormType,
+    type HeadingContentStyleFormType,
+    type ConfigType,
 } from '../../schema';
+import TextElementsStylesEdit from '../ReportContainer/TextElementsStylesEdit';
+import ContainerStylesEdit from '../ReportContainer/ContainerStylesEdit';
 import styles from './styles.css';
 
 interface Props {
@@ -44,6 +55,28 @@ function MetadataEdit(props: Props) {
     } = props;
 
     const error = getErrorObject(riskyError);
+
+    const onConfigChange = useFormObject<
+        'configuration', ConfigType
+    >('configuration', setFieldValue, {});
+
+    const handleBodyStyleChange = useFormObject<
+        'bodyStyle', BodyStyleConfig
+    >('bodyStyle', onConfigChange, {});
+
+    const handleTextContentStyleChange = useFormObject<
+        'textContentStyle', TextContentStyleFormType
+    >('textContentStyle', onConfigChange, {});
+
+    const handleImageContentStyleChange = useFormObject<
+        'imageContentStyle', ImageContentStyleFormType
+    >('imageContentStyle', onConfigChange, {});
+
+    const handleHeadingContentStyleChange = useFormObject<
+        'headingContentStyle', HeadingContentStyleFormType
+    >('headingContentStyle', onConfigChange, {});
+
+    const configurationError = getErrorObject(error?.configuration);
 
     return (
         <div className={_cs(className, styles.metadataEdit)}>
@@ -92,6 +125,91 @@ function MetadataEdit(props: Props) {
                 // error={error?.isPublic}
                 disabled={disabled}
             />
+            <ContainerStylesEdit
+                name="containerStyle"
+                value={value?.configuration?.containerStyle}
+                error={configurationError?.containerStyle}
+                onChange={onConfigChange}
+            />
+            <ExpandableContainer
+                heading="Body"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                <NumberInput
+                    label="Gap"
+                    value={value?.configuration?.bodyStyle?.gap}
+                    error={getErrorObject(configurationError?.bodyStyle)?.gap}
+                    name="gap"
+                    onChange={handleBodyStyleChange}
+                />
+            </ExpandableContainer>
+            <ExpandableContainer
+                heading="Text"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                <TextElementsStylesEdit
+                    name="content"
+                    value={value?.configuration?.textContentStyle?.content}
+                    onChange={handleTextContentStyleChange}
+                    error={getErrorObject(configurationError?.textContentStyle)?.content}
+                />
+            </ExpandableContainer>
+            <ExpandableContainer
+                heading="Image"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                <TextElementsStylesEdit
+                    name="caption"
+                    value={value?.configuration?.imageContentStyle?.caption}
+                    onChange={handleImageContentStyleChange}
+                    error={getErrorObject(configurationError?.imageContentStyle)?.caption}
+                />
+            </ExpandableContainer>
+            <ExpandableContainer
+                heading="Heading"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                <Heading size="extraSmall">H1</Heading>
+                <TextElementsStylesEdit
+                    name="h1"
+                    value={value?.configuration?.headingContentStyle?.h1}
+                    onChange={handleHeadingContentStyleChange}
+                    error={getErrorObject(configurationError?.headingContentStyle)?.h1}
+                />
+                <Heading size="extraSmall">H2</Heading>
+                <TextElementsStylesEdit
+                    name="h2"
+                    value={value?.configuration?.headingContentStyle?.h2}
+                    onChange={handleHeadingContentStyleChange}
+                    error={getErrorObject(configurationError?.headingContentStyle)?.h2}
+                />
+                <Heading size="extraSmall">H3</Heading>
+                <TextElementsStylesEdit
+                    name="h3"
+                    value={value?.configuration?.headingContentStyle?.h3}
+                    onChange={handleHeadingContentStyleChange}
+                    error={getErrorObject(configurationError?.headingContentStyle)?.h3}
+                />
+                <Heading size="extraSmall">H4</Heading>
+                <TextElementsStylesEdit
+                    name="h4"
+                    value={value?.configuration?.headingContentStyle?.h4}
+                    onChange={handleHeadingContentStyleChange}
+                    error={getErrorObject(configurationError?.headingContentStyle)?.h4}
+                />
+            </ExpandableContainer>
         </div>
     );
 }

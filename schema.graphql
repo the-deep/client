@@ -244,6 +244,25 @@ type ReportContainer {
   modifiedAt: String
 }
 
+type GeneralHeadingContentStyle {
+  h1: TextStyle
+  h2: TextStyle
+  h3: TextStyle
+  h4: TextStyle
+}
+
+type BodyStyleConfig {
+  gap: Int
+}
+
+type GeneralConfiguration {
+  containerStyle: ReportContainerStyle
+  textContentStyle: TextConfigurationStyleType
+  imageContentStyle: ImageConfigurationStyleType
+  headingContentStyle: GeneralHeadingContentStyle
+  bodyStyle: BodyStyleConfig
+}
+
 type PublicReportDetails {
   id: String!
   analysis: String!
@@ -252,6 +271,7 @@ type PublicReportDetails {
   slug: String!
   organizations: [Organization!]
   containers: [ReportContainer!]
+  configuration: GeneralConfiguration
   isPublic: Boolean
   modifiedAt: String
 }

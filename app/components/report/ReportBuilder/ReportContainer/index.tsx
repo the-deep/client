@@ -46,6 +46,7 @@ import {
     type ReportContainerType,
     type ContentDataType,
     type ContainerStyleFormType,
+    type ConfigType,
 } from '../../schema';
 
 import ContentAddModal from './ContentAddModal';
@@ -83,6 +84,7 @@ export interface Props {
     error: Error<ReportContainerType> | undefined;
     contentType: AnalysisReportContainerContentTypeEnum | undefined;
     configuration: ContentConfigType | undefined;
+    generalConfiguration: ConfigType | undefined;
     setFieldValue: ((...entries: EntriesAsList<PartialFormType>) => void);
     contentDataToFileMap: ContentDataFileMap | undefined;
     style: ContainerStyleFormType | undefined;
@@ -114,6 +116,7 @@ function ReportContainer(props: Props) {
         contentDataToFileMap,
         setContentDataToFileMap,
         disabled,
+        generalConfiguration,
         isBeingEdited,
         onContentEditChange,
         leftContentRef,
@@ -342,7 +345,7 @@ function ReportContainer(props: Props) {
 
     const isErrored = analyzeErrors(error);
 
-    const containerStyles = resolveContainerStyle(style);
+    const containerStyles = resolveContainerStyle(style, generalConfiguration?.containerStyle);
 
     const heading = useMemo(() => {
         if (contentType !== 'HEADING') {
@@ -442,6 +445,7 @@ function ReportContainer(props: Props) {
                 <Content
                     contentType={contentType}
                     configuration={configuration}
+                    generalConfiguration={generalConfiguration}
                     contentData={contentData}
                     contentDataToFileMap={contentDataToFileMap}
                 />

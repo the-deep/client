@@ -12,7 +12,10 @@ import {
     AnalysisReportContainerContentConfigurationType,
 } from '#generated/types';
 
-import { ContentDataType } from '../../../schema';
+import {
+    type ContentDataType,
+    type ConfigType,
+} from '../../../schema';
 import {
     resolveTextStyle,
     type ContentDataFileMap,
@@ -24,6 +27,7 @@ interface Props {
     contentType: AnalysisReportContainerContentTypeEnum;
     contentData: ContentDataType[] | undefined;
     configuration: AnalysisReportContainerContentConfigurationType | undefined;
+    generalConfiguration: ConfigType | undefined;
     contentDataToFileMap: ContentDataFileMap | undefined;
 }
 
@@ -31,6 +35,7 @@ function Content(props: Props) {
     const {
         contentType,
         configuration: configurationFromProps = {},
+        generalConfiguration,
         contentData,
         contentDataToFileMap,
     } = props;
@@ -53,7 +58,10 @@ function Content(props: Props) {
                         styles.heading,
                         styles.headingFour,
                     )}
-                    style={resolveTextStyle(style?.content)}
+                    style={resolveTextStyle(
+                        style?.content,
+                        generalConfiguration?.headingContentStyle?.h4,
+                    )}
                 >
                     {content ?? 'Title goes here'}
                 </h4>
@@ -66,7 +74,10 @@ function Content(props: Props) {
                         styles.heading,
                         styles.headingThree,
                     )}
-                    style={resolveTextStyle(style?.content)}
+                    style={resolveTextStyle(
+                        style?.content,
+                        generalConfiguration?.headingContentStyle?.h3,
+                    )}
                 >
                     {content ?? 'Title goes here'}
                 </h3>
@@ -79,7 +90,10 @@ function Content(props: Props) {
                         styles.heading,
                         styles.headingTwo,
                     )}
-                    style={resolveTextStyle(style?.content)}
+                    style={resolveTextStyle(
+                        style?.content,
+                        generalConfiguration?.headingContentStyle?.h2,
+                    )}
                 >
                     {content ?? 'Title goes here'}
                 </h2>
@@ -91,7 +105,10 @@ function Content(props: Props) {
                     styles.heading,
                     styles.headingOne,
                 )}
-                style={resolveTextStyle(style?.content)}
+                style={resolveTextStyle(
+                    style?.content,
+                    generalConfiguration?.headingContentStyle?.h1,
+                )}
             >
                 {content ?? 'Title goes here'}
             </h1>
@@ -108,7 +125,10 @@ function Content(props: Props) {
 
         return (
             <div
-                style={resolveTextStyle(style?.content)}
+                style={resolveTextStyle(
+                    style?.content,
+                    generalConfiguration?.textContentStyle?.content,
+                )}
             >
                 <ReactMarkdown className={styles.markdown}>
                     {content ?? 'Content goes here'}
@@ -137,7 +157,9 @@ function Content(props: Props) {
     if (contentType === 'IMAGE') {
         const {
             image: {
+                caption,
                 altText,
+                style,
             } = {},
         } = configuration;
 
@@ -145,11 +167,24 @@ function Content(props: Props) {
 
         if (imageContentData && contentDataToFileMap) {
             return (
-                <img
-                    className={styles.image}
-                    src={contentDataToFileMap[imageContentData.clientId]?.url ?? ''}
-                    alt={altText ?? ''}
-                />
+                <div className={styles.imageContainer}>
+                    <img
+                        className={styles.image}
+                        src={contentDataToFileMap[imageContentData.clientId]?.url ?? ''}
+                        alt={altText ?? ''}
+                    />
+                    {caption && (
+                        <div
+                            className={styles.caption}
+                            style={resolveTextStyle(
+                                style?.caption,
+                                generalConfiguration?.imageContentStyle?.caption,
+                            )}
+                        >
+                            {caption}
+                        </div>
+                    )}
+                </div>
             );
         }
     }

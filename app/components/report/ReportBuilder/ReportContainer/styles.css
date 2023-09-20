@@ -79,7 +79,7 @@
     */
 
     &:hover {
-        border-color: var(--dui-color-accent);
+        border-color: var(--dui-color-accent)!important;
 
         /*
         .mask {

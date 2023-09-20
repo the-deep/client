@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
+    isDefined,
     listToMap,
 } from '@togglecorp/fujs';
 import {
@@ -131,6 +132,7 @@ function ReportBuilder(props: Props) {
                 contentData: item?.contentData,
                 configuration: item.contentConfiguration,
                 contentType: item.contentType,
+                generalConfiguration: value?.configuration,
                 leftContentRef,
                 style: item.style,
                 reportId,
@@ -151,6 +153,7 @@ function ReportBuilder(props: Props) {
             leftContentRef,
             error,
             value?.containers,
+            value?.configuration,
             setFieldValue,
             readOnly,
             disabled,
@@ -162,6 +165,8 @@ function ReportBuilder(props: Props) {
             getErrorObject(getErrorObject(error)?.[field]),
         ))
     ), [error]);
+
+    const gap = value?.configuration?.bodyStyle?.gap;
 
     return (
         <div
@@ -208,6 +213,7 @@ function ReportBuilder(props: Props) {
                 <ListView
                     className={styles.containers}
                     data={value?.containers}
+                    style={isDefined(gap) ? { gridGap: gap } : undefined}
                     keySelector={reportContainerKeySelector}
                     renderer={ReportContainer}
                     rendererParams={reportContainerRendererParams}
@@ -216,7 +222,7 @@ function ReportBuilder(props: Props) {
                     pending={false}
                 />
             </div>
-            {setFieldValue && containerToEdit === 'metadata' && leftContentRef?.current && (
+            {containerToEdit === 'metadata' && leftContentRef?.current && (
                 <Portal element={leftContentRef.current}>
                     <Container
                         className={styles.editContainer}

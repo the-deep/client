@@ -53,8 +53,9 @@ const alignStyleToValueMap: Record<
 
 export function resolveContainerStyle(
     containerStyle: ContainerStyleFormType | undefined,
+    generalContainerStyle: ContainerStyleFormType | undefined,
 ): React.CSSProperties {
-    if (!containerStyle) {
+    if (!containerStyle && !generalContainerStyle) {
         return {};
     }
 
@@ -64,22 +65,33 @@ export function resolveContainerStyle(
         background,
     } = containerStyle ?? {};
 
+    const {
+        padding: generalPadding,
+        border: generalBorder,
+        background: generalBackground,
+    } = generalContainerStyle ?? {};
+
+    const borderStyle = border?.style ? borderStyleToValueMap[border.style] : undefined;
+    const generalBorderStyle = generalBorder?.style
+        ? borderStyleToValueMap[generalBorder.style] : undefined;
+
     return {
-        backgroundColor: background?.color,
-        borderWidth: border?.width,
-        borderColor: border?.color,
-        borderStyle: border?.style ? borderStyleToValueMap[border.style] : undefined,
-        paddingTop: padding?.top,
-        paddingRight: padding?.right,
-        paddingBottom: padding?.bottom,
-        paddingLeft: padding?.left,
+        backgroundColor: background?.color ?? generalBackground?.color,
+        borderWidth: border?.width ?? generalBorder?.width,
+        borderColor: border?.color ?? generalBorder?.color,
+        borderStyle: borderStyle ?? generalBorderStyle,
+        paddingTop: padding?.top ?? generalPadding?.top,
+        paddingRight: padding?.right ?? generalPadding?.right,
+        paddingBottom: padding?.bottom ?? generalPadding?.bottom,
+        paddingLeft: padding?.left ?? generalPadding?.bottom,
     };
 }
 
 export function resolveTextStyle(
     textStyle: PurgeNull<AnalysisReportTextStyleType> | undefined,
+    generalTextStyle: PurgeNull<AnalysisReportTextStyleType> | undefined,
 ): React.CSSProperties {
-    if (!textStyle) {
+    if (!textStyle && !generalTextStyle) {
         return {};
     }
 
@@ -91,12 +103,23 @@ export function resolveTextStyle(
         size,
     } = textStyle ?? {};
 
+    const {
+        align: generalAlign,
+        color: generalColor,
+        family: generalFamily,
+        weight: generalWeight,
+        size: generalSize,
+    } = generalTextStyle ?? {};
+
+    const textAlign = align ? alignStyleToValueMap[align] : undefined;
+    const generalTextAlign = generalAlign ? alignStyleToValueMap[generalAlign] : undefined;
+
     return {
-        textAlign: align ? alignStyleToValueMap[align] : undefined,
-        color,
-        fontFamily: family,
-        fontWeight: weight,
-        fontSize: size,
+        textAlign: textAlign ?? generalTextAlign,
+        color: color ?? generalColor,
+        fontFamily: family ?? generalFamily,
+        fontWeight: weight ?? generalWeight,
+        fontSize: size ?? generalSize,
     };
 }
 
