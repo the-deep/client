@@ -1,7 +1,12 @@
 import React, { useMemo, useCallback } from 'react';
 import { ExpandableContainer, ListView } from '@the-deep/deep-ui';
-import { EntriesAsList, Error, getErrorObject, useFormArray } from '@togglecorp/toggle-form';
 import { isDefined } from '@togglecorp/fujs';
+import {
+    EntriesAsList,
+    Error,
+    getErrorObject,
+    useFormArray,
+} from '@togglecorp/toggle-form';
 
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 
