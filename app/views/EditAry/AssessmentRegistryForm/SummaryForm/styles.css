@@ -21,6 +21,12 @@
             display: flex;
             flex-shrink: 0;
 
+            .tab {
+                &.error {
+                    color: var(--dui-color-danger);
+                }
+            }
+
             .dummy {
                 flex-grow: 1;
                 border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-separator);

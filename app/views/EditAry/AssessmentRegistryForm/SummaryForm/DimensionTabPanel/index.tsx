@@ -5,10 +5,6 @@ import {
     TabPanel,
     TextOutput,
 } from '@the-deep/deep-ui';
-import { EntriesAsList, Error } from '@togglecorp/toggle-form';
-import {
-    _cs,
-} from '@togglecorp/fujs';
 import {
     Bar,
     BarChart,
@@ -20,6 +16,8 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
+import { EntriesAsList, Error, getErrorObject } from '@togglecorp/toggle-form';
+import { _cs } from '@togglecorp/fujs';
 
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 import { calcPercent } from '#utils/common';
@@ -81,10 +79,11 @@ function DimensionTabPanel(props: Props) {
         setDimensionIssuesOptions,
         dimensionIssueToClientIdMap,
         setDimensionIssueToClientIdMap,
-        error,
+        error: riskError,
         disabled,
     } = props;
 
+    const error = getErrorObject(riskError);
     const dimensionRendererParams = useCallback(
         (_: string, dimensionData: DimensionType): DimensionItemProps => ({
             data: dimensionData,
@@ -199,7 +198,10 @@ function DimensionTabPanel(props: Props) {
         <TabPanel
             key={sector}
             name={sector}
-            className={_cs(className, styles.dimensionTabPanel)}
+            className={_cs(
+                className,
+                styles.dimensionTabPanel,
+            )}
         >
             <List
                 data={data}

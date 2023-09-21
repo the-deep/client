@@ -7,9 +7,9 @@ import {
     Tabs,
     Message,
 } from '@the-deep/deep-ui';
-import { EntriesAsList, Error, removeNull } from '@togglecorp/toggle-form';
+import { EntriesAsList, Error, analyzeErrors, getErrorObject, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
-import { isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
+import { _cs, isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
 
 import {
     AssessmentRegistrySectorTypeEnum,
@@ -98,7 +98,7 @@ function SummaryForm(props: Props) {
         disabled,
         projectId,
         value,
-        error,
+        error: riskError,
         setFieldValue,
         issuesOptions,
         setIssuesOptions,
@@ -111,6 +111,7 @@ function SummaryForm(props: Props) {
         loading,
     } = props;
 
+    const error = getErrorObject(riskError);
     const [selectedDimension, setSelectedDimension] = useState<AssessmentRegistrySectorTypeEnum
     | undefined>();
 
@@ -189,6 +190,36 @@ function SummaryForm(props: Props) {
         ],
     );
 
+    const isFaulty = useMemo(() => {
+        if (
+            isDefined(error?.summarySubDimensionIssue)
+            && isDefined(dimensionIssueToClientIdMap)
+        ) {
+            const errorSubDimension = Object.keys(dimensionIssueToClientIdMap).reduce(
+                (acc, key) => {
+                    const clientId = dimensionIssueToClientIdMap[key];
+                    const isFaultyInSubDimension = analyzeErrors(
+                        getErrorObject(error?.summarySubDimensionIssue)?.[clientId],
+                    );
+                    acc[key] = isFaultyInSubDimension;
+                    return acc;
+                }, {} as Record<string, boolean>,
+            );
+
+            // NOTE: sector key to error
+            const sectorWithError = Object.keys(errorSubDimension).reduce((acc, key) => {
+                const sectorKey = key.split('-')?.[0];
+                return { ...acc, [sectorKey]: true };
+            }, {} as Record<string, boolean>);
+
+            return sectorWithError;
+        }
+        return {};
+    }, [
+        error?.summarySubDimensionIssue,
+        dimensionIssueToClientIdMap,
+    ]);
+
     if (loading || optionsLoading) {
         return (
             <Message pending={loading || optionsLoading} />
@@ -227,6 +258,10 @@ function SummaryForm(props: Props) {
                         <TabList className={styles.tabList}>
                             {value.sectors?.map((sector) => (
                                 <Tab
+                                    className={_cs(
+                                        styles.tab,
+                                        isFaulty?.[sector] && styles.error,
+                                    )}
                                     key={sector}
                                     name={sector}
                                 >
