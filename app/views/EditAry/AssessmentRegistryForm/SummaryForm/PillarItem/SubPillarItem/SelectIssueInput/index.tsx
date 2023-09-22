@@ -1,5 +1,5 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { SearchSelectInput, TextInput } from '@the-deep/deep-ui';
+import React, { useCallback } from 'react';
+import { TextInput } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
     useFormObject,
@@ -8,47 +8,20 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import { randomString, isDefined, isNotDefined } from '@togglecorp/fujs';
-import { gql, useQuery } from '@apollo/client';
 
 import {
     PartialFormType,
     SummaryIssueType,
     SubPillarIssueType,
 } from '#views/EditAry/AssessmentRegistryForm/formSchema';
-import useDebouncedValue from '#hooks/useDebouncedValue';
 import {
     AssessmentRegistrySummarySubDimensionTypeEnum,
     AssessmentRegistrySummarySubPillarTypeEnum,
-    SummaryIssueSearchQuery,
-    SummaryIssueSearchQueryVariables,
 } from '#generated/types';
 
-import styles from './styles.css';
+import IssueSearchSelectInput from '../../../IssueSearchSelectInput';
 
-const SUMMARY_ISSUE_SEARCH = gql`
-    query SummaryIssueSearch(
-        $subPillar: AssessmentRegistrySummarySubPillarTypeEnum,
-        $subDimension: AssessmentRegistrySummarySubDimensionTypeEnum,
-        $search: String,
-        $page: Int,
-        $pageSize: Int,
-    ) {
-        assessmentRegSummaryIssues(
-            subPillar: $subPillar,
-        subDimension: $subDimension,
-            search: $search,
-            pageSize: $pageSize,
-            page: $page,
-        ) {
-            page
-            results {
-                id
-                label
-            }
-            totalCount
-        }
-    }
-`;
+import styles from './styles.css';
 
 interface Props {
     name: string;
@@ -67,9 +40,6 @@ interface Props {
     onChange: (...entries: EntriesAsList<PartialFormType>) => void;
 }
 
-const keySelector = (d: SummaryIssueType) => d.id;
-const labelSelector = (d: SummaryIssueType) => d.label;
-
 function SelectIssueInput(props: Props) {
     const {
         subPillar,
@@ -86,10 +56,6 @@ function SelectIssueInput(props: Props) {
         error,
         disabled,
     } = props;
-
-    const [opened, setOpened] = useState(false);
-    const [searchText, setSearchText] = useState('');
-    const debouncedSearchText = useDebouncedValue(searchText);
 
     const {
         setValue: setSubPillarIssue,
@@ -162,68 +128,6 @@ function SelectIssueInput(props: Props) {
         onChange,
     ]);
 
-    const variables = useMemo(
-        (): SummaryIssueSearchQueryVariables => ({
-            subPillar: subPillar as AssessmentRegistrySummarySubPillarTypeEnum,
-            subDimension: subDimension as AssessmentRegistrySummarySubDimensionTypeEnum,
-            search: debouncedSearchText,
-            page: 1,
-            pageSize: 10,
-        }), [
-            debouncedSearchText,
-            subPillar,
-            subDimension,
-        ],
-    );
-
-    const {
-        loading,
-        data,
-        fetchMore,
-    } = useQuery<SummaryIssueSearchQuery, SummaryIssueSearchQueryVariables>(
-        SUMMARY_ISSUE_SEARCH,
-        {
-            skip: !opened,
-            variables,
-        },
-    );
-
-    const handleShowMoreClick = useCallback(() => {
-        fetchMore({
-            variables: {
-                ...variables,
-                page: (data?.assessmentRegSummaryIssues?.page ?? 1) + 1,
-            },
-            updateQuery: (previousResult, { fetchMoreResult }) => {
-                if (!previousResult.assessmentRegSummaryIssues) {
-                    return previousResult;
-                }
-
-                const oldIssues = previousResult.assessmentRegSummaryIssues;
-                const newIssues = fetchMoreResult?.assessmentRegSummaryIssues;
-
-                if (!newIssues) {
-                    return previousResult;
-                }
-
-                return ({
-                    ...previousResult,
-                    assessmentRegSummaryIssues: {
-                        ...newIssues,
-                        results: [
-                            ...(oldIssues.results ?? []),
-                            ...(newIssues.results ?? []),
-                        ],
-                    },
-                });
-            },
-        });
-    }, [
-        fetchMore,
-        variables,
-        data?.assessmentRegSummaryIssues?.page,
-    ]);
-
     const getError = useCallback(
         (clientId?: string) => {
             if (!clientId) {
@@ -235,21 +139,15 @@ function SelectIssueInput(props: Props) {
 
     return (
         <div className={styles.input}>
-            <SearchSelectInput
+            <IssueSearchSelectInput
                 placeholder={placeholder}
                 name="summaryIssue"
                 value={value?.summaryIssue}
+                subPillar={subPillar}
+                subDimension={subDimension}
                 onChange={handleIssueChange}
-                keySelector={keySelector}
-                labelSelector={labelSelector}
                 options={options}
                 onOptionsChange={setOptions}
-                onSearchValueChange={setSearchText}
-                searchOptions={data?.assessmentRegSummaryIssues?.results}
-                totalOptionsCount={data?.assessmentRegSummaryIssues?.totalCount ?? 0}
-                optionsPending={loading}
-                onShowDropdownChange={setOpened}
-                handleShowMoreClick={handleShowMoreClick}
                 error={getError(value?.clientId)?.summaryIssue}
             />
             <TextInput
