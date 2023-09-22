@@ -5,12 +5,18 @@
     border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
     .expandable-container {
-        .heading-container {
-            align-self: center;
-        }
+        .header {
+            .heading-container {
+                align-self: center;
 
-        .header-actions {
-            display: flex;
+                .heading {
+                    color: var(--dui-color-danger);
+                }
+            }
+
+            .header-actions {
+                display: flex;
+            }
         }
 
         .sub-dimension-item {
