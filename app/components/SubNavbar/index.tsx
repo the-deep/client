@@ -7,7 +7,7 @@ import {
 import { Link } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import { _cs } from '@togglecorp/fujs';
-import deepLogo from '#resources/img/deep-logo-new.svg';
+import deepLogo from '#resources/img/logo.svg';
 import route from '#base/configs/routes';
 
 import NavbarContext from './context';

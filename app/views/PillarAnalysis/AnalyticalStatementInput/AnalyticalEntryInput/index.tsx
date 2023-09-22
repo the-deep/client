@@ -154,7 +154,6 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
             <DraggableContent
                 className={_cs(
                     styles.entry,
-                    entryDraggedStatus && styles.isBeingDragged,
                     entryCardFlipped && styles.isFlipped,
                 )}
                 name="entry"

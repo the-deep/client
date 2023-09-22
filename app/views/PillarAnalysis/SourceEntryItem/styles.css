@@ -6,6 +6,7 @@
     &.is-being-dragged {
         --max-height-entry: 120px;
     }
+
     margin: var(--dui-spacing-medium);
     background-color: var(--dui-color-white);
     max-height: var(--max-height-entry);

@@ -54,9 +54,6 @@
             }
         }
 
-        &.is-being-dragged {
-            max-height: 120px;
-        }
         &.is-flipped {
             max-height: 360px;
         }

@@ -34,7 +34,6 @@ import {
     DiscardedEntryTagTypeEnum,
 } from '#generated/types';
 import routes from '#base/configs/routes';
-import { useModalState } from '#hooks/stateManagement';
 import {
     organizationShortNameSelector,
     organizationTitleSelector,
@@ -119,12 +118,6 @@ function SourceEntryItem(props: Props) {
         , , ,
         toggleEntryCardFlipped,
     ] = useBooleanState(false);
-
-    const [
-        entryDraggedStatus,
-        setDragStart,
-        setDragEnd,
-    ] = useModalState(false);
 
     const authors = useMemo(() => (
         entry?.lead.authors
@@ -221,12 +214,9 @@ function SourceEntryItem(props: Props) {
                 disabled && styles.disabled,
                 isNewEntry && styles.newEntry,
                 entryCardFlipped && styles.isFlipped,
-                entryDraggedStatus && styles.isBeingDragged,
             )}
             name="entry"
             value={value}
-            onDragStart={setDragStart}
-            onDragStop={setDragEnd}
             contentClassName={_cs(
                 styles.children,
                 entryType === 'IMAGE' && styles.image,

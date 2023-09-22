@@ -1,21 +1,20 @@
 .analytical-statement-input {
     --width-analytical-statement: 420px;
     display: flex;
-    border: none;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-surface-information);
     padding: 0;
     width: var(--width-analytical-statement);
     height: 100%;
     gap: 0;
 
     .header {
-        border: var(--dui-width-separator-thin) solid var(--dui-color-surface-information);
-        background-color: var(--dui-color-background-information);
+        background-color: var(--dui-color-foreground);
         padding: var(--dui-spacing-small);
         gap: 0;
     }
 
     .header-description {
-        padding: var(--dui-spacing-small);
+        padding: var(--dui-spacing-small) var(--dui-spacing-small) 0;
 
         .statement {
             width: 100%;
@@ -33,31 +32,47 @@
         flex-direction: column;
         margin: 0!important;
         background-color: var(--dui-color-white);
-        width: var(--width-analytical-statement);
-        gap: var(--dui-spacing-medium);
+        width: 100%;
         height: 100%;
         overflow-y: auto;
 
-        .entry-container {
-            display: flex;
-            flex-direction: column;
-            background-color: var(--dui-color-white);
-            padding: var(--dui-spacing-medium);
-            gap: var(--dui-spacing-medium);
-            overflow-x: hidden;
+        .content-tabs {
+            flex-shrink: 0;
+            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-surface-information);
+            padding: 0 var(--dui-spacing-small);
         }
 
-        .drop-container {
+        .entries-list {
+            display: flex;
+            flex-direction: column;
             flex-grow: 1;
-            flex-shrink: 0;
-            transition: .2s min-height ease-in-out;
-            background-color: var(--dui-color-white);
-            min-height: 24px;
-            overflow-y: hidden;
+            overflow-y: auto;
 
-            &.dragged-over {
-                min-height: 160px;
+            .entry-container {
+                display: flex;
+                flex-direction: column;
+                background-color: var(--dui-color-white);
+                padding: var(--dui-spacing-medium);
+                gap: var(--dui-spacing-medium);
+                overflow-x: hidden;
             }
+
+            .drop-container {
+                flex-grow: 1;
+                flex-shrink: 0;
+                transition: .2s min-height ease-in-out;
+                background-color: var(--dui-color-white);
+                min-height: 24px;
+                overflow-y: hidden;
+
+                &.dragged-over {
+                    min-height: 160px;
+                }
+            }
+        }
+
+        .my-analysis-tab {
+            padding: var(--dui-spacing-small);
         }
     }
 }

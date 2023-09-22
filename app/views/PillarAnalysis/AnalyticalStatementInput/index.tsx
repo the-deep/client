@@ -4,10 +4,11 @@ import {
     IoCheckmarkCircleSharp,
     IoEllipseOutline,
     IoBarChartSharp,
+    IoEyeOffOutline,
+    IoEyeOutline,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
 import { useParams } from 'react-router-dom';
-
 import {
     _cs,
     isDefined,
@@ -18,6 +19,7 @@ import {
     Tabs,
     Tab,
     TabList,
+    useBooleanState,
     TabPanel,
     Container,
     DropContainer,
@@ -122,7 +124,8 @@ const defaultVal = (): AnalyticalStatementType => ({
     entries: [],
 });
 
-type Field = 'infogaps' | 'myAnalysis' | 'statement';
+type Field = 'infogaps' | 'statement';
+type Content = 'myAnalysis' | 'entries';
 
 export interface DroppedValue {
     entryId: string;
@@ -167,6 +170,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     } = props;
 
     const [selectedField, setSelectedField] = useState<Field | undefined>('statement');
+    const [selectedContent, setSelectedContent] = useState<Content | undefined>('entries');
 
     const alert = useAlert();
 
@@ -345,183 +349,224 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onRemove(index);
     }, [index, onRemove]);
 
+    const [
+        statementAndInfoGapsShown,
+        , , ,
+        toggleStatementAndInfoGaps,
+    ] = useBooleanState(true);
+
     return (
-        <Container
-            className={_cs(styles.analyticalStatementInput, className)}
-            contentClassName={styles.dragContent}
-            headerClassName={styles.header}
-            headerDescriptionClassName={styles.headerDescription}
-            headerDescription={(
-                <>
-                    <NonFieldError error={error} />
-                    <Tabs
-                        value={selectedField}
-                        onChange={setSelectedField}
-                        variant="primary"
-                    >
-                        <TabList>
-                            <Tab
-                                className={styles.tab}
-                                name="statement"
-                                transparentBorder
-                            >
-                                Statement
-                            </Tab>
-                            <Tab
-                                className={styles.tab}
-                                name="infogaps"
-                                transparentBorder
-                            >
-                                Info Gaps
-                            </Tab>
-                            <Tab
-                                className={styles.tab}
-                                name="myAnalysis"
-                                transparentBorder
-                            >
-                                My Analysis
-                            </Tab>
-                        </TabList>
-                        <TabPanel name="statement">
-                            <MarkdownEditor
-                                className={styles.statement}
-                                placeholder="Enter analytical statement"
-                                name="statement"
-                                height={150}
-                                value={value.statement}
-                                onChange={onFieldChange}
-                                error={error?.statement}
-                            />
-                        </TabPanel>
-                        <TabPanel name="infogaps">
-                            <MarkdownEditor
-                                className={styles.statement}
-                                placeholder="Enter info gaps"
-                                name="informationGaps"
-                                height={150}
-                                value={value.informationGaps}
-                                onChange={onFieldChange}
-                                error={error?.informationGaps}
-                            />
-                        </TabPanel>
-                        <TabPanel name="myAnalysis">
-                            <MarkdownEditor
-                                className={styles.statement}
-                                placeholder="My analysis"
-                                name="reportText"
-                                height={150}
-                                value={value.reportText}
-                                onChange={onFieldChange}
-                                error={error?.reportText}
-                            />
-                        </TabPanel>
-                    </Tabs>
-                </>
-            )}
-            headerIcons={(
-                <>
-                    <QuickActionButton
-                        title="Include in report"
-                        name="includeInReport"
-                        onClick={handleIncludeInReportChange}
-                        big
-                    >
-                        {(value.includeInReport
-                            ? <IoCheckmarkCircleSharp />
-                            : <IoEllipseOutline />
-                        )}
-                    </QuickActionButton>
-                    <QuickActionButton
-                        title="View Story Analysis"
-                        name="viewStoryAnalysis"
-                        onClick={handleStoryAnalysisModalOpen}
-                        disabled={(value.entries?.length ?? 0) <= 0}
-                        big
-                    >
-                        <IoBarChartSharp />
-                    </QuickActionButton>
-                </>
-            )}
-            // actionsContainerClassName={styles.actionsContainer}
-            headerActions={(
-                <>
-                    <QuickActionConfirmButton
-                        name={index}
-                        onConfirm={handleDeleteAnalyticalStatement}
-                        message="Are you sure you want to delete this analytical statement?"
-                        showConfirmationInitially={false}
-                        // FIXME: use translation
-                        title="Remove Analytical Statement"
-                    >
-                        <IoClose />
-                    </QuickActionConfirmButton>
-                    <QuickActionButton
-                        name={index}
-                        // FIXME: use translation
-                        title="Drag"
-                        {...attributes}
-                        {...listeners}
-                    >
-                        <GrDrag />
-                    </QuickActionButton>
-                </>
-            )}
+        <Tabs
+            value={selectedField}
+            onChange={setSelectedField}
+            variant="primary"
         >
-            <div className={styles.entryContainer}>
-                {value.entries?.map((analyticalEntry, myIndex) => (
-                    <AnalyticalEntryInput
-                        key={analyticalEntry.clientId}
-                        index={myIndex}
-                        statementClientId={value.clientId}
-                        value={analyticalEntry}
-                        projectId={projectId}
-                        // onChange={onAnalyticalEntryChange}
-                        onRemove={onAnalyticalEntryRemove}
-                        error={(
-                            analyticalEntry.clientId
-                                ? arrayError?.[analyticalEntry.clientId] : undefined
+            <Container
+                className={_cs(styles.analyticalStatementInput, className)}
+                contentClassName={styles.dragContent}
+                headerClassName={styles.header}
+                headerIcons={(
+                    <>
+                        <QuickActionButton
+                            title="Include in report"
+                            name="includeInReport"
+                            onClick={handleIncludeInReportChange}
+                            big
+                        >
+                            {(value.includeInReport
+                                ? <IoCheckmarkCircleSharp />
+                                : <IoEllipseOutline />
+                            )}
+                        </QuickActionButton>
+                        <QuickActionButton
+                            title="View Story Analysis"
+                            name="viewStoryAnalysis"
+                            onClick={handleStoryAnalysisModalOpen}
+                            disabled={(value.entries?.length ?? 0) <= 0}
+                            big
+                        >
+                            <IoBarChartSharp />
+                        </QuickActionButton>
+                        {statementAndInfoGapsShown && (
+                            <TabList>
+                                <Tab
+                                    className={styles.tab}
+                                    name="statement"
+                                    transparentBorder
+                                >
+                                    Statement
+                                </Tab>
+                                <Tab
+                                    className={styles.tab}
+                                    name="infogaps"
+                                    transparentBorder
+                                >
+                                    Info Gaps
+                                </Tab>
+                            </TabList>
                         )}
-                        onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
+                    </>
+                )}
+                headerActions={(
+                    <>
+                        <QuickActionButton
+                            title="Show/hide statement and info gaps"
+                            name={undefined}
+                            onClick={toggleStatementAndInfoGaps}
+                        >
+                            {statementAndInfoGapsShown ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                        </QuickActionButton>
+                        <QuickActionConfirmButton
+                            name={index}
+                            onConfirm={handleDeleteAnalyticalStatement}
+                            message="Are you sure you want to delete this analytical statement?"
+                            showConfirmationInitially={false}
+                            // FIXME: use translation
+                            title="Remove Analytical Statement"
+                        >
+                            <IoClose />
+                        </QuickActionConfirmButton>
+                        <QuickActionButton
+                            name={index}
+                            // FIXME: use translation
+                            title="Drag"
+                            {...attributes}
+                            {...listeners}
+                        >
+                            <GrDrag />
+                        </QuickActionButton>
+                    </>
+                )}
+                headerDescriptionClassName={styles.headerDescription}
+                headerDescription={(
+                    <>
+                        <NonFieldError error={error} />
+                        {statementAndInfoGapsShown && (
+                            <>
+                                <TabPanel name="statement">
+                                    <MarkdownEditor
+                                        className={styles.statement}
+                                        placeholder="Enter analytical statement"
+                                        name="statement"
+                                        height={150}
+                                        value={value.statement}
+                                        onChange={onFieldChange}
+                                        error={error?.statement}
+                                    />
+                                </TabPanel>
+                                <TabPanel name="infogaps">
+                                    <MarkdownEditor
+                                        className={styles.statement}
+                                        placeholder="Enter info gaps"
+                                        name="informationGaps"
+                                        height={150}
+                                        value={value.informationGaps}
+                                        onChange={onFieldChange}
+                                        error={error?.informationGaps}
+                                    />
+                                </TabPanel>
+                            </>
+                        )}
+                    </>
+                )}
+            >
+                <Tabs
+                    value={selectedContent}
+                    onChange={setSelectedContent}
+                    variant="primary"
+                >
+                    <TabList className={styles.contentTabs}>
+                        <Tab
+                            className={styles.tab}
+                            name="entries"
+                            transparentBorder
+                        >
+                            Entries
+                        </Tab>
+                        <Tab
+                            className={styles.tab}
+                            name="myAnalysis"
+                            transparentBorder
+                        >
+                            My Analysis
+                        </Tab>
+                    </TabList>
+                    <TabPanel
+                        activeClassName={styles.myAnalysisTab}
+                        name="myAnalysis"
+                    >
+                        <MarkdownEditor
+                            className={styles.statement}
+                            placeholder="My analysis"
+                            name="reportText"
+                            height={400}
+                            value={value.reportText}
+                            onChange={onFieldChange}
+                            error={error?.reportText}
+                        />
+                    </TabPanel>
+                    <TabPanel
+                        name="entries"
+                        activeClassName={styles.entriesList}
+                    >
+                        <div className={styles.entryContainer}>
+                            {value.entries?.map((analyticalEntry, myIndex) => (
+                                <AnalyticalEntryInput
+                                    key={analyticalEntry.clientId}
+                                    index={myIndex}
+                                    statementClientId={value.clientId}
+                                    value={analyticalEntry}
+                                    projectId={projectId}
+                                    // onChange={onAnalyticalEntryChange}
+                                    onRemove={onAnalyticalEntryRemove}
+                                    error={(
+                                        analyticalEntry.clientId
+                                            ? arrayError?.[analyticalEntry.clientId] : undefined
+                                    )}
+                                    onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
+                                    framework={framework}
+                                    geoAreaOptions={geoAreaOptions}
+                                    setGeoAreaOptions={setGeoAreaOptions}
+                                    onEntryDataChange={onEntryDataChange}
+                                />
+                            ))}
+                        </div>
+                        <DropContainer
+                            className={styles.dropContainer}
+                            name="entry"
+                            draggedOverClassName={styles.draggedOver}
+                            onDrop={handleAnalyticalEntryAdd}
+                        />
+                    </TabPanel>
+                </Tabs>
+                {moreDetailsModalShown && (
+                    <StoryAnalysisModal
+                        onModalClose={hideStoryAnalysisModal}
+                        analyticalStatement={value.statement}
+                        reportText={value.reportText}
+                        informationGaps={value.informationGaps}
+                        onStatementChange={handleStatementChange}
+                        onReportTextChange={handleReportTextChange}
+                        onInfoGapsChange={handleInfoGapsChange}
+                        statementId={value.clientId}
+                        analyticalEntries={value.entries}
+                        projectId={projectId}
+                        automaticSummaryId={automaticStoryAnalysis
+                            ?.project?.triggerAnalysisAutomaticSummary?.result?.id}
+                        automaticNgramsId={automaticStoryAnalysis
+                            ?.project?.triggerAnalysisAutomaticNgram?.result?.id}
+                        automaticNlpMapId={automaticStoryAnalysis
+                            ?.project?.triggerAnalysisGeoLocation?.result?.id}
+                        onRemove={onAnalyticalEntryRemove}
+                        index={index}
                         framework={framework}
                         geoAreaOptions={geoAreaOptions}
                         setGeoAreaOptions={setGeoAreaOptions}
                         onEntryDataChange={onEntryDataChange}
                     />
-                ))}
-            </div>
-            {moreDetailsModalShown && (
-                <StoryAnalysisModal
-                    onModalClose={hideStoryAnalysisModal}
-                    analyticalStatement={value.statement}
-                    reportText={value.reportText}
-                    informationGaps={value.informationGaps}
-                    onStatementChange={handleStatementChange}
-                    onReportTextChange={handleReportTextChange}
-                    onInfoGapsChange={handleInfoGapsChange}
-                    statementId={value.clientId}
-                    analyticalEntries={value.entries}
-                    projectId={projectId}
-                    automaticSummaryId={automaticStoryAnalysis
-                        ?.project?.triggerAnalysisAutomaticSummary?.result?.id}
-                    automaticNgramsId={automaticStoryAnalysis
-                        ?.project?.triggerAnalysisAutomaticNgram?.result?.id}
-                    automaticNlpMapId={automaticStoryAnalysis
-                        ?.project?.triggerAnalysisGeoLocation?.result?.id}
-                    onRemove={onAnalyticalEntryRemove}
-                    index={index}
-                    framework={framework}
-                    geoAreaOptions={geoAreaOptions}
-                    setGeoAreaOptions={setGeoAreaOptions}
-                    onEntryDataChange={onEntryDataChange}
-                />
-            )}
-            <DropContainer
-                className={styles.dropContainer}
-                name="entry"
-                draggedOverClassName={styles.draggedOver}
-                onDrop={handleAnalyticalEntryAdd}
-            />
-        </Container>
+                )}
+            </Container>
+        </Tabs>
     );
 }
 

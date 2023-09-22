@@ -657,6 +657,12 @@ function PillarAnalysis() {
     const frameworkDetails = projectDetailsResponse?.project?.analysisFramework as Framework;
 
     const [
+        statementAndInfoGapsShown,
+        , , ,
+        toggleStatementAndInfoGaps,
+    ] = useBooleanState(false);
+
+    const [
         filtersShown,
         showFilter,
         , ,
@@ -1174,6 +1180,18 @@ function PillarAnalysis() {
                 homeLinkShown
                 defaultActions={(
                     <>
+                        <Button
+                            name={undefined}
+                            onClick={toggleStatementAndInfoGaps}
+                            className={styles.statementAndInfoGapsButton}
+                            variant="action"
+                            actions={(
+                                statementAndInfoGapsShown
+                                    ? <IoChevronUp /> : <IoChevronDown />
+                            )}
+                        >
+                            Statement and Info Gaps
+                        </Button>
                         <BackLink
                             defaultLink="/"
                         >
@@ -1201,62 +1219,48 @@ function PillarAnalysis() {
                 <div className={styles.content}>
                     {(frameworkGetPending || pending) && <PendingMessage />}
                     <NonFieldError error={error} />
-                    <CollapsibleContainer
-                        className={styles.infoContainer}
-                        contentClassName={styles.inputsContainer}
-                        expandButtonClassName={styles.expandTopSectionButton}
-                        collapseButtonClassName={styles.collapseTopSectionButton}
-                        collapseButtonContent={(
-                            <div className={styles.buttonContent}>
-                                Hide
-                                <IoChevronUp />
+                    {statementAndInfoGapsShown && (
+                        <div className={styles.inputsContainer}>
+                            <div className={styles.inputContainer}>
+                                <MarkdownEditor
+                                    className={styles.editor}
+                                    label={(
+                                        <Heading
+                                            className={styles.inputHeader}
+                                            size="extraSmall"
+                                        >
+                                            {_ts('pillarAnalysis', 'mainStatementLabel')}
+                                        </Heading>
+                                    )}
+                                    name="mainStatement"
+                                    onChange={setFieldValue}
+                                    value={value.mainStatement}
+                                    error={error?.mainStatement}
+                                    height={150}
+                                    disabled={pending}
+                                />
                             </div>
-                        )}
-                        expandButtonContent={(
-                            <div className={styles.buttonContent}>
-                                Show Main Statements and Information Gaps
-                                <IoChevronDown />
+                            <div className={styles.inputContainer}>
+                                <MarkdownEditor
+                                    className={styles.editor}
+                                    label={(
+                                        <Heading
+                                            className={styles.inputHeader}
+                                            size="extraSmall"
+                                        >
+                                            {_ts('pillarAnalysis', 'infoGapLabel')}
+                                        </Heading>
+                                    )}
+                                    name="informationGap"
+                                    value={value.informationGap}
+                                    onChange={setFieldValue}
+                                    error={error?.informationGap}
+                                    height={150}
+                                    disabled={pending}
+                                />
                             </div>
-                        )}
-                        collapsedInitially
-                    >
-                        <div className={styles.inputContainer}>
-                            <MarkdownEditor
-                                className={styles.editor}
-                                label={(
-                                    <Heading
-                                        className={styles.inputHeader}
-                                    >
-                                        {_ts('pillarAnalysis', 'mainStatementLabel')}
-                                    </Heading>
-                                )}
-                                name="mainStatement"
-                                onChange={setFieldValue}
-                                value={value.mainStatement}
-                                error={error?.mainStatement}
-                                height={150}
-                                disabled={pending}
-                            />
                         </div>
-                        <div className={styles.inputContainer}>
-                            <MarkdownEditor
-                                className={styles.editor}
-                                label={(
-                                    <Heading
-                                        className={styles.inputHeader}
-                                    >
-                                        {_ts('pillarAnalysis', 'infoGapLabel')}
-                                    </Heading>
-                                )}
-                                name="informationGap"
-                                value={value.informationGap}
-                                onChange={setFieldValue}
-                                error={error?.informationGap}
-                                height={150}
-                                disabled={pending}
-                            />
-                        </div>
-                    </CollapsibleContainer>
+                    )}
                     <div className={styles.filterContainer}>
                         <Button
                             name={undefined}
@@ -1364,11 +1368,7 @@ function PillarAnalysis() {
                                             name="entries"
                                             className={styles.tab}
                                         >
-                                            {_ts(
-                                                'pillarAnalysis',
-                                                'entriesTabLabel',
-                                                { entriesCount: entriesResponse?.totalCount },
-                                            )}
+                                            {`All (${entriesResponse?.totalCount ?? 0})`}
                                         </Tab>
                                         <Tab
                                             name="assigned"
@@ -1380,14 +1380,11 @@ function PillarAnalysis() {
                                             name="discarded"
                                             className={styles.tab}
                                         >
-                                            {_ts(
-                                                'pillarAnalysis',
-                                                'discardedEntriesTabLabel',
-                                                { entriesCount: discardedEntriesCount },
-                                            )}
+                                            {`Discarded (${discardedEntriesCount ?? 0})`}
                                         </Tab>
                                     </TabList>
                                 )}
+                                spacing="compact"
                             >
                                 <TabPanel
                                     name="entries"
