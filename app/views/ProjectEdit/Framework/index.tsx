@@ -22,30 +22,47 @@ import {
     requiredCondition,
     useForm,
 } from '@togglecorp/toggle-form';
-
 import {
-    MultiResponse,
-} from '#types';
-import { useRequest } from '#base/utils/restRequest';
+    useQuery,
+    gql,
+} from '@apollo/client';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import ProjectContext from '#base/context/ProjectContext';
 import { isFiltered } from '#utils/common';
 import routes from '#base/configs/routes';
 import _ts from '#ts';
+import {
+    ProjectAnalysisFrameworksQueryVariables,
+    ProjectAnalysisFrameworksQuery,
+} from '#generated/types';
 
 import FrameworkDetail from './FrameworkDetail';
 
 import styles from './styles.css';
 
 interface FrameworkMini {
-    id: number;
+    id: string;
     title: string;
     createdAt: string;
 }
+const frameworkKeySelector = (d: FrameworkMini) => parseInt(d.id, 10);
 
-const frameworkKeySelector = (d: FrameworkMini) => d.id;
-
+export const PROJECTS_AFS = gql`
+    query ProjectAnalysisFrameworks(
+        $isCurrentUserMember: Boolean
+        $search: String,
+    ) {
+        analysisFrameworks(search: $search , isCurrentUserMember: $isCurrentUserMember) {
+         results {
+                    title
+                    id
+                    createdAt
+                }
+                totalCount
+        }
+    }
+`;
 interface ItemProps {
     itemKey: string;
     title: string;
@@ -137,7 +154,6 @@ function ProjectFramework(props: Props) {
     } = props;
 
     const { project } = React.useContext(ProjectContext);
-
     const [
         selectedFramework,
         setSelectedFramework,
@@ -156,37 +172,36 @@ function ProjectFramework(props: Props) {
     } = useForm(schema, defaultFormValue);
 
     const delayedValue = useDebouncedValue(value);
-
     useEffect(() => {
         setOffset(0);
         setFrameworkList([]);
     }, [delayedValue]);
-
-    const queryForFrameworks = useMemo(() => ({
-        fields: ['id', 'title', 'created_at'],
-        offset,
-        order: 'created_at',
-        limit: 10,
-        search: delayedValue.search,
-        relatedToMe: delayedValue.relatedToMe,
-    }), [delayedValue, offset]);
-
+    const analysisFrameworkVariables = useMemo(() => {
+        let isCurrentUserMember;
+        if (delayedValue.relatedToMe === 'true') {
+            isCurrentUserMember = true;
+        } else if (delayedValue.relatedToMe === 'false') {
+            isCurrentUserMember = false;
+        } else {
+            isCurrentUserMember = undefined;
+        }
+        return {
+            isCurrentUserMember,
+            search: delayedValue.search,
+            offset,
+        };
+    }, [delayedValue]);
     const {
-        pending: frameworksGetPending,
-        response: frameworksResponse,
-        retrigger: retriggerGetFrameworkListRequest,
-    } = useRequest<MultiResponse<FrameworkMini>>({
-        url: 'server://analysis-frameworks/',
-        query: queryForFrameworks,
-        method: 'GET',
-        onSuccess: (response) => {
-            setFrameworkList([
-                ...frameworkList,
-                ...response.results,
-            ]);
+        previousData,
+        data: projectUsersResponse = previousData,
+        loading: frameworksGetPending,
+        refetch: retriggerGetFrameworkListRequest,
+    } = useQuery<ProjectAnalysisFrameworksQuery, ProjectAnalysisFrameworksQueryVariables>(
+        PROJECTS_AFS,
+        {
+            variables: analysisFrameworkVariables,
         },
-        preserveResponse: true,
-    });
+    );
 
     const frameworksRendererParams = useCallback((key: number, data: FrameworkMini) => ({
         itemKey: String(key),
@@ -214,8 +229,11 @@ function ProjectFramework(props: Props) {
         offset,
     ]);
 
-    const totalFrameworksCount = frameworksResponse?.count ?? 0;
+    const totalFrameworksCount = projectUsersResponse?.analysisFrameworks?.totalCount ?? 0;
+    const AfList: FrameworkMini[] = projectUsersResponse?.analysisFrameworks?.results || [];
 
+    console.log('type one', typeof frameworkList);
+    console.log('type two >> ', projectUsersResponse?.analysisFrameworks?.results);
     return (
         <div className={_cs(styles.framework, className)}>
             <div className={styles.leftContainer}>
@@ -243,7 +261,7 @@ function ProjectFramework(props: Props) {
                         className={styles.frameworkList}
                         pending={frameworksGetPending}
                         errored={false}
-                        data={frameworkList}
+                        data={AfList}
                         keySelector={frameworkKeySelector}
                         renderer={Item}
                         filtered={isFiltered(value)}
