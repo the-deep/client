@@ -238,9 +238,7 @@ function SubPillarItem(props: Props) {
                     freeHeight
                 >
                     <IssueSearchSelectInput
-                        placeholder="issue"
                         name="summaryIssue"
-                        value={undefined}
                         subPillar={data.subPillar}
                         onChange={noOp}
                         mode="add"

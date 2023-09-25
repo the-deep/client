@@ -5,7 +5,9 @@ import React, {
 } from 'react';
 
 import {
+    Footer,
     ListView,
+    Pager,
     SearchSelectInput,
 } from '@the-deep/deep-ui';
 import { gql, useQuery } from '@apollo/client';
@@ -71,7 +73,7 @@ interface Props {
 }
 
 const keySelector = (d: NonNullable<NonNullable<SummaryIssueSearchQuery['assessmentRegSummaryIssues']>['results']>[number]) => d.id;
-const labelSelector = (d: NonNullable<NonNullable<SummaryIssueSearchQuery['assessmentRegSummaryIssues']>['results']>[number]) => d.id;
+const labelSelector = (d: NonNullable<NonNullable<SummaryIssueSearchQuery['assessmentRegSummaryIssues']>['results']>[number]) => d.label;
 
 function IssueSearchSelectInput(props: Props) {
     const {
@@ -90,6 +92,8 @@ function IssueSearchSelectInput(props: Props) {
     const [opened, setOpened] = useState(mode === 'add' && true);
     const [searchText, setSearchText] = useState('');
     const debouncedSearchText = useDebouncedValue(searchText);
+    const [page, setPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(10);
 
     const variables = useMemo(
         (): SummaryIssueSearchQueryVariables => ({
@@ -97,12 +101,14 @@ function IssueSearchSelectInput(props: Props) {
             subDimension: subDimension as AssessmentRegistrySummarySubDimensionTypeEnum,
             search: debouncedSearchText,
             isParent: true,
-            page: 1,
-            pageSize: 10,
+            page,
+            pageSize,
         }), [
             debouncedSearchText,
             subPillar,
             subDimension,
+            page,
+            pageSize,
         ],
     );
 
@@ -193,18 +199,32 @@ function IssueSearchSelectInput(props: Props) {
                 />
             )}
             {mode === 'add' && (
-                <ListView
-                    className={styles.issueListContainer}
-                    data={data?.assessmentRegSummaryIssues?.results}
-                    keySelector={keySelector}
-                    renderer={IssueItem}
-                    rendererParams={issueParams}
-                    errored={false}
-                    filtered={false}
-                    pending={false}
-                    messageShown
-                    messageIconShown
-                />
+                <>
+                    <ListView
+                        className={styles.issueListContainer}
+                        data={data?.assessmentRegSummaryIssues?.results}
+                        keySelector={keySelector}
+                        renderer={IssueItem}
+                        rendererParams={issueParams}
+                        errored={false}
+                        filtered={false}
+                        pending={false}
+                        messageShown
+                        messageIconShown
+                    />
+
+                    <Footer
+                        actions={(
+                            <Pager
+                                activePage={page}
+                                itemsCount={(data?.assessmentRegSummaryIssues?.totalCount) ?? 0}
+                                maxItemsPerPage={pageSize}
+                                onActivePageChange={setPage}
+                                onItemsPerPageChange={setPageSize}
+                            />
+                        )}
+                    />
+                </>
             )}
         </>
     );
