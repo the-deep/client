@@ -20,7 +20,7 @@ import {
 
 import SelectIssueInput from './SelectIssueInput';
 import { DimensionType } from '../..';
-import AddIssueModal from '../../AddIssueModal';
+import IssueSearchSelectInput from '../../IssueSearchSelectInput';
 
 import styles from './styles.css';
 
@@ -246,16 +246,16 @@ function SubDimensionItem(props: Props) {
             </div>
             {isModalShown && (
                 <Modal
-                    heading={`Issue Editor: ${data.subDimensionDisplay}`}
+                    heading={`Issue Editor - ${data.subDimensionDisplay}`}
                     size="medium"
                     onCloseButtonClick={closeModal}
                     freeHeight
                 >
-                    <AddIssueModal
-                        type="dimension"
+                    <IssueSearchSelectInput
+                        name="summaryIssue"
                         subDimension={data.subDimension}
-                        onClose={closeModal}
-                        refetch={noOp}
+                        onChange={noOp}
+                        mode="add"
                     />
                 </Modal>
             )}
