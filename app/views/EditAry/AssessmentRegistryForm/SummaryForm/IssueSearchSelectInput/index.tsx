@@ -1,12 +1,27 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, {
+    useMemo,
+    useState,
+    useCallback,
+} from 'react';
 
-import { SearchSelectInput } from '@the-deep/deep-ui';
+import {
+    ListView,
+    SearchSelectInput,
+} from '@the-deep/deep-ui';
 import { gql, useQuery } from '@apollo/client';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
-import { AssessmentRegistrySummarySubDimensionTypeEnum, AssessmentRegistrySummarySubPillarTypeEnum, SummaryIssueSearchQuery, SummaryIssueSearchQueryVariables } from '#generated/types';
+import {
+    AssessmentRegistrySummarySubDimensionTypeEnum,
+    AssessmentRegistrySummarySubPillarTypeEnum,
+    SummaryIssueSearchQuery,
+    SummaryIssueSearchQueryVariables,
+} from '#generated/types';
 
 import { Option } from '../../formSchema';
+import IssueItem, { Props as IssueProps } from './IssueItem';
+
+import styles from './styles.css';
 
 const SUMMARY_ISSUE_SEARCH = gql`
     query SummaryIssueSearch(
@@ -29,6 +44,14 @@ const SUMMARY_ISSUE_SEARCH = gql`
             results {
                 id
                 label
+                parent {
+                    id
+                    label
+                    subPillar
+                    subDimension
+                }
+                subPillar
+                subDimension
             }
             totalCount
         }
@@ -42,12 +65,13 @@ interface Props {
     value?: string;
     onChange: (issueId?: string) => void;
     options?: Option[] | null;
-    onOptionsChange: React.Dispatch<React.SetStateAction<Option[] |undefined | null>>;
+    onOptionsChange?: React.Dispatch<React.SetStateAction<Option[] |undefined | null>>;
     error?: string;
+    mode?: 'add' | 'select';
 }
 
-const keySelector = (d: Option) => d.id;
-const labelSelector = (d: Option) => d.label;
+const keySelector = (d: NonNullable<NonNullable<SummaryIssueSearchQuery['assessmentRegSummaryIssues']>['results']>[number]) => d.id;
+const labelSelector = (d: NonNullable<NonNullable<SummaryIssueSearchQuery['assessmentRegSummaryIssues']>['results']>[number]) => d.id;
 
 function IssueSearchSelectInput(props: Props) {
     const {
@@ -60,9 +84,10 @@ function IssueSearchSelectInput(props: Props) {
         onChange,
         options,
         onOptionsChange,
+        mode = 'select',
     } = props;
 
-    const [opened, setOpened] = useState(false);
+    const [opened, setOpened] = useState(mode === 'add' && true);
     const [searchText, setSearchText] = useState('');
     const debouncedSearchText = useDebouncedValue(searchText);
 
@@ -83,7 +108,8 @@ function IssueSearchSelectInput(props: Props) {
 
     const {
         loading,
-        data,
+        previousData,
+        data = previousData,
         fetchMore,
     } = useQuery<SummaryIssueSearchQuery, SummaryIssueSearchQueryVariables>(
         SUMMARY_ISSUE_SEARCH,
@@ -129,24 +155,58 @@ function IssueSearchSelectInput(props: Props) {
         data?.assessmentRegSummaryIssues?.page,
     ]);
 
+    const issueParams = useCallback(
+        (
+            n: string,
+            issuesData: NonNullable<NonNullable<SummaryIssueSearchQuery['assessmentRegSummaryIssues']>['results']>[number],
+        ): IssueProps => ({
+            name: n,
+            data: issuesData,
+            subPillar,
+            subDimension,
+        }),
+        [
+            subPillar,
+            subDimension,
+        ],
+    );
+
     return (
-        <SearchSelectInput
-            placeholder={placeholder}
-            name={name}
-            value={value}
-            onChange={onChange}
-            keySelector={keySelector}
-            labelSelector={labelSelector}
-            options={options}
-            onOptionsChange={onOptionsChange}
-            onSearchValueChange={setSearchText}
-            searchOptions={data?.assessmentRegSummaryIssues?.results}
-            totalOptionsCount={data?.assessmentRegSummaryIssues?.totalCount ?? 0}
-            optionsPending={loading}
-            onShowDropdownChange={setOpened}
-            handleShowMoreClick={handleShowMoreClick}
-            error={error}
-        />
+        <>
+            {mode === 'select' && (
+                <SearchSelectInput
+                    placeholder={placeholder}
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
+                    options={options}
+                    onOptionsChange={onOptionsChange}
+                    onSearchValueChange={setSearchText}
+                    searchOptions={data?.assessmentRegSummaryIssues?.results}
+                    totalOptionsCount={data?.assessmentRegSummaryIssues?.totalCount ?? 0}
+                    optionsPending={loading}
+                    onShowDropdownChange={setOpened}
+                    handleShowMoreClick={handleShowMoreClick}
+                    error={error}
+                />
+            )}
+            {mode === 'add' && (
+                <ListView
+                    className={styles.issueListContainer}
+                    data={data?.assessmentRegSummaryIssues?.results}
+                    keySelector={keySelector}
+                    renderer={IssueItem}
+                    rendererParams={issueParams}
+                    errored={false}
+                    filtered={false}
+                    pending={false}
+                    messageShown
+                    messageIconShown
+                />
+            )}
+        </>
     );
 }
 export default IssueSearchSelectInput;
