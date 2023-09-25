@@ -1,0 +1,27 @@
+.issue-item {
+    display: grid;
+    gap: var(--dui-spacing-large);
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .header {
+        .heading-container {
+            align-self: center;
+
+            .heading {
+                color: var(--dui-color-text);
+                font-weight: var(--dui-font-weight-normal);
+            }
+        }
+
+        .header-actions {
+            .actions {
+                display: flex;
+            }
+        }
+    }
+
+    .sub-issue {
+        display: grid;
+        gap: var(--dui-spacing-large);
+    }
+}

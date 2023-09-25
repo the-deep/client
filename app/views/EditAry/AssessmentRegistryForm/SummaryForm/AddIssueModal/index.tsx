@@ -27,7 +27,13 @@ const CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE = gql`
                 id
                 label
                 subPillar
-                subPillarDisplay
+                subDimension
+                parent {
+                    id
+                    label
+                    subPillar
+                    subDimension
+                }
             }
         }
     }
@@ -35,10 +41,12 @@ const CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE = gql`
 
 type Props = {
     className?: string;
+    parentId?: string;
     onClose: () => void;
+    refetch: () => void;
 } & ({
     type: 'pillar';
-    subPillar: AssessmentRegistrySummarySubPillarTypeEnum;
+    subPillar?: AssessmentRegistrySummarySubPillarTypeEnum | null;
 } | {
     type: 'dimension';
     subDimension: AssessmentRegistrySummarySubDimensionTypeEnum;
@@ -47,7 +55,9 @@ type Props = {
 function AddIssueModal(props: Props) {
     const {
         className,
+        parentId,
         onClose,
+        refetch,
     } = props;
 
     const alert = useAlert();
@@ -72,6 +82,7 @@ function AddIssueModal(props: Props) {
                         variant: 'success',
                     },
                 );
+                refetch();
                 onClose();
             }
         },
@@ -92,6 +103,7 @@ function AddIssueModal(props: Props) {
                 createSummaryIssue({
                     variables: {
                         data: {
+                            parent: parentId,
                             label,
                             // eslint-disable-next-line react/destructuring-assignment
                             subPillar: props.subPillar,
@@ -104,6 +116,7 @@ function AddIssueModal(props: Props) {
                 createSummaryIssue({
                     variables: {
                         data: {
+                            parent: parentId,
                             label,
                             // eslint-disable-next-line react/destructuring-assignment
                             subDimension: props.subDimension,
@@ -114,6 +127,7 @@ function AddIssueModal(props: Props) {
         }, [
             props,
             label,
+            parentId,
             createSummaryIssue,
         ],
     );
@@ -131,11 +145,11 @@ function AddIssueModal(props: Props) {
                 actions={(
                     <>
                         <Button
-                            name={undefined}
+                            name={parentId}
                             onClick={onClose}
                             variant="secondary"
                         >
-                            Close
+                            Cancel
                         </Button>
                         <Button
                             name="save"

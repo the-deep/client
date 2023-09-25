@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import {
     listToMap,
     isDefined,
+    noOp,
 } from '@togglecorp/fujs';
 import { Header, Modal, QuickActionButton, useModalState } from '@the-deep/deep-ui';
 import {
@@ -19,10 +20,10 @@ import {
 } from '#views/EditAry/AssessmentRegistryForm/formSchema';
 
 import SelectIssueInput from './SelectIssueInput';
-import AddIssueModal from '../../AddIssueModal';
 import { PillarType } from '../..';
 
 import styles from './styles.css';
+import IssueSearchSelectInput from '../../IssueSearchSelectInput';
 
 const colorMap: Record<number, string> = {
     1: '#ff7d7d',
@@ -231,15 +232,18 @@ function SubPillarItem(props: Props) {
             </div>
             {isModalShown && (
                 <Modal
-                    heading={`Issue Editor: ${data.subPillarDisplay}`}
+                    heading={`Issue Editor - ${data.subPillarDisplay}`}
                     size="medium"
                     onCloseButtonClick={closeModal}
                     freeHeight
                 >
-                    <AddIssueModal
-                        type="pillar"
+                    <IssueSearchSelectInput
+                        placeholder="issue"
+                        name="summaryIssue"
+                        value={undefined}
                         subPillar={data.subPillar}
-                        onClose={closeModal}
+                        onChange={noOp}
+                        mode="add"
                     />
                 </Modal>
             )}

@@ -3,6 +3,7 @@ import { EntriesAsList, Error } from '@togglecorp/toggle-form';
 import {
     listToMap,
     isDefined,
+    noOp,
 } from '@togglecorp/fujs';
 import {
     IoEllipseSharp,
@@ -19,8 +20,8 @@ import {
 
 import SelectIssueInput from './SelectIssueInput';
 import { DimensionType } from '../..';
-
 import AddIssueModal from '../../AddIssueModal';
+
 import styles from './styles.css';
 
 const colorMap: Record<number, string> = {
@@ -254,6 +255,7 @@ function SubDimensionItem(props: Props) {
                         type="dimension"
                         subDimension={data.subDimension}
                         onClose={closeModal}
+                        refetch={noOp}
                     />
                 </Modal>
             )}
