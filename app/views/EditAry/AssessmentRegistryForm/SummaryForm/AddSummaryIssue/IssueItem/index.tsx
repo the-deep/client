@@ -20,7 +20,7 @@ import {
     SummaryIssueSearchQuery,
 } from '#generated/types';
 
-import AddIssueModal from '../../AddIssueModal';
+import AddIssueModal from '../AddIssueModal';
 
 import styles from './styles.css';
 
@@ -29,7 +29,6 @@ const GET_SUMMARY_SUB_ISSUES = gql`
         $subPillar: AssessmentRegistrySummarySubPillarTypeEnum,
         $subDimension: AssessmentRegistrySummarySubDimensionTypeEnum,
         $search: String,
-        $isParent: Boolean,
         $parent: ID,
         $page: Int,
         $pageSize: Int,
@@ -38,7 +37,6 @@ const GET_SUMMARY_SUB_ISSUES = gql`
             subPillar: $subPillar,
             subDimension: $subDimension,
             search: $search,
-            isParent: $isParent,
             parent: $parent,
             pageSize: $pageSize,
             page: $page,
@@ -84,7 +82,6 @@ function IssueItem(props: Props) {
         (): GetSummarySubIssuesQueryVariables => ({
             subPillar: subPillar as AssessmentRegistrySummarySubPillarTypeEnum,
             subDimension: subDimension as AssessmentRegistrySummarySubDimensionTypeEnum,
-            isParent: false,
             parent: selected,
             page: 1,
             pageSize: 10,
@@ -102,16 +99,16 @@ function IssueItem(props: Props) {
     } = useQuery<GetSummarySubIssuesQuery, GetSummarySubIssuesQueryVariables>(
         GET_SUMMARY_SUB_ISSUES,
         {
-            skip: isNotDefined(variables),
+            skip: isNotDefined(selected),
             variables,
         },
     );
 
     const handleAddNewIssue = useCallback(
         (n: string) => {
-            setAddIssue(!addIssue);
+            setAddIssue(true);
             setSelected(n);
-        }, [addIssue],
+        }, [],
     );
 
     const headerActions = useMemo(() => (
@@ -138,9 +135,11 @@ function IssueItem(props: Props) {
         handleAddNewIssue,
     ]);
 
-    const handleChange = (_: boolean, n: string) => {
-        setSelected((oldValue) => (oldValue === n ? undefined : n));
-    };
+    const handleOnExpansionChange = useCallback(
+        (_: boolean, n: string) => {
+            setSelected((oldValue) => (oldValue === n ? undefined : n));
+        }, [],
+    );
 
     const issueParams = useCallback(
         (
@@ -157,7 +156,6 @@ function IssueItem(props: Props) {
             subDimension,
         ],
     );
-
     return (
         <ControlledExpandableContainer
             className={styles.issueItem}
@@ -171,7 +169,7 @@ function IssueItem(props: Props) {
             expansionTriggerArea="arrow"
             name={data.id}
             expanded={!!selected}
-            onExpansionChange={handleChange}
+            onExpansionChange={handleOnExpansionChange}
             withoutBorder
         >
             <ListView
