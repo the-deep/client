@@ -46,20 +46,24 @@ interface FrameworkMini {
     title: string;
     createdAt: string;
 }
-const frameworkKeySelector = (d: FrameworkMini) => parseInt(d.id, 10);
+
+const frameworkKeySelector = (d: FrameworkMini) => d.id;
 
 export const PROJECTS_AFS = gql`
     query ProjectAnalysisFrameworks(
         $isCurrentUserMember: Boolean
         $search: String,
     ) {
-        analysisFrameworks(search: $search , isCurrentUserMember: $isCurrentUserMember) {
+        analysisFrameworks(
+            search: $search , 
+            isCurrentUserMember: $isCurrentUserMember
+            ) {
          results {
-                    title
-                    id
-                    createdAt
-                }
-                totalCount
+            title
+            id
+            createdAt
+         }
+         totalCount
         }
     }
 `;
@@ -172,28 +176,14 @@ function ProjectFramework(props: Props) {
     } = useForm(schema, defaultFormValue);
 
     const delayedValue = useDebouncedValue(value);
-    useEffect(() => {
-        setOffset(0);
-        setFrameworkList([]);
-    }, [delayedValue]);
-    const analysisFrameworkVariables = useMemo(() => {
-        let isCurrentUserMember;
-        if (delayedValue.relatedToMe === 'true') {
-            isCurrentUserMember = true;
-        } else if (delayedValue.relatedToMe === 'false') {
-            isCurrentUserMember = false;
-        } else {
-            isCurrentUserMember = undefined;
-        }
-        return {
-            isCurrentUserMember,
-            search: delayedValue.search,
-            offset,
-        };
-    }, [delayedValue]);
+    const analysisFrameworkVariables = useMemo(() => ({
+        isCurrentUserMember: delayedValue.relatedToMe === 'true' ? true : undefined,
+        search: delayedValue.search,
+        offset,
+    }), [delayedValue, offset]);
     const {
         previousData,
-        data: projectUsersResponse = previousData,
+        data: projectAflist = previousData,
         loading: frameworksGetPending,
         refetch: retriggerGetFrameworkListRequest,
     } = useQuery<ProjectAnalysisFrameworksQuery, ProjectAnalysisFrameworksQueryVariables>(
@@ -203,7 +193,7 @@ function ProjectFramework(props: Props) {
         },
     );
 
-    const frameworksRendererParams = useCallback((key: number, data: FrameworkMini) => ({
+    const frameworksRendererParams = useCallback((key: string, data: FrameworkMini) => ({
         itemKey: String(key),
         title: data.title,
         createdAt: data.createdAt,
@@ -229,11 +219,9 @@ function ProjectFramework(props: Props) {
         offset,
     ]);
 
-    const totalFrameworksCount = projectUsersResponse?.analysisFrameworks?.totalCount ?? 0;
-    const AfList: FrameworkMini[] = projectUsersResponse?.analysisFrameworks?.results || [];
+    const totalFrameworksCount = projectAflist?.analysisFrameworks?.totalCount ?? 0;
+    const afList: FrameworkMini[] = projectAflist?.analysisFrameworks?.results || [];
 
-    console.log('type one', typeof frameworkList);
-    console.log('type two >> ', projectUsersResponse?.analysisFrameworks?.results);
     return (
         <div className={_cs(styles.framework, className)}>
             <div className={styles.leftContainer}>
@@ -261,7 +249,7 @@ function ProjectFramework(props: Props) {
                         className={styles.frameworkList}
                         pending={frameworksGetPending}
                         errored={false}
-                        data={AfList}
+                        data={afList}
                         keySelector={frameworkKeySelector}
                         renderer={Item}
                         filtered={isFiltered(value)}
@@ -283,7 +271,6 @@ function ProjectFramework(props: Props) {
                                 <IoChevronForward />
                             )}
                         >
-                            {/* TODO: Might move to component library, no need to use ts */}
                             Show More
                         </Button>
                     )}
