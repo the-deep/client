@@ -3,7 +3,6 @@ import { EntriesAsList, Error } from '@togglecorp/toggle-form';
 import {
     listToMap,
     isDefined,
-    noOp,
 } from '@togglecorp/fujs';
 import {
     IoEllipseSharp,
@@ -20,7 +19,7 @@ import {
 
 import SelectIssueInput from './SelectIssueInput';
 import { DimensionType } from '../..';
-import IssueSearchSelectInput from '../../IssueSearchSelectInput';
+import AddSummaryIssue from '../../AddSummaryIssue';
 
 import styles from './styles.css';
 
@@ -251,12 +250,7 @@ function SubDimensionItem(props: Props) {
                     onCloseButtonClick={closeModal}
                     freeHeight
                 >
-                    <IssueSearchSelectInput
-                        name="summaryIssue"
-                        subDimension={data.subDimension}
-                        onChange={noOp}
-                        mode="add"
-                    />
+                    <AddSummaryIssue subDimension={data.subDimension} />
                 </Modal>
             )}
         </div>

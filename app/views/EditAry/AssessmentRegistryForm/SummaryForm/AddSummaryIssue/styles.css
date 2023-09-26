@@ -1,0 +1,4 @@
+.issue-list-container {
+    display: grid;
+    gap: var(--dui-spacing-large);
+}
