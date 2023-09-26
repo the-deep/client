@@ -2,7 +2,6 @@ import React, { useMemo, useCallback } from 'react';
 import {
     listToMap,
     isDefined,
-    noOp,
 } from '@togglecorp/fujs';
 import { Header, Modal, QuickActionButton, useModalState } from '@the-deep/deep-ui';
 import {
@@ -21,9 +20,9 @@ import {
 
 import SelectIssueInput from './SelectIssueInput';
 import { PillarType } from '../..';
+import AddSummaryIssue from '../../AddSummaryIssue';
 
 import styles from './styles.css';
-import IssueSearchSelectInput from '../../IssueSearchSelectInput';
 
 const colorMap: Record<number, string> = {
     1: '#ff7d7d',
@@ -237,12 +236,7 @@ function SubPillarItem(props: Props) {
                     onCloseButtonClick={closeModal}
                     freeHeight
                 >
-                    <IssueSearchSelectInput
-                        name="summaryIssue"
-                        subPillar={data.subPillar}
-                        onChange={noOp}
-                        mode="add"
-                    />
+                    <AddSummaryIssue subPillar={data.subPillar} />
                 </Modal>
             )}
         </div>
