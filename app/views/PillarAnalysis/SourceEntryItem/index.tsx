@@ -9,6 +9,7 @@ import { useMutation, gql } from '@apollo/client';
 import {
     IoBan,
     IoPeopleCircleOutline,
+    IoOpenOutline,
     IoPencilOutline,
     IoRepeat,
 } from 'react-icons/io5';
@@ -28,6 +29,7 @@ import {
 import ExcerptInput from '#components/entry/ExcerptInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import EditableEntry from '#components/entry/EditableEntry';
+import LeadPreviewButton from '#components/lead/LeadPreviewButton';
 import {
     DiscardedEntriesCreateMutation,
     DiscardedEntriesCreateMutationVariables,
@@ -125,8 +127,6 @@ function SourceEntryItem(props: Props) {
                 organizationShortNameSelector(author) ?? organizationTitleSelector(author)
             )).join(', ')
     ), [entry?.lead]);
-
-    const entryDate = entry?.createdAt;
 
     const [
         createDiscardedEntry,
@@ -226,8 +226,6 @@ function SourceEntryItem(props: Props) {
             headingClassName={styles.heading}
             headingSectionClassName={styles.headingSection}
             headingContainerClassName={styles.headingContainer}
-            borderBelowHeader
-            borderBelowHeaderWidth="thin"
             headerIcons={(
                 <>
                     <IoPeopleCircleOutline className={styles.headingItem} />
@@ -237,13 +235,20 @@ function SourceEntryItem(props: Props) {
                     >
                         {authors}
                     </span>
+                    <LeadPreviewButton
+                        className={styles.previewButton}
+                        title={entry.lead.title}
+                        label={(<IoOpenOutline />)}
+                        url={entry.lead.url}
+                        attachment={entry.lead.attachment}
+                    />
                 </>
             )}
             heading={(
                 <DateOutput
                     className={styles.headingItem}
                     format="dd/MM/yyyy"
-                    value={entryDate}
+                    value={entry.lead.publishedOn}
                 />
             )}
             headerActionsContainerClassName={styles.headerActions}

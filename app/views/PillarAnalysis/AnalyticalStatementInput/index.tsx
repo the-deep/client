@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
     IoClose,
     IoCheckmarkCircleSharp,
@@ -30,6 +30,7 @@ import {
 import {
     useFormArray,
     useFormObject,
+    analyzeErrors,
     SetValueArg,
     Error,
     getErrorObject,
@@ -355,6 +356,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         toggleStatementAndInfoGaps,
     ] = useBooleanState(true);
 
+    const isErrored = useMemo(() => analyzeErrors(error), [error]);
+
     return (
         <Tabs
             value={selectedField}
@@ -362,7 +365,11 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             variant="primary"
         >
             <Container
-                className={_cs(styles.analyticalStatementInput, className)}
+                className={_cs(
+                    styles.analyticalStatementInput,
+                    className,
+                    isErrored && styles.errored,
+                )}
                 contentClassName={styles.dragContent}
                 headerClassName={styles.header}
                 headerIcons={(

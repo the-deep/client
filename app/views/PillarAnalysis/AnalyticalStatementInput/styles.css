@@ -13,6 +13,10 @@
         gap: 0;
     }
 
+    &.errored {
+        border-color: var(--dui-color-danger);
+    }
+
     .header-description {
         padding: var(--dui-spacing-small) var(--dui-spacing-small) 0;
 

@@ -201,6 +201,17 @@ export const ENTRY_DETAILS = gql`
                     title
                 }
             }
+            title
+            url
+            attachment {
+                id
+                title
+                mimeType
+                file {
+                    url
+                }
+            }
+            publishedOn
             source {
                 id
                 title
@@ -896,6 +907,12 @@ function PillarAnalysis() {
                     } else {
                         setError(formError);
                     }
+                    alert.show(
+                        'There was an error while saving analysis. Make sure there are no issues.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
             },
             onError: () => {
@@ -1017,7 +1034,17 @@ function PillarAnalysis() {
         () => {
             const submit = createSubmitHandler(
                 validate,
-                setError,
+                (errorFromForm) => {
+                    if (errorFromForm) {
+                        alert.show(
+                            'Looks like there are some issues with the data you have entered. Make sure there are no errors.',
+                            {
+                                variant: 'error',
+                            },
+                        );
+                        setError(errorFromForm);
+                    }
+                },
                 (finalVal) => {
                     updateAnalysisPillars({
                         variables: {
@@ -1032,6 +1059,7 @@ function PillarAnalysis() {
         },
         [
             pillarId,
+            alert,
             projectId,
             setError,
             validate,

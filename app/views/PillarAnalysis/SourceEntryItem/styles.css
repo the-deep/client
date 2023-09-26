@@ -8,11 +8,17 @@
     }
 
     margin: var(--dui-spacing-medium);
+    border-radius: var(--dui-border-radius-card);
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     background-color: var(--dui-color-white);
     max-height: var(--max-height-entry);
 
     .heading-section {
         align-items: center;
+
+        .preview-button {
+            opacity: 0;
+        }
 
         .heading-item {
             color: var(--dui-color-text-label);
@@ -41,6 +47,9 @@
     }
 
     &:hover {
+        .preview-button {
+            opacity: 1;
+        }
         .header-actions {
             opacity: 1;
         }

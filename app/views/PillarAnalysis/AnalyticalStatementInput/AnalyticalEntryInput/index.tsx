@@ -3,6 +3,7 @@ import { generatePath } from 'react-router-dom';
 import {
     IoTrashOutline,
     IoPeopleCircleOutline,
+    IoOpenOutline,
     IoPencilOutline,
     IoRepeat,
 } from 'react-icons/io5';
@@ -25,6 +26,7 @@ import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 import NonFieldError from '#components/NonFieldError';
 import ExcerptInput from '#components/entry/ExcerptInput';
+import LeadPreviewButton from '#components/lead/LeadPreviewButton';
 import EditableEntry from '#components/entry/EditableEntry';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import {
@@ -116,7 +118,6 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 organizationShortNameSelector(author) ?? organizationTitleSelector(author)
             )).join(', ')
     ), [entry?.lead]);
-    const entryDate = entry?.createdAt;
 
     const editEntryLink = useMemo(() => ({
         pathname: generatePath(routes.entryEdit.path, {
@@ -171,21 +172,26 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                         >
                             {authors}
                         </span>
+                        <LeadPreviewButton
+                            className={styles.previewButton}
+                            title={entry?.lead.title}
+                            label={(<IoOpenOutline />)}
+                            url={entry?.lead.url}
+                            attachment={entry?.lead.attachment}
+                        />
                     </>
                 )}
                 heading={(
                     <DateOutput
                         className={styles.headingItem}
                         format="dd/MM/yyyy"
-                        value={entryDate}
+                        value={entry?.lead.publishedOn}
                     />
                 )}
                 headingClassName={styles.heading}
                 headingSectionClassName={styles.headingSection}
                 headingContainerClassName={styles.headingContainer}
                 headingSize="extraSmall"
-                borderBelowHeader
-                borderBelowHeaderWidth="thin"
                 headerActionsContainerClassName={styles.headerActions}
                 headerActions={(
                     <>
