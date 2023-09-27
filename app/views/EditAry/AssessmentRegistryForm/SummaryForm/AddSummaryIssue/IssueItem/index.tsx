@@ -20,7 +20,7 @@ import {
     SummaryIssueSearchQuery,
 } from '#generated/types';
 
-import AddIssueModal from '../AddIssueModal';
+import AddSummaryIssueModal from '../AddSummaryIssueModal';
 
 import styles from './styles.css';
 
@@ -185,7 +185,7 @@ function IssueItem(props: Props) {
                 emptyIcon
             />
             {addIssue && (
-                <AddIssueModal
+                <AddSummaryIssueModal
                     type="pillar"
                     subPillar={data.subPillar}
                     parentId={selected}
