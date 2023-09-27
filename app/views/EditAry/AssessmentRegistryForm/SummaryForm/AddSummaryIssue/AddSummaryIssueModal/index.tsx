@@ -52,7 +52,7 @@ type Props = {
     subDimension: AssessmentRegistrySummarySubDimensionTypeEnum;
 })
 
-function AddIssueModal(props: Props) {
+function AddSummaryIssueModal(props: Props) {
     const {
         className,
         parentId,
@@ -165,4 +165,4 @@ function AddIssueModal(props: Props) {
     );
 }
 
-export default AddIssueModal;
+export default AddSummaryIssueModal;
