@@ -6,6 +6,8 @@ export interface Props {
     element?: HTMLDivElement;
 }
 
+// NOTE: We are creating a separate portal because
+// Portal from deep-ui only attaches to body
 function Portal(props: Props) {
     const {
         children,

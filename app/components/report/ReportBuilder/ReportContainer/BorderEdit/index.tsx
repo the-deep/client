@@ -15,6 +15,7 @@ import {
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 
+import NonFieldError from '#components/NonFieldError';
 import { EnumOptions } from '#types/common';
 import {
     enumKeySelector,
@@ -79,6 +80,7 @@ function BorderEdit<NAME extends string>(props: Props<NAME>) {
         <div className={styles.borderEdit}>
             {loading && <PendingMessage />}
             <Heading size="extraSmall">Border</Heading>
+            <NonFieldError error={error} />
             <div className={styles.inputs}>
                 <ColorInput
                     name="color"

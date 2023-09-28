@@ -9,6 +9,7 @@ import {
 import { ExpandableContainer } from '@the-deep/deep-ui';
 
 import MarkdownEditor from '#components/MarkdownEditor';
+import NonFieldError from '#components/NonFieldError';
 
 import {
     type TextConfigType,
@@ -49,6 +50,7 @@ function TextEdit<NAME extends string>(props: Props<NAME>) {
 
     return (
         <div className={_cs(className, styles.textEdit)}>
+            <NonFieldError error={error} />
             <ExpandableContainer
                 heading="General"
                 headingSize="small"

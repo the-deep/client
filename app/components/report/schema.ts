@@ -20,6 +20,8 @@ import {
     AnalysisReportTextStyleType,
 } from '#generated/types';
 
+// NOTE: New DeepReplace is not compatible with old that is present in other
+// parts of DEEP
 type DeepNonNullable<T> = T extends object ? (
     T extends (infer K)[] ? (
         DeepNonNullable<K>[]

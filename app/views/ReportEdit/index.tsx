@@ -7,6 +7,7 @@ import React, {
 import {
     _cs,
     randomString,
+    isDefined,
     compareDate,
     listToMap,
     compareNumber,
@@ -96,6 +97,7 @@ const PILLARS_FOR_REPORT = gql`
                     filters
                     clientId
                     statements {
+                        id
                         clientId
                         informationGaps
                         statement
@@ -324,6 +326,11 @@ function ReportEdit(props: Props) {
     const history = useHistory();
     const leftContentRef = useRef<HTMLDivElement>(null);
 
+    const [
+        contentEditPaneVisible,
+        setContentEditPaneVisibility,
+    ] = useState(false);
+
     const {
         reportId,
         projectId,
@@ -387,6 +394,19 @@ function ReportEdit(props: Props) {
                     pillars,
                 } = response.project.analysis;
 
+                const mainPillarContainer: ReportContainerType = {
+                    clientId: randomString(),
+                    row: 1,
+                    column: 1,
+                    width: 12,
+                    contentType: 'HEADING' as const,
+                    contentConfiguration: {
+                        heading: {
+                            content: response.project.analysis.title,
+                            variant: 'H1' as const,
+                        },
+                    },
+                };
                 const containers: ReportContainerType[] = pillars.reduce((acc, item) => {
                     const header: ReportContainerType = {
                         clientId: randomString(),
@@ -397,15 +417,13 @@ function ReportEdit(props: Props) {
                         contentConfiguration: {
                             heading: {
                                 content: item.title,
-                                variant: 'H2',
+                                variant: 'H2' as const,
                             },
                         },
                     };
 
-                    return ([
-                        ...acc,
-                        header,
-                        ...(item?.statements ?? []).map((statement, statementIndex) => ({
+                    const statementItems: ReportContainerType[] | undefined = item?.statements
+                        ?.map((statement, statementIndex) => ({
                             clientId: randomString(),
                             row: acc.length + 1 + statementIndex + 1,
                             column: 1,
@@ -414,30 +432,23 @@ function ReportEdit(props: Props) {
                             contentConfiguration: {
                                 text: {
                                     content: [
-                                        '#### Main Statement',
+                                        statement.statement ? '#### Main Statement' : undefined,
                                         statement.statement,
-                                        '#### Information Gaps',
+                                        statement.informationGaps ? '#### Information Gaps' : undefined,
                                         statement.informationGaps,
-                                        '#### My Analysis',
+                                        statement.reportText ? '#### My Analysis' : undefined,
                                         statement.reportText,
-                                    ].join('\n'),
+                                    ].filter(isDefined).join('\n'),
                                 },
                             },
-                        })),
+                        }));
+
+                    return ([
+                        ...acc,
+                        header,
+                        ...(statementItems ?? []),
                     ]);
-                }, [{
-                    clientId: randomString(),
-                    row: 1,
-                    column: 1,
-                    width: 12,
-                    contentType: 'HEADING' as const,
-                    contentConfiguration: {
-                        heading: {
-                            content: response.project.analysis.title,
-                            variant: 'H1',
-                        },
-                    },
-                }] as ReportContainerType[]);
+                }, [mainPillarContainer]);
 
                 setFieldValue(containers, 'containers');
             },
@@ -485,7 +496,7 @@ function ReportEdit(props: Props) {
                         })),
                     },
                 );
-                const uploadItems = valueToSet.containers?.map((item) => item.contentData).flat();
+                const uploadItems = valueToSet.containers?.flatMap((item) => item.contentData);
                 setContentDataToFileMap(listToMap(
                     uploadItems,
                     (item) => item.clientId,
@@ -663,20 +674,15 @@ function ReportEdit(props: Props) {
         || createReportLoading
         || updateReportLoading;
 
-    const [
-        contentEditPaneVisible,
-        setContentEditPaneVisibility,
-    ] = useState(false);
-
     const selectedReport = data?.project?.analysisReport;
     const publishConfirmMessage = (compareDate(
         selectedReport?.modifiedAt,
         selectedReport?.latestSnapshot?.publishedOn,
     )) > 0 ? (
-            'Are you sure you want to published the report?'
+            'Are you sure you want to publish the report?'
         ) : (
             `Looks like the latest version of report is already published.
-            Are you sure you want to published the report?`
+            Are you sure you want to publish the report?`
         );
 
     const copyToClipboard = useCallback(() => {
@@ -786,7 +792,7 @@ function ReportEdit(props: Props) {
                         value={value}
                         error={error}
                         setFieldValue={setFieldValue}
-                        disabled={false}
+                        disabled={pending}
                         readOnly={false}
                         organizationOptions={organizationOptions}
                         onOrganizationOptionsChange={setOrganizationOptions}

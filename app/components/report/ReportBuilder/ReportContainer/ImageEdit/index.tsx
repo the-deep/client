@@ -11,6 +11,7 @@ import {
     TextInput,
 } from '@the-deep/deep-ui';
 
+import NonFieldError from '#components/NonFieldError';
 import { AnalysisReportUploadType } from '#generated/types';
 import FileUpload from '../../FileUpload';
 import {
@@ -54,6 +55,7 @@ function ImageEdit<NAME extends string>(props: Props<NAME>) {
 
     return (
         <div className={_cs(className, styles.imageEdit)}>
+            <NonFieldError error={error} />
             <ExpandableContainer
                 heading="General"
                 headingSize="small"

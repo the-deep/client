@@ -34,7 +34,7 @@ interface Props {
 function Content(props: Props) {
     const {
         contentType,
-        configuration: configurationFromProps = {},
+        configuration: configurationFromProps,
         generalConfiguration,
         contentData,
         contentDataToFileMap,
@@ -43,13 +43,9 @@ function Content(props: Props) {
     const configuration = removeNull(configurationFromProps);
 
     if (contentType === 'HEADING') {
-        const {
-            heading: {
-                content,
-                variant,
-                style,
-            } = {},
-        } = configuration;
+        const content = configuration?.heading?.content;
+        const variant = configuration?.heading?.variant;
+        const style = configuration?.heading?.style;
 
         if (variant === 'H4') {
             return (
@@ -63,7 +59,7 @@ function Content(props: Props) {
                         generalConfiguration?.headingContentStyle?.h4,
                     )}
                 >
-                    {content ?? 'Title goes here'}
+                    {content || 'Title goes here'}
                 </h4>
             );
         }
@@ -79,7 +75,7 @@ function Content(props: Props) {
                         generalConfiguration?.headingContentStyle?.h3,
                     )}
                 >
-                    {content ?? 'Title goes here'}
+                    {content || 'Title goes here'}
                 </h3>
             );
         }
@@ -95,7 +91,7 @@ function Content(props: Props) {
                         generalConfiguration?.headingContentStyle?.h2,
                     )}
                 >
-                    {content ?? 'Title goes here'}
+                    {content || 'Title goes here'}
                 </h2>
             );
         }
@@ -110,18 +106,14 @@ function Content(props: Props) {
                     generalConfiguration?.headingContentStyle?.h1,
                 )}
             >
-                {content ?? 'Title goes here'}
+                {content || 'Title goes here'}
             </h1>
         );
     }
 
     if (contentType === 'TEXT') {
-        const {
-            text: {
-                content,
-                style,
-            } = {},
-        } = configuration;
+        const content = configuration?.text?.content;
+        const style = configuration?.text?.style;
 
         return (
             <div
@@ -131,18 +123,15 @@ function Content(props: Props) {
                 )}
             >
                 <ReactMarkdown className={styles.markdown}>
-                    {content ?? 'Content goes here'}
+                    {content || 'Content goes here'}
                 </ReactMarkdown>
             </div>
         );
     }
 
     if (contentType === 'URL') {
-        const {
-            url: {
-                url,
-            } = {},
-        } = configuration;
+        const url = configuration?.url?.url;
+
         return (
             <iframe
                 key={url}
@@ -155,13 +144,9 @@ function Content(props: Props) {
     }
 
     if (contentType === 'IMAGE') {
-        const {
-            image: {
-                caption,
-                altText,
-                style,
-            } = {},
-        } = configuration;
+        const caption = configuration?.image?.caption;
+        const altText = configuration?.image?.altText;
+        const style = configuration?.image?.style;
 
         const imageContentData = contentData?.[0];
 
@@ -187,6 +172,14 @@ function Content(props: Props) {
                 </div>
             );
         }
+        return (
+            <div className={styles.imageContainer}>
+                <Message
+                    erroredEmptyMessage="Image not found"
+                    errored
+                />
+            </div>
+        );
     }
 
     return (

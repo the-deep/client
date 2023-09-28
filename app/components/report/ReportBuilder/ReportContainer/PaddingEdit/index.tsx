@@ -11,6 +11,7 @@ import {
 } from '@the-deep/deep-ui';
 import { MdPadding } from 'react-icons/md';
 
+import NonFieldError from '#components/NonFieldError';
 import {
     type PaddingStyleFormType,
 } from '../../../schema';
@@ -43,6 +44,7 @@ function PaddingEdit<NAME extends string>(props: Props<NAME>) {
     return (
         <div className={styles.paddingEdit}>
             <Heading size="extraSmall">Padding</Heading>
+            <NonFieldError error={error} />
             <div className={styles.inputs}>
                 <NumberInput
                     className={styles.input}

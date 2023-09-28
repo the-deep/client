@@ -11,6 +11,7 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import {
     type UrlConfigType,
 } from '../../../schema';
@@ -44,6 +45,7 @@ function UrlEdit<NAME extends string>(props: Props<NAME>) {
 
     return (
         <div className={_cs(className, styles.urlEdit)}>
+            <NonFieldError error={error} />
             <ExpandableContainer
                 heading="General"
                 headingSize="small"

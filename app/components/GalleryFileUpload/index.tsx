@@ -33,6 +33,7 @@ const UPLOAD_FILE = gql`
 interface Props {
     onSuccess: (file: NonNullable<GalleryFileType>) => void;
     acceptFileType?: '.pdf' | 'image/*';
+    title?: string;
     disabled?: boolean;
     projectIds?: string[];
 }
@@ -40,6 +41,7 @@ interface Props {
 function FileUpload(props: Props) {
     const {
         onSuccess,
+        title,
         acceptFileType,
         disabled,
         projectIds,
@@ -118,6 +120,7 @@ function FileUpload(props: Props) {
             onChange={handleFileInputChange}
             status={undefined}
             overrideStatus
+            title={title}
             maxFileSize={100}
             accept={acceptFileType}
             disabled={loading || disabled}

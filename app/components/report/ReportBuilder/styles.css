@@ -1,4 +1,5 @@
 .report-builder {
+    --report-box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     background-color: var(--dui-color-background);
     padding: var(--dui-spacing-large) 0;
     height: auto;
@@ -43,8 +44,8 @@
         display: flex;
         flex-direction: column;
         margin: 0 auto;
-        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-        background-color: #fff;
+        box-shadow: var(--report-box-shadow);
+        background-color: var(--dui-color-white);
         padding: var(--dui-spacing-extra-large);
         width: 210mm;
         overflow-y: auto;

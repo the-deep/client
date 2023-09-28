@@ -16,6 +16,7 @@ import {
     ColorInput,
 } from '@the-deep/deep-ui';
 
+import NonFieldError from '#components/NonFieldError';
 import {
     AnalysisReportTextStyleType,
     AnalysisReportTextStyleAlignEnum,
@@ -103,6 +104,7 @@ function TextElementStylesEdit<NAME extends string>(props: Props<NAME>) {
             {label && (
                 <Heading size="extraSmall">{label}</Heading>
             )}
+            <NonFieldError error={error} />
             <div className={styles.inputs}>
                 <NumberInput
                     className={styles.input}

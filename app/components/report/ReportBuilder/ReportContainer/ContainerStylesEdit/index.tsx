@@ -9,6 +9,8 @@ import {
     ExpandableContainer,
 } from '@the-deep/deep-ui';
 
+import NonFieldError from '#components/NonFieldError';
+
 import {
     type ContainerStyleFormType,
 } from '../../../schema';
@@ -54,6 +56,7 @@ function ContainerStylesEdit<NAME extends string>(props: Props<NAME>) {
             contentClassName={styles.expandedBody}
             withoutBorder
         >
+            <NonFieldError error={error} />
             {additionalStylingSettings}
             <BorderEdit
                 name="border"

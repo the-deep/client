@@ -22,6 +22,7 @@ const variantToStyleMapping = {
     H1: styles.headingOne,
     H2: styles.headingTwo,
     H3: styles.headingThree,
+    // TODO: Consider headings that have same label
     H4: styles.headingFour,
 } as const;
 
@@ -38,6 +39,7 @@ function TocItem(props: TocItemProps) {
         hideNavbar,
     } = props;
 
+    // TODO: Consider headings that have same label
     const handleHeaderClick = useCallback(() => {
         const containerIdForLabel = label?.replace(' ', '-');
         if (!containerIdForLabel) {
@@ -104,6 +106,7 @@ function Toc(props: Props) {
                         name="toggle"
                         variant="transparent"
                         onClick={toggleNavVisibility}
+                        title="Show/Hide ToC"
                     >
                         <IoMenuOutline className={styles.icon} />
                     </Button>

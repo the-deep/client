@@ -264,7 +264,7 @@ const reportEditRoute = wrap({
 });
 
 const publicReportViewRoute = wrap({
-    path: '/reports/:reportSlug/',
+    path: '/public-reports/:reportSlug/',
     title: 'View Report',
     navbarVisibility: false,
     component: lazy(() => import('#views/PublicReportView')),

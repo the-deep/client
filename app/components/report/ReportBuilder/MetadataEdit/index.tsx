@@ -18,6 +18,7 @@ import {
 import NewOrganizationMultiSelectInput, {
     BasicOrganization,
 } from '#components/selections/NewOrganizationMultiSelectInput';
+import NonFieldError from '#components/NonFieldError';
 
 import {
     type PartialFormType,
@@ -80,6 +81,7 @@ function MetadataEdit(props: Props) {
 
     return (
         <div className={_cs(className, styles.metadataEdit)}>
+            <NonFieldError error={error} />
             <TextInput
                 name="title"
                 label="Title"

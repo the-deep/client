@@ -11,6 +11,7 @@ import {
     ColorInput,
 } from '@the-deep/deep-ui';
 
+import NonFieldError from '#components/NonFieldError';
 import {
     type BackgroundStyleFormType,
 } from '../../../schema';
@@ -42,6 +43,7 @@ function BackgroundEdit<NAME extends string>(props: Props<NAME>) {
     return (
         <div className={styles.backgroundEdit}>
             <Heading size="extraSmall">Background</Heading>
+            <NonFieldError error={error} />
             <div className={styles.inputs}>
                 <NumberInput
                     name="opacity"

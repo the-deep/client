@@ -176,6 +176,7 @@ function ReportBuilder(props: Props) {
             )}
         >
             <div className={styles.report}>
+                <NonFieldError error={error} />
                 <div
                     className={_cs(
                         styles.headingContainer,
@@ -204,6 +205,7 @@ function ReportBuilder(props: Props) {
                             onClick={handleContentEdit}
                             className={styles.editButton}
                             disabled={disabled}
+                            title="Edit"
                         >
                             <IoPencil />
                         </QuickActionButton>
@@ -226,7 +228,7 @@ function ReportBuilder(props: Props) {
                 <Portal element={leftContentRef.current}>
                     <Container
                         className={styles.editContainer}
-                        heading="Metadata Edit"
+                        heading="Edit Metadata"
                         headingSize="small"
                         footerActions={(
                             <Button

@@ -14,6 +14,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { useQuery, gql } from '@apollo/client';
 
+import NonFieldError from '#components/NonFieldError';
 import {
     enumKeySelector,
     enumLabelSelector,
@@ -87,6 +88,7 @@ function HeadingEdit<NAME extends string>(props: Props<NAME>) {
     return (
         <div className={_cs(className, styles.headingEdit)}>
             {loading && <PendingMessage />}
+            <NonFieldError error={error} />
             <ExpandableContainer
                 heading="General"
                 headingSize="small"

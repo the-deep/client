@@ -263,6 +263,7 @@ export const ORGANIZATION_FRAGMENT = gql`
         verified
         shortName
         logo {
+            id
             file {
                 url
             }
@@ -272,6 +273,7 @@ export const ORGANIZATION_FRAGMENT = gql`
             title
             shortName
             logo {
+                id
                 file {
                     url
                 }

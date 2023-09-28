@@ -64,10 +64,12 @@ import {
 import styles from './styles.css';
 
 const widthSelector = (item: { width: number }) => item.width;
+// FIXME: Optimize reorder function by not editing the object is new
+// order is equal to old order
 export function reorder<T>(
     data: T[],
     orderKey = 'order',
-) {
+): T[] {
     return data.map((v, i) => ({ ...v, [orderKey]: i + 1 }));
 }
 
@@ -122,7 +124,9 @@ function ReportContainer(props: Props) {
         leftContentRef,
     } = props;
 
-    const index = allItems?.findIndex((item) => item.clientId === containerKey);
+    const index = useMemo(() => (
+        allItems?.findIndex((item) => item.clientId === containerKey)
+    ), [allItems, containerKey]);
 
     const error = getErrorObject(riskyError);
 
@@ -192,6 +196,7 @@ function ReportContainer(props: Props) {
     ), [rowItems]);
 
     const widthOptions = useMemo(() => (
+        // NOTE: Providing options to set content to a minimum of 3 units
         Array.from({ length: (12 - (totalColSpan - width)) - 2 }, (_, i) => ({ width: i + 3 }))
     ), [totalColSpan, width]);
 
@@ -274,6 +279,7 @@ function ReportContainer(props: Props) {
             newItems.splice(indexOfCurrentRowBefore, 0, newItem);
             return newItems.map((item) => ({
                 ...item,
+                // NOTE: Only updating row values of items that appear after the new item
                 row: ((item.row ?? 0) >= newItem.row && item.clientId !== newItem.clientId)
                     ? ((item.row ?? 0) + 1)
                     : item.row,
@@ -297,6 +303,7 @@ function ReportContainer(props: Props) {
             newItems.splice(indexOfRow + 1, 0, newItem);
             return newItems.map((item) => ({
                 ...item,
+                // NOTE: Only updating row values of items that appear after the new item
                 row: ((item.row ?? 0) >= newItem.row && item.clientId !== newItem.clientId)
                     ? ((item.row ?? 0) + 1)
                     : item.row,
@@ -351,6 +358,8 @@ function ReportContainer(props: Props) {
         if (contentType !== 'HEADING') {
             return undefined;
         }
+        // NOTE: heading is used as id, so replacing space with dash for better
+        // looking div ids
         return configuration?.heading?.content?.replace(' ', '-');
     }, [
         contentType,
@@ -558,6 +567,7 @@ function ReportContainer(props: Props) {
                                     name="height"
                                     label="Height"
                                     value={height}
+                                    error={error?.height}
                                     onChange={onFieldChange}
                                     disabled={disabled}
                                 />

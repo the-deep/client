@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { removeNull } from '@togglecorp/toggle-form';
 import { useParams } from 'react-router-dom';
+import { Message } from '@the-deep/deep-ui';
 import {
     _cs,
     isDefined,
@@ -248,6 +249,7 @@ function PublicReportView(props: Props) {
     ), [reportSlug]);
 
     const {
+        loading: completeDataPending,
         data: completeData,
     } = useQuery<PublicReportSnapshotQuery, PublicReportSnapshotQueryVariables>(
         PUBLIC_REPORT_SNAPSHOT,
@@ -268,7 +270,8 @@ function PublicReportView(props: Props) {
     }, [completeData]);
 
     const {
-        data: yearlyDataNode,
+        loading: snapshotDataPending,
+        data: snapshotData,
     } = useQuery<PublicReportDetailsQuery, PublicReportDetailsQueryVariables>(
         PUBLIC_REPORT_DETAILS,
         {
@@ -282,7 +285,7 @@ function PublicReportView(props: Props) {
         organizationOptions,
         contentDataToFileMap,
     } = useMemo(() => {
-        if (!yearlyDataNode?.publicReportDetails) {
+        if (!snapshotData?.publicReportDetails) {
             return {
                 finalData: undefined,
                 organizationOptions: undefined,
@@ -295,7 +298,7 @@ function PublicReportView(props: Props) {
             (item) => item.file,
         );
 
-        const data = removeNull(yearlyDataNode.publicReportDetails);
+        const data = removeNull(snapshotData.publicReportDetails);
         const uploadItems = data.containers
             ?.map((item) => item.contentData)
             .flat()
@@ -335,7 +338,7 @@ function PublicReportView(props: Props) {
             contentDataToFileMap: contentDataToFile,
         };
     }, [
-        yearlyDataNode,
+        snapshotData,
         completeData,
     ]);
 
@@ -348,29 +351,41 @@ function PublicReportView(props: Props) {
         finalData?.containers?.filter((item) => item.contentType === 'HEADING')
     ), [finalData?.containers]);
 
+    const pending = snapshotDataPending || completeDataPending;
+
     return (
         <div className={_cs(className, styles.publicReportView)}>
-            <Toc
-                className={styles.leftContent}
-                title={finalData?.title}
-                data={tableOfContents}
-            />
-            {finalData && (
-                <ReportBuilder
-                    className={styles.reportBuilder}
-                    value={finalData}
-                    error={undefined}
-                    reportId={undefined}
-                    setFieldValue={handleUpdate}
-                    disabled
-                    readOnly
-                    organizationOptions={organizationOptions}
-                    onOrganizationOptionsChange={handleUpdate}
-                    contentDataToFileMap={contentDataToFileMap}
-                    setContentDataToFileMap={handleUpdate}
-                    leftContentRef={undefined}
-                    onContentEditChange={handleUpdate}
-                />
+            {(!pending && finalData) ? (
+                <>
+                    <Toc
+                        className={styles.leftContent}
+                        title={finalData?.title}
+                        data={tableOfContents}
+                    />
+                    <ReportBuilder
+                        className={styles.reportBuilder}
+                        value={finalData}
+                        error={undefined}
+                        reportId={undefined}
+                        setFieldValue={handleUpdate}
+                        disabled
+                        readOnly
+                        organizationOptions={organizationOptions}
+                        onOrganizationOptionsChange={handleUpdate}
+                        contentDataToFileMap={contentDataToFileMap}
+                        setContentDataToFileMap={handleUpdate}
+                        leftContentRef={undefined}
+                        onContentEditChange={handleUpdate}
+                    />
+                </>
+            ) : (
+                <div className={styles.errorMessageContainer}>
+                    <Message
+                        pending={pending}
+                        erroredEmptyMessage="The requested report was not found."
+                        errored
+                    />
+                </div>
             )}
         </div>
     );

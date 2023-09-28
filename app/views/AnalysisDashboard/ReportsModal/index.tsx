@@ -38,6 +38,7 @@ const REPORTS_FROM_ANALYSIS_LIST = gql`
                     id
                     slug
                     latestSnapshot {
+                        id
                         publishedBy {
                             displayName
                             id

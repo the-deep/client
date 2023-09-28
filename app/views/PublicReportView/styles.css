@@ -26,4 +26,11 @@
             padding: var(--dui-spacing-medium) var(--dui-spacing-small);
         }
     }
+
+    .error-message-container {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+    }
 }
