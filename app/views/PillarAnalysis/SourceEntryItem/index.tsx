@@ -9,6 +9,7 @@ import { useMutation, gql } from '@apollo/client';
 import {
     IoBan,
     IoPeopleCircleOutline,
+    IoOpenOutline,
     IoPencilOutline,
     IoRepeat,
 } from 'react-icons/io5';
@@ -28,13 +29,13 @@ import {
 import ExcerptInput from '#components/entry/ExcerptInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import EditableEntry from '#components/entry/EditableEntry';
+import LeadPreviewButton from '#components/lead/LeadPreviewButton';
 import {
     DiscardedEntriesCreateMutation,
     DiscardedEntriesCreateMutationVariables,
     DiscardedEntryTagTypeEnum,
 } from '#generated/types';
 import routes from '#base/configs/routes';
-import { useModalState } from '#hooks/stateManagement';
 import {
     organizationShortNameSelector,
     organizationTitleSelector,
@@ -120,20 +121,12 @@ function SourceEntryItem(props: Props) {
         toggleEntryCardFlipped,
     ] = useBooleanState(false);
 
-    const [
-        entryDraggedStatus,
-        setDragStart,
-        setDragEnd,
-    ] = useModalState(false);
-
     const authors = useMemo(() => (
         entry?.lead.authors
             ?.map((author) => (
                 organizationShortNameSelector(author) ?? organizationTitleSelector(author)
             )).join(', ')
     ), [entry?.lead]);
-
-    const entryDate = entry?.createdAt;
 
     const [
         createDiscardedEntry,
@@ -221,12 +214,9 @@ function SourceEntryItem(props: Props) {
                 disabled && styles.disabled,
                 isNewEntry && styles.newEntry,
                 entryCardFlipped && styles.isFlipped,
-                entryDraggedStatus && styles.isBeingDragged,
             )}
             name="entry"
             value={value}
-            onDragStart={setDragStart}
-            onDragStop={setDragEnd}
             contentClassName={_cs(
                 styles.children,
                 entryType === 'IMAGE' && styles.image,
@@ -236,8 +226,6 @@ function SourceEntryItem(props: Props) {
             headingClassName={styles.heading}
             headingSectionClassName={styles.headingSection}
             headingContainerClassName={styles.headingContainer}
-            borderBelowHeader
-            borderBelowHeaderWidth="thin"
             headerIcons={(
                 <>
                     <IoPeopleCircleOutline className={styles.headingItem} />
@@ -247,13 +235,20 @@ function SourceEntryItem(props: Props) {
                     >
                         {authors}
                     </span>
+                    <LeadPreviewButton
+                        className={styles.previewButton}
+                        title={entry.lead.title}
+                        label={(<IoOpenOutline />)}
+                        url={entry.lead.url}
+                        attachment={entry.lead.attachment}
+                    />
                 </>
             )}
             heading={(
                 <DateOutput
                     className={styles.headingItem}
                     format="dd/MM/yyyy"
-                    value={entryDate}
+                    value={entry.lead.publishedOn}
                 />
             )}
             headerActionsContainerClassName={styles.headerActions}

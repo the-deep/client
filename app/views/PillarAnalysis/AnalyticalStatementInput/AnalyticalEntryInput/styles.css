@@ -13,7 +13,8 @@
     }
 
     .entry {
-        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        border-radius: var(--dui-border-radius-card);
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         background-color: var(--dui-color-foreground);
         overflow: auto;
 
@@ -24,6 +25,10 @@
         .heading-section {
             display: flex;
             align-items: center;
+
+            .preview-button {
+                opacity: 0;
+            }
 
             .authors {
                 display: inline-block;
@@ -49,14 +54,14 @@
         }
 
         &:hover {
+            .preview-button {
+                opacity: 1;
+            }
             .header-actions {
                 opacity: 1;
             }
         }
 
-        &.is-being-dragged {
-            max-height: 120px;
-        }
         &.is-flipped {
             max-height: 360px;
         }

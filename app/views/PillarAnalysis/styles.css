@@ -15,6 +15,14 @@
             font-size: var(--dui-font-size-large);
             font-weight: var(--dui-font-weight-bold);
         }
+
+        .statement-and-info-gaps-button {
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            border-radius: var(--dui-border-radius-card);
+            background-color: var(--dui-color-background-information);
+            padding: 0 var(--dui-spacing-small);
+            font-size: var(--dui-font-size-small);
+        }
     }
 
     .content {
@@ -24,35 +32,27 @@
         flex-grow: 1;
         overflow-y: auto;
 
-        .info-container {
+        .inputs-container {
             display: flex;
-            flex-direction: column;
             flex-shrink: 0;
-            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
             background-color: var(--dui-color-background-information);
-            gap: 0;
+            padding: var(--dui-spacing-large);
+            gap: var(--dui-spacing-large);
 
-            .inputs-container {
+            .input-container {
                 display: flex;
+                flex-basis: calc(50% - var(--dui-spacing-large) / 2);
+                flex-direction: column;
                 flex-shrink: 0;
-                gap: var(--dui-spacing-large);
-                padding: 0 var(--dui-spacing-large);
 
-                .input-container {
+                .input-header {
+                    padding: var(--dui-spacing-small) 0;
+                }
+
+                .editor {
                     display: flex;
-                    flex-basis: calc(50% - var(--dui-spacing-large) / 2);
-                    flex-direction: column;
-                    flex-shrink: 0;
-
-                    .input-header {
-                        padding: var(--dui-spacing-small) 0;
-                    }
-
-                    .editor {
-                        display: flex;
-                        flex-grow: 1;
-                        gap: var(--dui-width-separator-thin);
-                    }
+                    flex-grow: 1;
+                    gap: var(--dui-width-separator-thin);
                 }
             }
         }
@@ -129,7 +129,7 @@
             padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-extra-large));
             overflow-y: auto;
 
-            --width-left-container: 420px;
+            --width-left-container: 28rem;
 
             .entries-filter {
                 flex-shrink: 0;
@@ -170,6 +170,7 @@
                 background-color: var(--dui-color-background-information);
                 padding: 0;
                 overflow: auto;
+
                 .entry-list-header {
                     padding: 0;
 

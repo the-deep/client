@@ -4,7 +4,6 @@ import {
     forceNullType,
     requiredCondition,
     requiredStringCondition,
-    requiredListCondition,
     defaultUndefinedType,
     defaultEmptyArrayType,
     PartialForm,
@@ -144,8 +143,8 @@ const schema: FormSchema = {
                     fields: (): FrameworkPropertiesSchemaFields => ({
                         statsConfig: {
                             fields: (): StatsConfigSchemaFields => ({
-                                widget1d: [requiredListCondition],
-                                widget2d: [requiredListCondition],
+                                widget1d: [defaultEmptyArrayType],
+                                widget2d: [defaultEmptyArrayType],
                                 geoWidget: [requiredCondition],
                                 severityWidget: [requiredCondition],
                                 reliabilityWidget: [requiredCondition],

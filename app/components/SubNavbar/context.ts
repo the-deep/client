@@ -14,17 +14,17 @@ const SubNavbarContext = createContext<SubNavbarContextInterface>({
     iconsNode: null,
     setIconsNode: (node: unknown) => {
         // eslint-disable-next-line no-console
-        console.warn('Trying to set icons node', node);
+        console.log('Trying to set icons node', node);
     },
     actionsNode: null,
     setActionsNode: (node: unknown) => {
         // eslint-disable-next-line no-console
-        console.warn('Trying to set actions node', node);
+        console.log('Trying to set actions node', node);
     },
     childrenNode: null,
     setChildrenNode: (node: unknown) => {
         // eslint-disable-next-line no-console
-        console.warn('Trying to set children node', node);
+        console.log('Trying to set children node', node);
     },
 });
 

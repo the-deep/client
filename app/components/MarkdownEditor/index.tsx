@@ -81,7 +81,6 @@ function MarkdownEditor<T extends string>(props: MarkdownEditorProps<T>) {
                         commands={[
                             commands.bold,
                             commands.italic,
-                            commands.divider,
                             ...(commandsFromProps ?? []),
                         ]}
                         preview={preview}
