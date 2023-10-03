@@ -9,14 +9,47 @@ import { EntriesAsList, Error } from '@togglecorp/toggle-form';
 import {
     _cs,
 } from '@togglecorp/fujs';
+import {
+    Bar,
+    BarChart,
+    Cell,
+    LabelList,
+    ResponsiveContainer,
+    Tooltip,
+    TooltipProps,
+    XAxis,
+    YAxis,
+} from 'recharts';
 
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
+import { calcPercent } from '#utils/common';
 
 import { PartialFormType, SummaryIssueType } from '../../formSchema';
 import DimensionItem, { Props as DimensionItemProps } from '../DimensionItem';
 import { DimensionType } from '..';
 
 import styles from './styles.css';
+
+// NOTE: These types are copied from 'recharts/types/component/DefaultTooltipContent'
+type ValueType = number | string | Array<number | string>;
+type NameType = number | string;
+
+const customTooltip = (tooltipProps: TooltipProps<ValueType, NameType>) => {
+    const { active, payload } = tooltipProps;
+    if (active && payload && payload.length) {
+        return (
+            <div className={styles.tooltip}>{`${payload[0].value}%`}</div>
+        );
+    }
+
+    return null;
+};
+
+const NOT_AFFECTED_COLOR = '#9ce5b9';
+const AFFECTED_COLOR = '#f2f3b9';
+const MODERATELY_COLOR = '#e5a99c';
+const SEVERELY_COLOR = '#e08276';
+const CRITICALLY_COLOR = '#871e17';
 
 interface Props {
     className?: string;
@@ -83,12 +116,84 @@ function DimensionTabPanel(props: Props) {
 
     const pillarStats = value?.summaryPillarMeta;
     const totalAssessed = pillarStats?.totalPeopleAssessed ?? 0;
-    const totalNotInNeed = totalAssessed - (dimensionStats?.totalPeopleAffected ?? 0);
+    const totalNotAffected = totalAssessed - (dimensionStats?.totalPeopleAffected ?? 0);
     const totalInNeed = dimensionStats?.totalInNeed ?? 0;
     const totalModeratelyInNeed = dimensionStats?.totalModerate ?? 0;
     const totalSeverelyInNeed = dimensionStats?.totalSevere ?? 0;
     const totalCriticallyInNeed = dimensionStats?.totalCritical ?? 0;
-    const totalAffectedInNeed = totalAssessed - (totalInNeed + totalNotInNeed);
+    const totalAffected = totalAssessed - (totalInNeed + totalNotAffected);
+
+    const barChartData = useMemo(
+        () => ([
+            {
+                key: '1',
+                name: 'Not Affected/Not In Need',
+                value: totalNotAffected,
+                color: NOT_AFFECTED_COLOR,
+            },
+            {
+                key: '2',
+                name: 'Affected/Not In Need',
+                value: totalAffected,
+                color: AFFECTED_COLOR,
+            },
+            {
+                key: '3',
+                name: 'Moderately In Need',
+                value: totalModeratelyInNeed,
+                color: MODERATELY_COLOR,
+            },
+            {
+                key: '4',
+                name: 'Severely In Need',
+                value: totalSeverelyInNeed,
+                color: SEVERELY_COLOR,
+            },
+            {
+                key: '5',
+                name: 'Critically In Need',
+                value: totalCriticallyInNeed,
+                color: CRITICALLY_COLOR,
+            },
+        ]),
+        [
+            totalNotAffected,
+            totalAffected,
+            totalModeratelyInNeed,
+            totalSeverelyInNeed,
+            totalCriticallyInNeed,
+        ],
+    );
+
+    const stackChartData = useMemo(
+        () => ([
+            {
+                totalNotAffectedPercentage: Math.round(
+                    (calcPercent(totalNotAffected, totalAssessed) ?? 0) * 100,
+                ) / 100,
+                totalAffectedPercentage: Math.round(
+                    (calcPercent(totalAffected, totalAssessed) ?? 0) * 100,
+                ) / 100,
+                totalModeratelyInNeedPercentage: Math.round(
+                    (calcPercent(totalModeratelyInNeed, totalAssessed) ?? 0) * 100,
+                ) / 100,
+                totalSeverelyInNeedPercentage: Math.round(
+                    (calcPercent(totalSeverelyInNeed, totalAssessed) ?? 0) * 100,
+                ) / 100,
+                totalCriticallyInNeedPercentage: Math.round(
+                    (calcPercent(totalCriticallyInNeed, totalAssessed) ?? 0) * 100,
+                ) / 100,
+            },
+        ]),
+        [
+            totalAssessed,
+            totalNotAffected,
+            totalAffected,
+            totalModeratelyInNeed,
+            totalSeverelyInNeed,
+            totalCriticallyInNeed,
+        ],
+    );
 
     return (
         <TabPanel
@@ -118,12 +223,12 @@ function DimensionTabPanel(props: Props) {
                     <TextOutput
                         label="Total Not Affected / Not in Need"
                         valueType="number"
-                        value={totalNotInNeed}
+                        value={totalNotAffected}
                     />
                     <TextOutput
                         label="Total Affected / Not in Need"
                         valueType="number"
-                        value={totalAffectedInNeed}
+                        value={totalAffected}
                     />
                     <TextOutput
                         label="Total People in Need"
@@ -145,6 +250,43 @@ function DimensionTabPanel(props: Props) {
                         valueType="number"
                         value={totalCriticallyInNeed}
                     />
+                </div>
+                <div className={styles.chart}>
+                    <div className={styles.stackchart}>
+                        <ResponsiveContainer height={70} width="100%">
+                            <BarChart
+                                layout="vertical"
+                                data={stackChartData}
+                            >
+                                <YAxis hide type="category" dataKey="name" />
+                                <XAxis hide type="number" />
+                                <Tooltip shared={false} content={customTooltip} />
+                                <Bar dataKey="totalNotAffectedPercentage" stackId="a" fill={NOT_AFFECTED_COLOR} />
+                                <Bar dataKey="totalAffectedPercentage" stackId="a" fill={AFFECTED_COLOR} />
+                                <Bar dataKey="totalModeratelyInNeedPercentage" stackId="a" fill={MODERATELY_COLOR} />
+                                <Bar dataKey="totalSeverelyInNeedPercentage" stackId="a" fill={SEVERELY_COLOR} />
+                                <Bar dataKey="totalCriticallyInNeedPercentage" stackId="a" fill={CRITICALLY_COLOR} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                    <div className={styles.barchart}>
+                        <ResponsiveContainer width="100%" height="100%" debounce={300}>
+                            <BarChart data={barChartData}>
+                                <Bar maxBarSize={60} dataKey="value">
+                                    {barChartData?.map((entry) => (
+                                        <Cell key={entry.key} fill={entry.color} />
+                                    ))}
+                                    <LabelList dataKey="value" position="top" />
+                                </Bar>
+                                <XAxis
+                                    dataKey="name"
+                                    angle={60}
+                                    textAnchor="start"
+                                    height={140}
+                                />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </ExpandableContainer>
         </TabPanel>

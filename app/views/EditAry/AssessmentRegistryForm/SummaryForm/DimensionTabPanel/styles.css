@@ -5,8 +5,11 @@
     overflow: auto;
 
     .summary-content {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+        grid-template-rows: auto auto;
         gap: var(--dui-spacing-large);
+        padding: var(--dui-spacing-medium);
 
         .left {
             display: flex;
@@ -14,11 +17,25 @@
             flex-shrink: 0;
             width: 30rem;
             font-size: var(--dui-font-size-large);
-            gap: var(--dui-spacing-small);
+            gap: var(--dui-spacing-extra-large);
         }
 
-        .right {
-            flex-grow: 1;
+        .chart {
+            display: grid;
+            gap: var(--dui-spacing-large);
+
+            .stackchart {
+                overflow: hidden;
+
+                .tooltip {
+                    font-size: var(--dui-font-size-large);
+                }
+            }
+
+            .barchart {
+                height: 400px;
+                overflow: hidden;
+            }
         }
     }
 }

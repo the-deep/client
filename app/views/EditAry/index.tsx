@@ -274,6 +274,7 @@ function EditAry(props: Props) {
         error,
         setError,
         validate,
+        pristine,
         setPristine,
     } = useForm(schema, initialValue);
 
@@ -683,7 +684,8 @@ function EditAry(props: Props) {
                             name="save"
                             type="submit"
                             onClick={handleSubmit}
-                            disabled={createAssessmentRegistryPending
+                            disabled={pristine
+                                || createAssessmentRegistryPending
                                 || assessmentRegistryDataLoading
                                 || updateAssessmentRegistryPending}
                         >
