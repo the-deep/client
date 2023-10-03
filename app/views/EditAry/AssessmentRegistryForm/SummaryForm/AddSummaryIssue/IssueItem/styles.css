@@ -3,7 +3,14 @@
     gap: var(--dui-spacing-large);
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
+    .content {
+        display: grid;
+        gap: var(--dui-spacing-large);
+    }
+
     .header {
+        background-color: transparent;
+
         .heading-container {
             align-self: center;
 

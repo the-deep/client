@@ -5,11 +5,14 @@ import React, {
 
 import {
     ControlledExpandableContainer,
+    Footer,
     ListView,
+    Pager,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import { gql, useQuery } from '@apollo/client';
-import { isNotDefined } from '@togglecorp/fujs';
+import { isDefined, isNotDefined } from '@togglecorp/fujs';
+import { removeNull } from '@togglecorp/toggle-form';
 import { IoAddOutline } from 'react-icons/io5';
 
 import {
@@ -77,18 +80,22 @@ function IssueItem(props: Props) {
 
     const [selected, setSelected] = useState<string | undefined>();
     const [addIssue, setAddIssue] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(5);
 
     const variables = useMemo(
         (): GetSummarySubIssuesQueryVariables => ({
             subPillar: subPillar as AssessmentRegistrySummarySubPillarTypeEnum,
             subDimension: subDimension as AssessmentRegistrySummarySubDimensionTypeEnum,
             parent: selected,
-            page: 1,
-            pageSize: 10,
+            page,
+            pageSize,
         }), [
             subPillar,
             subDimension,
             selected,
+            page,
+            pageSize,
         ],
     );
 
@@ -105,48 +112,24 @@ function IssueItem(props: Props) {
     );
 
     const handleAddNewIssue = useCallback(
-        (n: string) => {
+        (issueKey: string) => {
             setAddIssue(true);
-            setSelected(n);
+            setSelected(issueKey);
         }, [],
     );
 
-    const headerActions = useMemo(() => (
-        <div className={styles.actions}>
-            {/* TODO:
-                <QuickActionButton
-                name={name}
-                onClick={handleEditIssue}
-                disabled={loading}
-            >
-                <IoPencilOutline />
-            </QuickActionButton> */}
-            <QuickActionButton
-                name={name}
-                onClick={handleAddNewIssue}
-                disabled={loading}
-            >
-                <IoAddOutline />
-            </QuickActionButton>
-        </div>
-    ), [
-        name,
-        loading,
-        handleAddNewIssue,
-    ]);
-
     const handleOnExpansionChange = useCallback(
-        (_: boolean, n: string) => {
-            setSelected((oldValue) => (oldValue === n ? undefined : n));
+        (_: boolean, issueKey: string) => {
+            setSelected((oldValue) => (oldValue === issueKey ? undefined : issueKey));
         }, [],
     );
 
     const issueParams = useCallback(
         (
-            n: string,
+            issueKey: string,
             issuesData: NonNullable<NonNullable<GetSummarySubIssuesQuery['assessmentRegSummaryIssues']>['results']>[number],
         ) => ({
-            name: n,
+            name: issueKey,
             data: issuesData,
             subPillar,
             subDimension,
@@ -156,16 +139,30 @@ function IssueItem(props: Props) {
             subDimension,
         ],
     );
+
+    const handleModalClose = useCallback(() => setAddIssue(false), []);
+
+    const response = removeNull(issuesResponse?.assessmentRegSummaryIssues);
+
     return (
         <ControlledExpandableContainer
             className={styles.issueItem}
+            contentClassName={styles.content}
             headerClassName={styles.header}
             headingContainerClassName={styles.headingContainer}
             headerActionsContainerClassName={styles.headerActions}
             headingClassName={styles.heading}
             heading={data.label}
             headingSize="extraSmall"
-            headerActions={headerActions}
+            headerActions={(
+                <QuickActionButton
+                    name={name}
+                    onClick={handleAddNewIssue}
+                    disabled={loading}
+                >
+                    <IoAddOutline />
+                </QuickActionButton>
+            )}
             expansionTriggerArea="arrow"
             name={data.id}
             expanded={!!selected}
@@ -174,7 +171,7 @@ function IssueItem(props: Props) {
         >
             <ListView
                 className={styles.subIssue}
-                data={issuesResponse?.assessmentRegSummaryIssues?.results}
+                data={response?.results}
                 keySelector={keySelector}
                 renderer={IssueItem}
                 rendererParams={issueParams}
@@ -183,14 +180,30 @@ function IssueItem(props: Props) {
                 pending={false}
                 messageShown
                 emptyIcon
+                emptyMessage="No issue found!"
             />
             {addIssue && (
                 <AddSummaryIssueModal
                     type="pillar"
                     subPillar={data.subPillar}
                     parentId={selected}
-                    onClose={() => setAddIssue(false)}
+                    onClose={handleModalClose}
                     refetch={refetch}
+                />
+            )}
+            {isDefined(response?.totalCount) && response?.totalCount > 0 && (
+                <Footer
+                    actions={(
+                        <Pager
+                            activePage={page}
+                            itemsCount={(response?.totalCount) ?? 0}
+                            maxItemsPerPage={pageSize}
+                            onActivePageChange={setPage}
+                            onItemsPerPageChange={setPageSize}
+                            itemsPerPageControlHidden
+                            infoVisibility="hidden"
+                        />
+                    )}
                 />
             )}
         </ControlledExpandableContainer>
