@@ -10,7 +10,8 @@ import {
     Pager,
 } from '@the-deep/deep-ui';
 import { gql, useQuery } from '@apollo/client';
-import { isNotDefined } from '@togglecorp/fujs';
+import { isDefined, isNotDefined } from '@togglecorp/fujs';
+import { removeNull } from '@togglecorp/toggle-form';
 
 import {
     AssessmentRegistrySummarySubDimensionTypeEnum,
@@ -114,6 +115,9 @@ function AddSummaryIssue(props: Props) {
             subDimension,
         ],
     );
+
+    const response = removeNull(data?.assessmentRegSummaryIssues);
+
     return (
         <>
             <ListView
@@ -129,18 +133,21 @@ function AddSummaryIssue(props: Props) {
                 messageIconShown
             />
 
-            <Footer
-                actions={(
-                    <Pager
-                        activePage={page}
-                        itemsCount={(data?.assessmentRegSummaryIssues?.totalCount) ?? 0}
-                        maxItemsPerPage={pageSize}
-                        onActivePageChange={setPage}
-                        onItemsPerPageChange={setPageSize}
-                        itemsPerPageControlHidden
-                    />
-                )}
-            />
+            {isDefined(response?.totalCount) && response?.totalCount > 0 && (
+                <Footer
+                    actions={(
+                        <Pager
+                            activePage={page}
+                            itemsCount={(response?.totalCount) ?? 0}
+                            maxItemsPerPage={pageSize}
+                            onActivePageChange={setPage}
+                            onItemsPerPageChange={setPageSize}
+                            itemsPerPageControlHidden
+                            infoVisibility="hidden"
+                        />
+                    )}
+                />
+            )}
         </>
     );
 }
