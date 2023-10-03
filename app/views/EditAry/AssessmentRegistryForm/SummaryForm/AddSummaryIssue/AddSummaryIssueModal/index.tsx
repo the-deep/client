@@ -9,7 +9,6 @@ import { gql, useMutation } from '@apollo/client';
 import { _cs } from '@togglecorp/fujs';
 import { removeNull } from '@togglecorp/toggle-form';
 
-import { ObjectError } from '#base/utils/errorTransform';
 import {
     AssessmentRegistrySummaryIssueCreateInputType,
     AssessmentRegistrySummarySubDimensionTypeEnum,
@@ -76,7 +75,7 @@ function AddSummaryIssueModal(props: Props) {
     >(CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE, {
         onCompleted: (response) => {
             const result = removeNull(response.createAssessmentRegSummaryIssue);
-            const { ok, errors } = result;
+            const { ok } = result;
             if (ok) {
                 alert.show(
                     'Successfully added new issue.',
@@ -86,15 +85,6 @@ function AddSummaryIssueModal(props: Props) {
                 );
                 refetch();
                 onClose();
-            }
-            if (errors) {
-                const err = errors as ObjectError[];
-                alert.show(
-                    err?.[0]?.messages,
-                    {
-                        variant: 'error',
-                    },
-                );
             }
         },
         onError: () => {
@@ -156,7 +146,7 @@ function AddSummaryIssueModal(props: Props) {
                 actions={(
                     <>
                         <Button
-                            name={parentId}
+                            name={undefined}
                             onClick={onClose}
                             variant="secondary"
                         >
