@@ -9,18 +9,19 @@ import {
     ListView,
     Pager,
     QuickActionButton,
+    TextOutput,
 } from '@the-deep/deep-ui';
 import { gql, useQuery } from '@apollo/client';
-import { isDefined, isNotDefined } from '@togglecorp/fujs';
+import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
 import { removeNull } from '@togglecorp/toggle-form';
 import { IoAddOutline } from 'react-icons/io5';
 
 import {
     AssessmentRegistrySummarySubDimensionTypeEnum,
     AssessmentRegistrySummarySubPillarTypeEnum,
+    GetSummaryIssueQuery,
     GetSummarySubIssuesQuery,
     GetSummarySubIssuesQueryVariables,
-    SummaryIssueSearchQuery,
 } from '#generated/types';
 
 import AddSummaryIssueModal from '../AddSummaryIssueModal';
@@ -48,9 +49,13 @@ const GET_SUMMARY_SUB_ISSUES = gql`
             results {
                 id
                 label
+                childCount
+                level
                 parent {
                     id
                     label
+                    childCount
+                    level
                     subPillar
                     subDimension
                 }
@@ -61,9 +66,10 @@ const GET_SUMMARY_SUB_ISSUES = gql`
         }
     }
 `;
+
 export interface Props {
     name: string;
-    data: NonNullable<NonNullable<SummaryIssueSearchQuery['assessmentRegSummaryIssues']>['results']>[number];
+    data: NonNullable<NonNullable<GetSummaryIssueQuery['assessmentRegSummaryIssues']>['results']>[number];
     subPillar?: AssessmentRegistrySummarySubPillarTypeEnum;
     subDimension?: AssessmentRegistrySummarySubDimensionTypeEnum;
 }
@@ -111,6 +117,8 @@ function IssueItem(props: Props) {
         },
     );
 
+    const response = removeNull(issuesResponse?.assessmentRegSummaryIssues);
+
     const handleAddNewIssue = useCallback(
         (issueKey: string) => {
             setAddIssue(true);
@@ -119,9 +127,16 @@ function IssueItem(props: Props) {
     );
 
     const handleOnExpansionChange = useCallback(
-        (_: boolean, issueKey: string) => {
-            setSelected((oldValue) => (oldValue === issueKey ? undefined : issueKey));
-        }, [],
+        (val: boolean, issueKey: string) => {
+            if (val) {
+                setSelected((oldValue) => (oldValue === issueKey ? undefined : issueKey));
+            }
+
+            if (!val) {
+                setSelected(undefined);
+            }
+        },
+        [],
     );
 
     const issueParams = useCallback(
@@ -142,32 +157,43 @@ function IssueItem(props: Props) {
 
     const handleModalClose = useCallback(() => setAddIssue(false), []);
 
-    const response = removeNull(issuesResponse?.assessmentRegSummaryIssues);
-
     return (
         <ControlledExpandableContainer
-            className={styles.issueItem}
+            className={_cs(
+                styles.issueItem,
+                data.level === 1 && styles.issueItemBorder,
+            )}
             contentClassName={styles.content}
             headerClassName={styles.header}
             headingContainerClassName={styles.headingContainer}
+            footerClassName={_cs(data.level === 3 && styles.footer)}
             headerActionsContainerClassName={styles.headerActions}
-            headingClassName={styles.heading}
-            heading={data.label}
-            headingSize="extraSmall"
-            headerActions={(
-                <QuickActionButton
-                    name={name}
-                    onClick={handleAddNewIssue}
-                    disabled={loading}
-                >
-                    <IoAddOutline />
-                </QuickActionButton>
+            headingSectionClassName={styles.headingSection}
+            headingClassName={_cs(
+                data.level === 1 && styles.headingOne,
+                data.level === 2 && styles.headingTwo,
+                data.level === 3 && styles.headingThree,
             )}
-            expansionTriggerArea="arrow"
+            headerActions={(
+                <>
+                    <TextOutput label="sub issues" value={data.childCount} />
+                    <QuickActionButton
+                        name={name}
+                        onClick={handleAddNewIssue}
+                        disabled={loading || data.level === 3}
+                    >
+                        <IoAddOutline />
+                    </QuickActionButton>
+                </>
+            )}
+            heading={data.label}
+            headerIcons={data.level === 3 && <div className={styles.dot} />}
             name={data.id}
-            expanded={!!selected}
+            expanded={selected === data.id}
             onExpansionChange={handleOnExpansionChange}
+            expansionTriggerArea="arrow"
             withoutBorder
+            disabled={data.level === 3 || data.childCount === 0}
         >
             <ListView
                 className={styles.subIssue}
