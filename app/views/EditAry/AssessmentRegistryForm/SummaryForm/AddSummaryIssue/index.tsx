@@ -45,9 +45,13 @@ const GET_SUMMARY_ISSUE = gql`
             results {
                 id
                 label
+                childCount
+                level
                 parent {
                     id
                     label
+                    childCount
+                    level
                     subPillar
                     subDimension
                 }
@@ -100,6 +104,7 @@ function AddSummaryIssue(props: Props) {
             variables,
         },
     );
+
     const issueParams = useCallback(
         (
             name: string,
