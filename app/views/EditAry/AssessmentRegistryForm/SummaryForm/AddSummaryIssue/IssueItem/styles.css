@@ -1,9 +1,6 @@
 .issue-item {
-    display: grid;
-
     .content {
         display: grid;
-        border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
     }
 
     .header {
@@ -35,6 +32,12 @@
             .actions {
                 display: flex;
             }
+
+            .child-heading {
+                color: var(--dui-color-grey1);
+                font-size: var(--dui-font-size-small);
+                font-weight: var(--dui-font-weight-normal);
+            }
         }
 
         .heading-section {
@@ -57,4 +60,3 @@
 .issue-item-border {
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 }
-

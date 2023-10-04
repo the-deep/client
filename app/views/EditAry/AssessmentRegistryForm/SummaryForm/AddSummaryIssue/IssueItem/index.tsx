@@ -9,7 +9,7 @@ import {
     ListView,
     Pager,
     QuickActionButton,
-    TextOutput,
+    useBooleanState,
 } from '@the-deep/deep-ui';
 import { gql, useQuery } from '@apollo/client';
 import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
@@ -67,14 +67,16 @@ const GET_SUMMARY_SUB_ISSUES = gql`
     }
 `;
 
+type SummaryIssueType = NonNullable<NonNullable<GetSummaryIssueQuery['assessmentRegSummaryIssues']>['results']>[number];
 export interface Props {
     name: string;
-    data: NonNullable<NonNullable<GetSummaryIssueQuery['assessmentRegSummaryIssues']>['results']>[number];
+    data: SummaryIssueType;
     subPillar?: AssessmentRegistrySummarySubPillarTypeEnum;
     subDimension?: AssessmentRegistrySummarySubDimensionTypeEnum;
+    type: 'pillar' | 'dimension';
 }
 
-const keySelector = (d: NonNullable<NonNullable<GetSummarySubIssuesQuery['assessmentRegSummaryIssues']>['results']>[number]) => d.id;
+const keySelector = (d: SummaryIssueType) => d.id;
 
 function IssueItem(props: Props) {
     const {
@@ -82,17 +84,23 @@ function IssueItem(props: Props) {
         data,
         subPillar,
         subDimension,
+        type,
     } = props;
 
+    const [
+        showAddIssue,
+        setShowAddIssueTrue,
+        setShowAddIssueFalse,
+    ] = useBooleanState(false);
+
     const [selected, setSelected] = useState<string | undefined>();
-    const [addIssue, setAddIssue] = useState<boolean>(false);
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
 
     const variables = useMemo(
         (): GetSummarySubIssuesQueryVariables => ({
-            subPillar: subPillar as AssessmentRegistrySummarySubPillarTypeEnum,
-            subDimension: subDimension as AssessmentRegistrySummarySubDimensionTypeEnum,
+            subPillar,
+            subDimension,
             parent: selected,
             page,
             pageSize,
@@ -117,24 +125,21 @@ function IssueItem(props: Props) {
         },
     );
 
-    const response = removeNull(issuesResponse?.assessmentRegSummaryIssues);
+    const response = useMemo(
+        () => removeNull(issuesResponse?.assessmentRegSummaryIssues),
+        [issuesResponse?.assessmentRegSummaryIssues],
+    );
 
     const handleAddNewIssue = useCallback(
         (issueKey: string) => {
-            setAddIssue(true);
+            setShowAddIssueTrue();
             setSelected(issueKey);
-        }, [],
+        }, [setShowAddIssueTrue],
     );
 
     const handleOnExpansionChange = useCallback(
-        (val: boolean, issueKey: string) => {
-            if (val) {
-                setSelected((oldValue) => (oldValue === issueKey ? undefined : issueKey));
-            }
-
-            if (!val) {
-                setSelected(undefined);
-            }
+        (_: boolean, issueKey: string) => {
+            setSelected((oldValue) => (oldValue === issueKey ? undefined : issueKey));
         },
         [],
     );
@@ -142,26 +147,27 @@ function IssueItem(props: Props) {
     const issueParams = useCallback(
         (
             issueKey: string,
-            issuesData: NonNullable<NonNullable<GetSummarySubIssuesQuery['assessmentRegSummaryIssues']>['results']>[number],
+            issuesData: SummaryIssueType,
         ) => ({
             name: issueKey,
             data: issuesData,
             subPillar,
             subDimension,
+            type,
         }),
         [
             subPillar,
             subDimension,
+            type,
         ],
     );
-
-    const handleModalClose = useCallback(() => setAddIssue(false), []);
 
     return (
         <ControlledExpandableContainer
             className={_cs(
                 styles.issueItem,
                 data.level === 1 && styles.issueItemBorder,
+                data.level === 3 && styles.issueContentSeparator,
             )}
             contentClassName={styles.content}
             headerClassName={styles.header}
@@ -176,7 +182,9 @@ function IssueItem(props: Props) {
             )}
             headerActions={(
                 <>
-                    <TextOutput label="sub issues" value={data.childCount} />
+                    <p className={styles.childHeading}>
+                        {`(${data.childCount} sub issues)`}
+                    </p>
                     <QuickActionButton
                         name={name}
                         onClick={handleAddNewIssue}
@@ -193,6 +201,7 @@ function IssueItem(props: Props) {
             onExpansionChange={handleOnExpansionChange}
             expansionTriggerArea="arrow"
             withoutBorder
+            spacing="compact"
             disabled={data.level === 3 || data.childCount === 0}
         >
             <ListView
@@ -208,12 +217,13 @@ function IssueItem(props: Props) {
                 emptyIcon
                 emptyMessage="No issue found!"
             />
-            {addIssue && (
+            {showAddIssue && (
                 <AddSummaryIssueModal
-                    type="pillar"
+                    type={type}
                     subPillar={data.subPillar}
+                    subDimension={data.subDimension}
                     parentId={selected}
-                    onClose={handleModalClose}
+                    onClose={setShowAddIssueFalse}
                     refetch={refetch}
                 />
             )}

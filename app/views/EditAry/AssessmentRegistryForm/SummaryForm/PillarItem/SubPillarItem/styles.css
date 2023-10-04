@@ -15,3 +15,9 @@
         gap: var(--dui-spacing-extra-large);
     }
 }
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-small);
+}

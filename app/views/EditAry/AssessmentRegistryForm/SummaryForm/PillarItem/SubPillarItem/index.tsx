@@ -2,14 +2,23 @@ import React, { useMemo, useCallback } from 'react';
 import {
     listToMap,
     isDefined,
+    noOp,
 } from '@togglecorp/fujs';
-import { Header, Modal, QuickActionButton, useModalState } from '@the-deep/deep-ui';
+import {
+    Button,
+    Header,
+    Modal,
+    QuickActionButton,
+    useBooleanState,
+    useModalState,
+} from '@the-deep/deep-ui';
 import {
     IoAddCircleOutline,
     IoEllipseSharp,
 } from 'react-icons/io5';
 import {
-    EntriesAsList, Error,
+    EntriesAsList,
+    Error,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -21,6 +30,7 @@ import {
 import SelectIssueInput from './SelectIssueInput';
 import { PillarType } from '../..';
 import AddSummaryIssue from '../../AddSummaryIssue';
+import AddSummaryIssueModal from '../../AddSummaryIssue/AddSummaryIssueModal';
 
 import styles from './styles.css';
 
@@ -69,6 +79,12 @@ function SubPillarItem(props: Props) {
         closeModal,
     ] = useModalState(false);
 
+    const [
+        showAddIssue,
+        setShowAddIssueTrue,
+        setShowAddIssueFalse,
+    ] = useBooleanState(false);
+
     const filledValues = useMemo(() => {
         const valueMap = listToMap(value, (item) => item.clientId, () => true);
         return Object.keys(issueItemToClientIdMap)
@@ -106,6 +122,14 @@ function SubPillarItem(props: Props) {
             return mainIndex;
         }, [value, issueItemToClientIdMap],
     );
+
+    const handleModalClose = useCallback(() => {
+        setShowAddIssueFalse();
+        closeModal();
+    }, [
+        closeModal,
+        setShowAddIssueFalse,
+    ]);
 
     return (
         <div className={styles.subPillarItem}>
@@ -234,9 +258,27 @@ function SubPillarItem(props: Props) {
                     heading={`Issue Editor - ${data.subPillarDisplay}`}
                     size="medium"
                     onCloseButtonClick={closeModal}
-                    freeHeight
+                    bodyClassName={styles.modalBody}
+                    headerActions={(
+                        <Button
+                            name={undefined}
+                            variant="nlp-general"
+                            spacing="compact"
+                            onClick={setShowAddIssueTrue}
+                        >
+                            Add a Subpillar
+                        </Button>
+                    )}
                 >
-                    <AddSummaryIssue subPillar={data.subPillar} />
+                    <AddSummaryIssue type="pillar" subPillar={data.subPillar} />
+                    {showAddIssue && (
+                        <AddSummaryIssueModal
+                            type="pillar"
+                            subPillar={data.subPillar}
+                            onClose={handleModalClose}
+                            refetch={noOp}
+                        />
+                    )}
                 </Modal>
             )}
         </div>
