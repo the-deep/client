@@ -63,14 +63,17 @@ const GET_SUMMARY_ISSUE = gql`
     }
 `;
 
+type SummaryIssueType = NonNullable<NonNullable<GetSummaryIssueQuery['assessmentRegSummaryIssues']>['results']>[number];
 interface Props {
+    type: 'pillar' | 'dimension';
     subPillar?: AssessmentRegistrySummarySubPillarTypeEnum;
     subDimension?: AssessmentRegistrySummarySubDimensionTypeEnum;
 }
-const keySelector = (d: NonNullable<NonNullable<GetSummaryIssueQuery['assessmentRegSummaryIssues']>['results']>[number]) => d.id;
+const keySelector = (d: SummaryIssueType) => d.id;
 
 function AddSummaryIssue(props: Props) {
     const {
+        type,
         subPillar,
         subDimension,
     } = props;
@@ -80,8 +83,8 @@ function AddSummaryIssue(props: Props) {
 
     const variables = useMemo(
         (): GetSummaryIssueQueryVariables => ({
-            subPillar: subPillar as AssessmentRegistrySummarySubPillarTypeEnum,
-            subDimension: subDimension as AssessmentRegistrySummarySubDimensionTypeEnum,
+            subPillar,
+            subDimension,
             isParent: true,
             page,
             pageSize,
@@ -108,20 +111,25 @@ function AddSummaryIssue(props: Props) {
     const issueParams = useCallback(
         (
             name: string,
-            issuesData: NonNullable<NonNullable<GetSummaryIssueQuery['assessmentRegSummaryIssues']>['results']>[number],
+            issuesData: SummaryIssueType,
         ): IssueProps => ({
             name,
             data: issuesData,
             subPillar,
             subDimension,
+            type,
         }),
         [
             subPillar,
             subDimension,
+            type,
         ],
     );
 
-    const response = removeNull(data?.assessmentRegSummaryIssues);
+    const response = useMemo(
+        () => removeNull(data?.assessmentRegSummaryIssues),
+        [data?.assessmentRegSummaryIssues],
+    );
 
     return (
         <>
@@ -137,7 +145,6 @@ function AddSummaryIssue(props: Props) {
                 messageShown
                 messageIconShown
             />
-
             {isDefined(response?.totalCount) && response?.totalCount > 0 && (
                 <Footer
                     actions={(

@@ -1,14 +1,25 @@
 import React, { useCallback, useMemo } from 'react';
-import { EntriesAsList, Error } from '@togglecorp/toggle-form';
 import {
     listToMap,
     isDefined,
+    noOp,
 } from '@togglecorp/fujs';
 import {
     IoEllipseSharp,
     IoAddCircleOutline,
 } from 'react-icons/io5';
-import { Header, Modal, QuickActionButton, useModalState } from '@the-deep/deep-ui';
+import {
+    Button,
+    Header,
+    Modal,
+    QuickActionButton,
+    useBooleanState,
+    useModalState,
+} from '@the-deep/deep-ui';
+import {
+    EntriesAsList,
+    Error,
+} from '@togglecorp/toggle-form';
 
 import { AssessmentRegistrySectorTypeEnum } from '#generated/types';
 import {
@@ -20,6 +31,7 @@ import {
 import SelectIssueInput from './SelectIssueInput';
 import { DimensionType } from '../..';
 import AddSummaryIssue from '../../AddSummaryIssue';
+import AddSummaryIssueModal from '../../AddSummaryIssue/AddSummaryIssueModal';
 
 import styles from './styles.css';
 
@@ -74,6 +86,12 @@ function SubDimensionItem(props: Props) {
         closeModal,
     ] = useModalState(false);
 
+    const [
+        showAddIssue,
+        setShowAddIssueTrue,
+        setShowAddIssueFalse,
+    ] = useBooleanState(false);
+
     const filledValues = useMemo(() => {
         const valueMap = listToMap(value, (item) => item.clientId, () => true);
         return Object.keys(dimensionIssueToClientIdMap)
@@ -112,6 +130,14 @@ function SubDimensionItem(props: Props) {
             return mainIndex;
         }, [value, dimensionIssueToClientIdMap],
     );
+
+    const handleModalClose = useCallback(() => {
+        setShowAddIssueFalse();
+        closeModal();
+    }, [
+        closeModal,
+        setShowAddIssueFalse,
+    ]);
 
     return (
         <div className={styles.subDimensionItem}>
@@ -248,9 +274,26 @@ function SubDimensionItem(props: Props) {
                     heading={`Issue Editor - ${data.subDimensionDisplay}`}
                     size="medium"
                     onCloseButtonClick={closeModal}
-                    freeHeight
+                    headerActions={(
+                        <Button
+                            name={undefined}
+                            variant="nlp-general"
+                            spacing="compact"
+                            onClick={setShowAddIssueTrue}
+                        >
+                            ADD A SUBDIMENSION
+                        </Button>
+                    )}
                 >
-                    <AddSummaryIssue subDimension={data.subDimension} />
+                    <AddSummaryIssue type="dimension" subDimension={data.subDimension} />
+                    {showAddIssue && (
+                        <AddSummaryIssueModal
+                            type="dimension"
+                            subDimension={data.subDimension}
+                            onClose={handleModalClose}
+                            refetch={noOp}
+                        />
+                    )}
                 </Modal>
             )}
         </div>
