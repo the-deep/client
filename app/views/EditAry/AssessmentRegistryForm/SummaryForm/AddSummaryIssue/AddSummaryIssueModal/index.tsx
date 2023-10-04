@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import {
     Button,
+    Container,
     TextInput,
     Footer,
     useAlert,
@@ -29,11 +30,15 @@ const CREATE_ASSESSMENT_REGISTRY_SUMMARY_ISSUE = gql`
                 label
                 subPillar
                 subDimension
+                childCount
+                level
                 parent {
                     id
                     label
                     subPillar
                     subDimension
+                    childCount
+                    level
                 }
             }
         }
@@ -50,7 +55,7 @@ type Props = {
     subPillar?: AssessmentRegistrySummarySubPillarTypeEnum | null;
 } | {
     type: 'dimension';
-    subDimension: AssessmentRegistrySummarySubDimensionTypeEnum;
+    subDimension?: AssessmentRegistrySummarySubDimensionTypeEnum | null;
 })
 
 function AddSummaryIssueModal(props: Props) {
@@ -134,7 +139,27 @@ function AddSummaryIssueModal(props: Props) {
     );
 
     return (
-        <div className={_cs(className, styles.issueModal)}>
+        <Container
+            className={_cs(className, styles.addIssueBox)}
+            footerActions={(
+                <>
+                    <Button
+                        name={undefined}
+                        onClick={onClose}
+                        variant="secondary"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        name="save"
+                        disabled={loading}
+                        onClick={handleSave}
+                    >
+                        save
+                    </Button>
+                </>
+            )}
+        >
             <TextInput
                 placeholder="label"
                 label="label"
@@ -142,27 +167,7 @@ function AddSummaryIssueModal(props: Props) {
                 value={label}
                 onChange={setLabel}
             />
-            <Footer
-                actions={(
-                    <>
-                        <Button
-                            name={undefined}
-                            onClick={onClose}
-                            variant="secondary"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            name="save"
-                            disabled={loading}
-                            onClick={handleSave}
-                        >
-                            save
-                        </Button>
-                    </>
-                )}
-            />
-        </div>
+        </Container>
     );
 }
 
