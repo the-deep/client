@@ -130,7 +130,7 @@ function ScoreForm(props: Props) {
         const analyticalDensityValue = {
             key: 'ANALYTICAL_DENSITY',
             label: 'Analytical density',
-            score: median(sectorWiseDensityValue ?? []) ?? 0,
+            score: Math.round((median(sectorWiseDensityValue ?? []) ?? 0) * 100) / 100,
         };
 
         const scoreToScoreGroupMap = listToMap(
@@ -195,9 +195,10 @@ function ScoreForm(props: Props) {
             {
                 key: 'FINAL_SCORE',
                 label: 'Final Score',
-                score: (sum(
-                    scoreGroupScores.map((item) => item.score),
-                ) + analyticalDensityValue.score) / 5,
+                score: Math.round(((
+                    sum(
+                        scoreGroupScores.map((item) => item.score),
+                    ) + analyticalDensityValue.score) / 5) * 100) / 100,
             },
         ];
     }, [
