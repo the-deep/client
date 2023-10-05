@@ -13,6 +13,7 @@ import {
     QuickActionButton,
     TextArea,
     Heading,
+    PendingAnimation,
 } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
@@ -75,6 +76,7 @@ interface Props {
     error: Error<PartialFormType>;
     disabled?: boolean;
     readOnly?: boolean;
+    loading?: boolean;
 }
 
 type PartialMethodologyAttributesType = PartialFormType['methodologyAttributes'];
@@ -86,11 +88,13 @@ function MethodologyForm(props: Props) {
         error: riskyError,
         disabled,
         readOnly,
+        loading,
     } = props;
 
     const error = getErrorObject(riskyError);
 
     const {
+        loading: optionsLoading,
         data: options,
     } = useQuery<GetAttributesOptionsQuery, GetAttributesOptionsQueryVariables>(
         GET_ATTRIBUTES_OPTIONS,
@@ -122,6 +126,14 @@ function MethodologyForm(props: Props) {
             'methodologyAttributes',
         );
     }, [setFieldValue]);
+
+    if (loading || optionsLoading) {
+        return (
+            <div className={styles.pending}>
+                <PendingAnimation />
+            </div>
+        );
+    }
 
     return (
         <div className={styles.methodologyForm}>

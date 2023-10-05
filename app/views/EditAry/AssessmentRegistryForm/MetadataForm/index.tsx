@@ -4,6 +4,7 @@ import {
     DateInput,
     MultiSelectInput,
     NumberInput,
+    PendingAnimation,
     SelectInput,
 } from '@the-deep/deep-ui';
 import {
@@ -36,6 +37,7 @@ import {
 import { PartialFormType } from '../formSchema';
 import Header from '../Header';
 import StakeholderForm from './StakeholderForm';
+
 import styles from './styles.css';
 
 const GET_METADATA_OPTIONS = gql`
@@ -105,6 +107,7 @@ interface Props {
     regionOptions?: BasicRegion[] | null;
     setStakeholderOptions: React.Dispatch<React.SetStateAction<BasicOrganization[]>>;
     stakeholderOptions: BasicOrganization[];
+    loading?: boolean;
 }
 
 function MetadataForm(props: Props) {
@@ -116,13 +119,14 @@ function MetadataForm(props: Props) {
         setRegionOptions,
         stakeholderOptions,
         setStakeholderOptions,
+        loading,
     } = props;
 
     const error = getErrorObject(riskyError);
 
     const {
         data,
-        loading,
+        loading: optionsLoading,
     } = useQuery<GetOptionsQuery, GetOptionsQueryVariables>(
         GET_METADATA_OPTIONS,
     );
@@ -154,6 +158,14 @@ function MetadataForm(props: Props) {
         >,
         data?.languageOptions?.enumValues as EnumOptions<AssessmentRegistryLanguageTypeEnum>,
     ]), [data]);
+
+    if (loading) {
+        return (
+            <div className={styles.pending}>
+                <PendingAnimation />
+            </div>
+        );
+    }
 
     return (
         <div className={styles.metadataForm}>
@@ -311,7 +323,7 @@ function MetadataForm(props: Props) {
                 className={styles.stakeholderForm}
                 value={value}
                 setFieldValue={setFieldValue}
-                loading={loading}
+                loading={optionsLoading}
                 error={error}
                 stakeholderOptions={stakeholderOptions}
                 setStakeholderOptions={setStakeholderOptions}
