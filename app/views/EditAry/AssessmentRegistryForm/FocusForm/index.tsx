@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { CheckListInput } from '@the-deep/deep-ui';
+import { CheckListInput, PendingAnimation } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
     Error,
@@ -60,6 +60,7 @@ interface Props {
     error: Error<PartialFormType>;
     setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     geoAreaOptions?: GeoArea[] | null;
+    loading?: boolean;
 }
 
 function FocusForm(props: Props) {
@@ -69,6 +70,7 @@ function FocusForm(props: Props) {
         error: riskyError,
         setGeoAreaOptions,
         geoAreaOptions,
+        loading,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -94,6 +96,14 @@ function FocusForm(props: Props) {
             AssessmentRegistryAffectedGroupTypeEnum
         >,
     ]), [data]);
+
+    if (loading || pending) {
+        return (
+            <div className={styles.pending}>
+                <PendingAnimation />
+            </div>
+        );
+    }
 
     return (
         <div className={styles.focus}>

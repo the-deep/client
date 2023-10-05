@@ -3,6 +3,7 @@ import { EntriesAsList, Error, getErrorObject, getErrorString } from '@togglecor
 import {
     TextArea,
     Heading,
+    PendingAnimation,
 } from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
 
@@ -21,6 +22,7 @@ interface Props {
     readOnly?: boolean;
     setUploadedList: React.Dispatch<React.SetStateAction<GalleryFileType[] | undefined>>;
     uploadedList?: GalleryFileType[];
+    loading?: boolean;
 }
 
 function AdditionalDocument(props: Props) {
@@ -32,6 +34,7 @@ function AdditionalDocument(props: Props) {
         readOnly,
         uploadedList,
         setUploadedList,
+        loading,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -93,6 +96,13 @@ function AdditionalDocument(props: Props) {
         ];
     }, [formValue]);
 
+    if (loading) {
+        return (
+            <div className={styles.pending}>
+                <PendingAnimation />
+            </div>
+        );
+    }
     return (
         <div className={styles.additionalDocument}>
             <TextArea

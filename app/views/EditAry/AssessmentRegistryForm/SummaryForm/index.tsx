@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import {
     Header,
     ListView,
+    PendingAnimation,
     Tab,
     TabList,
     Tabs,
@@ -89,6 +90,7 @@ interface Props {
     | undefined
     | null
     >>;
+    loading?: boolean;
 }
 
 function SummaryForm(props: Props) {
@@ -106,6 +108,7 @@ function SummaryForm(props: Props) {
         setDimensionIssueToClientIdMap,
         dimensionIssuesOptions,
         setDimensionIssuesOptions,
+        loading,
     } = props;
 
     const [selectedDimension, setSelectedDimension] = useState<AssessmentRegistrySectorTypeEnum
@@ -116,7 +119,7 @@ function SummaryForm(props: Props) {
     );
 
     const {
-        loading,
+        loading: optionsLoading,
         data,
     } = useQuery<GetAssessmentRegistrySummaryOptionsQuery,
     GetAssessmentRegistrySummaryOptionsQueryVariables>(
@@ -185,6 +188,14 @@ function SummaryForm(props: Props) {
             error,
         ],
     );
+
+    if (loading || optionsLoading) {
+        return (
+            <div className={styles.pending}>
+                <PendingAnimation />
+            </div>
+        );
+    }
 
     return (
         <div className={styles.summaryForm}>

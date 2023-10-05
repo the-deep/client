@@ -11,6 +11,7 @@ import {
     KeyFigure,
     KeyFigureProps,
     ListView,
+    PendingAnimation,
 } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
@@ -86,6 +87,7 @@ interface Props {
     value: PartialFormType,
     setFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
     error: Error<PartialFormType>
+    loading?: boolean;
 }
 
 function ScoreForm(props: Props) {
@@ -94,6 +96,7 @@ function ScoreForm(props: Props) {
         value,
         setFieldValue,
         error: riskyError,
+        loading,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -101,6 +104,7 @@ function ScoreForm(props: Props) {
     const [activeTab, setActiveTab] = useState<TabOptions>('qualityScores');
 
     const {
+        loading: scorePending,
         data: qualityScoreList,
     } = useQuery<GetQualityScoreListQuery, GetQualityScoreListQueryVariables>(
         GET_QUALITY_SCORE_LIST,
@@ -208,6 +212,14 @@ function ScoreForm(props: Props) {
             value: data.score,
         }), [],
     );
+
+    if (loading || scorePending) {
+        return (
+            <div className={styles.pending}>
+                <PendingAnimation />
+            </div>
+        );
+    }
 
     return (
         <div className={styles.scoreForm}>
