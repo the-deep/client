@@ -728,6 +728,7 @@ function EditAry(props: Props) {
                                 setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
                                 dimensionIssuesOptions={dimensionIssuesOptions}
                                 setDimensionIssuesOptions={setDimensionIssuesOptions}
+                                loading={assessmentRegistryDataLoading}
                             />
                         </div>
                     </>

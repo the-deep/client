@@ -108,6 +108,7 @@ interface Props {
     | undefined
     | null
     >>;
+    loading?: boolean;
 }
 
 function AssessmentRegistryForm(props: Props) {
@@ -133,6 +134,7 @@ function AssessmentRegistryForm(props: Props) {
         setDimensionIssueToClientIdMap,
         dimensionIssuesOptions,
         setDimensionIssuesOptions,
+        loading,
     } = props;
 
     const errorInMetadata = useMemo(() => (
@@ -269,6 +271,7 @@ function AssessmentRegistryForm(props: Props) {
                         setRegionOptions={setRegionOptions}
                         stakeholderOptions={stakeholderOptions}
                         setStakeholderOptions={setStakeholderOptions}
+                        loading={loading}
                     />
                 </TabPanel>
                 <TabPanel
@@ -281,6 +284,7 @@ function AssessmentRegistryForm(props: Props) {
                         error={error}
                         uploadedList={uploadedList}
                         setUploadedList={setUploadedList}
+                        loading={loading}
                     />
                 </TabPanel>
                 <TabPanel
@@ -293,6 +297,7 @@ function AssessmentRegistryForm(props: Props) {
                         error={error}
                         geoAreaOptions={geoAreaOptions}
                         setGeoAreaOptions={setGeoAreaOptions}
+                        loading={loading}
                     />
                 </TabPanel>
                 <TabPanel
@@ -303,6 +308,7 @@ function AssessmentRegistryForm(props: Props) {
                         error={error}
                         setFieldValue={setFieldValue}
                         value={value}
+                        loading={loading}
                     />
                 </TabPanel>
                 <TabPanel
@@ -322,6 +328,7 @@ function AssessmentRegistryForm(props: Props) {
                         setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
                         dimensionIssuesOptions={dimensionIssuesOptions}
                         setDimensionIssuesOptions={setDimensionIssuesOptions}
+                        loading={loading}
 
                     />
                 </TabPanel>
@@ -334,6 +341,7 @@ function AssessmentRegistryForm(props: Props) {
                         value={value}
                         setFieldValue={setFieldValue}
                         error={error}
+                        loading={loading}
                     />
                 </TabPanel>
                 <TabPanel

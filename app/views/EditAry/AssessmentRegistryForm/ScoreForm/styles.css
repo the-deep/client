@@ -11,7 +11,7 @@
 
     .list {
         flex-shrink: 0;
-        
+
         .tab {
             &.error {
                 color: var(--dui-color-danger);
@@ -33,4 +33,11 @@
         padding: var(--dui-spacing-extra-large);
         overflow-y: auto;
     }
+}
+
+.pending {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
 }
