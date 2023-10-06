@@ -5,10 +5,3 @@
     gap: var(--dui-spacing-extra-large);
     padding: var(--dui-spacing-large);
 }
-
-.pending {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    justify-content: center;
-}
