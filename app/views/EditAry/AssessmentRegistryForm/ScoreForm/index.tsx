@@ -11,7 +11,7 @@ import {
     KeyFigure,
     KeyFigureProps,
     ListView,
-    PendingAnimation,
+    Message,
 } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
@@ -216,9 +216,7 @@ function ScoreForm(props: Props) {
 
     if (loading || scorePending) {
         return (
-            <div className={styles.pending}>
-                <PendingAnimation />
-            </div>
+            <Message pending={loading || scorePending} />
         );
     }
 

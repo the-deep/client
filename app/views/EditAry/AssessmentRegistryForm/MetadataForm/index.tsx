@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import {
     DateInput,
+    Message,
     MultiSelectInput,
     NumberInput,
-    PendingAnimation,
     SelectInput,
 } from '@the-deep/deep-ui';
 import {
@@ -159,11 +159,9 @@ function MetadataForm(props: Props) {
         data?.languageOptions?.enumValues as EnumOptions<AssessmentRegistryLanguageTypeEnum>,
     ]), [data]);
 
-    if (loading) {
+    if (loading || optionsLoading) {
         return (
-            <div className={styles.pending}>
-                <PendingAnimation />
-            </div>
+            <Message pending={loading || optionsLoading} />
         );
     }
 

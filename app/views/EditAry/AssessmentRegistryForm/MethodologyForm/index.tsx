@@ -13,7 +13,7 @@ import {
     QuickActionButton,
     TextArea,
     Heading,
-    PendingAnimation,
+    Message,
 } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
@@ -129,9 +129,7 @@ function MethodologyForm(props: Props) {
 
     if (loading || optionsLoading) {
         return (
-            <div className={styles.pending}>
-                <PendingAnimation />
-            </div>
+            <Message pending={loading || optionsLoading} />
         );
     }
 

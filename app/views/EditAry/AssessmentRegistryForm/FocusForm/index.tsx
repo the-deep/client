@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { CheckListInput, PendingAnimation } from '@the-deep/deep-ui';
+import { CheckListInput, Message } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
     Error,
@@ -76,7 +76,7 @@ function FocusForm(props: Props) {
     const error = getErrorObject(riskyError);
     const {
         data,
-        loading: pending,
+        loading: optionsLoading,
     } = useQuery<GetFocusOptionsQuery, GetFocusOptionsQueryVariables>(
         GET_FOCUS_OPTIONS,
     );
@@ -97,13 +97,6 @@ function FocusForm(props: Props) {
         >,
     ]), [data]);
 
-    if (loading || pending) {
-        return (
-            <div className={styles.pending}>
-                <PendingAnimation />
-            </div>
-        );
-    }
     const handleSectorSelect = (sectorVal: AssessmentRegistrySectorTypeEnum[]) => {
         const newValue = value.scoreAnalyticalDensity?.filter(
             (sector) => sectorVal?.includes(sector?.sector as AssessmentRegistrySectorTypeEnum),
@@ -111,6 +104,12 @@ function FocusForm(props: Props) {
         setFieldValue(sectorVal, 'sectors');
         setFieldValue(newValue, 'scoreAnalyticalDensity');
     };
+
+    if (loading || optionsLoading) {
+        return (
+            <Message pending={loading || optionsLoading} />
+        );
+    }
 
     return (
         <div className={styles.focus}>
@@ -124,7 +123,7 @@ function FocusForm(props: Props) {
                 value={value.focuses}
                 options={frameworkOptions ?? undefined}
                 onChange={setFieldValue}
-                disabled={pending}
+                disabled={optionsLoading}
                 error={getErrorString(error?.focuses)}
 
             />
@@ -138,7 +137,7 @@ function FocusForm(props: Props) {
                 value={value.sectors}
                 options={sectorOptions ?? undefined}
                 onChange={handleSectorSelect}
-                disabled={pending}
+                disabled={optionsLoading}
                 error={getErrorString(error?.sectors)}
             />
             <CheckListInput
@@ -151,7 +150,7 @@ function FocusForm(props: Props) {
                 value={value.protectionInfoMgmts}
                 options={protectionOptions ?? undefined}
                 onChange={setFieldValue}
-                disabled={pending || !value.sectors?.some((sector) => sector === 'PROTECTION')}
+                disabled={!value.sectors?.some((sector) => sector === 'PROTECTION')}
                 error={getErrorString(error?.protectionInfoMgmts)}
             />
             <CheckListInput
@@ -168,7 +167,7 @@ function FocusForm(props: Props) {
                 value={value.affectedGroups}
                 options={affectedOptions ?? undefined}
                 onChange={setFieldValue}
-                disabled={pending}
+                disabled={optionsLoading}
                 error={getErrorString(error?.affectedGroups)}
             />
             <div className={styles.geoContainer}>
