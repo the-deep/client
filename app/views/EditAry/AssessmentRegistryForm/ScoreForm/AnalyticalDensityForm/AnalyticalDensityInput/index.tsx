@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     CheckListInput,
     ContainerCard,
@@ -54,9 +54,21 @@ function AnalyticalDensityInput(props: Props) {
         sector: sector as AssessmentRegistrySectorTypeEnum,
     });
 
-    const figureProvidedValue = value?.figureProvided?.length ?? 0;
-    const analysisLevelValue = value?.analysisLevelCovered?.length ?? 0;
-    const sectorWiseDensityValue = (figureProvidedValue * analysisLevelValue) / 10;
+    const figureProvidedValue = useMemo(
+        () => value?.figureProvided?.length ?? 0,
+        [value?.figureProvided],
+    );
+    const analysisLevelValue = useMemo(
+        () => value?.analysisLevelCovered?.length ?? 0,
+        [value?.analysisLevelCovered],
+    );
+    const sectorWiseDensityValue = useMemo(
+        () => (figureProvidedValue * analysisLevelValue) / 10,
+        [
+            figureProvidedValue,
+            analysisLevelValue,
+        ],
+    );
 
     const error = getErrorObject(riskyError);
 
