@@ -3,7 +3,7 @@ import { EntriesAsList, Error, getErrorObject, getErrorString } from '@togglecor
 import {
     TextArea,
     Heading,
-    PendingAnimation,
+    Message,
 } from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
 
@@ -98,11 +98,10 @@ function AdditionalDocument(props: Props) {
 
     if (loading) {
         return (
-            <div className={styles.pending}>
-                <PendingAnimation />
-            </div>
+            <Message pending={loading} />
         );
     }
+
     return (
         <div className={styles.additionalDocument}>
             <TextArea

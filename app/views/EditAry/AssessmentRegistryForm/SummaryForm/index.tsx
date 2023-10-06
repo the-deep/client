@@ -2,10 +2,10 @@ import React, { useCallback, useMemo, useState } from 'react';
 import {
     Header,
     ListView,
-    PendingAnimation,
     Tab,
     TabList,
     Tabs,
+    Message,
 } from '@the-deep/deep-ui';
 import { EntriesAsList, Error, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
@@ -191,9 +191,7 @@ function SummaryForm(props: Props) {
 
     if (loading || optionsLoading) {
         return (
-            <div className={styles.pending}>
-                <PendingAnimation />
-            </div>
+            <Message pending={loading || optionsLoading} />
         );
     }
 
