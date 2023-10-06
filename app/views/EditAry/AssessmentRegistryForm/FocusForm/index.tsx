@@ -104,6 +104,13 @@ function FocusForm(props: Props) {
             </div>
         );
     }
+    const handleSectorSelect = (sectorVal: AssessmentRegistrySectorTypeEnum[]) => {
+        const newValue = value.scoreAnalyticalDensity?.filter(
+            (sector) => sectorVal?.includes(sector?.sector as AssessmentRegistrySectorTypeEnum),
+        );
+        setFieldValue(sectorVal, 'sectors');
+        setFieldValue(newValue, 'scoreAnalyticalDensity');
+    };
 
     return (
         <div className={styles.focus}>
@@ -130,7 +137,7 @@ function FocusForm(props: Props) {
                 labelSelector={enumLabelSelector}
                 value={value.sectors}
                 options={sectorOptions ?? undefined}
-                onChange={setFieldValue}
+                onChange={handleSectorSelect}
                 disabled={pending}
                 error={getErrorString(error?.sectors)}
             />

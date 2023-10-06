@@ -97,8 +97,11 @@ function AnalyticalDensityForm(props: Props) {
         riskyError,
     );
 
-    const sectorsValue = value.sectors;
-    const analyticalDensityValue = value.scoreAnalyticalDensity;
+    const sectorsValue = useMemo(() => value.sectors, [value.sectors]);
+    const analyticalDensityValue = useMemo(
+        () => value.scoreAnalyticalDensity,
+        [value.scoreAnalyticalDensity],
+    );
     const analyticalDensityError = getErrorObject(error?.scoreAnalyticalDensity);
 
     const sectorNameMapping = useMemo(() => listToMap(
