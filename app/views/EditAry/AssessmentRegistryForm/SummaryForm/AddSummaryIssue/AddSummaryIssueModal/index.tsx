@@ -3,7 +3,6 @@ import {
     Button,
     Container,
     TextInput,
-    Footer,
     useAlert,
 } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
@@ -52,10 +51,10 @@ type Props = {
     refetch: () => void;
 } & ({
     type: 'pillar';
-    subPillar?: AssessmentRegistrySummarySubPillarTypeEnum | null;
+    subPillar?: AssessmentRegistrySummarySubPillarTypeEnum;
 } | {
     type: 'dimension';
-    subDimension?: AssessmentRegistrySummarySubDimensionTypeEnum | null;
+    subDimension?: AssessmentRegistrySummarySubDimensionTypeEnum;
 })
 
 function AddSummaryIssueModal(props: Props) {
