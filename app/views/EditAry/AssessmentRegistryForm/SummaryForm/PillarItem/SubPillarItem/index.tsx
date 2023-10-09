@@ -266,7 +266,7 @@ function SubPillarItem(props: Props) {
                             spacing="compact"
                             onClick={setShowAddIssueTrue}
                         >
-                            Add a Subpillar
+                            ADD A SUBPILLAR
                         </Button>
                     )}
                 >
