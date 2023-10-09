@@ -82,7 +82,7 @@ interface Props {
     setIssuesOptions: React.Dispatch<React.SetStateAction<SummaryIssueType[] |undefined | null>>;
     issueItemToClientIdMap: Record<string, string>;
     setIssueItemToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
-    dimensionIssueToClienIdMap: Record<string, string>;
+    dimensionIssueToClientIdMap: Record<string, string>;
     setDimensionIssueToClientIdMap: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     dimensionIssuesOptions?: SummaryIssueType[] | null;
     setDimensionIssuesOptions: React.Dispatch<React.SetStateAction<
@@ -104,7 +104,7 @@ function SummaryForm(props: Props) {
         setIssuesOptions,
         issueItemToClientIdMap,
         setIssueItemToClientIdMap,
-        dimensionIssueToClienIdMap,
+        dimensionIssueToClientIdMap,
         setDimensionIssueToClientIdMap,
         dimensionIssuesOptions,
         setDimensionIssuesOptions,
@@ -244,7 +244,7 @@ function SummaryForm(props: Props) {
                                 setFieldValue={setFieldValue}
                                 dimensionIssuesOptions={dimensionIssuesOptions}
                                 setDimensionIssuesOptions={setDimensionIssuesOptions}
-                                dimensionIssueToClientIdMap={dimensionIssueToClienIdMap}
+                                dimensionIssueToClientIdMap={dimensionIssueToClientIdMap}
                                 setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
                                 disabled={disabled}
                                 error={error}

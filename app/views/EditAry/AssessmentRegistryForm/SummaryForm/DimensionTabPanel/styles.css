@@ -24,7 +24,7 @@
             display: grid;
             gap: var(--dui-spacing-large);
 
-            .stackchart {
+            .stack-chart {
                 overflow: hidden;
 
                 .tooltip {
@@ -32,7 +32,7 @@
                 }
             }
 
-            .barchart {
+            .bar-chart {
                 height: 400px;
                 overflow: hidden;
             }

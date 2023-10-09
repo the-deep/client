@@ -120,16 +120,6 @@ function AddIssueModal(props: Props) {
 
     return (
         <div className={_cs(className, styles.issueModal)}>
-            {/* TODO:
-                <SelectInput
-                placeholder="Select parent"
-                name="parent"
-                onChange={setFieldValue}
-                value={value.parent}
-                options={[]}
-                labelSelector={(d) => d}
-                keySelector={(d) => d}
-            /> */}
             <TextInput
                 placeholder="label"
                 label="label"
