@@ -252,7 +252,7 @@ function DimensionTabPanel(props: Props) {
                     />
                 </div>
                 <div className={styles.chart}>
-                    <div className={styles.stackchart}>
+                    <div className={styles.stackChart}>
                         <ResponsiveContainer height={70} width="100%">
                             <BarChart
                                 layout="vertical"
@@ -269,7 +269,7 @@ function DimensionTabPanel(props: Props) {
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
-                    <div className={styles.barchart}>
+                    <div className={styles.barChart}>
                         <ResponsiveContainer width="100%" height="100%" debounce={300}>
                             <BarChart data={barChartData}>
                                 <Bar maxBarSize={60} dataKey="value">

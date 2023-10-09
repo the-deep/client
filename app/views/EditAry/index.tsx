@@ -297,7 +297,7 @@ function EditAry(props: Props) {
         setIssueItemToClientIdMap,
     ] = useState<Record<string, string>>({});
     const [
-        dimensionIssueToClienIdMap,
+        dimensionIssueToClientIdMap,
         setDimensionIssueToClientIdMap,
     ] = useState<Record<string, string>>({});
 
@@ -724,7 +724,7 @@ function EditAry(props: Props) {
                                 setIssuesOptions={setIssuesOptions}
                                 issueItemToClientIdMap={issueItemToClientIdMap}
                                 setIssueItemToClientIdMap={setIssueItemToClientIdMap}
-                                dimensionIssueToClienIdMap={dimensionIssueToClienIdMap}
+                                dimensionIssueToClientIdMap={dimensionIssueToClientIdMap}
                                 setDimensionIssueToClientIdMap={setDimensionIssueToClientIdMap}
                                 dimensionIssuesOptions={dimensionIssuesOptions}
                                 setDimensionIssuesOptions={setDimensionIssuesOptions}
