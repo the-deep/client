@@ -81,12 +81,12 @@ const keySelector = (d: SummaryIssueType) => d.id;
 function IssueItem(props: Props) {
     const {
         name,
-        data,
+        data: newData,
         subPillar,
         subDimension,
         type,
     } = props;
-
+    const data = removeNull(newData);
     const [
         showAddIssue,
         setShowAddIssueTrue,
@@ -204,19 +204,21 @@ function IssueItem(props: Props) {
             spacing="compact"
             disabled={data.level === 3 || data.childCount === 0}
         >
-            <ListView
-                className={styles.subIssue}
-                data={response?.results}
-                keySelector={keySelector}
-                renderer={IssueItem}
-                rendererParams={issueParams}
-                errored={false}
-                filtered={false}
-                pending={false}
-                messageShown
-                emptyIcon
-                emptyMessage="No issue found!"
-            />
+            {data.childCount > 0 && (
+                <ListView
+                    className={styles.subIssue}
+                    data={response?.results}
+                    keySelector={keySelector}
+                    renderer={IssueItem}
+                    rendererParams={issueParams}
+                    errored={false}
+                    filtered={false}
+                    pending={false}
+                    messageShown
+                    emptyIcon
+                    emptyMessage="No issue found!"
+                />
+            )}
             {showAddIssue && (
                 <AddSummaryIssueModal
                     type={type}
