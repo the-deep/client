@@ -1,0 +1,17 @@
+.nagbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--dui-color-complement3);
+    width: 100%;
+    gap: var(--dui-spacing-extra-small);
+
+    .content {
+        display: flex;
+        padding: var(--dui-spacing-extra-small);
+    }
+
+    .link-icon {
+        display: none;
+    }
+}
