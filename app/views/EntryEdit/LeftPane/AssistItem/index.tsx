@@ -469,14 +469,19 @@ function AssistItem(props: Props) {
     ]);
 
     const [draftEntryId, setDraftEntryId] = useState<string | undefined>(undefined);
+    // FIXME: randomId is used to create different query variables after each poll
+    // so that apollo doesn't create unnecessary cache
+    const [randomId, setRandomId] = useState<string>(randomString());
     const [predictionsLoading, setPredictionsLoading] = useState(false);
 
     const queryVariables = useMemo(() => (
         draftEntryId && projectId ? ({
             projectId,
             draftEntryId,
+            randomId,
         }) : undefined
     ), [
+        randomId,
         projectId,
         draftEntryId,
     ]);
@@ -486,8 +491,7 @@ function AssistItem(props: Props) {
     const {
         loading: draftEntryFetchPending,
         data,
-        startPolling,
-        stopPolling,
+        refetch,
         error: fetchErrors,
     } = useQuery<ProjectDraftEntryQuery, ProjectDraftEntryQueryVariables>(
         PROJECT_DRAFT_ENTRY,
@@ -496,6 +500,7 @@ function AssistItem(props: Props) {
             variables: queryVariables,
             onCompleted: (response) => {
                 const result = response?.project?.assistedTagging?.draftEntry;
+                setPredictionsLoading(true);
 
                 // FIXME: Handle errors more gracefully
                 if (!result) {
@@ -548,28 +553,32 @@ function AssistItem(props: Props) {
         },
     );
 
-    const shouldPoll = useMemo(() => {
-        const draftEntry = data?.project?.assistedTagging?.draftEntry;
-        return draftEntry?.predictionStatus === 'PENDING' || draftEntry?.predictionStatus === 'STARTED';
-    }, [data]);
-
     useEffect(
         () => {
-            if (!shouldPoll) {
-                return undefined;
-            }
-            setPredictionsLoading(true);
-            startPolling(2000);
+            const timeout = setTimeout(
+                () => {
+                    const draftEntry = data?.project?.assistedTagging?.draftEntry;
+                    const shouldPoll = draftEntry?.predictionStatus === 'PENDING'
+                    || draftEntry?.predictionStatus === 'STARTED';
+
+                    if (shouldPoll) {
+                        setPredictionsLoading(true);
+                        setRandomId(randomString());
+                        refetch();
+                    } else {
+                        setPredictionsLoading(false);
+                    }
+                },
+                2000,
+            );
 
             return () => {
-                setPredictionsLoading(false);
-                stopPolling();
+                clearTimeout(timeout);
             };
         },
         [
-            shouldPoll,
-            startPolling,
-            stopPolling,
+            data,
+            refetch,
         ],
     );
 
