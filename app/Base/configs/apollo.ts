@@ -66,6 +66,9 @@ const apolloOptions: ApolloClientOptions<NormalizedCacheObject> = {
             AssistedTaggingQueryType: {
                 keyFields: [],
             },
+            AssistedTaggingMutationType: {
+                keyFields: [],
+            },
         },
     }),
     assumeImmutableResults: true,

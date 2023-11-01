@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import {
     isDefined,
+    randomString,
     formatDateToString,
 } from '@togglecorp/fujs';
 import {
@@ -447,18 +448,28 @@ function ExploreDeep(props: Props) {
             variables,
         },
     );
+    // FIXME: randomId is used to create different query variables after each poll
+    // so that apollo doesn't create unnecessary cache
+    const [randomId, setRandomId] = useState<string>(randomString());
+
+    const queryVariables = useMemo(() => (
+        exportIdToDownload ? ({
+            id: exportIdToDownload,
+            randomId,
+        }) : undefined
+    ), [
+        exportIdToDownload,
+        randomId,
+    ]);
 
     const {
         data: genericExportData,
-        startPolling,
-        stopPolling,
+        refetch,
     } = useQuery<GenericExportQuery, GenericExportQueryVariables>(
         GENERIC_EXPORT,
         {
-            skip: !exportIdToDownload,
-            variables: exportIdToDownload ? {
-                id: exportIdToDownload,
-            } : undefined,
+            skip: !queryVariables,
+            variables: queryVariables,
             onCompleted: (response) => {
                 if (!response?.genericExport) {
                     setExportIdToDownload(undefined);
@@ -543,22 +554,26 @@ function ExploreDeep(props: Props) {
 
     useEffect(
         () => {
-            const shouldPoll = exportIdToDownload
-                && genericExportData?.genericExport?.status !== 'SUCCESS'
-                && genericExportData?.genericExport?.status !== 'FAILURE';
+            const timeout = setTimeout(
+                () => {
+                    const shouldPoll = genericExportData?.genericExport?.status === 'PENDING'
+                    || genericExportData?.genericExport?.status === 'STARTED';
 
-            if (shouldPoll) {
-                startPolling(5000);
-            } else {
-                stopPolling();
-            }
+                    if (shouldPoll) {
+                        setRandomId(randomString());
+                        refetch();
+                    }
+                },
+                2000,
+            );
+
+            return () => {
+                clearTimeout(timeout);
+            };
         },
         [
-            removeAlert,
-            exportIdToDownload,
             genericExportData,
-            startPolling,
-            stopPolling,
+            refetch,
         ],
     );
 
