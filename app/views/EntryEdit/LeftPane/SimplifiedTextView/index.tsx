@@ -326,7 +326,6 @@ function SimplifiedTextView(props: Props) {
                 styles.simplifiedTextView,
                 className,
                 disableAddButton && styles.disabled,
-                assistedTaggingEnabled && styles.assistedEnabled,
             )}
         >
             {children}
