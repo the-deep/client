@@ -2,12 +2,10 @@ import React, {
     useCallback,
     useContext,
     useEffect,
-    useMemo,
     useRef,
 } from 'react';
 import {
     _cs,
-    isNotDefined,
 } from '@togglecorp/fujs';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
@@ -50,7 +48,6 @@ import { LOGOUT, USER_NOTIFICATIONS_COUNT } from './queries';
 import styles from './styles.css';
 
 const NOTIFICATION_POLL_INTERVAL = 60000;
-const releaseTime = process.env.REACT_APP_RELEASE_TIME;
 
 interface Props {
     className?: string;
@@ -119,24 +116,6 @@ function Navbar(props: Props) {
         message: 'Are you sure you want to logout?',
     });
 
-    const today = new Date().getTime();
-    const releaseDate = new Date(releaseTime ?? '').getTime();
-
-    const showNagbar = useMemo(() => {
-        if (isNotDefined(releaseTime)) {
-            return false;
-        }
-        const diff = Math.round((today - releaseDate) / (60 * 60 * 24 * 1000));
-        if (diff < 0 || diff > 30) {
-            return false;
-        }
-
-        return true;
-    }, [
-        today,
-        releaseDate,
-    ]);
-
     const handleCloseNotificationClick = useCallback(() => {
         notificationRef?.current?.setShowPopup(false);
     }, []);
@@ -155,9 +134,7 @@ function Navbar(props: Props) {
 
     return (
         <div className={styles.navbarContainer}>
-            {showNagbar && (
-                <Nagbar />
-            )}
+            <Nagbar />
             <nav className={_cs(className, styles.navbar)}>
                 <Link
                     to={route.home.path}
