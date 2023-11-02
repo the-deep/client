@@ -16,13 +16,6 @@
         margin: var(--dui-spacing-medium) 0;
     }
 
-    &.assisted-enabled {
-        >*::selection {
-            background: var(--dui-color-nlp);
-            color: var(--dui-color-text-on-accent);
-        }
-    }
-
     .actions-popup {
         display: flex;
         position: absolute;
