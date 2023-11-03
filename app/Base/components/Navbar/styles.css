@@ -88,6 +88,12 @@
     }
 }
 
+.navbar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
 .popup {
     max-height: unset!important;
 }

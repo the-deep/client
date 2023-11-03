@@ -1,5 +1,12 @@
-import React, { useCallback, useContext, useRef, useEffect } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+} from 'react';
+import {
+    _cs,
+} from '@togglecorp/fujs';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import {
@@ -28,6 +35,7 @@ import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
 import { zendeskSupportUrl, extensionChromeUrl } from '#base/configs/env';
 import localforageInstance from '#base/configs/localforage';
+import Nagbar from '#components/Nagbar';
 import {
     LogoutMutation,
     UserNotificationsCountQuery,
@@ -125,137 +133,140 @@ function Navbar(props: Props) {
     const notificationsCount = notifications?.notifications?.totalCount;
 
     return (
-        <nav className={_cs(className, styles.navbar)}>
-            <Link
-                to={route.home.path}
-                className={styles.appBrand}
-            >
-                <Svg
-                    className={styles.logo}
-                    src={deepLogo}
-                />
-            </Link>
-            <div className={styles.main}>
-                <div className={styles.navLinks}>
-                    <SmartNavLink
-                        exact
-                        route={route.home}
-                        className={styles.link}
-                    />
-                    <SmartNavLink
-                        route={route.tagging}
-                        className={styles.link}
-                    />
-                    <SmartNavLink
-                        route={route.analysis}
-                        className={styles.link}
-                    />
-                </div>
-                <div className={styles.actions}>
-                    <SmartButtonLikeLink
-                        route={route.explore}
-                        variant="tertiary"
-                        icons={<IoCompassOutline />}
-                    >
-                        Explore DEEP
-                    </SmartButtonLikeLink>
-                    <SmartButtonLikeLink
-                        route={route.login}
-                        variant="tertiary"
-                        icons={(
-                            <IoLogInOutline />
-                        )}
-                    >
-                        Login
-                    </SmartButtonLikeLink>
-                    <QuickActionLink
-                        title="DEEP Support"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        to={zendeskSupportUrl}
-                    >
-                        <IoHelp />
-                    </QuickActionLink>
-                    {authenticated && (
-                        <QuickActionDropdownMenu
-                            label={(<IoNotificationsOutline />)}
-                            componentRef={notificationRef}
-                            className={styles.notificationButton}
-                            actions={notificationsCount !== 0 ? notificationsCount : undefined}
-                            popupClassName={styles.popup}
-                            actionsContainerClassName={styles.notificationCount}
-                            disabled={disabled}
-                            persistent
-                        >
-                            <Notifications
-                                closeNotification={handleCloseNotificationClick}
-                            />
-                        </QuickActionDropdownMenu>
-                    )}
-                </div>
-            </div>
-            {authenticated && user && (
-                <DropdownMenu
-                    componentRef={settingsRef}
-                    actions={(
-                        <Avatar
-                            className={styles.avatar}
-                            src={user.displayPictureUrl}
-                            name={user.displayName ?? 'Anon'}
-                        />
-                    )}
-                    label={user.displayName ?? 'Anon'}
-                    className={styles.userDisplay}
-                    variant="transparent"
-                    disabled={disabled}
+        <div className={styles.navbarContainer}>
+            <Nagbar />
+            <nav className={_cs(className, styles.navbar)}>
+                <Link
+                    to={route.home.path}
+                    className={styles.appBrand}
                 >
-                    <DropdownMenuItem
-                        href={route.myProfile.path}
-                    >
-                        User Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        href={route.userGroups.path}
-                    >
-                        User Groups
-                    </DropdownMenuItem>
-                    <Border
-                        inline
-                        width="thin"
+                    <Svg
+                        className={styles.logo}
+                        src={deepLogo}
                     />
-                    <DropdownMenuItem
-                        href={route.termsOfService.path}
-                    >
-                        Terms and Privacy
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        href={extensionChromeUrl}
-                        linkProps={{
-                            // FIXME: we should not need to add "to" here
-                            to: extensionChromeUrl,
-                            target: '_blank',
-                            rel: 'noopener noreferrer',
-                        }}
-                    >
-                        Chrome Extension
-                    </DropdownMenuItem>
-                    <Border
-                        inline
-                        width="thin"
-                    />
-                    <DropdownMenuItem
-                        name={undefined}
-                        onClick={onLogoutClick}
-                        actions={(
-                            <IoLogOutOutline />
+                </Link>
+                <div className={styles.main}>
+                    <div className={styles.navLinks}>
+                        <SmartNavLink
+                            exact
+                            route={route.home}
+                            className={styles.link}
+                        />
+                        <SmartNavLink
+                            route={route.tagging}
+                            className={styles.link}
+                        />
+                        <SmartNavLink
+                            route={route.analysis}
+                            className={styles.link}
+                        />
+                    </div>
+                    <div className={styles.actions}>
+                        <SmartButtonLikeLink
+                            route={route.explore}
+                            variant="tertiary"
+                            icons={<IoCompassOutline />}
+                        >
+                            Explore DEEP
+                        </SmartButtonLikeLink>
+                        <SmartButtonLikeLink
+                            route={route.login}
+                            variant="tertiary"
+                            icons={(
+                                <IoLogInOutline />
+                            )}
+                        >
+                            Login
+                        </SmartButtonLikeLink>
+                        <QuickActionLink
+                            title="DEEP Support"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            to={zendeskSupportUrl}
+                        >
+                            <IoHelp />
+                        </QuickActionLink>
+                        {authenticated && (
+                            <QuickActionDropdownMenu
+                                label={(<IoNotificationsOutline />)}
+                                componentRef={notificationRef}
+                                className={styles.notificationButton}
+                                actions={notificationsCount !== 0 ? notificationsCount : undefined}
+                                popupClassName={styles.popup}
+                                actionsContainerClassName={styles.notificationCount}
+                                disabled={disabled}
+                                persistent
+                            >
+                                <Notifications
+                                    closeNotification={handleCloseNotificationClick}
+                                />
+                            </QuickActionDropdownMenu>
                         )}
+                    </div>
+                </div>
+                {authenticated && user && (
+                    <DropdownMenu
+                        componentRef={settingsRef}
+                        actions={(
+                            <Avatar
+                                className={styles.avatar}
+                                src={user.displayPictureUrl}
+                                name={user.displayName ?? 'Anon'}
+                            />
+                        )}
+                        label={user.displayName ?? 'Anon'}
+                        className={styles.userDisplay}
+                        variant="transparent"
+                        disabled={disabled}
                     >
-                        Logout
-                    </DropdownMenuItem>
-                </DropdownMenu>
-            )}
-            {modal}
-        </nav>
+                        <DropdownMenuItem
+                            href={route.myProfile.path}
+                        >
+                            User Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            href={route.userGroups.path}
+                        >
+                            User Groups
+                        </DropdownMenuItem>
+                        <Border
+                            inline
+                            width="thin"
+                        />
+                        <DropdownMenuItem
+                            href={route.termsOfService.path}
+                        >
+                            Terms and Privacy
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            href={extensionChromeUrl}
+                            linkProps={{
+                                // FIXME: we should not need to add "to" here
+                                to: extensionChromeUrl,
+                                target: '_blank',
+                                rel: 'noopener noreferrer',
+                            }}
+                        >
+                            Chrome Extension
+                        </DropdownMenuItem>
+                        <Border
+                            inline
+                            width="thin"
+                        />
+                        <DropdownMenuItem
+                            name={undefined}
+                            onClick={onLogoutClick}
+                            actions={(
+                                <IoLogOutOutline />
+                            )}
+                        >
+                            Logout
+                        </DropdownMenuItem>
+                    </DropdownMenu>
+                )}
+                {modal}
+            </nav>
+        </div>
     );
 }
 

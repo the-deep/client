@@ -1,0 +1,22 @@
+.nagbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--dui-color-complement2);
+    width: 100%;
+    color: var(--dui-color-brand);
+
+    .content {
+        display: flex;
+        padding: var(--dui-spacing-extra-small);
+    }
+
+    .link {
+        text-decoration: underline;
+        color: var(--dui-color-brand);
+
+        .link-icon {
+            display: none;
+        }
+    }
+}
