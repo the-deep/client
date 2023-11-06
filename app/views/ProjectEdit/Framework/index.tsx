@@ -6,15 +6,15 @@ import {
     IoSearch,
 } from 'react-icons/io5';
 import {
-    Container,
     Button,
-    ListView,
-    RawButton,
-    TextInput,
-    SelectInput,
-    TextOutput,
-    Message,
+    Container,
     Kraken,
+    ListView,
+    Message,
+    RawButton,
+    SelectInput,
+    TextInput,
+    TextOutput,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -41,32 +41,37 @@ import FrameworkDetail from './FrameworkDetail';
 
 import styles from './styles.css';
 
-interface FrameworkMini {
-    id: string;
-    title: string;
-    createdAt: string;
-}
+const PAGE_SIZE = 10;
+type FrameworkType = NonNullable<NonNullable<ProjectAnalysisFrameworksQuery['analysisFrameworks']>['results']>[number];
 
-const frameworkKeySelector = (d: FrameworkMini) => d.id;
+const frameworkKeySelector = (d: FrameworkType) => d.id;
 
-export const PROJECTS_AFS = gql`
+export const PROJECT_FRAMEWORKS = gql`
     query ProjectAnalysisFrameworks(
-        $isCurrentUserMember: Boolean
+        $isCurrentUserMember: Boolean,
         $search: String,
+        $page: Int,
+        $pageSize: Int,
+        $createdBy: [ID!],
     ) {
         analysisFrameworks(
-            search: $search , 
+            search: $search,
             isCurrentUserMember: $isCurrentUserMember
-            ) {
-         results {
-            title
-            id
-            createdAt
-         }
-         totalCount
+            page: $page,
+            pageSize: $pageSize,
+            createdBy: $createdBy,
+        ) {
+            results {
+                title
+                id
+                createdAt
+            }
+            page
+            totalCount
         }
     }
 `;
+
 interface ItemProps {
     itemKey: string;
     title: string;
@@ -167,8 +172,7 @@ function ProjectFramework(props: Props) {
         setSelectedFramework(project?.analysisFramework?.id);
     }, [project?.analysisFramework]);
 
-    const [frameworkList, setFrameworkList] = useState<FrameworkMini[]>([]);
-    const [offset, setOffset] = useState<number>(0);
+    const [frameworkList, setFrameworkList] = useState<FrameworkType[]>([]);
 
     const {
         value,
@@ -176,24 +180,76 @@ function ProjectFramework(props: Props) {
     } = useForm(schema, defaultFormValue);
 
     const delayedValue = useDebouncedValue(value);
-    const analysisFrameworkVariables = useMemo(() => ({
-        isCurrentUserMember: delayedValue.relatedToMe === 'true' ? true : undefined,
-        search: delayedValue.search,
-        offset,
-    }), [delayedValue, offset]);
+    const analysisFrameworkVariables = useMemo(() => (
+        {
+            isCurrentUserMember: delayedValue.relatedToMe === 'true' ? true : undefined,
+            search: delayedValue.search,
+            page: 1,
+            pageSize: PAGE_SIZE,
+        }
+    ), [
+        delayedValue.relatedToMe,
+        delayedValue.search,
+    ]);
+
     const {
         previousData,
-        data: projectAflist = previousData,
+        data: projectFrameworks = previousData,
         loading: frameworksGetPending,
         refetch: retriggerGetFrameworkListRequest,
+        fetchMore,
     } = useQuery<ProjectAnalysisFrameworksQuery, ProjectAnalysisFrameworksQueryVariables>(
-        PROJECTS_AFS,
+        PROJECT_FRAMEWORKS,
         {
             variables: analysisFrameworkVariables,
+            onCompleted: (response) => {
+                setFrameworkList(response?.analysisFrameworks?.results ?? []);
+            },
         },
     );
 
-    const frameworksRendererParams = useCallback((key: string, data: FrameworkMini) => ({
+    const handleShowMoreButtonClick = useCallback(() => {
+        fetchMore({
+            variables: {
+                ...analysisFrameworkVariables,
+                page: (projectFrameworks?.analysisFrameworks?.page ?? 1) + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult.analysisFrameworks) {
+                    return previousResult;
+                }
+
+                const oldFrameworks = previousResult.analysisFrameworks;
+                const newFrameworks = fetchMoreResult?.analysisFrameworks;
+
+                if (!newFrameworks) {
+                    return previousResult;
+                }
+
+                const newFrameworkList = ({
+                    ...previousResult,
+                    analysisFrameworks: {
+                        ...newFrameworks,
+                        results: [
+                            ...(oldFrameworks.results ?? []),
+                            ...(newFrameworks.results ?? []),
+                        ],
+                    },
+                });
+                setFrameworkList(newFrameworkList.analysisFrameworks.results ?? []);
+                return newFrameworkList;
+            },
+        });
+    }, [
+        fetchMore,
+        analysisFrameworkVariables,
+        projectFrameworks?.analysisFrameworks?.page,
+    ]);
+
+    const totalFrameworksCount = projectFrameworks?.analysisFrameworks?.totalCount ?? 0;
+    const frameworks = projectFrameworks?.analysisFrameworks?.results || [];
+
+    const frameworksRendererParams = useCallback((key: string, data: FrameworkType): ItemProps => ({
         itemKey: String(key),
         title: data.title,
         createdAt: data.createdAt,
@@ -201,26 +257,14 @@ function ProjectFramework(props: Props) {
         isSelected: String(key) === selectedFramework,
     }), [selectedFramework]);
 
-    const handleShowMoreButtonClick = useCallback(() => {
-        setOffset(frameworkList.length);
-    }, [frameworkList.length]);
-
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: string) => {
         setSelectedFramework(newFrameworkId);
         setFrameworkList([]);
-        if (offset !== 0) {
-            setOffset(0);
-        } else {
-            retriggerGetFrameworkListRequest();
-        }
+        retriggerGetFrameworkListRequest();
     }, [
         setSelectedFramework,
         retriggerGetFrameworkListRequest,
-        offset,
     ]);
-
-    const totalFrameworksCount = projectAflist?.analysisFrameworks?.totalCount ?? 0;
-    const afList: FrameworkMini[] = projectAflist?.analysisFrameworks?.results || [];
 
     return (
         <div className={_cs(styles.framework, className)}>
@@ -249,7 +293,7 @@ function ProjectFramework(props: Props) {
                         className={styles.frameworkList}
                         pending={frameworksGetPending}
                         errored={false}
-                        data={afList}
+                        data={frameworks}
                         keySelector={frameworkKeySelector}
                         renderer={Item}
                         filtered={isFiltered(value)}
