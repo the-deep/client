@@ -100,8 +100,9 @@ function Dashboard(props: Props) {
             className={_cs(styles.dashboard, className)}
             headerClassName={styles.header}
             headerActions={(
-                (publicUrl && publiclyShared)
-                || project?.allowedPermissions.includes('UPDATE_PROJECT')
+                ((publicUrl && publiclyShared) || project?.allowedPermissions.includes('UPDATE_PROJECT'))
+                && project?.isVisualizationAvailable
+                && project?.isVisualizationEnabled
             ) && (
                 <Button
                     name={undefined}
@@ -114,6 +115,18 @@ function Dashboard(props: Props) {
             contentClassName={styles.content}
         >
             {loading && <PendingMessage />}
+            {!project?.isVisualizationAvailable && (
+                <Message
+                    className={styles.message}
+                    icon={(
+                        <Kraken
+                            variant="crutches"
+                            size="large"
+                        />
+                    )}
+                    message="Looks like the analytical framework is not configured properly for dashboards to be visible for this project."
+                />
+            )}
             {status === 'FAILURE' && (
                 <Message
                     className={styles.message}
