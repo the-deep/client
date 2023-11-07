@@ -174,6 +174,7 @@ const schema: FormSchema = {
         hasPubliclyViewableConfidentialLeads: [requiredCondition],
         isPrivate: [],
         isTest: [],
+        isVisualizationEnabled: [requiredCondition],
     }),
     validation: (value) => {
         if (
@@ -207,6 +208,7 @@ const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 
 const initialValue: PartialFormType = {
     title: '',
+    isVisualizationEnabled: false,
     isPrivate: false,
     isTest: false,
     hasPubliclyViewableUnprotectedLeads: false,
@@ -244,6 +246,7 @@ const CURRENT_PROJECT = gql`
             createdAt
             description
             isPrivate
+            isVisualizationEnabled
             isTest
             hasPubliclyViewableUnprotectedLeads
             hasPubliclyViewableConfidentialLeads
@@ -273,6 +276,7 @@ mutation ProjectCreate($data: ProjectCreateInputType!) {
         result {
             id
             title
+            isVisualizationEnabled
             startDate
             endDate
             hasPubliclyViewableUnprotectedLeads
@@ -304,6 +308,7 @@ mutation ProjectCreate($data: ProjectCreateInputType!) {
 `;
 
 const PROJECT_UPDATE = gql`
+${LAST_ACTIVE_PROJECT_FRAGMENT}
 mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
     project(id: $projectId) {
         projectUpdate(data: $data) {
@@ -318,6 +323,7 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 }
                 createdAt
                 description
+                isVisualizationEnabled
                 isPrivate
                 isTest
                 hasPubliclyViewableUnprotectedLeads
@@ -336,6 +342,7 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                     organizationType
                     organizationTypeDisplay
                 }
+                ...LastActiveProjectResponse
             }
             errors
         }
@@ -487,6 +494,9 @@ function ProjectDetailsForm(props: Props) {
                         { variant: 'error' },
                     );
                 } else if (ok) {
+                    setPristine(true);
+                    const project = response.project.projectUpdate.result;
+                    setProject(project ?? undefined);
                     alert.show(
                         'Successfully updated project!',
                         { variant: 'success' },
@@ -851,6 +861,27 @@ function ProjectDetailsForm(props: Props) {
                                     documents to be viewed publicly
                                 </>
                             )}
+                        />
+                    </Container>
+                    <Container
+                        className={styles.documentSharing}
+                        headingSize="extraSmall"
+                        contentClassName={styles.items}
+                        heading="Dashboards"
+                        inlineHeadingDescription
+                        headerDescriptionClassName={styles.infoIconContainer}
+                        headingDescription={(
+                            <IoInformationCircleOutline
+                                className={styles.infoIcon}
+                                title="Dashboards will only be visible if the associated framework is properly configured."
+                            />
+                        )}
+                    >
+                        <Switch
+                            name="isVisualizationEnabled"
+                            value={value?.isVisualizationEnabled}
+                            onChange={setFieldValue}
+                            label="Enable Dashboard"
                         />
                     </Container>
                     <div className={styles.createdByDetails}>

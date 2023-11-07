@@ -361,7 +361,7 @@ const dashboard = wrap({
         if (!project) {
             return false;
         }
-        return project.isVisualizationEnabled && project.isVisualizationAvailable;
+        return project.isVisualizationEnabled;
     },
 });
 
@@ -383,7 +383,6 @@ const aryDashboard = wrap({
         }
         return (
             project.isVisualizationEnabled
-            && project.isVisualizationAvailable
             && project.hasAssessmentTemplate
         );
     },

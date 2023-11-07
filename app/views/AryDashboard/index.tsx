@@ -81,6 +81,18 @@ function AryDashboard(props: Props) {
             contentClassName={styles.content}
         >
             {loading && <PendingMessage />}
+            {!project?.isVisualizationAvailable && (
+                <Message
+                    className={styles.message}
+                    icon={(
+                        <Kraken
+                            variant="crutches"
+                            size="large"
+                        />
+                    )}
+                    message="Looks like the analytical framework is not configured properly for dashboards to be visible for this project."
+                />
+            )}
             {status === 'FAILURE' && (
                 <Message
                     className={styles.message}
