@@ -13,13 +13,11 @@
         height: 64px;
 
         &:not(.hidden) {
-            transition: 200ms margin-top ease-in;
-            margin-top: 0;
+            display: flex;
         }
 
         &.hidden {
-            transition: 200ms margin-top ease-out;
-            margin-top: -64px;
+            display: none;
         }
     }
 
