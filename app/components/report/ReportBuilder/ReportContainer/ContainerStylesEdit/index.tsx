@@ -76,7 +76,7 @@ function ContainerStylesEdit<NAME extends string>(props: Props<NAME>) {
                 name="background"
                 value={value?.background}
                 onChange={onFieldChange}
-                disabled={disabled}
+                // disabled={disabled}
                 error={error?.background}
             />
         </ExpandableContainer>

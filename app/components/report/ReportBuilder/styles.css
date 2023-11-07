@@ -50,6 +50,19 @@
         width: 210mm;
         overflow-y: auto;
 
+        .header {
+            flex-wrap: wrap;
+
+            .heading {
+                flex-shrink: 0;
+                max-width: 80%;
+            }
+
+            .organizations {
+                flex-wrap: wrap;
+            }
+        }
+
         .containers {
             display: grid;
             grid-template-columns: repeat(12, 1fr);

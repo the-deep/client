@@ -6,6 +6,7 @@ import {
     requiredCondition,
     defaultEmptyArrayType,
     defaultUndefinedType,
+    lessThanOrEqualToCondition,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -90,7 +91,10 @@ const borderStyleSchema: BorderStyleFormSchema = {
         color: [defaultUndefinedType],
         opacity: [defaultUndefinedType],
         style: [defaultUndefinedType],
-        width: [defaultUndefinedType],
+        width: [
+            defaultUndefinedType,
+            lessThanOrEqualToCondition(72),
+        ],
     }),
 };
 
@@ -101,10 +105,10 @@ type PaddingStyleFormSchemaFields = ReturnType<PaddingStyleFormSchema['fields']>
 
 const paddingStyleSchema: PaddingStyleFormSchema = {
     fields: (): PaddingStyleFormSchemaFields => ({
-        left: [defaultUndefinedType],
-        right: [defaultUndefinedType],
-        bottom: [defaultUndefinedType],
-        top: [defaultUndefinedType],
+        left: [defaultUndefinedType, lessThanOrEqualToCondition(72)],
+        right: [defaultUndefinedType, lessThanOrEqualToCondition(72)],
+        bottom: [defaultUndefinedType, lessThanOrEqualToCondition(72)],
+        top: [defaultUndefinedType, lessThanOrEqualToCondition(72)],
     }),
 };
 
@@ -131,7 +135,7 @@ const textStyleSchema: TextStyleFormSchema = {
     fields: (): TextStyleFormSchemaFields => ({
         color: [defaultUndefinedType],
         family: [defaultUndefinedType],
-        size: [defaultUndefinedType],
+        size: [defaultUndefinedType, lessThanOrEqualToCondition(108)],
         weight: [defaultUndefinedType],
         align: [defaultUndefinedType],
     }),

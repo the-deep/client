@@ -6,6 +6,7 @@ import {
     NumberInput,
     ExpandableContainer,
     Heading,
+    Message,
 } from '@the-deep/deep-ui';
 import {
     type EntriesAsList,
@@ -127,6 +128,13 @@ function MetadataEdit(props: Props) {
                 // error={error?.isPublic}
                 disabled={disabled}
             />
+            {value?.isPublic && (
+                <Message
+                    className={styles.message}
+                    message="Reports can be viewed publicly only if project admin has enabled sharing functionality."
+                    compact
+                />
+            )}
             <ContainerStylesEdit
                 name="containerStyle"
                 value={value?.configuration?.containerStyle}

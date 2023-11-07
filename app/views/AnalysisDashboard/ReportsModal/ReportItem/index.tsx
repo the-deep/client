@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { generatePath } from 'react-router-dom';
 import {
     Header,
@@ -12,7 +12,9 @@ import {
     IoShareSocialOutline,
 } from 'react-icons/io5';
 
+import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
+
 import styles from './styles.css';
 
 interface Props {
@@ -33,6 +35,10 @@ function ReportItem(props: Props) {
         latestPublishedBy,
         latestPublishedOn,
     } = props;
+
+    const {
+        project,
+    } = useContext(ProjectContext);
 
     const viewReportLink = useMemo(() => ({
         pathname: generatePath(routes.publicReportView.path, {
@@ -89,13 +95,19 @@ function ReportItem(props: Props) {
             )}
             actions={(
                 <>
-                    <QuickActionLink
-                        title="Share latest Snapshot"
-                        to={viewReportLink}
-                        target="_blank"
-                    >
-                        <IoShareSocialOutline />
-                    </QuickActionLink>
+                    {project?.enablePubliclyViewableAnalysisReportSnapshot && (
+                        <QuickActionLink
+                            to={viewReportLink}
+                            disabled={(
+                                !viewReportLink
+                                || !project?.enablePubliclyViewableAnalysisReportSnapshot
+                            )}
+                            title="Share Latest Report"
+                            target="_blank"
+                        >
+                            <IoShareSocialOutline />
+                        </QuickActionLink>
+                    )}
                     <QuickActionLink
                         title="Edit Report"
                         to={editReportLink}

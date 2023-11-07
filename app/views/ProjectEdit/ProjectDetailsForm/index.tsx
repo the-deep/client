@@ -172,6 +172,7 @@ const schema: FormSchema = {
         hasPubliclyViewableUnprotectedLeads: [requiredCondition],
         hasPubliclyViewableRestrictedLeads: [requiredCondition],
         hasPubliclyViewableConfidentialLeads: [requiredCondition],
+        enablePubliclyViewableAnalysisReportSnapshot: [requiredCondition],
         isPrivate: [],
         isTest: [],
         isVisualizationEnabled: [requiredCondition],
@@ -214,6 +215,7 @@ const initialValue: PartialFormType = {
     hasPubliclyViewableUnprotectedLeads: false,
     hasPubliclyViewableConfidentialLeads: false,
     hasPubliclyViewableRestrictedLeads: false,
+    enablePubliclyViewableAnalysisReportSnapshot: false,
 };
 
 const LAST_ACTIVE_PROJECT = gql`
@@ -251,6 +253,7 @@ const CURRENT_PROJECT = gql`
             hasPubliclyViewableUnprotectedLeads
             hasPubliclyViewableConfidentialLeads
             hasPubliclyViewableRestrictedLeads
+            enablePubliclyViewableAnalysisReportSnapshot
             organizations {
                 id
                 organization {
@@ -282,6 +285,7 @@ mutation ProjectCreate($data: ProjectCreateInputType!) {
             hasPubliclyViewableUnprotectedLeads
             hasPubliclyViewableConfidentialLeads
             hasPubliclyViewableRestrictedLeads
+            enablePubliclyViewableAnalysisReportSnapshot
             createdBy {
                 displayName
             }
@@ -329,6 +333,7 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 hasPubliclyViewableUnprotectedLeads
                 hasPubliclyViewableConfidentialLeads
                 hasPubliclyViewableRestrictedLeads
+                enablePubliclyViewableAnalysisReportSnapshot
                 organizations {
                     id
                     organization {
@@ -859,6 +864,18 @@ function ProjectDetailsForm(props: Props) {
                                     Allow links for
                                     <i className={styles.italic}>Confidential</i>
                                     documents to be viewed publicly
+                                </>
+                            )}
+                        />
+                        <Switch
+                            name="enablePubliclyViewableAnalysisReportSnapshot"
+                            value={value?.enablePubliclyViewableAnalysisReportSnapshot}
+                            onChange={setFieldValue}
+                            label={(
+                                <>
+                                    Allow links for
+                                    <i className={styles.italic}>published reports</i>
+                                    to be viewed publicly
                                 </>
                             )}
                         />

@@ -185,9 +185,12 @@ function ReportBuilder(props: Props) {
                     )}
                 >
                     <Header
+                        className={styles.header}
+                        headingContainerClassName={styles.heading}
                         heading={value?.title ?? 'Title goes here'}
                         headingSize="extraLarge"
                         description={value?.subTitle}
+                        actionsContainerClassName={styles.organizations}
                         actions={value?.organizations?.map((org) => (
                             <Avatar
                                 className={styles.organizationLogo}

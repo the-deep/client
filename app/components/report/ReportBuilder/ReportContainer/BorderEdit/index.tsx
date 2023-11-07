@@ -102,6 +102,7 @@ function BorderEdit<NAME extends string>(props: Props<NAME>) {
                     error={error?.width}
                     disabled={disabled}
                 />
+                {/*
                 <NumberInput
                     name="opacity"
                     label="Opacity"
@@ -111,6 +112,7 @@ function BorderEdit<NAME extends string>(props: Props<NAME>) {
                     error={error?.opacity}
                     disabled={disabled}
                 />
+                */}
                 <SelectInput
                     name="style"
                     label="Variant"

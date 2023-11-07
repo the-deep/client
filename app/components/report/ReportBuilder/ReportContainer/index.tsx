@@ -562,6 +562,7 @@ function ReportContainer(props: Props) {
                             name="style"
                             value={style}
                             onChange={onFieldChange}
+                            error={getErrorObject(error?.style)}
                             additionalStylingSettings={(
                                 <NumberInput
                                     name="height"

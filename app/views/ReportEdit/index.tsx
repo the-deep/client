@@ -2,6 +2,7 @@ import React, {
     useMemo,
     useState,
     useCallback,
+    useContext,
     useRef,
 } from 'react';
 import {
@@ -21,6 +22,7 @@ import {
     useForm,
     removeNull,
     createSubmitHandler,
+    type Error,
 } from '@togglecorp/toggle-form';
 import {
     useQuery,
@@ -69,6 +71,7 @@ import {
 } from '#base/utils/errorTransform';
 
 import ReportBuilder from '#components/report/ReportBuilder';
+import { ProjectContext } from '#base/context/ProjectContext';
 import Toc from '#components/report/Toc';
 import schema, {
     type PartialFormType,
@@ -338,6 +341,8 @@ function ReportEdit(props: Props) {
         reportId: string | undefined,
         projectId: string | undefined,
     }>();
+
+    const { project } = useContext(ProjectContext);
 
     const [
         organizationOptions,
@@ -712,6 +717,17 @@ function ReportEdit(props: Props) {
         alert,
     ]);
 
+    const handleError = useCallback((localError: Error<Report> | undefined) => {
+        setError(localError);
+        alert.show(
+            'We encountered an issue while trying to save the report. Please look for red container for errored state.',
+            { variant: 'error' },
+        );
+    }, [
+        setError,
+        alert,
+    ]);
+
     return (
         <div className={_cs(className, styles.reportEdit)}>
             <SubNavbar
@@ -729,7 +745,7 @@ function ReportEdit(props: Props) {
                             name={undefined}
                             onClick={createSubmitHandler(
                                 validate,
-                                setError,
+                                handleError,
                                 handleSubmit,
                             )}
                             disabled={pristine}
@@ -764,11 +780,17 @@ function ReportEdit(props: Props) {
                             className={styles.topBar}
                             actions={(
                                 <>
-
                                     <QuickActionButton
                                         name={undefined}
                                         variant="secondary"
-                                        title="Share to other users"
+                                        disabled={(
+                                            !project?.enablePubliclyViewableAnalysisReportSnapshot
+                                        )}
+                                        title={(
+                                            project?.enablePubliclyViewableAnalysisReportSnapshot
+                                                ? 'Share to others publicly'
+                                                : 'Project admin has restricted sharing this report publicly'
+                                        )}
                                         onClick={copyToClipboard}
                                     >
                                         <IoShareSocialOutline />

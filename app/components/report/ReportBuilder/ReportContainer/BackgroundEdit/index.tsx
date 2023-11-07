@@ -6,7 +6,6 @@ import {
     useFormObject,
 } from '@togglecorp/toggle-form';
 import {
-    NumberInput,
     Heading,
     ColorInput,
 } from '@the-deep/deep-ui';
@@ -23,7 +22,7 @@ interface Props<NAME extends string> {
     onChange: (value: SetValueArg<BackgroundStyleFormType | undefined>, name: NAME) => void;
     value: BackgroundStyleFormType | undefined;
     error?: Error<BackgroundStyleFormType>;
-    disabled?: boolean;
+    // disabled?: boolean;
 }
 
 function BackgroundEdit<NAME extends string>(props: Props<NAME>) {
@@ -32,7 +31,7 @@ function BackgroundEdit<NAME extends string>(props: Props<NAME>) {
         value,
         onChange,
         error: riskyError,
-        disabled,
+        // disabled,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -45,6 +44,7 @@ function BackgroundEdit<NAME extends string>(props: Props<NAME>) {
             <Heading size="extraSmall">Background</Heading>
             <NonFieldError error={error} />
             <div className={styles.inputs}>
+                {/*
                 <NumberInput
                     name="opacity"
                     label="opacity"
@@ -53,6 +53,7 @@ function BackgroundEdit<NAME extends string>(props: Props<NAME>) {
                     error={error?.opacity}
                     disabled={disabled}
                 />
+                */}
                 <ColorInput
                     name="color"
                     value={value?.color}
