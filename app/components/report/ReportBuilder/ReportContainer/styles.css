@@ -1,0 +1,126 @@
+.report-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: var(--dui-spacing-medium);
+    transition: 0.2s all ease-in-out;
+    border: var(--dui-width-separator-thin) solid transparent;
+    padding: var(--dui-spacing-small);
+
+    .add-button {
+        position: absolute;
+        transition: all 0.2s ease-in-out;
+        opacity: 0;
+    }
+
+    .before-button {
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        border-left-width: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .after-button {
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        border-right-width: 0;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .above-button {
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border-top-width: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    .below-button {
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border-bottom-width: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .footer {
+        position: absolute;
+        right: var(--dui-spacing-small);
+        bottom: var(--dui-spacing-small);
+        visibility: hidden;
+    }
+
+    .message {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+    }
+
+    /*
+    .mask {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0.5;
+        background-color: var(--dui-color-background-information);
+        width: 100%;
+        height: 100%;
+        mix-blend-mode: multiply;
+    }
+    */
+
+    &:hover {
+        border-color: var(--dui-color-accent)!important;
+
+        /*
+        .mask {
+            display: block;
+        }
+        */
+
+        .add-button {
+            display: block;
+            opacity: 1;
+            font-size: var(--dui-font-size-large);
+        }
+
+        .footer {
+            visibility: unset;
+        }
+    }
+
+    &.read-only {
+        border-color: transparent;
+    }
+
+    &.selected {
+        border-color: transparent;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    }
+
+    &.errored {
+        border-width: var(--dui-width-separator-thin)!important;
+        border-color: var(--dui-color-danger)!important;
+    }
+}
+
+.edit-container {
+    background-color: transparent;
+    overflow-y: auto;
+
+    .edit-content-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-large);
+        overflow-y: auto;
+    }
+}

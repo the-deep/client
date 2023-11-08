@@ -262,10 +262,22 @@ export const ORGANIZATION_FRAGMENT = gql`
         title
         verified
         shortName
+        logo {
+            id
+            file {
+                url
+            }
+        }
         mergedAs {
             id
             title
             shortName
+            logo {
+                id
+                file {
+                    url
+                }
+            }
         }
     }
 `;
@@ -284,6 +296,35 @@ export const LAST_ACTIVE_PROJECT_FRAGMENT = gql`
         isVisualizationEnabled
         isVisualizationAvailable
         membershipPending
+        enablePubliclyViewableAnalysisReportSnapshot
         isRejected
+    }
+`;
+
+export const TEXT_STYLE_FRAGMENT = gql`
+    fragment TextStyle on AnalysisReportTextStyleType {
+        align
+        color
+        family
+        size
+        weight
+    }
+`;
+
+export const PADDING_STYLE_FRAGMENT = gql`
+    fragment PaddingStyle on AnalysisReportPaddingStyleType {
+        top
+        bottom
+        right
+        left
+    }
+`;
+
+export const BORDER_STYLE_FRAGMENT = gql`
+    fragment BorderStyle on AnalysisReportBorderStyleType {
+        color
+        opacity
+        style
+        width
     }
 `;

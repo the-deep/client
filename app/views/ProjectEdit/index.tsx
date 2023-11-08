@@ -103,7 +103,7 @@ function ProjectEdit() {
                                         className={styles.shareButton}
                                         name="copy"
                                         variant="secondary"
-                                        title="Share project to other users"
+                                        title="Get sharable link for other users"
                                         onClick={copyToClipboard}
                                     >
                                         <IoShareSocialOutline />

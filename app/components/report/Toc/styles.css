@@ -1,0 +1,92 @@
+.toc {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    z-index: 1;
+    padding: 0 var(--dui-spacing-large);
+
+    .header {
+        border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        background-color: var(--dui-color-white);
+        padding: var(--dui-spacing-medium) 0;
+
+        .heading-section {
+            align-items: center;
+        }
+
+        .icon {
+            font-size: var(--dui-font-size-large);
+        }
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        padding: var(--dui-spacing-small) 0;
+        overflow-y: auto;
+
+        .toc-item {
+            padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+            text-align: left;
+            font-size: var(--dui-font-size-large);
+
+            &.heading-one {
+                display: flex;
+                align-items: center;
+                font-weight: var(--dui-font-weight-bold);
+                gap: var(--dui-spacing-extra-small);
+
+                &:before {
+                    content: '-';
+                }
+            }
+
+            &.heading-two {
+                padding-left: calc(2 * var(--dui-spacing-medium));
+            }
+            &.heading-three {
+                padding-left: calc(3 * var(--dui-spacing-medium));
+            }
+            &.heading-four {
+                padding-left: calc(4 * var(--dui-spacing-medium));
+            }
+
+            &:hover {
+                background-color: var(--dui-color-background-information);
+            }
+        }
+    }
+
+    .menu {
+        line-height: 100%;
+        color: var(--color-text-on-dark);
+        font-size: var(--font-size-large);
+        pointer-events: none;
+    }
+
+    @media screen and (max-width: 720px) {
+        .header {
+            z-index: 1;
+        }
+        .menu {
+            pointer-events: unset;
+        }
+
+        .list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            flex-direction: column;
+            transform: translateY(-100%);
+            transition: 200ms all ease-in-out;
+            z-index: -1;
+            background-color: #fff;
+            padding: var(--dui-spacing-large);
+            width: 100%;
+
+            &.navShown {
+                transform: translateY(0);
+            }
+        }
+    }
+}

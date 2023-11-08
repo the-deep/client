@@ -299,6 +299,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     // NOTE: After the newly added entry's order is set and
                     // placed in the desired index, we can change the order of
                     // whole list in bulk
+
                     return reorder(newAnalyticalEntries);
                 },
                 'entries' as const,

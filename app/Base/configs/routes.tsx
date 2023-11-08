@@ -233,6 +233,76 @@ const entryEditRoute = wrap({
         );
     },
 });
+const reportEditRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/reports/:reportId(\\d+)/',
+    title: 'Edit Report',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/ReportEdit')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (
+            !project
+            || project.allowedPermissions.length <= 0
+            || isNotDefined(project.analysisFramework?.id)
+        ) {
+            return false;
+        }
+        // NOTE: should also check if users can edit lead
+        // either in route or inside page
+        return (
+            project.allowedPermissions.includes('CREATE_ENTRY')
+            || project.allowedPermissions.includes('UPDATE_ENTRY')
+            || project.allowedPermissions.includes('DELETE_ENTRY')
+        );
+    },
+});
+
+const publicReportViewRoute = wrap({
+    path: '/public-reports/:reportSlug/',
+    title: 'View Report',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/PublicReportView')),
+    componentProps: {
+    },
+    visibility: 'is-anything',
+});
+
+const newReportRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/reports/new/',
+    title: 'Edit Report',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/ReportEdit')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (
+            !project
+            || project.allowedPermissions.length <= 0
+            || isNotDefined(project.analysisFramework?.id)
+        ) {
+            return false;
+        }
+        // NOTE: should also check if users can edit lead
+        // either in route or inside page
+        return (
+            project.allowedPermissions.includes('CREATE_ENTRY')
+            || project.allowedPermissions.includes('UPDATE_ENTRY')
+            || project.allowedPermissions.includes('DELETE_ENTRY')
+        );
+    },
+});
+
 const analysis = wrap({
     parent: { path: projectRoute.path },
     path: '/analysis-module/',
@@ -426,6 +496,7 @@ const exportCreateRoute = wrap({
         return project.allowedPermissions.includes('CREATE_EXPORT');
     },
 });
+
 const newAssessmentExportCreateRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/export/new-assessment/',
@@ -444,6 +515,7 @@ const newAssessmentExportCreateRoute = wrap({
         return project.allowedPermissions.includes('CREATE_EXPORT');
     },
 });
+
 const assessmentEditRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/assessments/leads/:leadId(\\d+)/',
@@ -598,6 +670,9 @@ const routes = {
     aryDashboard,
     export: exportRoute,
     exportCreate: exportCreateRoute,
+    reportEdit: reportEditRoute,
+    publicReportView: publicReportViewRoute,
+    newReport: newReportRoute,
     assessmentExportCreate: newAssessmentExportCreateRoute,
     entryEdit: entryEditRoute,
     assessmentEdit: assessmentEditRoute,

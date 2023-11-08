@@ -1,0 +1,85 @@
+.report-builder {
+    --report-box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    background-color: var(--dui-color-background);
+    padding: var(--dui-spacing-large) 0;
+    height: auto;
+    overflow-y: auto;
+
+    .heading-container {
+        position: relative;
+        border: var(--dui-width-separator-thin) solid transparent;
+        padding: var(--dui-spacing-small);
+
+        .organization-logo {
+            width: 2rem;
+            height: 2rem;
+            font-size: var(--dui-font-size-extra-large);
+        }
+
+        .edit-button {
+            position: absolute;
+            right: var(--dui-spacing-small);
+            bottom: var(--dui-spacing-small);
+            visibility: hidden;
+        }
+
+        &:hover {
+            border-color: var(--dui-color-separator);
+
+            .edit-button {
+                visibility: unset;
+            }
+        }
+
+        &.read-only {
+            border-color: transparent;
+        }
+
+        &.error {
+            border-color: var(--dui-color-danger);
+        }
+    }
+
+    .report {
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+        box-shadow: var(--report-box-shadow);
+        background-color: var(--dui-color-white);
+        padding: var(--dui-spacing-extra-large);
+        width: 210mm;
+        overflow-y: auto;
+
+        .header {
+            flex-wrap: wrap;
+
+            .heading {
+                flex-shrink: 0;
+                max-width: 80%;
+            }
+
+            .organizations {
+                flex-wrap: wrap;
+            }
+        }
+
+        .containers {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-gap: var(--dui-spacing-super-small);
+        }
+
+        @media screen and (max-width: 720px) {
+            width: unset;
+
+            .containers {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+    }
+}
+
+.edit-container {
+    background-color: transparent;
+}

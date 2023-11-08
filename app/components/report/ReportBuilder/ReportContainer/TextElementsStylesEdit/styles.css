@@ -1,0 +1,24 @@
+.text-elements-styles-edit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-medium);
+
+    .inputs {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--dui-spacing-medium);
+
+        .input {
+            width: 6rem;
+        }
+
+        .color-input {
+            width: 2rem;
+        }
+
+        .select-input {
+            width: 8rem;
+        }
+    }
+}

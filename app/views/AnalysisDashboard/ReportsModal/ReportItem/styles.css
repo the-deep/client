@@ -1,0 +1,14 @@
+.report-item {
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+
+    .header-description {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-large);
+
+        .label {
+            font-weight: var(--dui-font-weight-regular);
+        }
+    }
+}

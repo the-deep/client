@@ -51,6 +51,7 @@ import _ts from '#ts';
 import PillarAnalysisList from './PillarList';
 import PillarAssignment from './PillarAssignment';
 import AnalysisCloneModal from './AnalysisCloneModal';
+import ReportsModal from '../ReportsModal';
 
 import styles from './styles.css';
 
@@ -159,6 +160,12 @@ function Analysis(props: ComponentProps) {
         setModalHidden,
     ] = useModalState(false);
 
+    const [
+        reportsModalVisible,
+        showReportsModal,
+        hideReportsModal,
+    ] = useModalState(false);
+
     const alert = useAlert();
 
     const pillarAssignmentRendererParams = useCallback(
@@ -257,49 +264,60 @@ function Analysis(props: ComponentProps) {
                     endDate={endDate}
                 />
             )}
-            headerActions={canTagEntry && (
+            headerActions={(
                 <>
                     <Button
-                        name={analysisId}
-                        onClick={onEdit}
-                        disabled={disabled}
+                        name={undefined}
                         variant="tertiary"
-                        icons={(
-                            <FiEdit2 />
-                        )}
+                        onClick={showReportsModal}
                     >
-                        {_ts('analysis', 'editAnalysisTitle')}
+                        Reports
                     </Button>
-                    <QuickActionButton
-                        name="clone"
-                        onClick={setModalVisible}
-                        disabled={disabled}
-                        title={_ts('analysis', 'cloneAnalysisButtonTitle')}
-                        variant="secondary"
-                    >
-                        <IoCopyOutline />
-                    </QuickActionButton>
-                    <QuickActionButton
-                        name="analysis"
-                        onClick={handleAnalysisExport}
-                        disabled={createExportPending}
-                        title="Export"
-                        variant="secondary"
-                    >
-                        <IoDownloadOutline />
-                    </QuickActionButton>
+                    {canTagEntry && (
+                        <>
+                            <Button
+                                name={analysisId}
+                                onClick={onEdit}
+                                disabled={disabled}
+                                variant="tertiary"
+                                icons={(
+                                    <FiEdit2 />
+                                )}
+                            >
+                                {_ts('analysis', 'editAnalysisTitle')}
+                            </Button>
+                            <QuickActionButton
+                                name="clone"
+                                onClick={setModalVisible}
+                                disabled={disabled}
+                                title={_ts('analysis', 'cloneAnalysisButtonTitle')}
+                                variant="secondary"
+                            >
+                                <IoCopyOutline />
+                            </QuickActionButton>
+                            <QuickActionButton
+                                name="analysis"
+                                onClick={handleAnalysisExport}
+                                disabled={createExportPending}
+                                title="Export"
+                                variant="secondary"
+                            >
+                                <IoDownloadOutline />
+                            </QuickActionButton>
 
-                    <QuickActionConfirmButton
-                        name="delete"
-                        onConfirm={handleDeleteAnalysis}
-                        disabled={disabled}
-                        title={_ts('analysis', 'deleteAnalysisButtonTitle')}
-                        message={_ts('analysis', 'deleteAnalysisConfirmMessage')}
-                        variant="secondary"
-                        showConfirmationInitially={false}
-                    >
-                        <IoTrashBinOutline />
-                    </QuickActionConfirmButton>
+                            <QuickActionConfirmButton
+                                name="delete"
+                                onConfirm={handleDeleteAnalysis}
+                                disabled={disabled}
+                                title={_ts('analysis', 'deleteAnalysisButtonTitle')}
+                                message={_ts('analysis', 'deleteAnalysisConfirmMessage')}
+                                variant="secondary"
+                                showConfirmationInitially={false}
+                            >
+                                <IoTrashBinOutline />
+                            </QuickActionConfirmButton>
+                        </>
+                    )}
                 </>
             )}
             contentClassName={styles.content}
@@ -433,6 +451,13 @@ function Analysis(props: ComponentProps) {
                     projectId={activeProject}
                     analysisId={analysisId}
                     onClone={handleCloneSuccess}
+                />
+            )}
+            {reportsModalVisible && activeProject && (
+                <ReportsModal
+                    onCloseButtonClick={hideReportsModal}
+                    analysisId={String(analysisId)}
+                    projectId={activeProject}
                 />
             )}
         </ContainerCard>
