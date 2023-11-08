@@ -6,15 +6,15 @@ import {
     IoSearch,
 } from 'react-icons/io5';
 import {
-    Container,
     Button,
-    ListView,
-    RawButton,
-    TextInput,
-    SelectInput,
-    TextOutput,
-    Message,
+    Container,
     Kraken,
+    ListView,
+    Message,
+    RawButton,
+    SelectInput,
+    TextInput,
+    TextOutput,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -22,29 +22,55 @@ import {
     requiredCondition,
     useForm,
 } from '@togglecorp/toggle-form';
-
 import {
-    MultiResponse,
-} from '#types';
-import { useRequest } from '#base/utils/restRequest';
+    useQuery,
+    gql,
+} from '@apollo/client';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import ProjectContext from '#base/context/ProjectContext';
 import { isFiltered } from '#utils/common';
 import routes from '#base/configs/routes';
 import _ts from '#ts';
+import {
+    ProjectAnalysisFrameworksQueryVariables,
+    ProjectAnalysisFrameworksQuery,
+} from '#generated/types';
 
 import FrameworkDetail from './FrameworkDetail';
 
 import styles from './styles.css';
 
-interface FrameworkMini {
-    id: number;
-    title: string;
-    createdAt: string;
-}
+const PAGE_SIZE = 10;
+type FrameworkType = NonNullable<NonNullable<ProjectAnalysisFrameworksQuery['analysisFrameworks']>['results']>[number];
 
-const frameworkKeySelector = (d: FrameworkMini) => d.id;
+const frameworkKeySelector = (d: FrameworkType) => d.id;
+
+export const PROJECT_FRAMEWORKS = gql`
+    query ProjectAnalysisFrameworks(
+        $isCurrentUserMember: Boolean,
+        $search: String,
+        $page: Int,
+        $pageSize: Int,
+        $createdBy: [ID!],
+    ) {
+        analysisFrameworks(
+            search: $search,
+            isCurrentUserMember: $isCurrentUserMember
+            page: $page,
+            pageSize: $pageSize,
+            createdBy: $createdBy,
+        ) {
+            results {
+                title
+                id
+                createdAt
+            }
+            page
+            totalCount
+        }
+    }
+`;
 
 interface ItemProps {
     itemKey: string;
@@ -137,7 +163,6 @@ function ProjectFramework(props: Props) {
     } = props;
 
     const { project } = React.useContext(ProjectContext);
-
     const [
         selectedFramework,
         setSelectedFramework,
@@ -147,8 +172,7 @@ function ProjectFramework(props: Props) {
         setSelectedFramework(project?.analysisFramework?.id);
     }, [project?.analysisFramework]);
 
-    const [frameworkList, setFrameworkList] = useState<FrameworkMini[]>([]);
-    const [offset, setOffset] = useState<number>(0);
+    const [frameworkList, setFrameworkList] = useState<FrameworkType[]>([]);
 
     const {
         value,
@@ -156,39 +180,76 @@ function ProjectFramework(props: Props) {
     } = useForm(schema, defaultFormValue);
 
     const delayedValue = useDebouncedValue(value);
-
-    useEffect(() => {
-        setOffset(0);
-        setFrameworkList([]);
-    }, [delayedValue]);
-
-    const queryForFrameworks = useMemo(() => ({
-        fields: ['id', 'title', 'created_at'],
-        offset,
-        order: 'created_at',
-        limit: 10,
-        search: delayedValue.search,
-        relatedToMe: delayedValue.relatedToMe,
-    }), [delayedValue, offset]);
+    const analysisFrameworkVariables = useMemo(() => (
+        {
+            isCurrentUserMember: delayedValue.relatedToMe === 'true' ? true : undefined,
+            search: delayedValue.search,
+            page: 1,
+            pageSize: PAGE_SIZE,
+        }
+    ), [
+        delayedValue.relatedToMe,
+        delayedValue.search,
+    ]);
 
     const {
-        pending: frameworksGetPending,
-        response: frameworksResponse,
-        retrigger: retriggerGetFrameworkListRequest,
-    } = useRequest<MultiResponse<FrameworkMini>>({
-        url: 'server://analysis-frameworks/',
-        query: queryForFrameworks,
-        method: 'GET',
-        onSuccess: (response) => {
-            setFrameworkList([
-                ...frameworkList,
-                ...response.results,
-            ]);
+        previousData,
+        data: projectFrameworks = previousData,
+        loading: frameworksGetPending,
+        refetch: retriggerGetFrameworkListRequest,
+        fetchMore,
+    } = useQuery<ProjectAnalysisFrameworksQuery, ProjectAnalysisFrameworksQueryVariables>(
+        PROJECT_FRAMEWORKS,
+        {
+            variables: analysisFrameworkVariables,
+            onCompleted: (response) => {
+                setFrameworkList(response?.analysisFrameworks?.results ?? []);
+            },
         },
-        preserveResponse: true,
-    });
+    );
 
-    const frameworksRendererParams = useCallback((key: number, data: FrameworkMini) => ({
+    const handleShowMoreButtonClick = useCallback(() => {
+        fetchMore({
+            variables: {
+                ...analysisFrameworkVariables,
+                page: (projectFrameworks?.analysisFrameworks?.page ?? 1) + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult.analysisFrameworks) {
+                    return previousResult;
+                }
+
+                const oldFrameworks = previousResult.analysisFrameworks;
+                const newFrameworks = fetchMoreResult?.analysisFrameworks;
+
+                if (!newFrameworks) {
+                    return previousResult;
+                }
+
+                const newFrameworkList = ({
+                    ...previousResult,
+                    analysisFrameworks: {
+                        ...newFrameworks,
+                        results: [
+                            ...(oldFrameworks.results ?? []),
+                            ...(newFrameworks.results ?? []),
+                        ],
+                    },
+                });
+                setFrameworkList(newFrameworkList.analysisFrameworks.results ?? []);
+                return newFrameworkList;
+            },
+        });
+    }, [
+        fetchMore,
+        analysisFrameworkVariables,
+        projectFrameworks?.analysisFrameworks?.page,
+    ]);
+
+    const totalFrameworksCount = projectFrameworks?.analysisFrameworks?.totalCount ?? 0;
+    const frameworks = projectFrameworks?.analysisFrameworks?.results || [];
+
+    const frameworksRendererParams = useCallback((key: string, data: FrameworkType): ItemProps => ({
         itemKey: String(key),
         title: data.title,
         createdAt: data.createdAt,
@@ -196,25 +257,14 @@ function ProjectFramework(props: Props) {
         isSelected: String(key) === selectedFramework,
     }), [selectedFramework]);
 
-    const handleShowMoreButtonClick = useCallback(() => {
-        setOffset(frameworkList.length);
-    }, [frameworkList.length]);
-
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: string) => {
         setSelectedFramework(newFrameworkId);
         setFrameworkList([]);
-        if (offset !== 0) {
-            setOffset(0);
-        } else {
-            retriggerGetFrameworkListRequest();
-        }
+        retriggerGetFrameworkListRequest();
     }, [
         setSelectedFramework,
         retriggerGetFrameworkListRequest,
-        offset,
     ]);
-
-    const totalFrameworksCount = frameworksResponse?.count ?? 0;
 
     return (
         <div className={_cs(styles.framework, className)}>
@@ -243,7 +293,7 @@ function ProjectFramework(props: Props) {
                         className={styles.frameworkList}
                         pending={frameworksGetPending}
                         errored={false}
-                        data={frameworkList}
+                        data={frameworks}
                         keySelector={frameworkKeySelector}
                         renderer={Item}
                         filtered={isFiltered(value)}
@@ -265,7 +315,6 @@ function ProjectFramework(props: Props) {
                                 <IoChevronForward />
                             )}
                         >
-                            {/* TODO: Might move to component library, no need to use ts */}
                             Show More
                         </Button>
                     )}
