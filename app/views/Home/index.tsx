@@ -53,17 +53,17 @@ query RecentProjects{
             totalCount
         }
         topTaggers {
+            userId
             count
             name
-            id
         }
         topSourcers {
+            userId
             count
             name
-            id
         }
         recentActiveUsers {
-            id
+            userId
             name
             date
         }
@@ -107,15 +107,17 @@ query FetchProject($projectId: ID!) {
             totalCount
         }
         topTaggers {
+            userId
             count
             name
         }
         topSourcers {
+            userId
             count
             name
         }
         recentActiveUsers {
-            id
+            userId
             name
             date
         }
@@ -204,8 +206,8 @@ function Home(props: ViewProps) {
             totalSourcesInProgress: data?.stats?.numberOfLeadsInProgress,
             totalSourcesTagged: data?.stats?.numberOfLeadsTagged,
             entriesActivity: data?.stats?.entriesActivity,
-            topTaggers: data?.topTaggers,
             recentActiveUsers: data?.recentActiveUsers,
+            topTaggers: data?.topTaggers,
             topSourcers: data?.topSourcers,
             allowedPermissions: data?.allowedPermissions,
         }),
