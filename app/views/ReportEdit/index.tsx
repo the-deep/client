@@ -719,10 +719,12 @@ function ReportEdit(props: Props) {
 
     const handleError = useCallback((localError: Error<Report> | undefined) => {
         setError(localError);
-        alert.show(
-            'We encountered an issue while trying to save the report. Please look for red container for errored state.',
-            { variant: 'error' },
-        );
+        if (localError) {
+            alert.show(
+                'We encountered an issue while trying to save the report. Please look for red container for errored state.',
+                { variant: 'error' },
+            );
+        }
     }, [
         setError,
         alert,

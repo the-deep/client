@@ -61,7 +61,8 @@ const minTickFormatter = (value: number | string) => {
     return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
 };
 
-const topUserKeySelector = (d: UserEntityCountType) => d?.id ?? '';
+const topUserKeySelector = (d: UserEntityCountType) => d?.userId;
+const activeUserKeySelector = (d: UserEntityDateType) => d?.userId;
 
 export interface RecentProjectItemProps {
     className?: string;
@@ -108,7 +109,7 @@ function ProjectItem(props: RecentProjectItemProps) {
         recentActiveUsers,
     } = props;
 
-    const topTaggersRendererParams = useCallback((_: unknown, data: UserEntityDateType) => ({
+    const activeUserRendererParams = useCallback((_: unknown, data: UserEntityDateType) => ({
         className: styles.recentlyActiveItem,
         label: data.name,
         labelContainerClassName: styles.recentlyActiveUserName,
@@ -240,8 +241,8 @@ function ProjectItem(props: RecentProjectItemProps) {
                             value={(
                                 <List
                                     data={recentActiveUsers ?? undefined}
-                                    keySelector={topUserKeySelector}
-                                    rendererParams={topTaggersRendererParams}
+                                    keySelector={activeUserKeySelector}
+                                    rendererParams={activeUserRendererParams}
                                     renderer={TextOutput}
                                 />
                             )}
