@@ -3172,10 +3172,10 @@
     content-type "^1.0.5"
     tslib "^2.6.1"
 
-"@the-deep/deep-ui@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-2.0.3.tgz#9f0ec63be17801085776e91f107b2da8210396ed"
-  integrity sha512-XBTi8fx1LSMze0y5LPC04LyY+gZrRFw440+7LM84NF2xSCvPqwQpo5aGjUUcShRD4fozyk7+nnfQ4VYBETzccw==
+"@the-deep/deep-ui@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-2.0.6.tgz#b798b5be0a23867677374f967d40c9cd88ec5d2e"
+  integrity sha512-F9EPrYmS4c1KpbO4sMeH+VUDergj/OCdu313LCuoA73cQW3RB9fPpWFtDmRslWjGCMs7WrW8ndlMDn39AOKA9w==
   dependencies:
     "@tanem/svg-injector" "^10.1.14"
     "@togglecorp/fujs" "^1.9.3"

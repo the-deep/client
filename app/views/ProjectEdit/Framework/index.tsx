@@ -8,6 +8,7 @@ import {
 import {
     Button,
     Container,
+    Checkbox,
     Kraken,
     ListView,
     Message,
@@ -29,6 +30,7 @@ import {
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import ProjectContext from '#base/context/ProjectContext';
+import FrameworkTagSelectInput from '#components/selections/FrameworkTagSelectInput';
 import { isFiltered } from '#utils/common';
 import routes from '#base/configs/routes';
 import _ts from '#ts';
@@ -49,7 +51,9 @@ const frameworkKeySelector = (d: FrameworkType) => d.id;
 export const PROJECT_FRAMEWORKS = gql`
     query ProjectAnalysisFrameworks(
         $isCurrentUserMember: Boolean,
+        $tags: [ID!],
         $search: String,
+        $recentlyUsed: Boolean,
         $page: Int,
         $pageSize: Int,
         $createdBy: [ID!],
@@ -57,8 +61,10 @@ export const PROJECT_FRAMEWORKS = gql`
         analysisFrameworks(
             search: $search,
             isCurrentUserMember: $isCurrentUserMember
+            recentlyUsed: $recentlyUsed,
             page: $page,
             pageSize: $pageSize,
+            tags: $tags,
             createdBy: $createdBy,
         ) {
             results {
@@ -133,7 +139,9 @@ const relatedToMeLabelSelector = (d: Option) => d.label;
 
 type FormType = {
     relatedToMe?: 'true' | 'false';
+    recentlyUsed: boolean;
     search: string;
+    tag?: string;
 };
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
@@ -142,12 +150,16 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         search: [],
+        tag: [],
+        recentlyUsed: [],
         relatedToMe: [requiredCondition],
     }),
 };
 
 const defaultFormValue: PartialForm<FormType> = {
     relatedToMe: 'true',
+    recentlyUsed: false,
+    tag: undefined,
     search: '',
 };
 
@@ -183,12 +195,16 @@ function ProjectFramework(props: Props) {
     const analysisFrameworkVariables = useMemo(() => (
         {
             isCurrentUserMember: delayedValue.relatedToMe === 'true' ? true : undefined,
+            tags: delayedValue.tag ? [delayedValue.tag] : undefined,
+            recentlyUsed: delayedValue.recentlyUsed,
             search: delayedValue.search,
             page: 1,
             pageSize: PAGE_SIZE,
         }
     ), [
         delayedValue.relatedToMe,
+        delayedValue.recentlyUsed,
+        delayedValue.tag,
         delayedValue.search,
     ]);
 
@@ -286,6 +302,17 @@ function ProjectFramework(props: Props) {
                         onChange={setFieldValue}
                         value={value.search}
                         placeholder={_ts('projectEdit', 'searchLabel')}
+                    />
+                    <Checkbox
+                        name="recentlyUsed"
+                        value={value?.recentlyUsed}
+                        label="Recently Used"
+                        onChange={setFieldValue}
+                    />
+                    <FrameworkTagSelectInput
+                        name="tag"
+                        onChange={setFieldValue}
+                        value={value.tag}
                     />
                 </div>
                 <div className={styles.bottomContent}>
