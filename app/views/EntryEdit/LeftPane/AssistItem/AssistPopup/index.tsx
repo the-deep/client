@@ -34,6 +34,7 @@ interface Props {
     onChange: (val: SetValueArg<PartialEntryType>, name: undefined) => void;
     error: Error<PartialEntryType> | undefined;
     onEntryCreateButtonClick: () => void;
+    variant?: 'normal' | 'compact' | 'nlp';
     // NOTE: Normal entry creation refers to entry created without use of
     // recommendations
     onNormalEntryCreateButtonClick: () => void;
@@ -50,6 +51,7 @@ interface Props {
 function AssistPopup(props: Props) {
     const {
         className,
+        variant = 'nlp',
         leadId,
         value,
         onChange,
@@ -153,7 +155,7 @@ function AssistPopup(props: Props) {
                     recommendations={recommendations}
                     emptyValueHidden
                     addButtonHidden
-                    variant="nlp"
+                    variant={variant}
                 />
             )}
         </Container>

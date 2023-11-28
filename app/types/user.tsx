@@ -36,12 +36,12 @@ export interface Assignment {
         displayName: string;
         email: string;
     };
-    contentObjectDetails: {
+    contentObjectDetails?: {
         id: number;
         title: string;
         lead?: string;
         entry?: string;
-    };
+    } | undefined;
     isDone: boolean;
     contentObjectType: 'lead' | 'entryreviewcomment' | 'entrycomment';
 }

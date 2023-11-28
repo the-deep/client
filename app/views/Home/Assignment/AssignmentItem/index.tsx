@@ -55,7 +55,7 @@ function AssignmentItem(props: AssignmentItemProps) {
             ));
         }
         if (contentObjectType === 'entryreviewcomment' || contentObjectType === 'entrycomment') {
-            if (!projectDetails?.id && contentObjectDetails?.lead) {
+            if (!contentObjectDetails || !projectDetails?.id || !contentObjectDetails?.lead) {
                 return (
                     <span>
                         an entry
