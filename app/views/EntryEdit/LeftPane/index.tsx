@@ -47,6 +47,8 @@ import {
     LeadPreviewForTextQueryVariables,
     CreateAutoDraftEntriesMutation,
     CreateAutoDraftEntriesMutationVariables,
+    AutoDraftEntriesStatusQuery,
+    AutoDraftEntriesStatusQueryVariables,
 } from '#generated/types';
 
 import { PartialEntryType as EntryInput } from '#components/entry/schema';
@@ -87,6 +89,22 @@ const CREATE_AUTO_DRAFT_ENTRIES = gql`
                 autoDraftEntryCreate(data: {lead: $leadId}) {
                     ok
                     errors
+                }
+            }
+        }
+    }
+`;
+
+const AUTO_DRAFT_ENTRIES_STATUS = gql`
+    query AutoDraftEntriesStatus (
+        $projectId: ID!,
+        $leadId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            assistedTagging {
+                extractionStatusByLead(leadId: $leadId) {
+                    autoEntryExtractionStatus
                 }
             }
         }
@@ -219,6 +237,65 @@ function LeftPane(props: Props) {
         },
     );
 
+    // FIXME: randomId is used to create different query variables after each poll
+    // so that apollo doesn't create unnecessary cache
+    const [randomId, setRandomId] = useState<string>(randomString());
+
+    const autoEntryStatusVariables = useMemo(() => {
+        if (isNotDefined(projectId)) {
+            return undefined;
+        }
+        return ({
+            leadId,
+            randomId,
+            projectId,
+        });
+    }, [
+        randomId,
+        leadId,
+        projectId,
+    ]);
+
+    const {
+        data: autoEntryExtractionStatus,
+        refetch: retriggerEntryExtractionStatus,
+    } = useQuery<AutoDraftEntriesStatusQuery, AutoDraftEntriesStatusQueryVariables>(
+        AUTO_DRAFT_ENTRIES_STATUS,
+        {
+            skip: isNotDefined(autoEntryStatusVariables),
+            variables: autoEntryStatusVariables,
+        },
+    );
+
+    const [draftEntriesLoading, setDraftEntriesLoading] = useState<boolean>(false);
+
+    // TODO: This polling calls two queries at a time. Fix this.
+    useEffect(() => {
+        const timeout = setTimeout(
+            () => {
+                const shouldPoll = autoEntryExtractionStatus?.project
+                    ?.assistedTagging?.extractionStatusByLead?.autoEntryExtractionStatus === 'PENDING';
+                if (shouldPoll) {
+                    setDraftEntriesLoading(true);
+                    setRandomId(randomString());
+                    retriggerEntryExtractionStatus();
+                } else {
+                    setDraftEntriesLoading(false);
+                }
+            },
+            2000,
+        );
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [
+        autoEntryExtractionStatus?.project?.assistedTagging
+            ?.extractionStatusByLead?.autoEntryExtractionStatus,
+        leadId,
+        retriggerEntryExtractionStatus,
+    ]);
+
     const [
         triggerAutoEntriesCreate,
     ] = useMutation<CreateAutoDraftEntriesMutation, CreateAutoDraftEntriesMutationVariables>(
@@ -242,13 +319,14 @@ function LeftPane(props: Props) {
                     );
                 }
             },
-            onError: () => {
+            onError: (error) => {
                 alert.show(
                     'Failed to extract entries using NLP.',
                     {
                         variant: 'error',
                     },
                 );
+                showAutoEntriesModal();
             },
         },
     );
@@ -724,11 +802,12 @@ function LeftPane(props: Props) {
                     />
                 </TabPanel>
             </Tabs>
-            {autoEntriesModalShown && isDefined(projectId) && (
+            {autoEntriesModalShown && isDefined(projectId) && frameworkDetails && (
                 <AutoEntriesModal
                     onModalClose={hideAutoEntriesModal}
                     projectId={projectId}
                     leadId={leadId}
+                    frameworkDetails={frameworkDetails}
                 />
             )}
         </div>
