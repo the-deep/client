@@ -392,7 +392,7 @@ const assessments = wrap({
         if (!project) {
             return false;
         }
-        return project.hasAssessmentTemplate;
+        return project.isAssessmentEnabled;
     },
     visibility: 'is-authenticated',
 });
@@ -411,7 +411,7 @@ const leadGroups = wrap({
         if (!project) {
             return false;
         }
-        return project.hasAssessmentTemplate;
+        return project.isAssessmentEnabled;
     },
     visibility: 'is-authenticated',
 });
@@ -454,7 +454,7 @@ const aryDashboard = wrap({
         return (
             // project.isVisualizationEnabled
             // && project.isVisualizationAvailable
-            project.hasAssessmentTemplate
+            project.isAssessmentEnabled
         );
     },
 });
@@ -534,7 +534,7 @@ const newAssessmentEditRoute = wrap({
             return false;
         }
         // NOTE: using permission for LEAD as we don't have one for assessment
-        return project.hasAssessmentTemplate && (
+        return project.isAssessmentEnabled && (
             project.allowedPermissions.includes('CREATE_LEAD')
             || project.allowedPermissions.includes('UPDATE_LEAD')
         );
@@ -558,7 +558,7 @@ const createNewAssessmentEditRoute = wrap({
             return false;
         }
         // NOTE: using permission for LEAD as we don't have one for assessment
-        return project.hasAssessmentTemplate && (
+        return project.isAssessmentEnabled && (
             project.allowedPermissions.includes('CREATE_LEAD')
             || project.allowedPermissions.includes('UPDATE_LEAD')
         );
@@ -582,7 +582,7 @@ const assessmentEditRoute = wrap({
             return false;
         }
         // NOTE: using permission for LEAD as we don't have one for assessment
-        return project.hasAssessmentTemplate && (
+        return project.isAssessmentEnabled && (
             project.allowedPermissions.includes('CREATE_LEAD')
             || project.allowedPermissions.includes('UPDATE_LEAD')
         );
@@ -606,7 +606,7 @@ const groupAssessmentEditRoute = wrap({
             return false;
         }
         // NOTE: using permission for LEAD as we don't have one for assessment
-        return project.hasAssessmentTemplate && (
+        return project.isAssessmentEnabled && (
             project.allowedPermissions.includes('CREATE_LEAD')
             || project.allowedPermissions.includes('UPDATE_LEAD')
         );

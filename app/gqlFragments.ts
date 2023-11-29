@@ -289,7 +289,7 @@ export const LAST_ACTIVE_PROJECT_FRAGMENT = gql`
         analysisFramework {
             id
         }
-        hasAssessmentTemplate
+        isAssessmentEnabled
         id
         isPrivate
         title
