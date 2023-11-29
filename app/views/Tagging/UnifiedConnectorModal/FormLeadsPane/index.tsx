@@ -54,7 +54,7 @@ const LEAD_OPTIONS = gql`
         }
         project(id: $projectId) {
             id
-            hasAssessmentTemplate
+            isAssessmentEnabled
         }
     }
 `;
@@ -292,7 +292,7 @@ function FormLeadsPane(props: Props) {
                             // onLeadGroupOptionsChange={onLeadGroupOptionsChange}
                             assigneeOptions={assigneeOptions}
                             onAssigneeOptionChange={onAssigneeOptionChange}
-                            hasAssessment={leadOptionsData?.project?.hasAssessmentTemplate}
+                            hasAssessment={leadOptionsData?.project?.isAssessmentEnabled}
                             disabled={disabled}
                         />
                         <LeadPreview
