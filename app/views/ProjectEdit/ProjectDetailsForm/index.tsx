@@ -89,6 +89,7 @@ import RequestPrivateProjectButton from './RequestPrivateProjectButton';
 import styles from './styles.css';
 
 const privacyTooltip = 'Public projects will be visible in the "Explore DEEP" section. Any registered users will be able to see the project name, the target country, a scheenshot of the framework and the number of users, entries and sources it contains. This is the default option in DEEP as to foster collaboration and avoid duplication or efforts.  Private projects will not be visible in the "Explore DEEP" section. This feature can be exceptionally requested for projects dealing with sensitive information or topics. Requests are assessed case by case and the feature is activated only in the case specific harm to the users, data or the platform itself is possible.';
+const assessmentTooltip = 'Enable assessment tagging.';
 
 const DELETE_PROJECT = gql`
     mutation deleteProject($projectId: ID!) {
@@ -172,6 +173,7 @@ const schema: FormSchema = {
         hasPubliclyViewableRestrictedLeads: [requiredCondition],
         hasPubliclyViewableConfidentialLeads: [requiredCondition],
         isPrivate: [],
+        isAssessmentEnabled: [],
         isTest: [],
     }),
     validation: (value) => {
@@ -192,6 +194,7 @@ const initialValue: PartialFormType = {
     title: '',
     isPrivate: false,
     isTest: false,
+    isAssessmentEnabled: false,
     hasPubliclyViewableUnprotectedLeads: false,
     hasPubliclyViewableConfidentialLeads: false,
     hasPubliclyViewableRestrictedLeads: false,
@@ -215,9 +218,11 @@ const LAST_ACTIVE_PROJECT = gql`
 `;
 
 const CURRENT_PROJECT = gql`
+    ${LAST_ACTIVE_PROJECT_FRAGMENT}
     query UserCurrentProject($projectId: ID!) {
         project(id: $projectId) {
             id
+            ...LastActiveProjectResponse
             title
             startDate
             endDate
@@ -228,6 +233,7 @@ const CURRENT_PROJECT = gql`
             description
             isPrivate
             isTest
+            isAssessmentEnabled
             hasPubliclyViewableUnprotectedLeads
             hasPubliclyViewableConfidentialLeads
             hasPubliclyViewableRestrictedLeads
@@ -251,14 +257,17 @@ const CURRENT_PROJECT = gql`
 `;
 
 const PROJECT_CREATE = gql`
+${LAST_ACTIVE_PROJECT_FRAGMENT}
 mutation ProjectCreate($data: ProjectCreateInputType!) {
     projectCreate(data: $data) {
         ok
         result {
+            ...LastActiveProjectResponse
             id
             title
             startDate
             endDate
+            isAssessmentEnabled
             hasPubliclyViewableUnprotectedLeads
             hasPubliclyViewableConfidentialLeads
             hasPubliclyViewableRestrictedLeads
@@ -289,12 +298,14 @@ mutation ProjectCreate($data: ProjectCreateInputType!) {
 `;
 
 const PROJECT_UPDATE = gql`
+${LAST_ACTIVE_PROJECT_FRAGMENT}
 mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
     project(id: $projectId) {
         projectUpdate(data: $data) {
             ok
             result {
                 id
+                ...LastActiveProjectResponse
                 title
                 startDate
                 endDate
@@ -305,6 +316,7 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 description
                 isPrivate
                 isTest
+                isAssessmentEnabled
                 hasPubliclyViewableUnprotectedLeads
                 hasPubliclyViewableConfidentialLeads
                 hasPubliclyViewableRestrictedLeads
@@ -475,6 +487,10 @@ function ProjectDetailsForm(props: Props) {
                         { variant: 'error' },
                     );
                 } else if (ok) {
+                    setPristine(true);
+                    if (response?.project?.projectUpdate?.result) {
+                        setProject(response?.project?.projectUpdate?.result);
+                    }
                     alert.show(
                         'Successfully updated project!',
                         { variant: 'success' },
@@ -763,6 +779,27 @@ function ProjectDetailsForm(props: Props) {
                     </ContainerCard>
                 </div>
                 <div className={styles.right}>
+                    <Container
+                        className={styles.visibility}
+                        headingSize="extraSmall"
+                        contentClassName={styles.items}
+                        heading="Assessment Registry"
+                        inlineHeadingDescription
+                        headerDescriptionClassName={styles.infoIconContainer}
+                        headingDescription={(
+                            <IoInformationCircleOutline
+                                className={styles.infoIcon}
+                                title={assessmentTooltip}
+                            />
+                        )}
+                    >
+                        <Switch
+                            name="isAssessmentEnabled"
+                            label="Is Assessment Enabled"
+                            value={value?.isAssessmentEnabled}
+                            onChange={setFieldValue}
+                        />
+                    </Container>
                     <Container
                         className={styles.visibility}
                         headingSize="extraSmall"

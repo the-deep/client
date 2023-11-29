@@ -230,7 +230,7 @@ function LeadsPane(props: Props) {
                             // onLeadGroupOptionsChange={setLeadGroupOptions}
                             assigneeOptions={projectUserOptions}
                             onAssigneeOptionChange={setProjectUserOptions}
-                            hasAssessment={project?.hasAssessmentTemplate}
+                            hasAssessment={project?.isAssessmentEnabled}
                         />
                         {selectedLeadAttachment && (
                             <LeadPreview
