@@ -5,7 +5,7 @@ import {
     isDefined,
     randomString,
 } from '@togglecorp/fujs';
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import {
     Tabs,
     Container,
@@ -45,10 +45,6 @@ import { UserContext } from '#base/context/UserContext';
 import {
     LeadPreviewForTextQuery,
     LeadPreviewForTextQueryVariables,
-    CreateAutoDraftEntriesMutation,
-    CreateAutoDraftEntriesMutationVariables,
-    AutoDraftEntriesStatusQuery,
-    AutoDraftEntriesStatusQueryVariables,
 } from '#generated/types';
 
 import { PartialEntryType as EntryInput } from '#components/entry/schema';
@@ -73,38 +69,6 @@ const LEAD_PREVIEW = gql`
                 extractionStatus
                 leadPreview {
                     textExtract
-                }
-            }
-        }
-    }
-`;
-
-const CREATE_AUTO_DRAFT_ENTRIES = gql`
-    mutation CreateAutoDraftEntries (
-        $projectId: ID!,
-        $leadId: ID!,
-    ) {
-        project(id: $projectId) {
-            assistedTagging {
-                autoDraftEntryCreate(data: {lead: $leadId}) {
-                    ok
-                    errors
-                }
-            }
-        }
-    }
-`;
-
-const AUTO_DRAFT_ENTRIES_STATUS = gql`
-    query AutoDraftEntriesStatus (
-        $projectId: ID!,
-        $leadId: ID!,
-    ) {
-        project(id: $projectId) {
-            id
-            assistedTagging {
-                extractionStatusByLead(leadId: $leadId) {
-                    autoEntryExtractionStatus
                 }
             }
         }
@@ -236,117 +200,6 @@ function LeftPane(props: Props) {
             variables,
         },
     );
-
-    // FIXME: randomId is used to create different query variables after each poll
-    // so that apollo doesn't create unnecessary cache
-    const [randomId, setRandomId] = useState<string>(randomString());
-
-    const autoEntryStatusVariables = useMemo(() => {
-        if (isNotDefined(projectId)) {
-            return undefined;
-        }
-        return ({
-            leadId,
-            randomId,
-            projectId,
-        });
-    }, [
-        randomId,
-        leadId,
-        projectId,
-    ]);
-
-    const {
-        data: autoEntryExtractionStatus,
-        refetch: retriggerEntryExtractionStatus,
-    } = useQuery<AutoDraftEntriesStatusQuery, AutoDraftEntriesStatusQueryVariables>(
-        AUTO_DRAFT_ENTRIES_STATUS,
-        {
-            skip: isNotDefined(autoEntryStatusVariables),
-            variables: autoEntryStatusVariables,
-        },
-    );
-
-    const [draftEntriesLoading, setDraftEntriesLoading] = useState<boolean>(false);
-
-    // TODO: This polling calls two queries at a time. Fix this.
-    useEffect(() => {
-        const timeout = setTimeout(
-            () => {
-                const shouldPoll = autoEntryExtractionStatus?.project
-                    ?.assistedTagging?.extractionStatusByLead?.autoEntryExtractionStatus === 'PENDING';
-                if (shouldPoll) {
-                    setDraftEntriesLoading(true);
-                    setRandomId(randomString());
-                    retriggerEntryExtractionStatus();
-                } else {
-                    setDraftEntriesLoading(false);
-                }
-            },
-            2000,
-        );
-
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [
-        autoEntryExtractionStatus?.project?.assistedTagging
-            ?.extractionStatusByLead?.autoEntryExtractionStatus,
-        leadId,
-        retriggerEntryExtractionStatus,
-    ]);
-
-    const [
-        triggerAutoEntriesCreate,
-    ] = useMutation<CreateAutoDraftEntriesMutation, CreateAutoDraftEntriesMutationVariables>(
-        CREATE_AUTO_DRAFT_ENTRIES,
-        {
-            onCompleted: (response) => {
-                const autoEntriesResponse = response?.project?.assistedTagging
-                    ?.autoDraftEntryCreate;
-                if (autoEntriesResponse?.ok) {
-                    alert.show(
-                        'The entries extraction has started.',
-                        { variant: 'success' },
-                    );
-                    showAutoEntriesModal();
-                } else {
-                    alert.show(
-                        'Failed to extract entries using NLP.',
-                        {
-                            variant: 'error',
-                        },
-                    );
-                }
-            },
-            onError: (error) => {
-                alert.show(
-                    'Failed to extract entries using NLP.',
-                    {
-                        variant: 'error',
-                    },
-                );
-                showAutoEntriesModal();
-            },
-        },
-    );
-
-    const handleAutoExtractClick = useCallback(() => {
-        if (isNotDefined(projectId)) {
-            return;
-        }
-
-        triggerAutoEntriesCreate({
-            variables: {
-                projectId,
-                leadId,
-            },
-        });
-    }, [
-        projectId,
-        leadId,
-        triggerAutoEntriesCreate,
-    ]);
 
     const leadPreview = leadPreviewData?.project?.lead?.leadPreview;
     const extractionStatus = leadPreviewData?.project?.lead?.extractionStatus;
@@ -694,8 +547,9 @@ function LeftPane(props: Props) {
                         <>
                             <Button
                                 name={undefined}
-                                onClick={handleAutoExtractClick}
-                                variant="nlp-primary"
+                                onClick={showAutoEntriesModal}
+                                variant="nlp-tertiary"
+                                spacing="compact"
                             >
                                 NLP Extract and Classify
                             </Button>
