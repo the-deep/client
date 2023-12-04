@@ -658,8 +658,10 @@ function LeftPane(props: Props) {
             </Tabs>
             {autoEntriesModalShown && isDefined(projectId) && frameworkDetails && (
                 <AutoEntriesModal
+                    createdEntries={entries}
                     onModalClose={hideAutoEntriesModal}
                     projectId={projectId}
+                    onAssistedEntryAdd={onAssistedEntryAdd}
                     leadId={leadId}
                     frameworkDetails={frameworkDetails}
                 />

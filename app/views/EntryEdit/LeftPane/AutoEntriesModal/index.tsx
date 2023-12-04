@@ -12,6 +12,10 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 import {
+    useForm,
+    useFormArray,
+} from '@togglecorp/toggle-form';
+import {
     gql,
     useQuery,
     useMutation,
@@ -21,9 +25,9 @@ import {
     ListView,
     useAlert,
     Button,
-    Message,
 } from '@the-deep/deep-ui';
 
+import { mergeLists } from '#utils/common';
 import { type Framework } from '#components/entry/types';
 import { type GeoArea } from '#components/GeoMultiSelectInput';
 import {
@@ -38,7 +42,8 @@ import {
     filterOrganigramMappings,
     type MappingsItem,
 } from '#types/newAnalyticalFramework';
-import {
+import getSchema, {
+    defaultFormValues,
     PartialEntryType,
     PartialAttributeType,
 } from '#components/entry/schema';
@@ -51,6 +56,9 @@ import {
     AutoDraftEntriesStatusQueryVariables,
 } from '#generated/types';
 import AssistPopup from '../AssistItem/AssistPopup';
+import { createDefaultAttributes } from '../../utils';
+
+import styles from './styles.css';
 
 import {
     createOrganigramAttr,
@@ -325,6 +333,10 @@ interface Props {
     projectId: string;
     leadId: string;
     frameworkDetails: Framework;
+    createdEntries: PartialEntryType[] | undefined | null;
+    onAssistedEntryAdd: (
+        (newEntry: PartialEntryType, locations?: GeoArea[]) => void
+    ) | undefined;
 }
 
 function AutoEntriesModal(props: Props) {
@@ -332,10 +344,61 @@ function AutoEntriesModal(props: Props) {
         onModalClose,
         projectId,
         leadId,
+        onAssistedEntryAdd,
         frameworkDetails,
+        createdEntries,
     } = props;
 
     const alert = useAlert();
+    const draftEntriesMap = useMemo(() => (
+        listToMap(
+            createdEntries?.filter((item) => isDefined(item.draftEntry)) ?? [],
+            (item) => item.draftEntry ?? '',
+            () => true,
+        )
+    ), [createdEntries]);
+
+    const {
+        allWidgets,
+        filteredWidgets,
+    } = useMemo(() => {
+        const widgetsFromPrimary = frameworkDetails?.primaryTagging?.flatMap(
+            (item) => (item.widgets ?? []),
+        ) ?? [];
+        const widgetsFromSecondary = frameworkDetails?.secondaryTagging ?? [];
+        const widgets = [
+            ...widgetsFromPrimary,
+            ...widgetsFromSecondary,
+        ];
+        return {
+            allWidgets: widgets,
+            filteredWidgets: widgets.filter((w) => mappingsSupportedWidgets.includes(w.widgetId)),
+        };
+    }, [
+        frameworkDetails,
+    ]);
+
+    const schema = useMemo(
+        () => {
+            const widgetsMapping = listToMap(
+                allWidgets,
+                (item) => item.id,
+                (item) => item,
+            );
+
+            return getSchema(widgetsMapping);
+        },
+        [allWidgets],
+    );
+    const {
+        setValue,
+        value,
+        setFieldValue,
+    } = useForm(schema, defaultFormValues);
+
+    const {
+        setValue: onEntryChange,
+    } = useFormArray<'entries', PartialEntryType>('entries', setFieldValue);
 
     const [
         geoAreaOptions,
@@ -388,8 +451,7 @@ function AutoEntriesModal(props: Props) {
     useEffect(() => {
         const timeout = setTimeout(
             () => {
-                const shouldPoll = autoEntryExtractionStatus?.project
-                    ?.assistedTagging?.extractionStatusByLead?.autoEntryExtractionStatus === 'PENDING';
+                const shouldPoll = extractionStatus === 'PENDING' || extractionStatus === 'STARTED';
                 if (shouldPoll) {
                     setDraftEntriesLoading(true);
                     setRandomId(randomString());
@@ -405,8 +467,7 @@ function AutoEntriesModal(props: Props) {
             clearTimeout(timeout);
         };
     }, [
-        autoEntryExtractionStatus?.project?.assistedTagging
-            ?.extractionStatusByLead?.autoEntryExtractionStatus,
+        extractionStatus,
         leadId,
         retriggerEntryExtractionStatus,
     ]);
@@ -465,30 +526,6 @@ function AutoEntriesModal(props: Props) {
 
     const mappings = frameworkDetails?.predictionTagsMapping;
 
-    const {
-        filteredWidgets,
-    } = useMemo(() => {
-        const widgetsFromPrimary = frameworkDetails?.primaryTagging?.flatMap(
-            (item) => (item.widgets ?? []),
-        ) ?? [];
-        const widgetsFromSecondary = frameworkDetails?.secondaryTagging ?? [];
-        const widgets = [
-            ...widgetsFromPrimary,
-            ...widgetsFromSecondary,
-        ];
-        return {
-            allWidgets: widgets,
-            filteredWidgets: widgets.filter((w) => mappingsSupportedWidgets.includes(w.widgetId)),
-        };
-    }, [
-        frameworkDetails,
-    ]);
-
-    const [
-        draftEntries,
-        setDraftEntries,
-    ] = useState<PartialEntryType[]>([]);
-
     const autoEntriesVariables = useMemo(() => ({
         projectId,
         leadIds: [leadId],
@@ -540,6 +577,7 @@ function AutoEntriesModal(props: Props) {
                         entryType: 'EXCERPT' as const,
                         lead: leadId,
                         excerpt: entry.excerpt,
+                        draftEntry: entry.id,
                         droppedExcerpt: entry.excerpt,
                         attributes: entryRecommendations?.map((attr) => {
                             if (attr.widgetType !== 'GEO') {
@@ -581,7 +619,9 @@ function AutoEntriesModal(props: Props) {
                     (item) => item.entryId,
                     (item) => item.geoLocations,
                 );
-                setDraftEntries(requiredDraftEntries);
+                setValue({
+                    entries: requiredDraftEntries,
+                });
                 setAllRecommendations(entryRecommendations);
                 setAllHints(entryHints);
                 setGeoAreaOptions(entryGeoAreas);
@@ -589,24 +629,100 @@ function AutoEntriesModal(props: Props) {
         },
     );
 
-    const rendererParams = useCallback((entryId: string, datum: PartialEntryType) => ({
-        frameworkDetails,
-        value: datum,
-        onChange: noOp,
-        leadId,
-        hints: allHints?.[entryId],
-        recommendations: allRecommendations?.[entryId],
-        geoAreaOptions: geoAreaOptions?.[entryId],
-        onEntryDiscardButtonClick: noOp,
-        onEntryCreateButtonClick: noOp,
-        onNormalEntryCreateButtonClick: noOp,
-        onGeoAreaOptionsChange: noOp,
-        predictionsLoading: false,
-        predictionsErrored: false,
-        messageText: undefined,
-        variant: 'normal' as const,
-        error: undefined,
-    }), [
+    const handleEntryCreateButtonClick = useCallback((entryId: string) => {
+        if (!allRecommendations?.[entryId]) {
+            return;
+        }
+
+        const selectedEntry = value?.entries?.find((item) => item.clientId === entryId);
+        if (onAssistedEntryAdd && selectedEntry) {
+            const defaultAttributes = createDefaultAttributes(allWidgets);
+
+            const newAttributes = mergeLists(
+                defaultAttributes,
+                selectedEntry?.attributes ?? [],
+                (attr) => attr.widget,
+                (defaultAttr, newAttr) => ({
+                    ...newAttr,
+                    clientId: defaultAttr.clientId,
+                    widget: defaultAttr.widget,
+                    id: defaultAttr.id,
+                    widgetVersion: defaultAttr.widgetVersion,
+                }),
+            );
+
+            onAssistedEntryAdd(
+                {
+                    ...selectedEntry,
+                    attributes: newAttributes,
+                },
+                geoAreaOptions?.[entryId] ?? undefined,
+            );
+
+            alert.show(
+                'Successfully added entry from recommendation.',
+                {
+                    variant: 'success',
+                },
+            );
+        } else {
+            alert.show(
+                'Failed to add entry from recommendations.',
+                {
+                    variant: 'error',
+                },
+            );
+        }
+    }, [
+        alert,
+        value?.entries,
+        allWidgets,
+        geoAreaOptions,
+        allRecommendations,
+        onAssistedEntryAdd,
+    ]);
+
+    const filteredEntries = useMemo(() => (
+        value?.entries?.filter(
+            (item) => item.draftEntry && !draftEntriesMap[item.draftEntry],
+        )
+    ), [
+        value?.entries,
+        draftEntriesMap,
+    ]);
+
+    const rendererParams = useCallback((
+        entryId: string,
+        datum: PartialEntryType,
+    ) => {
+        const onEntryCreateButtonClick = () => handleEntryCreateButtonClick(entryId);
+        const index = value?.entries?.findIndex((item) => item.clientId === entryId);
+
+        return ({
+            frameworkDetails,
+            value: datum,
+            className: styles.listItem,
+            entryInputClassName: styles.entryInput,
+            name: index,
+            onChange: onEntryChange,
+            leadId,
+            hints: allHints?.[entryId],
+            recommendations: allRecommendations?.[entryId],
+            geoAreaOptions: geoAreaOptions?.[entryId],
+            onEntryDiscardButtonClick: noOp,
+            onEntryCreateButtonClick,
+            onNormalEntryCreateButtonClick: noOp,
+            onGeoAreaOptionsChange: noOp,
+            predictionsLoading: false,
+            predictionsErrored: false,
+            messageText: undefined,
+            variant: 'normal' as const,
+            error: undefined,
+        });
+    }, [
+        value?.entries,
+        handleEntryCreateButtonClick,
+        onEntryChange,
         allHints,
         allRecommendations,
         frameworkDetails,
@@ -614,26 +730,39 @@ function AutoEntriesModal(props: Props) {
         geoAreaOptions,
     ]);
 
+    const isFiltered = useMemo(() => (
+        (filteredEntries?.length ?? 0) < (value?.entries?.length ?? 0)
+    ), [
+        filteredEntries,
+        value?.entries,
+    ]);
+
     const hideList = draftEntriesLoading
+        || autoEntriesLoading
         || extractionStatus === 'NONE';
 
     return (
         <Modal
             onCloseButtonClick={onModalClose}
             heading="NLP Extract & Classify"
-            size={hideList ? 'small' : 'cover'}
-            freeHeight={hideList}
+            size={(hideList || value?.entries?.length === 0) ? 'small' : 'cover'}
+            bodyClassName={styles.modalBody}
         >
             <ListView
-                data={draftEntries}
+                data={filteredEntries}
                 keySelector={entryKeySelector}
                 renderer={AssistPopup}
                 rendererParams={rendererParams}
                 pendingMessage="Please wait while we load recommendations."
                 pending={autoEntriesLoading || draftEntriesLoading}
                 errored={false}
-                filtered={false}
-                emptyMessage={(extractionStatus === 'NONE') && "Looks like you've not triggered an extraction yet"}
+                filtered={isFiltered}
+                filteredEmptyMessage="Looks like you've already added all entries from recommendations."
+                emptyMessage={
+                    (extractionStatus === 'NONE')
+                        ? "Looks like you've not triggered an extraction yet"
+                        : "Looks like there aren't any recommendations."
+                }
                 messageActions={(extractionStatus === 'NONE') && (
                     <Button
                         name={undefined}
@@ -646,10 +775,6 @@ function AutoEntriesModal(props: Props) {
                 messageShown
                 messageIconShown
                 borderBetweenItem
-            />
-            <Message
-                pending={draftEntriesLoading}
-                message=""
             />
         </Modal>
     );
