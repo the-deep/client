@@ -741,6 +741,7 @@ function AssistItem(props: Props) {
                             frameworkDetails={frameworkDetails}
                             value={value}
                             onChange={setValue}
+                            name={undefined}
                             error={error}
                             leadId={leadId}
                             hints={allHints}

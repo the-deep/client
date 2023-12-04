@@ -26,12 +26,13 @@ import {
 
 import styles from './styles.css';
 
-interface Props {
+interface Props<NAME extends string | number | undefined> {
     className?: string;
+    entryInputClassName?: string;
     frameworkDetails: Framework;
     leadId: string;
     value: PartialEntryType;
-    onChange: (val: SetValueArg<PartialEntryType>, name: undefined) => void;
+    onChange: (val: SetValueArg<PartialEntryType>, name: NAME) => void;
     error: Error<PartialEntryType> | undefined;
     onEntryCreateButtonClick: () => void;
     variant?: 'normal' | 'compact' | 'nlp';
@@ -45,16 +46,19 @@ interface Props {
     hints: WidgetHint[] | undefined;
     recommendations: PartialAttributeType[] | undefined;
     predictionsErrored: boolean;
+    name: NAME;
     messageText: string | undefined;
 }
 
-function AssistPopup(props: Props) {
+function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME>) {
     const {
         className,
+        entryInputClassName,
         variant = 'nlp',
         leadId,
         value,
         onChange,
+        name,
         error,
         frameworkDetails,
         onEntryCreateButtonClick,
@@ -138,9 +142,9 @@ function AssistPopup(props: Props) {
                 />
             ) : (
                 <EntryInput
-                    className={styles.entryInput}
+                    className={_cs(styles.entryInput, entryInputClassName)}
                     leadId={leadId}
-                    name={undefined}
+                    name={name}
                     error={error}
                     value={value}
                     onChange={onChange}
