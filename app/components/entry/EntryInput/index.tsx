@@ -81,6 +81,9 @@ interface EntryInputProps<T extends string | number | undefined> {
     allWidgets: Widget[] | undefined | null;
     rightComponent?: React.ReactNode;
     noPaddingInWidgetContainer?: boolean;
+
+    excerptShown?: boolean;
+    displayHorizontally?: boolean;
 }
 
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
@@ -111,6 +114,8 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         onApplyToAll,
         rightComponent,
         noPaddingInWidgetContainer = false,
+        excerptShown = false,
+        displayHorizontally = false,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -194,11 +199,12 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
             className={_cs(
                 className,
                 compactMode && styles.compact,
+                displayHorizontally && styles.horizontal,
                 styles.entryInput,
             )}
         >
             <NonFieldError error={error} />
-            {!compactMode && (
+            {(!compactMode || excerptShown) && (
                 <Container
                     className={styles.excerpt}
                     heading={(

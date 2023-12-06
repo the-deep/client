@@ -54,6 +54,14 @@
         }
     }
 
+    &.horizontal {
+        flex-direction: row;
+        .excerpt {
+            width: 100%;
+            max-width: 30rem;
+        }
+    }
+
     .section {
         background-color: var(--dui-color-foreground);
         width: var(--inner-width);
