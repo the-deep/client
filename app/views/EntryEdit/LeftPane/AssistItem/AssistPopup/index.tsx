@@ -48,6 +48,8 @@ interface Props<NAME extends string | number | undefined> {
     predictionsErrored: boolean;
     name: NAME;
     messageText: string | undefined;
+    excerptShown?: boolean;
+    displayHorizontally?: boolean;
 }
 
 function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME>) {
@@ -71,6 +73,8 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
         predictionsErrored,
         messageText,
         recommendations,
+        excerptShown = false,
+        displayHorizontally = false,
     } = props;
 
     const allWidgets = useMemo(() => {
@@ -160,6 +164,8 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
                     emptyValueHidden
                     addButtonHidden
                     variant={variant}
+                    excerptShown={excerptShown}
+                    displayHorizontally={displayHorizontally}
                 />
             )}
         </Container>

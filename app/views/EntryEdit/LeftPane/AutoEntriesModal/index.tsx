@@ -716,8 +716,10 @@ function AutoEntriesModal(props: Props) {
             predictionsLoading: false,
             predictionsErrored: false,
             messageText: undefined,
-            variant: 'normal' as const,
+            variant: 'nlp' as const,
             error: undefined,
+            excerptShown: true,
+            displayHorizontally: true,
         });
     }, [
         value?.entries,
