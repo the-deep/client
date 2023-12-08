@@ -112,6 +112,8 @@ const PROJECT_EXPORTS = gql`
                             widgetKey
                         }
                         excelDecoupled
+                        dateFormat
+                        reportCitationStyle
                         reportExportingWidgets
                         reportLevels {
                             id

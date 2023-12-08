@@ -380,7 +380,7 @@ function SourcesFilter(props: Props) {
                         options={sourceOrganizationOptions}
                         onOptionsChange={setSourceOrganizationOptions}
                         disabled={disabled || optionsLoading}
-                        label="Source Organization"
+                        label="Publishing Organization"
                         error={getErrorString(error?.sourceOrganizations)}
                         usedInProject={projectId}
                     />

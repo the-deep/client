@@ -48,6 +48,9 @@ import {
     ProjectSourceStatsForExportQueryVariables,
     LeadsFilterDataInputType,
     ExportExcelSelectedStaticColumnEnum,
+    ExportDateFormatEnum,
+    ExportReportCitationStyleEnum,
+    ExportCreateInputType,
 } from '#generated/types';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import {
@@ -322,6 +325,12 @@ function NewExport(props: Props) {
         excelDecoupled,
         setExcelDecoupled,
     ] = useState<boolean>(locationState?.extraOptions?.excelDecoupled ?? false);
+    const [dateFormat, setDateFormat] = useState<ExportDateFormatEnum | undefined>(
+        locationState?.extraOptions?.dateFormat ?? 'DEFAULT',
+    );
+    const [citationFormat, setCitationFormat] = useState<ExportReportCitationStyleEnum | undefined>(
+        locationState?.extraOptions?.reportCitationStyle ?? 'DEFAULT',
+    );
 
     const [
         textWidgets,
@@ -620,9 +629,11 @@ function NewExport(props: Props) {
         setPristine(true);
     }, [clearSourcesFilterValue, setPristine]);
 
-    const getCreateExportData = useCallback((isPreview: boolean) => ({
+    const getCreateExportData = useCallback((isPreview: boolean): ExportCreateInputType => ({
         extraOptions: {
             excelDecoupled,
+            dateFormat,
+            reportCitationStyle: citationFormat,
             excelColumns: columns.filter((widget) => widget.selected).map((col) => (
                 col.isWidget ? {
                     isWidget: col.isWidget,
@@ -656,6 +667,8 @@ function NewExport(props: Props) {
         type: 'ENTRIES' as const,
         title: queryTitle,
     }), [
+        dateFormat,
+        citationFormat,
         columns,
         exportFileFormat,
         contextualWidgets,
@@ -866,6 +879,10 @@ function NewExport(props: Props) {
                             showMatrix2dOptions={showMatrix2dOptions}
                             contextualWidgets={contextualWidgets}
                             textWidgets={textWidgets}
+                            dateFormat={dateFormat}
+                            citationFormat={citationFormat}
+                            onDateFormatChange={setDateFormat}
+                            onCitationFormatChange={setCitationFormat}
                             onReportStructureChange={setReportStructure}
                             onReportShowLeadEntryIdChange={setReportShowLeadEntryId}
                             onReportShowAssessmentDataChange={setReportShowAssessmentData}

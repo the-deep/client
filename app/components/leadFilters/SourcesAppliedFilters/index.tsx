@@ -171,7 +171,7 @@ function SourcesAppliedFilters(props: Props) {
                 keySelector={organizationKeySelector}
             />
             <DismissableListOutput
-                label="Source Organization"
+                label="Publishing Organization"
                 name="sourceOrganizations"
                 onDismiss={onChange}
                 value={value.sourceOrganizations}
