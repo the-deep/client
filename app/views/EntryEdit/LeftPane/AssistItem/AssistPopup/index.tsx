@@ -4,16 +4,11 @@ import {
     Kraken,
     Container,
     Message,
-    QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
     SetValueArg,
     Error,
 } from '@togglecorp/toggle-form';
-import {
-    IoClose,
-} from 'react-icons/io5';
-import { FiEdit2 } from 'react-icons/fi';
 
 import EntryInput from '#components/entry/EntryInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
@@ -34,12 +29,9 @@ interface Props<NAME extends string | number | undefined> {
     value: PartialEntryType;
     onChange: (val: SetValueArg<PartialEntryType>, name: NAME) => void;
     error: Error<PartialEntryType> | undefined;
-    onEntryCreateButtonClick: () => void;
     variant?: 'normal' | 'compact' | 'nlp';
     // NOTE: Normal entry creation refers to entry created without use of
     // recommendations
-    onNormalEntryCreateButtonClick: () => void;
-    onEntryDiscardButtonClick: () => void;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     predictionsLoading?: boolean;
@@ -50,6 +42,8 @@ interface Props<NAME extends string | number | undefined> {
     messageText: string | undefined;
     excerptShown?: boolean;
     displayHorizontally?: boolean;
+
+    footerActions: React.ReactNode;
 }
 
 function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME>) {
@@ -63,9 +57,6 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
         name,
         error,
         frameworkDetails,
-        onEntryCreateButtonClick,
-        onNormalEntryCreateButtonClick,
-        onEntryDiscardButtonClick,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         predictionsLoading,
@@ -75,6 +66,7 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
         recommendations,
         excerptShown = false,
         displayHorizontally = false,
+        footerActions,
     } = props;
 
     const allWidgets = useMemo(() => {
@@ -99,28 +91,7 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
             // heading="Assisted Tagging"
             headingSize="extraSmall"
             spacing="compact"
-            footerQuickActions={(
-                <>
-                    <QuickActionButton
-                        name={undefined}
-                        onClick={onEntryDiscardButtonClick}
-                        title="Discard Entry"
-                        variant="nlp-secondary"
-                    >
-                        <IoClose />
-                    </QuickActionButton>
-                    <QuickActionButton
-                        name={undefined}
-                        onClick={(predictionsErrored || !!messageText)
-                            ? onNormalEntryCreateButtonClick : onEntryCreateButtonClick}
-                        disabled={predictionsLoading}
-                        variant="nlp-primary"
-                        title="Create Entry"
-                    >
-                        <FiEdit2 />
-                    </QuickActionButton>
-                </>
-            )}
+            footerQuickActions={footerActions}
             contentClassName={styles.body}
         >
             {isMessageShown ? (
