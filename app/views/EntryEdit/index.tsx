@@ -907,8 +907,14 @@ function EntryEdit(props: Props) {
     );
 
     const handleAssistedEntryAdd = useCallback(
-        (newValue: PartialEntryType, newGeoAreaOptions?: GeoArea[]) => {
-            createRestorePoint();
+        (
+            newValue: PartialEntryType,
+            newGeoAreaOptions?: GeoArea[],
+            selectCreatedEntry = false,
+        ) => {
+            if (selectCreatedEntry) {
+                createRestorePoint();
+            }
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => [
                     ...(prevValue ?? []),
@@ -919,7 +925,9 @@ function EntryEdit(props: Props) {
                 ],
                 'entries',
             );
-            setSelectedEntry(newValue.clientId);
+            if (selectCreatedEntry) {
+                setSelectedEntry(newValue.clientId);
+            }
             if (newGeoAreaOptions && newGeoAreaOptions.length > 0) {
                 setGeoAreaOptions((oldAreas) => {
                     const newAreas = unique([

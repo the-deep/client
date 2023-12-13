@@ -4,4 +4,9 @@
             height: 360px;
         }
     }
+
+    .footer-buttons {
+        display: flex;
+        gap: var(--dui-spacing-medium);
+    }
 }

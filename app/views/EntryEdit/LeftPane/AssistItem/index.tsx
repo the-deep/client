@@ -18,6 +18,7 @@ import {
     Container,
 } from '@the-deep/deep-ui';
 import { IoClose } from 'react-icons/io5';
+import { FiEdit2 } from 'react-icons/fi';
 
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import brainIcon from '#resources/img/brain.svg';
@@ -152,7 +153,11 @@ interface Props {
     className?: string;
     text: string;
     onAssistedEntryAdd: (
-        (newEntry: EntryInput, locations?: GeoArea[]) => void
+         (
+             newEntry: EntryInput,
+             locations?: GeoArea[],
+             selectCreatedEntry?: boolean,
+         ) => void
     ) | undefined;
     frameworkDetails?: Framework;
     leadId: string;
@@ -641,6 +646,7 @@ function AssistItem(props: Props) {
                             draftEntry: data?.project?.assistedTagging?.draftEntry?.id,
                         },
                         geoAreaOptions ?? undefined,
+                        true,
                     );
                 }
             },
@@ -746,9 +752,6 @@ function AssistItem(props: Props) {
                             leadId={leadId}
                             hints={allHints}
                             recommendations={allRecommendations}
-                            onEntryDiscardButtonClick={handleDiscardButtonClick}
-                            onEntryCreateButtonClick={handleEntryCreateButtonClick}
-                            onNormalEntryCreateButtonClick={handleNormalEntryCreateButtonClick}
                             geoAreaOptions={geoAreaOptions}
                             onGeoAreaOptionsChange={setGeoAreaOptions}
                             predictionsLoading={
@@ -758,6 +761,34 @@ function AssistItem(props: Props) {
                             }
                             predictionsErrored={!!fetchErrors || !!createErrors || isErrored}
                             messageText={messageText}
+                            footerActions={(
+                                <>
+                                    <QuickActionButton
+                                        name={undefined}
+                                        onClick={handleDiscardButtonClick}
+                                        title="Discard Entry"
+                                        variant="nlp-secondary"
+                                    >
+                                        <IoClose />
+                                    </QuickActionButton>
+                                    <QuickActionButton
+                                        name={undefined}
+                                        onClick={
+                                            (
+                                                (!!fetchErrors || !!createErrors || isErrored)
+                                                || !!messageText
+                                            )
+                                                ? handleNormalEntryCreateButtonClick
+                                                : handleEntryCreateButtonClick
+                                        }
+                                        disabled={predictionsLoading}
+                                        variant="nlp-primary"
+                                        title="Create Entry"
+                                    >
+                                        <FiEdit2 />
+                                    </QuickActionButton>
+                                </>
+                            )}
                         />
                     )}
                 </QuickActionDropdownMenu>
