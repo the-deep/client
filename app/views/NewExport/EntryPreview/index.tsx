@@ -93,16 +93,26 @@ function TextWidgetRenderer(props: TextWidgetRendererProps) {
     );
 }
 
+const todaysDate = new Date();
+const nextYear = todaysDate;
+nextYear.setFullYear(todaysDate.getFullYear() + 1);
+
 interface WidgetSampleProps {
     widget: Widget;
-    sampleDate: string;
+    selectedFormat?: { label: string; };
 }
 
 function WidgetSample(props: WidgetSampleProps) {
     const {
         widget,
-        sampleDate,
+        selectedFormat,
     } = props;
+
+    const sampleDateOne = formatDateToString(todaysDate, selectedFormat?.label ?? 'dd-MM-yyyy');
+    const sampleDateTwo = formatDateToString(
+        nextYear,
+        selectedFormat?.label ?? 'dd-MM-yyyy',
+    );
 
     const content = useMemo(() => {
         if (widget.widgetId === 'SCALE') {
@@ -141,10 +151,12 @@ function WidgetSample(props: WidgetSampleProps) {
             return firstItem.label;
         }
         if (widget.widgetId === 'DATE_RANGE') {
-            return `${sampleDate} - ${sampleDate}`;
+            const oneYearLaterDate = new Date(sampleDateOne);
+            oneYearLaterDate.setFullYear(oneYearLaterDate.getFullYear() + 1);
+            return `${sampleDateOne} - ${sampleDateTwo}`;
         }
         if (widget.widgetId === 'DATE') {
-            return sampleDate;
+            return sampleDateOne;
         }
         if (widget.widgetId === 'TIME') {
             return sampleTime;
@@ -156,7 +168,7 @@ function WidgetSample(props: WidgetSampleProps) {
             return sampleGeo;
         }
         return undefined;
-    }, [widget, sampleDate]);
+    }, [widget, sampleDateOne, sampleDateTwo]);
 
     if (!content) {
         return null;
@@ -198,13 +210,15 @@ function EntryPreview(props: Props) {
         EXPORT_ENUMS,
     );
 
-    const selectedDateFormat = useMemo(() => {
+    const selectedFormat = useMemo(() => {
         const options = exportEnums?.enums?.ExportExtraOptionsSerializerDateFormat ?? [];
-        const selectedFormat = options.find((item) => item.enum === dateFormat);
-        return formatDateToString(new Date(), selectedFormat?.label ?? 'dd-MM-yyyy');
-    }, [
-        exportEnums,
-        dateFormat,
+        return options.find((item) => item.enum === dateFormat);
+    }, [exportEnums, dateFormat]);
+
+    const dateInSelectedFormat = useMemo(() => (
+        formatDateToString(new Date(), selectedFormat?.label ?? 'dd-MM-yyyy')
+    ), [
+        selectedFormat,
     ]);
 
     const selectedExcerpt = useMemo(() => {
@@ -225,8 +239,10 @@ function EntryPreview(props: Props) {
 
     const widgetSampleRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
-        sampleDate: selectedDateFormat,
-    }), [selectedDateFormat]);
+        selectedFormat,
+    }), [
+        selectedFormat,
+    ]);
 
     const textWidgetRendererParams = useCallback((_: string, widget: Widget) => ({
         title: widget.title,
@@ -252,7 +268,7 @@ function EntryPreview(props: Props) {
                     <span className={styles.assessmentData}>
                         [
                         <BiTargetLock />
-                        {`, 612 Key Informant Interview, Data collection: ${selectedDateFormat}`}
+                        {`, 612 Key Informant Interview, Data collection: ${dateInSelectedFormat}`}
                     </span>
                 )}
                 {showEntryWidgetData && filteredContextualWidgets?.length > 0 && (
@@ -288,7 +304,7 @@ function EntryPreview(props: Props) {
                         <span className={styles.link}>
                             HarperCollins
                         </span>
-                        {`, Moby-Dick, ${selectedDateFormat})`}
+                        {`, Moby-Dick, ${dateInSelectedFormat})`}
                     </span>
                 )}
                 {citationFormat === 'STYLE_1' && (
@@ -297,7 +313,7 @@ function EntryPreview(props: Props) {
                         <span className={styles.link}>
                             Moby-Dick
                         </span>
-                        {` ${selectedDateFormat}).`}
+                        {` ${dateInSelectedFormat}).`}
                     </span>
                 )}
             </div>
