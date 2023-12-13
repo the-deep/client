@@ -49,6 +49,18 @@
                     gap: var(--dui-spacing-large);
                 }
 
+                .mid-pane {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--dui-spacing-large);
+
+                    .container-body {
+                        display: flex;
+                        flex-direction: column;
+                        gap: var(--dui-spacing-medium);
+                    }
+                }
+
                 .entry-preview {
                     width: 40rem;
                 }
@@ -74,6 +86,10 @@
             .excel-info {
                 flex-basis: 35%;
                 flex-shrink: 0;
+            }
+
+            .container {
+                background-color: var(--dui-color-background-information);
             }
 
             .excel-columns-container {

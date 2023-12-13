@@ -139,7 +139,7 @@ function Matrix2dTagInput(props: Props) {
 
     const subColumnMappings = useMemo(() => (
         mappings?.filter((mappingItem): mappingItem is SubColumnMappingItem => (
-            mappingItem.association.type === 'SUB_ROW'
+            mappingItem.association.type === 'SUB_COLUMN'
         ))
     ), [
         mappings,

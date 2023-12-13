@@ -1,5 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    formatDateToString,
+} from '@togglecorp/fujs';
 import {
     ContainerCard,
     TextOutput,
@@ -8,9 +11,16 @@ import {
 } from '@the-deep/deep-ui';
 import { BiTargetLock } from 'react-icons/bi';
 import { IoEllipse } from 'react-icons/io5';
+import { useQuery, gql } from '@apollo/client';
+
 import {
     Widget,
 } from '#types/newAnalyticalFramework';
+import {
+    ExportEnumsQuery,
+    ExportDateFormatEnum,
+    ExportReportCitationStyleEnum,
+} from '#generated/types';
 
 import {
     TreeSelectableWidget,
@@ -18,6 +28,22 @@ import {
 
 import styles from './styles.css';
 
+const EXPORT_ENUMS = gql`
+    query ExportEnums {
+        enums {
+            ExportExtraOptionsSerializerDateFormat {
+                description
+                enum
+                label
+            }
+            ExportExtraOptionsSerializerReportCitationStyle {
+                description
+                enum
+                label
+            }
+        }
+    }
+`;
 const sampleExcerpts = [
     'Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people\'s hats off - then, I account it high time to get to sea as soon as I can.',
     'As for me, I am tormented with an everlasting itch for things remote. I love to sail forbidden seas, and land on barbarous coasts.',
@@ -37,9 +63,7 @@ const sampleTexts = [
     'Down here all the fish is happy As off through the waves they roll The fish on the land ain\'t happy They sad \'cause they in their bowl',
 ];
 
-const sampleDateRange = '08/04/2022 - 20/05/2022';
 const sampleTimeRange = '12:00 - 14:50';
-const sampleDate = '08/04/2022';
 const sampleTime = '13:52';
 const sampleGeo = 'Rivnenska; Bagmati;';
 
@@ -69,14 +93,26 @@ function TextWidgetRenderer(props: TextWidgetRendererProps) {
     );
 }
 
+const todaysDate = new Date();
+const nextYear = todaysDate;
+nextYear.setFullYear(todaysDate.getFullYear() + 1);
+
 interface WidgetSampleProps {
     widget: Widget;
+    selectedFormat?: { label: string; };
 }
 
 function WidgetSample(props: WidgetSampleProps) {
     const {
         widget,
+        selectedFormat,
     } = props;
+
+    const sampleDateOne = formatDateToString(todaysDate, selectedFormat?.label ?? 'dd-MM-yyyy');
+    const sampleDateTwo = formatDateToString(
+        nextYear,
+        selectedFormat?.label ?? 'dd-MM-yyyy',
+    );
 
     const content = useMemo(() => {
         if (widget.widgetId === 'SCALE') {
@@ -115,10 +151,12 @@ function WidgetSample(props: WidgetSampleProps) {
             return firstItem.label;
         }
         if (widget.widgetId === 'DATE_RANGE') {
-            return sampleDateRange;
+            const oneYearLaterDate = new Date(sampleDateOne);
+            oneYearLaterDate.setFullYear(oneYearLaterDate.getFullYear() + 1);
+            return `${sampleDateOne} - ${sampleDateTwo}`;
         }
         if (widget.widgetId === 'DATE') {
-            return sampleDate;
+            return sampleDateOne;
         }
         if (widget.widgetId === 'TIME') {
             return sampleTime;
@@ -130,7 +168,7 @@ function WidgetSample(props: WidgetSampleProps) {
             return sampleGeo;
         }
         return undefined;
-    }, [widget]);
+    }, [widget, sampleDateOne, sampleDateTwo]);
 
     if (!content) {
         return null;
@@ -150,6 +188,8 @@ interface Props {
     showLeadEntryId: boolean;
     showAssessmentData: boolean;
     showEntryWidgetData: boolean;
+    dateFormat: ExportDateFormatEnum | undefined;
+    citationFormat: ExportReportCitationStyleEnum | undefined;
 }
 
 function EntryPreview(props: Props) {
@@ -160,11 +200,35 @@ function EntryPreview(props: Props) {
         showAssessmentData,
         showEntryWidgetData,
         textWidgets,
+        dateFormat,
+        citationFormat,
     } = props;
 
-    const selectedExcerpt = useMemo(() => (
-        sampleExcerpts[Math.floor(Math.random() * sampleExcerpts.length)]
-    ), []);
+    const {
+        data: exportEnums,
+    } = useQuery<ExportEnumsQuery>(
+        EXPORT_ENUMS,
+    );
+
+    const selectedFormat = useMemo(() => {
+        const options = exportEnums?.enums?.ExportExtraOptionsSerializerDateFormat ?? [];
+        return options.find((item) => item.enum === dateFormat);
+    }, [exportEnums, dateFormat]);
+
+    const dateInSelectedFormat = useMemo(() => (
+        formatDateToString(new Date(), selectedFormat?.label ?? 'dd-MM-yyyy')
+    ), [
+        selectedFormat,
+    ]);
+
+    const selectedExcerpt = useMemo(() => {
+        const excerpt = sampleExcerpts[Math.floor(Math.random() * sampleExcerpts.length)];
+        if (citationFormat === 'STYLE_1') {
+            return excerpt.replace(/\.$/, '');
+        }
+        return excerpt;
+    }, [citationFormat]);
+
     const filteredContextualWidgets = useMemo(() => (
         contextualWidgets?.filter((widget) => widget.selected)
     ), [contextualWidgets]);
@@ -175,7 +239,10 @@ function EntryPreview(props: Props) {
 
     const widgetSampleRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
-    }), []);
+        selectedFormat,
+    }), [
+        selectedFormat,
+    ]);
 
     const textWidgetRendererParams = useCallback((_: string, widget: Widget) => ({
         title: widget.title,
@@ -201,7 +268,7 @@ function EntryPreview(props: Props) {
                     <span className={styles.assessmentData}>
                         [
                         <BiTargetLock />
-                        , 612 Key Informant Interview, Data collection: 08/04/2022 - 20/04/2022]
+                        {`, 612 Key Informant Interview, Data collection: ${dateInSelectedFormat}`}
                     </span>
                 )}
                 {showEntryWidgetData && filteredContextualWidgets?.length > 0 && (
@@ -231,13 +298,24 @@ function EntryPreview(props: Props) {
                         errored={false}
                     />
                 )}
-                <span className={styles.leadDetails}>
-                    (
-                    <span className={styles.link}>
-                        HarperCollins
+                {citationFormat === 'DEFAULT' && (
+                    <span className={styles.leadDetails}>
+                        (
+                        <span className={styles.link}>
+                            HarperCollins
+                        </span>
+                        {`, Moby-Dick, ${dateInSelectedFormat})`}
                     </span>
-                    , Moby-Dick, 17/04/2022)
-                </span>
+                )}
+                {citationFormat === 'STYLE_1' && (
+                    <span className={styles.leadDetails}>
+                        (
+                        <span className={styles.link}>
+                            Moby-Dick
+                        </span>
+                        {` ${dateInSelectedFormat}).`}
+                    </span>
+                )}
             </div>
         </ContainerCard>
     );
