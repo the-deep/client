@@ -250,6 +250,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                     styles.section,
                     sectionContainerClassName,
                     compactMode && styles.compact,
+                    displayHorizontally && styles.horizontal,
                 )}
                 renderer={CompactSection}
                 keySelector={sectionKeySelector}

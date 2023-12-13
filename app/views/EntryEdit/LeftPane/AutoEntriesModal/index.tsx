@@ -23,6 +23,10 @@ import {
 import {
     Modal,
     ListView,
+    Tab,
+    Tabs,
+    TabPanel,
+    TabList,
     useAlert,
     Button,
 } from '@the-deep/deep-ui';
@@ -54,12 +58,11 @@ import {
     CreateAutoDraftEntriesMutationVariables,
     AutoDraftEntriesStatusQuery,
     AutoDraftEntriesStatusQueryVariables,
+    UpdateDraftEntryMutation,
+    UpdateDraftEntryMutationVariables,
 } from '#generated/types';
 import AssistPopup from '../AssistItem/AssistPopup';
 import { createDefaultAttributes } from '../../utils';
-
-import styles from './styles.css';
-
 import {
     createOrganigramAttr,
     createMatrix1dAttr,
@@ -70,20 +73,30 @@ import {
     createGeoAttr,
 } from '../AssistItem/utils';
 
+import styles from './styles.css';
+
 const GEOLOCATION_DEEPL_MODEL_ID = 'geolocation';
 
 const AUTO_ENTRIES_FOR_LEAD = gql`
     query AutoEntriesForLead(
         $projectId: ID!,
-        $leadIds: [ID!],
+        $leadId: ID!,
+        $isDiscarded: Boolean,
     ) {
         project(id: $projectId) {
             id
+            lead(id: $leadId) {
+                draftEntryStat {
+                    discardedDraftEnrty
+                    undiscardedDraftEntry
+                }
+            }
             assistedTagging {
                 draftEntryByLeads(
                 filter: {
-                    draftEntryType: AUTO,
-                    lead: $leadIds,
+                    draftEntryTypes: AUTO,
+                    leads: $leadId,
+                    isDiscarded: $isDiscarded,
                 }) {
                     id
                     excerpt
@@ -117,7 +130,7 @@ const CREATE_AUTO_DRAFT_ENTRIES = gql`
         project(id: $projectId) {
             id
             assistedTagging {
-                autoDraftEntryCreate(data: {lead: $leadId}) {
+                triggerAutoDraftEntry(data: {lead: $leadId}) {
                     ok
                     errors
                 }
@@ -136,6 +149,27 @@ const AUTO_DRAFT_ENTRIES_STATUS = gql`
             assistedTagging {
                 extractionStatusByLead(leadId: $leadId) {
                     autoEntryExtractionStatus
+                }
+            }
+        }
+    }
+`;
+
+const UPDATE_DRAFT_ENTRY = gql`
+    mutation UpdateDraftEntry(
+        $projectId: ID!,
+        $draftEntryId: ID!,
+        $input: UpdateDraftEntryInputType!,
+    ){
+        project(id: $projectId) {
+            id
+            assistedTagging {
+                updateDraftEntry(
+                    data: $input,
+                    id: $draftEntryId,
+                ) {
+                    errors
+                    ok
                 }
             }
         }
@@ -328,6 +362,8 @@ function handleMappingsFetch(entryAttributes: EntryAttributes) {
 
 const entryKeySelector = (entry: PartialEntryType) => entry.clientId;
 
+type EntriesTabType = 'extracted' | 'discarded';
+
 interface Props {
     onModalClose: () => void;
     projectId: string;
@@ -357,6 +393,11 @@ function AutoEntriesModal(props: Props) {
             () => true,
         )
     ), [createdEntries]);
+
+    const [
+        selectedTab,
+        setSelectedTab,
+    ] = useState<EntriesTabType | undefined>('extracted');
 
     const {
         allWidgets,
@@ -479,7 +520,7 @@ function AutoEntriesModal(props: Props) {
         {
             onCompleted: (response) => {
                 const autoEntriesResponse = response?.project?.assistedTagging
-                    ?.autoDraftEntryCreate;
+                    ?.triggerAutoDraftEntry;
                 if (autoEntriesResponse?.ok) {
                     retriggerEntryExtractionStatus();
                 } else {
@@ -528,14 +569,18 @@ function AutoEntriesModal(props: Props) {
 
     const autoEntriesVariables = useMemo(() => ({
         projectId,
-        leadIds: [leadId],
+        leadId,
+        isDiscarded: selectedTab === 'discarded',
     }), [
         projectId,
         leadId,
+        selectedTab,
     ]);
 
     const {
+        data: autoEntries,
         loading: autoEntriesLoading,
+        refetch: retriggerAutoEntriesFetch,
     } = useQuery<AutoEntriesForLeadQuery, AutoEntriesForLeadQueryVariables>(
         AUTO_ENTRIES_FOR_LEAD,
         {
@@ -543,6 +588,8 @@ function AutoEntriesModal(props: Props) {
                 || extractionStatus !== 'SUCCESS'
                 || isNotDefined(autoEntriesVariables),
             variables: autoEntriesVariables,
+            // TODO: This is due to caching issue in apollo.
+            notifyOnNetworkStatusChange: true,
             onCompleted: (response) => {
                 const entries = response.project?.assistedTagging?.draftEntryByLeads;
                 const transformedEntries = (entries ?? [])?.map((entry) => {
@@ -629,6 +676,11 @@ function AutoEntriesModal(props: Props) {
         },
     );
 
+    const discardedEntriesCount = autoEntries?.project?.lead
+        ?.draftEntryStat?.discardedDraftEnrty ?? 0;
+    const undiscardedEntriesCount = autoEntries?.project?.lead
+        ?.draftEntryStat?.undiscardedDraftEntry ?? 0;
+
     const handleEntryCreateButtonClick = useCallback((entryId: string) => {
         if (!allRecommendations?.[entryId]) {
             return;
@@ -636,6 +688,20 @@ function AutoEntriesModal(props: Props) {
 
         const selectedEntry = value?.entries?.find((item) => item.clientId === entryId);
         if (onAssistedEntryAdd && selectedEntry) {
+            const duplicateEntryCheck = createdEntries?.find(
+                (entry) => entry.droppedExcerpt === selectedEntry.droppedExcerpt,
+            );
+
+            if (isDefined(duplicateEntryCheck)) {
+                alert.show(
+                    'Similar entry found. Failed to add entry from recommendations.',
+                    {
+                        variant: 'error',
+                    },
+                );
+                return;
+            }
+
             const defaultAttributes = createDefaultAttributes(allWidgets);
 
             const newAttributes = mergeLists(
@@ -680,6 +746,79 @@ function AutoEntriesModal(props: Props) {
         geoAreaOptions,
         allRecommendations,
         onAssistedEntryAdd,
+        createdEntries,
+    ]);
+
+    const [
+        triggerUpdateDraftEntry,
+    ] = useMutation<UpdateDraftEntryMutation, UpdateDraftEntryMutationVariables>(
+        UPDATE_DRAFT_ENTRY,
+        {
+            onCompleted: (response) => {
+                const updateDraftEntryResponse = response?.project?.assistedTagging
+                    ?.updateDraftEntry;
+                retriggerAutoEntriesFetch();
+                if (updateDraftEntryResponse?.ok) {
+                    alert.show(
+                        'Successfully changed the discard status.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                } else {
+                    alert.show(
+                        'Failed to change the discard status.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to change the discard status.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
+    const handleUpdateDraftEntryClick = useCallback((entryId: string | undefined) => {
+        triggerUpdateDraftEntry({
+            variables: {
+                projectId,
+                input: {
+                    lead: leadId,
+                    isDiscarded: true,
+                },
+                // FIXME: Handle this better
+                draftEntryId: entryId ?? '',
+            },
+        });
+    }, [
+        triggerUpdateDraftEntry,
+        leadId,
+        projectId,
+    ]);
+
+    const handleUndiscardEntryClick = useCallback((entryId: string | undefined) => {
+        triggerUpdateDraftEntry({
+            variables: {
+                projectId,
+                input: {
+                    lead: leadId,
+                    isDiscarded: false,
+                },
+                // FIXME: Handle this better
+                draftEntryId: entryId ?? '',
+            },
+        });
+    }, [
+        triggerUpdateDraftEntry,
+        leadId,
+        projectId,
     ]);
 
     const filteredEntries = useMemo(() => (
@@ -697,6 +836,36 @@ function AutoEntriesModal(props: Props) {
     ) => {
         const onEntryCreateButtonClick = () => handleEntryCreateButtonClick(entryId);
         const index = value?.entries?.findIndex((item) => item.clientId === entryId);
+        const footerActions = (selectedTab === 'extracted' ? (
+            <div className={styles.footerButtons}>
+                <Button
+                    name={datum?.draftEntry}
+                    onClick={handleUpdateDraftEntryClick}
+                    title="Discard Entry"
+                    variant="nlp-secondary"
+                >
+                    Discard Entry
+                </Button>
+                <Button
+                    name={undefined}
+                    onClick={onEntryCreateButtonClick}
+                    // disabled={predictionsLoading}
+                    variant="nlp-primary"
+                    title="Create Entry"
+                >
+                    Add Entry
+                </Button>
+            </div>
+        ) : (
+            <Button
+                name={datum?.draftEntry}
+                onClick={handleUndiscardEntryClick}
+                title="Discard Entry"
+                variant="nlp-secondary"
+            >
+                Undiscard Entry
+            </Button>
+        ));
 
         return ({
             frameworkDetails,
@@ -709,17 +878,15 @@ function AutoEntriesModal(props: Props) {
             hints: allHints?.[entryId],
             recommendations: allRecommendations?.[entryId],
             geoAreaOptions: geoAreaOptions?.[entryId],
-            onEntryDiscardButtonClick: noOp,
-            onEntryCreateButtonClick,
-            onNormalEntryCreateButtonClick: noOp,
             onGeoAreaOptionsChange: noOp,
             predictionsLoading: false,
             predictionsErrored: false,
             messageText: undefined,
-            variant: 'nlp' as const,
+            variant: 'normal' as const,
             error: undefined,
             excerptShown: true,
             displayHorizontally: true,
+            footerActions,
         });
     }, [
         value?.entries,
@@ -730,6 +897,9 @@ function AutoEntriesModal(props: Props) {
         frameworkDetails,
         leadId,
         geoAreaOptions,
+        handleUpdateDraftEntryClick,
+        handleUndiscardEntryClick,
+        selectedTab,
     ]);
 
     const isFiltered = useMemo(() => (
@@ -739,45 +909,101 @@ function AutoEntriesModal(props: Props) {
         value?.entries,
     ]);
 
+    /*
     const hideList = draftEntriesLoading
         || autoEntriesLoading
         || extractionStatus === 'NONE';
+    */
 
     return (
         <Modal
             onCloseButtonClick={onModalClose}
             heading="NLP Extract & Classify"
-            size={(hideList || value?.entries?.length === 0) ? 'small' : 'cover'}
+            // size={(hideList || value?.entries?.length === 0) ? 'small' : 'cover'}
+            size="cover"
             bodyClassName={styles.modalBody}
         >
-            <ListView
-                data={filteredEntries}
-                keySelector={entryKeySelector}
-                renderer={AssistPopup}
-                rendererParams={rendererParams}
-                pendingMessage="Please wait while we load recommendations."
-                pending={autoEntriesLoading || draftEntriesLoading}
-                errored={false}
-                filtered={isFiltered}
-                filteredEmptyMessage="Looks like you've already added all entries from recommendations."
-                emptyMessage={
-                    (extractionStatus === 'NONE')
-                        ? "Looks like you've not triggered an extraction yet"
-                        : "Looks like there aren't any recommendations."
-                }
-                messageActions={(extractionStatus === 'NONE') && (
-                    <Button
-                        name={undefined}
-                        onClick={handleAutoExtractClick}
-                        variant="tertiary"
+            <Tabs
+                value={selectedTab}
+                onChange={setSelectedTab}
+            >
+                <TabList>
+                    <Tab
+                        name="extracted"
                     >
-                        Recommend entries
-                    </Button>
-                )}
-                messageShown
-                messageIconShown
-                borderBetweenItem
-            />
+                        {`All Recommendations (${undiscardedEntriesCount})`}
+                    </Tab>
+                    <Tab
+                        name="discarded"
+                    >
+                        {`Discarded Recommendations (${discardedEntriesCount})`}
+                    </Tab>
+                </TabList>
+                <TabPanel
+                    name="extracted"
+                >
+                    <ListView
+                        data={filteredEntries}
+                        keySelector={entryKeySelector}
+                        renderer={AssistPopup}
+                        rendererParams={rendererParams}
+                        pendingMessage="Please wait while we load recommendations."
+                        pending={autoEntriesLoading || draftEntriesLoading}
+                        errored={false}
+                        filtered={isFiltered}
+                        filteredEmptyMessage="Looks like you've already added all entries from recommendations."
+                        emptyMessage={
+                            (extractionStatus === 'NONE')
+                                ? "Looks like you've not triggered an extraction yet"
+                                : "Looks like there aren't any recommendations."
+                        }
+                        messageActions={(extractionStatus === 'NONE') && (
+                            <Button
+                                name={undefined}
+                                onClick={handleAutoExtractClick}
+                                variant="tertiary"
+                            >
+                                Recommend entries
+                            </Button>
+                        )}
+                        messageShown
+                        messageIconShown
+                        borderBetweenItem
+                    />
+                </TabPanel>
+                <TabPanel
+                    name="discarded"
+                >
+                    <ListView
+                        data={filteredEntries}
+                        keySelector={entryKeySelector}
+                        renderer={AssistPopup}
+                        rendererParams={rendererParams}
+                        pendingMessage="Please wait while we load recommendations."
+                        pending={autoEntriesLoading || draftEntriesLoading}
+                        errored={false}
+                        filtered={isFiltered}
+                        filteredEmptyMessage="Looks like you've already added all entries from recommendations."
+                        emptyMessage={
+                            (extractionStatus === 'NONE')
+                                ? "Looks like you've not triggered an extraction yet"
+                                : "Looks like there aren't any recommendations."
+                        }
+                        messageActions={(extractionStatus === 'NONE') && (
+                            <Button
+                                name={undefined}
+                                onClick={handleAutoExtractClick}
+                                variant="tertiary"
+                            >
+                                Recommend entries
+                            </Button>
+                        )}
+                        messageShown
+                        messageIconShown
+                        borderBetweenItem
+                    />
+                </TabPanel>
+            </Tabs>
         </Modal>
     );
 }
