@@ -73,24 +73,28 @@ function MethodologyAttributesInput(props: Props) {
         defaultMethodologyAttributeValue,
     );
 
+    const disableOtherFields = value.dataCollectionTechnique === 'SECONDARY_DATA_REVIEW';
+
     return (
         <div className={_cs(styles.attributesForm, className)}>
-            <SelectInput
-                className={_cs(styles.attributeInput, itemClassName)}
-                label="Data collection technique"
-                placeholder="Select an option"
-                name="dataCollectionTechnique"
-                options={options?.dataCollectionTechniqueOptions?.enumValues as EnumOptions<
-                    AssessmentRegistryDataCollectionTechniqueTypeEnum
-                >}
-                keySelector={enumKeySelector}
-                labelSelector={enumLabelSelector}
-                onChange={onAttributeChange}
-                value={value.dataCollectionTechnique}
-                error={error?.dataCollectionTechnique}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
+            <div className={itemClassName}>
+                <SelectInput
+                    className={styles.attributeInput}
+                    label="Data collection technique"
+                    placeholder="Select an option"
+                    name="dataCollectionTechnique"
+                    options={options?.dataCollectionTechniqueOptions?.enumValues as EnumOptions<
+                        AssessmentRegistryDataCollectionTechniqueTypeEnum
+                    >}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    onChange={onAttributeChange}
+                    value={value.dataCollectionTechnique}
+                    error={error?.dataCollectionTechnique}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                />
+            </div>
             <div className={itemClassName}>
                 <div className={styles.samplingInput}>
                     <NumberInput
@@ -98,9 +102,9 @@ function MethodologyAttributesInput(props: Props) {
                         label="Sampling size"
                         name="samplingSize"
                         onChange={onAttributeChange}
-                        value={value.samplingSize}
                         error={error?.samplingSize}
-                        disabled={disabled}
+                        value={!disableOtherFields ? value.samplingSize : undefined}
+                        disabled={disabled || disableOtherFields}
                         readOnly={readOnly}
                     />
                     <SelectInput
@@ -114,61 +118,67 @@ function MethodologyAttributesInput(props: Props) {
                         keySelector={enumKeySelector}
                         labelSelector={enumLabelSelector}
                         onChange={onAttributeChange}
-                        value={value.samplingApproach}
+                        value={!disableOtherFields ? value.samplingApproach : undefined}
                         error={error?.samplingApproach}
-                        disabled={disabled}
+                        disabled={disabled || disableOtherFields}
                         readOnly={readOnly}
                     />
                 </div>
             </div>
-            <SelectInput
-                className={_cs(styles.attributeInput, itemClassName)}
-                label="Proximity"
-                placeholder="Select an option"
-                name="proximity"
-                options={options?.proximity?.enumValues as EnumOptions<
-                    AssessmentRegistryProximityTypeEnum
-                >}
-                keySelector={enumKeySelector}
-                labelSelector={enumLabelSelector}
-                onChange={onAttributeChange}
-                value={value.proximity}
-                error={error?.proximity}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
-            <SelectInput
-                className={_cs(styles.attributeInput, itemClassName)}
-                label="Unit of analysis"
-                placeholder="Select an option"
-                name="unitOfAnalysis"
-                options={options?.unitOfAnanlysis?.enumValues as EnumOptions<
-                    AssessmentRegistryUnitOfAnalysisTypeEnum
-                >}
-                keySelector={enumKeySelector}
-                labelSelector={enumLabelSelector}
-                onChange={onAttributeChange}
-                value={value.unitOfAnalysis}
-                error={error?.unitOfAnalysis}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
-            <SelectInput
-                className={_cs(styles.attributeInput, itemClassName)}
-                label="Unit of reporting"
-                placeholder="Select an option"
-                name="unitOfReporting"
-                options={options?.unitOfReporting?.enumValues as EnumOptions<
-                    AssessmentRegistryUnitOfReportingTypeEnum
-                >}
-                keySelector={enumKeySelector}
-                labelSelector={enumLabelSelector}
-                onChange={onAttributeChange}
-                value={value.unitOfReporting}
-                error={error?.unitOfReporting}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
+            <div className={itemClassName}>
+                <SelectInput
+                    className={styles.attributeInput}
+                    label="Proximity"
+                    placeholder="Select an option"
+                    name="proximity"
+                    options={options?.proximity?.enumValues as EnumOptions<
+                        AssessmentRegistryProximityTypeEnum
+                    >}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    onChange={onAttributeChange}
+                    value={!disableOtherFields ? value.proximity : undefined}
+                    error={error?.proximity}
+                    disabled={disabled || disableOtherFields}
+                    readOnly={readOnly}
+                />
+            </div>
+            <div className={itemClassName}>
+                <SelectInput
+                    className={styles.attributeInput}
+                    label="Unit of analysis"
+                    placeholder="Select an option"
+                    name="unitOfAnalysis"
+                    options={options?.unitOfAnanlysis?.enumValues as EnumOptions<
+                        AssessmentRegistryUnitOfAnalysisTypeEnum
+                    >}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    onChange={onAttributeChange}
+                    value={!disableOtherFields ? value.unitOfAnalysis : undefined}
+                    error={error?.unitOfAnalysis}
+                    disabled={disabled || disableOtherFields}
+                    readOnly={readOnly}
+                />
+            </div>
+            <div className={itemClassName}>
+                <SelectInput
+                    className={styles.attributeInput}
+                    label="Unit of reporting"
+                    placeholder="Select an option"
+                    name="unitOfReporting"
+                    options={options?.unitOfReporting?.enumValues as EnumOptions<
+                        AssessmentRegistryUnitOfReportingTypeEnum
+                    >}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    onChange={onAttributeChange}
+                    value={!disableOtherFields ? value.unitOfReporting : undefined}
+                    error={error?.unitOfReporting}
+                    disabled={disabled || disableOtherFields}
+                    readOnly={readOnly}
+                />
+            </div>
             <QuickActionButton
                 title="Remove Attributes"
                 name={index}
