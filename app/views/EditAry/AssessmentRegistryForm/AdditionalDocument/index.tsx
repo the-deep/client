@@ -119,7 +119,6 @@ function AdditionalDocument(props: Props) {
                 name="ASSESSMENT_DATABASE"
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
-                acceptFileType=".pdf"
                 value={assessmentFiles}
                 uploadedList={uploadedList}
                 supportLinkAddition
@@ -129,7 +128,6 @@ function AdditionalDocument(props: Props) {
                 name="QUESTIONNAIRE"
                 onSuccess={handleFileUploadSuccess}
                 handleFileRemove={handleFileRemove}
-                acceptFileType=".pdf"
                 value={questionnaireFiles}
                 uploadedList={uploadedList}
             />

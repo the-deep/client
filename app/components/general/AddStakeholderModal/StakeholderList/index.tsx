@@ -78,7 +78,7 @@ function StakeholderList(props: Props) {
 
     const onRowRemove = useCallback((id: string) => {
         if (value) {
-            onChange(value.filter((v) => v.organization !== id), name);
+            onChange(value.filter((v) => v.clientId !== id), name);
         }
     }, [value, name, onChange]);
 

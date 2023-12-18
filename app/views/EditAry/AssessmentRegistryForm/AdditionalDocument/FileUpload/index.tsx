@@ -55,6 +55,11 @@ function FileUpload(props: Props) {
         }), [handleFileRemove, uploadedList],
     );
 
+    const handleExternalLinkChange = useCallback((newLink: string | undefined) => {
+        setExternalLink(newLink);
+        setURLError(undefined);
+    }, []);
+
     const handleExternalLinkAdd = useCallback(() => {
         const isUrl = isValidUrl(externalLink ?? '');
         if (!isUrl) {
@@ -68,11 +73,11 @@ function FileUpload(props: Props) {
             documentType: name,
             externalLink,
         });
-        setExternalLink(undefined);
+        handleExternalLinkChange(undefined);
     }, [
         name,
         externalLink,
-        setExternalLink,
+        handleExternalLinkChange,
         onSuccess,
     ]);
 
@@ -100,7 +105,7 @@ function FileUpload(props: Props) {
                                     placeholder="External Link"
                                     name="externalLink"
                                     value={externalLink}
-                                    onChange={setExternalLink}
+                                    onChange={handleExternalLinkChange}
                                     error={urlError}
                                 />
                                 <Button

@@ -411,6 +411,7 @@ function ProjectDetailsForm(props: Props) {
                     const cleanProject = removeNull(response.project);
                     setValue({
                         ...cleanProject,
+                        analysisFramework: cleanProject.analysisFramework?.id,
                         organizations: cleanProject?.organizations?.map((org) => ({
                             clientId: org.clientId,
                             id: org.id,

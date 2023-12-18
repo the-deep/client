@@ -2,12 +2,13 @@ import {
     ArraySchema,
     defaultEmptyArrayType,
     ObjectSchema,
+    forceNullType,
     PartialForm,
     defaultUndefinedType,
     PurgeNull,
     requiredCondition,
 } from '@togglecorp/toggle-form';
-import { randomString } from '@togglecorp/fujs';
+import { randomString, isDefined } from '@togglecorp/fujs';
 import {
     AssessmentRegistryCreateInputType,
     ProjectOrganizationGqInputType,
@@ -138,16 +139,30 @@ export const schema: FormSchema = {
             methodologyAttributes: {
                 keySelector: (attribute) => attribute.clientId,
                 member: (): MethodologyAttributesFormSchemaMember => ({
-                    fields: (): MethodologyAttributesSchemaFields => ({
-                        id: [defaultUndefinedType],
-                        clientId: [requiredCondition],
-                        dataCollectionTechnique: [requiredCondition],
-                        samplingApproach: [requiredCondition],
-                        samplingSize: [requiredCondition],
-                        proximity: [requiredCondition],
-                        unitOfAnalysis: [requiredCondition],
-                        unitOfReporting: [requiredCondition],
-                    }),
+                    fields: (methodology): MethodologyAttributesSchemaFields => {
+                        if (methodology?.dataCollectionTechnique === 'SECONDARY_DATA_REVIEW') {
+                            return ({
+                                id: [defaultUndefinedType],
+                                clientId: [requiredCondition],
+                                dataCollectionTechnique: [requiredCondition],
+                                samplingApproach: [forceNullType],
+                                samplingSize: [forceNullType],
+                                proximity: [forceNullType],
+                                unitOfAnalysis: [forceNullType],
+                                unitOfReporting: [forceNullType],
+                            });
+                        }
+                        return ({
+                            id: [defaultUndefinedType],
+                            clientId: [requiredCondition],
+                            dataCollectionTechnique: [requiredCondition],
+                            samplingApproach: [],
+                            samplingSize: [],
+                            proximity: [],
+                            unitOfAnalysis: [],
+                            unitOfReporting: [],
+                        });
+                    },
                 }),
             },
             executiveSummary: [],
@@ -155,13 +170,24 @@ export const schema: FormSchema = {
             scoreRatings: {
                 keySelector: (score) => score.clientId,
                 member: (): ScoreRatingsFormSchemaMember => ({
-                    fields: (): ScoreRatingsSchemaFields => ({
-                        id: [defaultUndefinedType],
-                        clientId: [requiredCondition],
-                        rating: [],
-                        reason: [],
-                        scoreType: [],
-                    }),
+                    fields: (scoreValue): ScoreRatingsSchemaFields => {
+                        if (isDefined(scoreValue?.rating) || isDefined(scoreValue?.reason)) {
+                            return ({
+                                id: [defaultUndefinedType],
+                                clientId: [requiredCondition],
+                                rating: [requiredCondition],
+                                reason: [requiredCondition],
+                                scoreType: [],
+                            });
+                        }
+                        return ({
+                            id: [defaultUndefinedType],
+                            clientId: [requiredCondition],
+                            rating: [],
+                            reason: [],
+                            scoreType: [],
+                        });
+                    },
                 }),
             },
             scoreAnalyticalDensity: {

@@ -2,10 +2,6 @@
     display: flex;
     gap: var(--dui-spacing-large);
 
-    .attribute-input {
-        display: block;
-    }
-
     .sampling-input {
         display: flex;
         gap: var(--dui-spacing-extra-small);

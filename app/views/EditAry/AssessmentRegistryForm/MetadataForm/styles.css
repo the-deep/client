@@ -4,7 +4,7 @@
     grid-column: auto;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
     gap: var(--dui-spacing-large);
-    padding: var(--dui-spacing-large);
+    padding: var(--dui-spacing-medium);
     overflow: auto;
 
     .form-element {
@@ -17,12 +17,12 @@
         .inputs {
             display: flex;
             flex-direction: column;
-            gap: var(--dui-spacing-extra-small);
+            gap: var(--dui-spacing-small);
         }
     }
 
     .stakeholder-form {
-        grid-column: 1 /5;
+        grid-column: 1 / 5;
         grid-row: 2;
     }
 }
