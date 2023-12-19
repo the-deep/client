@@ -1,5 +1,29 @@
 .modal-body {
+    display: flex;
+    flex-direction: column;
+
+    .tab-list {
+        flex-shrink: 0;
+    }
+
+    .tab-panel {
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .list {
+            flex-grow: 1;
+        }
+
+        &.active-tab-panel {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+    }
+
     .list-item {
+        height: auto;
+
         .entry-input {
             height: 360px;
         }

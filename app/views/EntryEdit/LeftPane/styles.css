@@ -33,6 +33,10 @@
         overflow: auto;
         gap: var(--dui-spacing-medium);
 
+        .auto-entries-button {
+            flex-shrink: 0;
+        }
+
         .switch {
             flex-shrink: 0;
         }

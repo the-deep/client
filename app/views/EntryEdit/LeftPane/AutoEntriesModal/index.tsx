@@ -446,21 +446,15 @@ function AutoEntriesModal(props: Props) {
         setGeoAreaOptions,
     ] = useState<Record<string, GeoArea[] | undefined> | undefined>(undefined);
 
-    // FIXME: randomId is used to create different query variables after each poll
-    // so that apollo doesn't create unnecessary cache
-    const [randomId, setRandomId] = useState<string>(randomString());
-
     const autoEntryStatusVariables = useMemo(() => {
         if (isNotDefined(projectId)) {
             return undefined;
         }
         return ({
             leadId,
-            randomId,
             projectId,
         });
     }, [
-        randomId,
         leadId,
         projectId,
     ]);
@@ -469,12 +463,14 @@ function AutoEntriesModal(props: Props) {
 
     const {
         data: autoEntryExtractionStatus,
-        refetch: retriggerEntryExtractionStatus,
+        startPolling,
+        stopPolling,
     } = useQuery<AutoDraftEntriesStatusQuery, AutoDraftEntriesStatusQueryVariables>(
         AUTO_DRAFT_ENTRIES_STATUS,
         {
             skip: isNotDefined(autoEntryStatusVariables),
             variables: autoEntryStatusVariables,
+            notifyOnNetworkStatusChange: true,
             onCompleted: (response) => {
                 const status = response?.project
                     ?.assistedTagging?.extractionStatusByLead?.autoEntryExtractionStatus;
@@ -488,29 +484,23 @@ function AutoEntriesModal(props: Props) {
     const extractionStatus = autoEntryExtractionStatus?.project
         ?.assistedTagging?.extractionStatusByLead?.autoEntryExtractionStatus;
 
-    // TODO: This polling calls two queries at a time. Fix this.
     useEffect(() => {
-        const timeout = setTimeout(
-            () => {
-                const shouldPoll = extractionStatus === 'PENDING' || extractionStatus === 'STARTED';
-                if (shouldPoll) {
-                    setDraftEntriesLoading(true);
-                    setRandomId(randomString());
-                    retriggerEntryExtractionStatus();
-                } else {
-                    setDraftEntriesLoading(false);
-                }
-            },
-            2000,
-        );
+        const extractionStatusInternal = autoEntryExtractionStatus?.project
+            ?.assistedTagging?.extractionStatusByLead?.autoEntryExtractionStatus;
 
-        return () => {
-            clearTimeout(timeout);
-        };
+        const shouldPoll = extractionStatusInternal === 'PENDING' || extractionStatusInternal === 'STARTED';
+        if (shouldPoll) {
+            setDraftEntriesLoading(true);
+            startPolling(3_000);
+        } else {
+            stopPolling();
+            setDraftEntriesLoading(false);
+        }
     }, [
-        extractionStatus,
+        startPolling,
+        stopPolling,
+        autoEntryExtractionStatus,
         leadId,
-        retriggerEntryExtractionStatus,
     ]);
 
     const [
@@ -522,7 +512,7 @@ function AutoEntriesModal(props: Props) {
                 const autoEntriesResponse = response?.project?.assistedTagging
                     ?.triggerAutoDraftEntry;
                 if (autoEntriesResponse?.ok) {
-                    retriggerEntryExtractionStatus();
+                    startPolling(3_000);
                 } else {
                     alert.show(
                         'Failed to extract entries using NLP.',
@@ -578,7 +568,8 @@ function AutoEntriesModal(props: Props) {
     ]);
 
     const {
-        data: autoEntries,
+        previousData,
+        data: autoEntries = previousData,
         loading: autoEntriesLoading,
         refetch: retriggerAutoEntriesFetch,
     } = useQuery<AutoEntriesForLeadQuery, AutoEntriesForLeadQueryVariables>(
@@ -618,6 +609,10 @@ function AutoEntriesModal(props: Props) {
                         geoAreas: entryGeoAreas,
                     } = handleMappingsFetch(entryAttributeData);
 
+                    if (!entryHints && !entryRecommendations && !entryGeoAreas) {
+                        return undefined;
+                    }
+
                     const entryId = randomString();
                     const requiredEntry = {
                         clientId: entryId,
@@ -647,7 +642,7 @@ function AutoEntriesModal(props: Props) {
                         hints: entryHints,
                         entry: requiredEntry,
                     };
-                });
+                }).filter(isDefined);
                 const requiredDraftEntries = transformedEntries?.map(
                     (draftEntry) => draftEntry.entry,
                 );
@@ -909,17 +904,27 @@ function AutoEntriesModal(props: Props) {
         value?.entries,
     ]);
 
-    /*
-    const hideList = draftEntriesLoading
-        || autoEntriesLoading
-        || extractionStatus === 'NONE';
-    */
+    const isPending = autoEntriesLoading || draftEntriesLoading;
+    const emptyMessage = useMemo(() => {
+        if (extractionStatus === 'NONE') {
+            return "Looks like you've not triggered an extraction yet";
+        }
+        if (extractionStatus === 'SUCCESS') {
+            return "Looks like there aren't any recommendations.";
+        }
+        if (extractionStatus === 'FAILED') {
+            return "Looks like DEEP couldn't generate extractions for this source.";
+        }
+        if (extractionStatus === 'PENDING' || extractionStatus === 'STARTED') {
+            return 'Please wait while we load the recommendations.';
+        }
+        return '';
+    }, [extractionStatus]);
 
     return (
         <Modal
             onCloseButtonClick={onModalClose}
             heading="NLP Extract & Classify"
-            // size={(hideList || value?.entries?.length === 0) ? 'small' : 'cover'}
             size="cover"
             bodyClassName={styles.modalBody}
         >
@@ -927,36 +932,37 @@ function AutoEntriesModal(props: Props) {
                 value={selectedTab}
                 onChange={setSelectedTab}
             >
-                <TabList>
-                    <Tab
-                        name="extracted"
-                    >
-                        {`All Recommendations (${undiscardedEntriesCount})`}
-                    </Tab>
-                    <Tab
-                        name="discarded"
-                    >
-                        {`Discarded Recommendations (${discardedEntriesCount})`}
-                    </Tab>
-                </TabList>
+                {(isDefined(extractionStatus) && (extractionStatus !== 'NONE')) && (
+                    <TabList className={styles.tabList}>
+                        <Tab
+                            name="extracted"
+                        >
+                            {`All Recommendations (${undiscardedEntriesCount})`}
+                        </Tab>
+                        <Tab
+                            name="discarded"
+                        >
+                            {`Discarded Recommendations (${discardedEntriesCount})`}
+                        </Tab>
+                    </TabList>
+                )}
                 <TabPanel
+                    className={styles.tabPanel}
+                    activeClassName={styles.activeTabPanel}
                     name="extracted"
                 >
                     <ListView
+                        className={styles.list}
                         data={filteredEntries}
                         keySelector={entryKeySelector}
                         renderer={AssistPopup}
                         rendererParams={rendererParams}
                         pendingMessage="Please wait while we load recommendations."
-                        pending={autoEntriesLoading || draftEntriesLoading}
+                        pending={isPending}
                         errored={false}
                         filtered={isFiltered}
                         filteredEmptyMessage="Looks like you've already added all entries from recommendations."
-                        emptyMessage={
-                            (extractionStatus === 'NONE')
-                                ? "Looks like you've not triggered an extraction yet"
-                                : "Looks like there aren't any recommendations."
-                        }
+                        emptyMessage={emptyMessage}
                         messageActions={(extractionStatus === 'NONE') && (
                             <Button
                                 name={undefined}
@@ -972,23 +978,22 @@ function AutoEntriesModal(props: Props) {
                     />
                 </TabPanel>
                 <TabPanel
+                    className={styles.tabPanel}
+                    activeClassName={styles.activeTabPanel}
                     name="discarded"
                 >
                     <ListView
+                        className={styles.list}
                         data={filteredEntries}
                         keySelector={entryKeySelector}
                         renderer={AssistPopup}
                         rendererParams={rendererParams}
                         pendingMessage="Please wait while we load recommendations."
-                        pending={autoEntriesLoading || draftEntriesLoading}
+                        pending={isPending}
                         errored={false}
                         filtered={isFiltered}
                         filteredEmptyMessage="Looks like you've already added all entries from recommendations."
-                        emptyMessage={
-                            (extractionStatus === 'NONE')
-                                ? "Looks like you've not triggered an extraction yet"
-                                : "Looks like there aren't any recommendations."
-                        }
+                        emptyMessage={emptyMessage}
                         messageActions={(extractionStatus === 'NONE') && (
                             <Button
                                 name={undefined}
