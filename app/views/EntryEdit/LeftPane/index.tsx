@@ -546,6 +546,7 @@ function LeftPane(props: Props) {
                     >
                         <>
                             <Button
+                                className={styles.autoEntriesButton}
                                 name={undefined}
                                 onClick={showAutoEntriesModal}
                                 variant="nlp-tertiary"

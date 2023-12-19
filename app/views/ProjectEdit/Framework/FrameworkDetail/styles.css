@@ -67,6 +67,12 @@
                     flex-direction: column;
                 }
 
+                .icon {
+                    width: 2rem;
+                    height: 2rem;
+                    object-fit: contain;
+                }
+
                 .show-more {
                     padding: 0;
                     font-size: var(--dui-font-size-small);
