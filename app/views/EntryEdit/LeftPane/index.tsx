@@ -67,8 +67,10 @@ const LEAD_PREVIEW = gql`
             lead(id: $leadId) {
                 id
                 extractionStatus
+                confidentiality
                 leadPreview {
                     textExtract
+                    textExtractionId
                 }
             }
         }
@@ -375,6 +377,9 @@ function LeftPane(props: Props) {
         setShowCanvasDrawModalTrue();
     }, [fullScreenMode, setShowCanvasDrawModalTrue, setShowScreenshotFalse]);
 
+    const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId)
+        && leadPreviewData?.project?.lead?.confidentiality !== 'CONFIDENTIAL';
+
     const originalTabContent = (
         <Container
             elementRef={containerRef}
@@ -548,13 +553,16 @@ function LeftPane(props: Props) {
                             <Button
                                 className={styles.autoEntriesButton}
                                 name={undefined}
+                                title={!isAutoExtractionCompatible
+                                    ? 'Ooops. Looks like this source does not support Auto extraction at the moment. Please try it with a new source.'
+                                    : 'Extract entries for this source'}
                                 onClick={showAutoEntriesModal}
                                 variant="nlp-tertiary"
                                 spacing="compact"
+                                disabled={!isAutoExtractionCompatible}
                             >
                                 NLP Extract and Classify
                             </Button>
-
                             {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
                                 <SimplifiedTextView
                                     className={styles.simplifiedTextView}
