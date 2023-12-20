@@ -85,12 +85,6 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
     ) {
         project(id: $projectId) {
             id
-            lead(id: $leadId) {
-                draftEntryStat {
-                    discardedDraftEnrty
-                    undiscardedDraftEntry
-                }
-            }
             assistedTagging {
                 draftEntryByLeads(
                 filter: {
@@ -573,8 +567,6 @@ function AutoEntriesModal(props: Props) {
     ]);
 
     const {
-        previousData,
-        data: autoEntries = previousData,
         loading: autoEntriesLoading,
         refetch: retriggerAutoEntriesFetch,
     } = useQuery<AutoEntriesForLeadQuery, AutoEntriesForLeadQueryVariables>(
@@ -675,11 +667,6 @@ function AutoEntriesModal(props: Props) {
             },
         },
     );
-
-    const discardedEntriesCount = autoEntries?.project?.lead
-        ?.draftEntryStat?.discardedDraftEnrty ?? 0;
-    const undiscardedEntriesCount = autoEntries?.project?.lead
-        ?.draftEntryStat?.undiscardedDraftEntry ?? 0;
 
     const handleEntryCreateButtonClick = useCallback((entryId: string) => {
         if (!allRecommendations?.[entryId]) {
@@ -946,12 +933,12 @@ function AutoEntriesModal(props: Props) {
                         <Tab
                             name="extracted"
                         >
-                            {`All Recommendations (${undiscardedEntriesCount})`}
+                            All Recommendations
                         </Tab>
                         <Tab
                             name="discarded"
                         >
-                            {`Discarded Recommendations (${discardedEntriesCount})`}
+                            Discarded Recommendations
                         </Tab>
                     </TabList>
                 )}
