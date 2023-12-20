@@ -85,12 +85,6 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
     ) {
         project(id: $projectId) {
             id
-            lead(id: $leadId) {
-                draftEntryStat {
-                    discardedDraftEnrty
-                    undiscardedDraftEntry
-                }
-            }
             assistedTagging {
                 draftEntryByLeads(
                 filter: {
@@ -676,11 +670,6 @@ function AutoEntriesModal(props: Props) {
         },
     );
 
-    const discardedEntriesCount = autoEntries?.project?.lead
-        ?.draftEntryStat?.discardedDraftEnrty ?? 0;
-    const undiscardedEntriesCount = autoEntries?.project?.lead
-        ?.draftEntryStat?.undiscardedDraftEntry ?? 0;
-
     const handleEntryCreateButtonClick = useCallback((entryId: string) => {
         if (!allRecommendations?.[entryId]) {
             return;
@@ -931,12 +920,12 @@ function AutoEntriesModal(props: Props) {
                     <Tab
                         name="extracted"
                     >
-                        {`All Recommendations (${undiscardedEntriesCount})`}
+                        All Recommendations
                     </Tab>
                     <Tab
                         name="discarded"
                     >
-                        {`Discarded Recommendations (${discardedEntriesCount})`}
+                        Discarded Recommendations
                     </Tab>
                 </TabList>
                 <TabPanel
@@ -954,8 +943,8 @@ function AutoEntriesModal(props: Props) {
                         filteredEmptyMessage="Looks like you've already added all entries from recommendations."
                         emptyMessage={
                             (extractionStatus === 'NONE')
-                                ? "Looks like you've not triggered an extraction yet"
-                                : "Looks like there aren't any recommendations."
+                                ? "It seems like you haven't initiated an extraction process. Ready to dive in and discover what's possible?"
+                                : 'Looks like there are no recommendations available for this source.'
                         }
                         messageActions={(extractionStatus === 'NONE') && (
                             <Button
