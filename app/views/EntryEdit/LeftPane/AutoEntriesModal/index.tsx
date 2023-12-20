@@ -21,12 +21,13 @@ import {
     useMutation,
 } from '@apollo/client';
 import {
-    Modal,
     ListView,
+    Modal,
+    Pager,
     Tab,
-    Tabs,
-    TabPanel,
     TabList,
+    TabPanel,
+    Tabs,
     useAlert,
     Button,
 } from '@the-deep/deep-ui';
@@ -82,33 +83,41 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
         $projectId: ID!,
         $leadId: ID!,
         $isDiscarded: Boolean,
+        $page: Int,
+        $pageSize: Int,
     ) {
         project(id: $projectId) {
             id
             assistedTagging {
-                draftEntryByLeads(
-                filter: {
+                draftEntries(
                     draftEntryTypes: AUTO,
-                    leads: $leadId,
+                    lead: $leadId,
                     isDiscarded: $isDiscarded,
-                }) {
-                    id
-                    excerpt
-                    predictionReceivedAt
-                    predictionStatus
-                    predictions {
+                    page: $page,
+                    pageSize: $pageSize,
+                ) {
+                    page
+                    pageSize
+                    totalCount
+                    results {
                         id
-                        draftEntry
-                        tag
-                        dataTypeDisplay
-                        dataType
-                        category
-                        isSelected
-                        modelVersion
-                        modelVersionDeeplModelId
-                        prediction
-                        threshold
-                        value
+                        excerpt
+                        predictionReceivedAt
+                        predictionStatus
+                        predictions {
+                            id
+                            draftEntry
+                            tag
+                            dataTypeDisplay
+                            dataType
+                            category
+                            isSelected
+                            modelVersion
+                            modelVersionDeeplModelId
+                            prediction
+                            threshold
+                            value
+                        }
                     }
                 }
             }
@@ -354,6 +363,8 @@ function handleMappingsFetch(entryAttributes: EntryAttributes) {
     };
 }
 
+const MAX_ITEMS_PER_PAGE = 20;
+
 const entryKeySelector = (entry: PartialEntryType) => entry.clientId;
 
 type EntriesTabType = 'extracted' | 'discarded';
@@ -392,6 +403,8 @@ function AutoEntriesModal(props: Props) {
         selectedTab,
         setSelectedTab,
     ] = useState<EntriesTabType | undefined>('extracted');
+
+    const [activePage, setActivePage] = useState<number>(1);
 
     const {
         allWidgets,
@@ -560,13 +573,17 @@ function AutoEntriesModal(props: Props) {
         projectId,
         leadId,
         isDiscarded: selectedTab === 'discarded',
+        page: activePage,
+        pageSize: MAX_ITEMS_PER_PAGE,
     }), [
         projectId,
         leadId,
         selectedTab,
+        activePage,
     ]);
 
     const {
+        data: autoEntries,
         loading: autoEntriesLoading,
         refetch: retriggerAutoEntriesFetch,
     } = useQuery<AutoEntriesForLeadQuery, AutoEntriesForLeadQueryVariables>(
@@ -579,7 +596,7 @@ function AutoEntriesModal(props: Props) {
             // TODO: This is due to caching issue in apollo.
             notifyOnNetworkStatusChange: true,
             onCompleted: (response) => {
-                const entries = response.project?.assistedTagging?.draftEntryByLeads;
+                const entries = response.project?.assistedTagging?.draftEntries?.results;
                 const transformedEntries = (entries ?? [])?.map((entry) => {
                     const validPredictions = entry.predictions?.filter(isDefined);
                     const categoricalTags = validPredictions?.filter(
@@ -1005,6 +1022,13 @@ function AutoEntriesModal(props: Props) {
                     />
                 </TabPanel>
             </Tabs>
+            <Pager
+                activePage={activePage}
+                itemsCount={autoEntries?.project?.assistedTagging?.draftEntries?.totalCount ?? 0}
+                onActivePageChange={setActivePage}
+                maxItemsPerPage={MAX_ITEMS_PER_PAGE}
+                itemsPerPageControlHidden
+            />
         </Modal>
     );
 }
