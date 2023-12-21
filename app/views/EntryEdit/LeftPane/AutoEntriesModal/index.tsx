@@ -149,10 +149,10 @@ const AUTO_DRAFT_ENTRIES_STATUS = gql`
     ) {
         project(id: $projectId) {
             id
-            assistedTagging {
-                extractionStatusByLead(leadId: $leadId) {
-                    autoEntryExtractionStatus
-                }
+            lead(
+                id: $leadId,
+            ) {
+                autoEntryExtractionStatus
             }
         }
     }
@@ -481,7 +481,7 @@ function AutoEntriesModal(props: Props) {
             notifyOnNetworkStatusChange: true,
             onCompleted: (response) => {
                 const status = response?.project
-                    ?.assistedTagging?.extractionStatusByLead?.autoEntryExtractionStatus;
+                    ?.lead?.autoEntryExtractionStatus;
                 if (status === 'SUCCESS') {
                     setDraftEntriesLoading(false);
                 }
@@ -490,11 +490,11 @@ function AutoEntriesModal(props: Props) {
     );
 
     const extractionStatus = autoEntryExtractionStatus?.project
-        ?.assistedTagging?.extractionStatusByLead?.autoEntryExtractionStatus;
+        ?.lead?.autoEntryExtractionStatus;
 
     useEffect(() => {
         const extractionStatusInternal = autoEntryExtractionStatus?.project
-            ?.assistedTagging?.extractionStatusByLead?.autoEntryExtractionStatus;
+            ?.lead?.autoEntryExtractionStatus;
 
         const shouldPoll = extractionStatusInternal === 'PENDING' || extractionStatusInternal === 'STARTED';
         if (shouldPoll) {
