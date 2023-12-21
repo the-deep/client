@@ -31,7 +31,11 @@
         background-color: var(--dui-color-background-information);
         padding: var(--dui-spacing-large);
         overflow: auto;
-        gap: var(--dui-spacing-small);
+        gap: var(--dui-spacing-medium);
+
+        .auto-entries-button {
+            flex-shrink: 0;
+        }
 
         .switch {
             flex-shrink: 0;

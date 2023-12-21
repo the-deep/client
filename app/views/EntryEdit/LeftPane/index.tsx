@@ -15,6 +15,7 @@ import {
     TextInput,
     QuickActionButton,
     useBooleanState,
+    useModalState,
     Button,
     QuickActionDropdownMenu,
     QuickActionDropdownMenuProps,
@@ -24,7 +25,6 @@ import {
     QuickActionLink,
     PendingMessage,
     Message,
-    Switch,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -37,7 +37,6 @@ import {
     IoCheckmark,
 } from 'react-icons/io5';
 
-import useLocalStorage from '#hooks/useLocalStorage';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
@@ -55,6 +54,7 @@ import CanvasDrawModal from './CanvasDrawModal';
 import { Lead, EntryImagesMap } from '../index';
 import SimplifiedTextView from './SimplifiedTextView';
 import EntryItem, { ExcerptModal } from './EntryItem';
+import AutoEntriesModal from './AutoEntriesModal';
 import styles from './styles.css';
 
 const LEAD_PREVIEW = gql`
@@ -67,8 +67,10 @@ const LEAD_PREVIEW = gql`
             lead(id: $leadId) {
                 id
                 extractionStatus
+                confidentiality
                 leadPreview {
                     textExtract
+                    textExtractionId
                 }
             }
         }
@@ -150,9 +152,10 @@ function LeftPane(props: Props) {
     );
 
     const [
-        assistedTaggingEnabled,
-        onAssistedTaggingStatusChange,
-    ] = useLocalStorage('assisted-tagging-enabled', false);
+        autoEntriesModalShown,
+        showAutoEntriesModal,
+        hideAutoEntriesModal,
+    ] = useModalState(false);
 
     useEffect(() => {
         if (activeTabRef) {
@@ -374,6 +377,9 @@ function LeftPane(props: Props) {
         setShowCanvasDrawModalTrue();
     }, [fullScreenMode, setShowCanvasDrawModalTrue, setShowScreenshotFalse]);
 
+    const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId)
+        && leadPreviewData?.project?.lead?.confidentiality !== 'CONFIDENTIAL';
+
     const originalTabContent = (
         <Container
             elementRef={containerRef}
@@ -501,8 +507,7 @@ function LeftPane(props: Props) {
         </Container>
     );
 
-    const assistedTaggingShown = assistedTaggingEnabled
-        && !project?.isPrivate
+    const assistedTaggingShown = !project?.isPrivate
         && isAssistedTaggingAccessible
         && frameworkDetails?.assistedTaggingEnabled
         && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
@@ -544,21 +549,21 @@ function LeftPane(props: Props) {
                         activeClassName={styles.simplifiedTab}
                         retainMount="lazy"
                     >
-                        {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
-                            <>
-                                {(frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0
-                                    && !project?.isPrivate
-                                    && frameworkDetails?.assistedTaggingEnabled
-                                    && isAssistedTaggingAccessible
-                                    && (
-                                        <Switch
-                                            className={styles.switch}
-                                            name="isAssistedTaggingEnabled"
-                                            value={assistedTaggingEnabled}
-                                            onChange={onAssistedTaggingStatusChange}
-                                            label="Assisted Tagging"
-                                        />
-                                    )}
+                        <>
+                            <Button
+                                className={styles.autoEntriesButton}
+                                name={undefined}
+                                title={!isAutoExtractionCompatible
+                                    ? 'Ooops. Looks like this source does not support Auto extraction at the moment. Please try it with a new source.'
+                                    : 'Extract entries for this source'}
+                                onClick={showAutoEntriesModal}
+                                variant="nlp-tertiary"
+                                spacing="compact"
+                                disabled={!isAutoExtractionCompatible}
+                            >
+                                NLP Extract and Classify
+                            </Button>
+                            {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
                                 <SimplifiedTextView
                                     className={styles.simplifiedTextView}
                                     activeEntryClientId={activeEntry}
@@ -579,42 +584,42 @@ function LeftPane(props: Props) {
                                     frameworkDetails={frameworkDetails}
                                     leadId={leadId}
                                 />
-                            </>
-                        ) : (
-                            <Message
-                                // NOTE: Pending from server side to get state of extraction
-                                // to properly toggle between whether the source has been
-                                // extracted or not
-                                pending={leadPreviewPending}
-                                pendingMessage="Fetching simplified text"
-                                icon={(
-                                    <Kraken variant="work" />
-                                )}
-                                message={(
-                                    (extractionStatus === 'PENDING'
-                                    || extractionStatus === 'STARTED')
-                                        ? 'Simplified text is currently being extracted from this source. Please retry after few minutes.'
-                                        : 'Oops! Either the source was empty or we couldn\'t extract its text.'
-                                )}
-                                errored={extractionStatus === 'FAILED'}
-                                erroredEmptyIcon={(
-                                    <Kraken variant="work" />
-                                )}
-                                erroredEmptyMessage="There was an when issue extracting simplified
-                                text for this source."
-                                actions={(extractionStatus === 'PENDING' || extractionStatus === 'STARTED') && (
-                                    <Button
-                                        name={undefined}
-                                        variant="secondary"
-                                        onClick={refetch}
-                                        icons={(<IoReloadOutline />)}
-                                        disabled={leadPreviewPending}
-                                    >
-                                        Retry
-                                    </Button>
-                                )}
-                            />
-                        )}
+                            ) : (
+                                <Message
+                                    // NOTE: Pending from server side to get state of extraction
+                                    // to properly toggle between whether the source has been
+                                    // extracted or not
+                                    pending={leadPreviewPending}
+                                    pendingMessage="Fetching simplified text"
+                                    icon={(
+                                        <Kraken variant="work" />
+                                    )}
+                                    message={(
+                                        (extractionStatus === 'PENDING'
+                                        || extractionStatus === 'STARTED')
+                                            ? 'Simplified text is currently being extracted from this source. Please retry after few minutes.'
+                                            : 'Oops! Either the source was empty or we couldn\'t extract its text.'
+                                    )}
+                                    errored={extractionStatus === 'FAILED'}
+                                    erroredEmptyIcon={(
+                                        <Kraken variant="work" />
+                                    )}
+                                    erroredEmptyMessage="There was an when issue extracting simplified
+                                    text for this source."
+                                    actions={(extractionStatus === 'PENDING' || extractionStatus === 'STARTED') && (
+                                        <Button
+                                            name={undefined}
+                                            variant="secondary"
+                                            onClick={refetch}
+                                            icons={(<IoReloadOutline />)}
+                                            disabled={leadPreviewPending}
+                                        >
+                                            Retry
+                                        </Button>
+                                    )}
+                                />
+                            )}
+                        </>
                     </TabPanel>
                 )}
                 {!hideOriginalPreview && (
@@ -660,6 +665,16 @@ function LeftPane(props: Props) {
                     />
                 </TabPanel>
             </Tabs>
+            {autoEntriesModalShown && isDefined(projectId) && frameworkDetails && (
+                <AutoEntriesModal
+                    createdEntries={entries}
+                    onModalClose={hideAutoEntriesModal}
+                    projectId={projectId}
+                    onAssistedEntryAdd={onAssistedEntryAdd}
+                    leadId={leadId}
+                    frameworkDetails={frameworkDetails}
+                />
+            )}
         </div>
     );
 }

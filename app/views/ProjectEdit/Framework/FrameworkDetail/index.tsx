@@ -94,6 +94,15 @@ const FRAMEWORK_DETAILS = gql`
                 name
                 url
             }
+            tags {
+                description
+                icon {
+                    name
+                    url
+                }
+                id
+                title
+            }
             # NOTE: Does not need predictionTagsMapping from FrameworkResponse
             ...FrameworkResponse
         }
@@ -441,6 +450,23 @@ function FrameworkDetail(props: Props) {
                             value={`${frameworkDetailsResponse?.projects?.totalCount ?? '-'} projects`}
                             hideLabelColon
                         />
+                        {frameworkDetails?.tags?.map((tag) => (
+                            <Tag
+                                key={tag.id}
+                                variant="gradient1"
+                                icons={tag.icon?.url && (
+                                    <img
+                                        className={styles.icon}
+                                        src={tag.icon.url}
+                                        alt={tag.icon?.url}
+                                    />
+                                )}
+                            >
+                                <div title={tag.description}>
+                                    {tag.title}
+                                </div>
+                            </Tag>
+                        ))}
                         {(isDefined(visibleProjects)
                             && isDefined(frameworkDetailsResponse?.projects)
                             && ((visibleProjects?.length ?? 0)) > 0) && (
