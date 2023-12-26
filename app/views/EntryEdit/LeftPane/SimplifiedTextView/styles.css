@@ -12,6 +12,25 @@
         user-select: none;
     }
 
+    .simplified-text {
+        line-height: 1.5;
+        &.extra-small{
+            font-size: var(--dui-font-size-extra-small);
+        }
+        &.small{
+            font-size: var(--dui-font-size-small);
+        }
+        &.medium{
+            font-size: var(--dui-font-size-medium);
+        }
+        &.large{
+            font-size: var(--dui-font-size-large);
+        }
+        &.extra-large{
+            font-size: var(--dui-font-size-extra-large);
+        }
+    }
+
     .entry {
         margin: var(--dui-spacing-medium) 0;
     }

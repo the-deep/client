@@ -63,6 +63,7 @@ interface Props {
     assistedTaggingEnabled: boolean;
     projectId: string | undefined;
     frameworkDetails?: Framework;
+    textZoomValue?: number | undefined;
 }
 
 function SimplifiedTextView(props: Props) {
@@ -87,6 +88,7 @@ function SimplifiedTextView(props: Props) {
         disableDiscardButton,
         disableAddButton,
         frameworkDetails,
+        textZoomValue,
     } = props;
 
     const containerRef = React.useRef<HTMLDivElement>(null);
@@ -328,7 +330,17 @@ function SimplifiedTextView(props: Props) {
                 disableAddButton && styles.disabled,
             )}
         >
-            {children}
+            <div className={_cs(
+                styles.simplifiedText,
+                textZoomValue === 1 && styles.extraSmall,
+                textZoomValue === 2 && styles.small,
+                textZoomValue === 3 && styles.medium,
+                textZoomValue === 4 && styles.large,
+                textZoomValue === 5 && styles.extraLarge,
+            )}
+            >
+                {children}
+            </div>
             {(textFromProps?.length ?? 0) > charactersLoaded && (
                 <div className={styles.actions}>
                     <Button

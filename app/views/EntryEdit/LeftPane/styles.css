@@ -33,8 +33,22 @@
         overflow: auto;
         gap: var(--dui-spacing-medium);
 
-        .auto-entries-button {
-            flex-shrink: 0;
+        .simplified-header {
+            display: flex;
+            justify-content: space-between;
+            gap: var(--dui-spacing-large);
+
+            .auto-entries-button {
+                flex-shrink: 0;
+            }
+            .actions {
+                display: flex;
+                gap: var(--dui-spacing-extra-small);
+
+                .zoom {
+                    border-radius: unset;
+                }
+            }
         }
 
         .switch {
