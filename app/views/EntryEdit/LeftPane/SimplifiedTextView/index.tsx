@@ -332,11 +332,13 @@ function SimplifiedTextView(props: Props) {
         >
             <div className={_cs(
                 styles.simplifiedText,
-                textZoomValue === 1 && styles.extraSmall,
+                textZoomValue === 1 && styles.xSmall,
                 textZoomValue === 2 && styles.small,
                 textZoomValue === 3 && styles.medium,
                 textZoomValue === 4 && styles.large,
-                textZoomValue === 5 && styles.extraLarge,
+                textZoomValue === 5 && styles.xLarge,
+                textZoomValue === 6 && styles.xxLarge,
+                textZoomValue === 7 && styles.xxxLarge,
             )}
             >
                 {children}
