@@ -53,6 +53,17 @@
                         font-weight: var(--dui-font-weight-bold);
                     }
 
+                    .inline {
+                        display: flex;
+                        justify-content: space-between;
+                        width: 100%;
+
+                        .warning {
+                            color: var(--dui-color-text-description);
+                            font-size: var(--dui-font-size-small);
+                        }
+                    }
+
                     .created-on {
                         color: var(--dui-color-text-description);
                         font-size: var(--dui-font-size-small);
