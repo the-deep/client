@@ -15,7 +15,6 @@
             .heading-container {
                 padding-bottom: var(--dui-spacing-small);
             }
-
             .header-actions {
                 display: flex;
                 align-items: center;
@@ -53,6 +52,14 @@
                 width: var(--width-left-container);
                 gap: var(--dui-spacing-medium);
                 overflow-y: auto;
+
+                .warning {
+                    display: flex;
+                    align-items: center;
+                    color: var(--dui-color-text-description);
+                    font-size: var(--dui-font-size-small);
+                    gap: var(--dui-spacing-small);
+                }
 
                 .value{
                     &:hover {

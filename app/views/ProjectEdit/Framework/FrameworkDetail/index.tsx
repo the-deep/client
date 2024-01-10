@@ -410,6 +410,11 @@ function FrameworkDetail(props: Props) {
                     contentClassName={styles.content}
                 >
                     <div className={styles.metadataContainer}>
+                        {frameworkDetailsResponse?.projects?.totalCount === 0 && (
+                            <div className={styles.warning}>
+                                This framework has not been used in any project in DEEP.
+                            </div>
+                        )}
                         {frameworkDetails?.description}
                         <TextOutput
                             className={styles.block}

@@ -16,6 +16,7 @@ import {
     SelectInput,
     TextInput,
     TextOutput,
+    Tooltip,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -71,6 +72,10 @@ export const PROJECT_FRAMEWORKS = gql`
                 title
                 id
                 createdAt
+                usedInProjectCount {
+                    projectCount
+                    testProjectCount
+                }
             }
             page
             totalCount
@@ -84,6 +89,8 @@ interface ItemProps {
     createdAt: string;
     onClick: (key: string) => void;
     isSelected: boolean;
+    projectCount: number;
+    testProjectCount: number;
 }
 
 function Item(props: ItemProps) {
@@ -93,7 +100,11 @@ function Item(props: ItemProps) {
         createdAt,
         onClick,
         isSelected,
+        projectCount,
+        testProjectCount,
     } = props;
+
+    const totalProjectCount = projectCount + testProjectCount;
 
     return (
         <RawButton
@@ -107,12 +118,28 @@ function Item(props: ItemProps) {
             <div className={styles.title}>
                 {title}
             </div>
-            <TextOutput
-                className={styles.createdOn}
-                label={_ts('projectEdit', 'createdOnLabel')}
-                value={createdAt}
-                valueType="date"
-            />
+            <div className={styles.inline}>
+                <TextOutput
+                    className={styles.createdOn}
+                    label={_ts('projectEdit', 'createdOnLabel')}
+                    value={createdAt}
+                    valueType="date"
+                />
+                <TextOutput
+                    className={styles.warning}
+                    label="Used in"
+                    value={`${totalProjectCount} projects`}
+                />
+                <Tooltip>
+                    {totalProjectCount !== 0
+                        ? `This framework is used in
+                        ${projectCount === 0 ? 'no' : projectCount}
+                        ${projectCount === 1 ? 'project' : 'projects'} and
+                        ${testProjectCount === 0 ? 'no' : testProjectCount} test
+                        ${testProjectCount === 1 ? 'project' : 'projects'}`
+                        : 'This framework is not used in any projects.'}
+                </Tooltip>
+            </div>
         </RawButton>
     );
 }
@@ -271,6 +298,8 @@ function ProjectFramework(props: Props) {
         createdAt: data.createdAt,
         onClick: setSelectedFramework,
         isSelected: String(key) === selectedFramework,
+        projectCount: data.usedInProjectCount?.projectCount ?? 0,
+        testProjectCount: data.usedInProjectCount?.testProjectCount ?? 0,
     }), [selectedFramework]);
 
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: string) => {
