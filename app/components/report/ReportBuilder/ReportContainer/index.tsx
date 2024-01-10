@@ -54,6 +54,7 @@ import HeadingEdit from './HeadingEdit';
 import ContainerStylesEdit from './ContainerStylesEdit';
 import UrlEdit from './UrlEdit';
 import TextEdit from './TextEdit';
+import TimeseriesChartEdit from './TimeseriesChartEdit';
 import ImageEdit from './ImageEdit';
 import Content from './Content';
 import {
@@ -548,6 +549,14 @@ function ReportContainer(props: Props) {
                                 value={configuration?.image}
                                 error={getErrorObject(error?.contentConfiguration)?.image}
                                 onFileUpload={handleImageFileUploadChange}
+                            />
+                        )}
+                        {contentType === 'TIMELINE_CHART' && (
+                            <TimeseriesChartEdit
+                                name="text"
+                                onChange={onConfigChange}
+                                value={undefined}
+                                error={undefined}
                             />
                         )}
                         {contentType === 'URL' && (

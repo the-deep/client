@@ -1,0 +1,36 @@
+.modal-body {
+    display: flex;
+
+    .left-container {
+        flex-shrink: 0;
+        border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        width: 16rem;
+    }
+
+    .right-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: var(--dui-spacing-small);
+        gap: var(--dui-spacing-small);
+        overflow-y: auto;
+
+        .expandable-container {
+            border: none;
+
+            .header-description {
+                display: flex;
+                gap: var(--dui-spacing-small);
+            }
+        }
+
+        .column-header {
+            background-color: transparent;
+            color: var(--dui-color-text);
+
+            .column-heading {
+                color: var(--dui-color-text);
+            }
+        }
+    }
+}
