@@ -1,0 +1,4 @@
+.timeseries-chart-edit {
+    display: flex;
+    flex-direction: column;
+}
