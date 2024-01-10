@@ -1,5 +1,5 @@
 import React from 'react';
-import { isNotDefined } from '@togglecorp/fujs';
+import { isNotDefined, _cs } from '@togglecorp/fujs';
 import {
     Modal,
     RawButton,
@@ -49,7 +49,7 @@ function ContentAddModal(props: Props) {
             <RawButton
                 name="IMAGE"
                 onClick={onSelect}
-                className={styles.button}
+                className={_cs(styles.button, isNotDefined(reportId) && styles.disabled)}
                 title={isNotDefined(reportId) ? 'Image can be added only after the report is saved' : undefined}
                 disabled={isNotDefined(reportId)}
             >
@@ -61,6 +61,15 @@ function ContentAddModal(props: Props) {
                 className={styles.button}
             >
                 URL
+            </RawButton>
+            <RawButton
+                name="TIMELINE_CHART"
+                onClick={onSelect}
+                className={_cs(styles.button, isNotDefined(reportId) && styles.disabled)}
+                title={isNotDefined(reportId) ? 'Charts can be added only after the report is saved' : undefined}
+                disabled={isNotDefined(reportId)}
+            >
+                Timeline Chart
             </RawButton>
         </Modal>
     );
