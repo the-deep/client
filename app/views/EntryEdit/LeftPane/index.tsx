@@ -7,6 +7,10 @@ import {
 } from '@togglecorp/fujs';
 import { gql, useQuery } from '@apollo/client';
 import {
+    MdOutlineZoomIn,
+    MdOutlineZoomOut,
+} from 'react-icons/md';
+import {
     Tabs,
     Container,
     TabPanel,
@@ -507,6 +511,34 @@ function LeftPane(props: Props) {
         </Container>
     );
 
+    const [
+        textZoomValue,
+        setTextZoomValue,
+    ] = useState<number | undefined>(2);
+    const handleTextZoomOut = useCallback(() => {
+        setTextZoomValue((prev) => {
+            if (isNotDefined(prev)) {
+                return undefined;
+            }
+            if (prev <= 1) {
+                return 1;
+            }
+            return (prev - 1);
+        });
+    }, []);
+
+    const handleTextZoomIn = useCallback(() => {
+        setTextZoomValue((prev) => {
+            if (isNotDefined(prev)) {
+                return undefined;
+            }
+            if (prev >= 5) {
+                return 5;
+            }
+            return (prev + 1);
+        });
+    }, []);
+
     const assistedTaggingShown = !project?.isPrivate
         && isAssistedTaggingAccessible
         && frameworkDetails?.assistedTaggingEnabled
@@ -550,19 +582,41 @@ function LeftPane(props: Props) {
                         retainMount="lazy"
                     >
                         <>
-                            <Button
-                                className={styles.autoEntriesButton}
-                                name={undefined}
-                                title={!isAutoExtractionCompatible
-                                    ? 'Ooops. Looks like this source does not support Auto extraction at the moment. Please try it with a new source.'
-                                    : 'Extract entries for this source'}
-                                onClick={showAutoEntriesModal}
-                                variant="nlp-tertiary"
-                                spacing="compact"
-                                disabled={!isAutoExtractionCompatible}
-                            >
-                                NLP Extract and Classify
-                            </Button>
+                            <div className={styles.simplifiedHeader}>
+                                <Button
+                                    className={styles.autoEntriesButton}
+                                    name={undefined}
+                                    title={!isAutoExtractionCompatible
+                                        ? 'Ooops. Looks like this source does not support Auto extraction at the moment. Please try it with a new source.'
+                                        : 'Extract entries for this source'}
+                                    onClick={showAutoEntriesModal}
+                                    variant="nlp-tertiary"
+                                    spacing="compact"
+                                    disabled={!isAutoExtractionCompatible}
+                                >
+                                    NLP Extract and Classify
+                                </Button>
+                                <div className={styles.actions}>
+                                    <QuickActionButton
+                                        name={undefined}
+                                        className={styles.zoom}
+                                        variant="general"
+                                        onClick={handleTextZoomOut}
+                                        disabled={isNotDefined(textZoomValue) || textZoomValue <= 1}
+                                    >
+                                        <MdOutlineZoomOut />
+                                    </QuickActionButton>
+                                    <QuickActionButton
+                                        name={undefined}
+                                        className={styles.zoom}
+                                        variant="general"
+                                        onClick={handleTextZoomIn}
+                                        disabled={isNotDefined(textZoomValue) || textZoomValue >= 5}
+                                    >
+                                        <MdOutlineZoomIn />
+                                    </QuickActionButton>
+                                </div>
+                            </div>
                             {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
                                 <SimplifiedTextView
                                     className={styles.simplifiedTextView}
@@ -583,6 +637,7 @@ function LeftPane(props: Props) {
                                     assistedTaggingEnabled={!!assistedTaggingShown}
                                     frameworkDetails={frameworkDetails}
                                     leadId={leadId}
+                                    textZoomValue={textZoomValue}
                                 />
                             ) : (
                                 <Message
