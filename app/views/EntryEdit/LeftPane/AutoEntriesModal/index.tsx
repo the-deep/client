@@ -825,15 +825,6 @@ function AutoEntriesModal(props: Props) {
         projectId,
     ]);
 
-    const filteredEntries = useMemo(() => (
-        value?.entries?.filter(
-            (item) => item.draftEntry && !draftEntriesMap[item.draftEntry],
-        )
-    ), [
-        value?.entries,
-        draftEntriesMap,
-    ]);
-
     const rendererParams = useCallback((
         entryId: string,
         datum: PartialEntryType,
@@ -891,6 +882,7 @@ function AutoEntriesModal(props: Props) {
             excerptShown: true,
             displayHorizontally: true,
             footerActions,
+            relevant: !!(datum.draftEntry && !draftEntriesMap[datum.draftEntry]),
         });
     }, [
         value?.entries,
@@ -904,13 +896,7 @@ function AutoEntriesModal(props: Props) {
         handleUpdateDraftEntryClick,
         handleUndiscardEntryClick,
         selectedTab,
-    ]);
-
-    const isFiltered = useMemo(() => (
-        (filteredEntries?.length ?? 0) < (value?.entries?.length ?? 0)
-    ), [
-        filteredEntries,
-        value?.entries,
+        draftEntriesMap,
     ]);
 
     const isPending = autoEntriesLoading
@@ -966,14 +952,14 @@ function AutoEntriesModal(props: Props) {
                 >
                     <ListView
                         className={styles.list}
-                        data={filteredEntries}
+                        data={value?.entries}
                         keySelector={entryKeySelector}
                         renderer={AssistPopup}
                         rendererParams={rendererParams}
                         pendingMessage="Please wait while we load recommendations."
                         pending={isPending}
                         errored={false}
-                        filtered={isFiltered}
+                        filtered={false}
                         filteredEmptyMessage="Looks like you've already added all entries from recommendations."
                         emptyMessage={emptyMessage}
                         messageActions={!isPending && (extractionStatus === 'NONE') && (
@@ -997,14 +983,14 @@ function AutoEntriesModal(props: Props) {
                 >
                     <ListView
                         className={styles.list}
-                        data={filteredEntries}
+                        data={value?.entries}
                         keySelector={entryKeySelector}
                         renderer={AssistPopup}
                         rendererParams={rendererParams}
                         pendingMessage="Please wait while we load recommendations."
                         pending={isPending}
                         errored={false}
-                        filtered={isFiltered}
+                        filtered={false}
                         filteredEmptyMessage="Looks like you've already added all entries from recommendations."
                         emptyMessage={emptyMessage}
                         messageActions={(extractionStatus === 'NONE') && (

@@ -1,81 +1,90 @@
 .entry-input {
     display: flex;
-    flex-shrink: 0;
-    background-color: var(--dui-color-foreground);
-    height: var(--height-entry-item);
-    overflow-y: auto;
+    flex-direction: column;
     --height-entry-item: 360px;
     --inner-width: 25%;
 
-    &.compact {
-        --height-entry-item: initial;
-        --inner-width: unset;
-        flex-direction: column;
+    .tag {
+        flex-shrink: 0;
     }
 
-    .heading-section {
-        overflow: visible;
-
-        .heading {
-            display: flex;
-            align-items: baseline;
-            gap: var(--dui-spacing-medium);
-
-            .entry-id {
-                color: var(--dui-color-accent);
-                font-weight: var(--dui-font-weight-bold);
-            }
-
-            .unsaved-entry {
-                color: var(--dui-color-text-description);
-                font-weight: var(--dui-font-weight-light);
-                font-style: italic;
-            }
-        }
-    }
-
-    .excerpt {
+    .content {
+        display: flex;
+        flex-shrink: 0;
         background-color: var(--dui-color-foreground);
-        width: var(--inner-width);
-
-        .header-actions {
-            flex-wrap: wrap;
-        }
-
-        .excerpt-content {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            overflow-y: auto;
-
-            .excerpt-input {
-                flex-grow: 1;
-            }
-        }
-    }
-
-    &.horizontal {
-        flex-direction: row;
-        .excerpt {
-            width: 100%;
-            max-width: 30rem;
-        }
-    }
-
-    .section {
-        background-color: var(--dui-color-foreground);
-        width: var(--inner-width);
+        height: var(--height-entry-item);
+        overflow-y: auto;
 
         &.compact {
-            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            --height-entry-item: initial;
+            --inner-width: unset;
+            flex-direction: column;
         }
-        &.horizontal {
-            border-bottom: unset;
-        }
-    }
 
-    .secondary-tagging {
-        background-color: var(--dui-color-foreground);
-        width: var(--inner-width);
+        .heading-section {
+            overflow: visible;
+
+            .heading {
+                display: flex;
+                align-items: baseline;
+                gap: var(--dui-spacing-medium);
+
+                .entry-id {
+                    color: var(--dui-color-accent);
+                    font-weight: var(--dui-font-weight-bold);
+                }
+
+                .unsaved-entry {
+                    color: var(--dui-color-text-description);
+                    font-weight: var(--dui-font-weight-light);
+                    font-style: italic;
+                }
+            }
+        }
+
+        .excerpt {
+            background-color: var(--dui-color-foreground);
+            width: var(--inner-width);
+
+            .header-actions {
+                flex-wrap: wrap;
+            }
+
+            .excerpt-content {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                overflow-y: auto;
+
+                .excerpt-input {
+                    flex-grow: 1;
+                }
+            }
+        }
+
+        &.horizontal {
+            flex-direction: row;
+            .excerpt {
+                width: 100%;
+                max-width: 30rem;
+            }
+        }
+
+        .section {
+            background-color: var(--dui-color-foreground);
+            width: var(--inner-width);
+
+            &.compact {
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            }
+            &.horizontal {
+                border-bottom: unset;
+            }
+        }
+
+        .secondary-tagging {
+            background-color: var(--dui-color-foreground);
+            width: var(--inner-width);
+        }
     }
 }

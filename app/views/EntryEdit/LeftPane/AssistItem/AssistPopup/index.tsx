@@ -44,6 +44,8 @@ interface Props<NAME extends string | number | undefined> {
     displayHorizontally?: boolean;
 
     footerActions: React.ReactNode;
+
+    relevant?: boolean;
 }
 
 function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME>) {
@@ -67,6 +69,7 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
         excerptShown = false,
         displayHorizontally = false,
         footerActions,
+        relevant = true,
     } = props;
 
     const allWidgets = useMemo(() => {
@@ -137,6 +140,7 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
                     variant={variant}
                     excerptShown={excerptShown}
                     displayHorizontally={displayHorizontally}
+                    relevant={relevant}
                 />
             )}
         </Container>

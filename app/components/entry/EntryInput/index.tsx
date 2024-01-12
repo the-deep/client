@@ -17,6 +17,7 @@ import {
     List,
     Container,
     NumberOutput,
+    Tag,
 } from '@the-deep/deep-ui';
 
 import NonFieldError from '#components/NonFieldError';
@@ -84,6 +85,7 @@ interface EntryInputProps<T extends string | number | undefined> {
 
     excerptShown?: boolean;
     displayHorizontally?: boolean;
+    relevant?: boolean;
 }
 
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
@@ -116,6 +118,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         noPaddingInWidgetContainer = false,
         excerptShown = false,
         displayHorizontally = false,
+        relevant = true,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -198,89 +201,103 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         <div
             className={_cs(
                 className,
-                compactMode && styles.compact,
-                displayHorizontally && styles.horizontal,
                 styles.entryInput,
             )}
         >
-            <NonFieldError error={error} />
-            {(!compactMode || excerptShown) && (
-                <Container
-                    className={styles.excerpt}
-                    heading={(
-                        <>
-                            {!hideEntryId && isDefined(value.id) && (
-                                <NumberOutput
-                                    className={styles.entryId}
-                                    prefix="#"
-                                    value={Number(value.id)}
-                                />
-                            )}
-                            {!hideEntryId && isNotDefined(value.id) && (
-                                <span className={styles.unsavedEntry}>(unsaved entry)</span>
-                            )}
-                        </>
-                    )}
-                    headingSize="extraSmall"
-                    headingClassName={styles.heading}
-                    headerActions={excerptHeaderActions}
-                    headerActionsContainerClassName={styles.headerActions}
-                    headingSectionClassName={styles.headingSection}
-                    contentClassName={styles.excerptContent}
+            {!relevant && (
+                <Tag
+                    variant="gradient1"
+                    className={styles.tag}
                 >
-                    <ExcerptInput
-                        className={styles.excerptInput}
-                        name="excerpt"
-                        onChange={onFieldChange}
-                        entryType={value.entryType}
-                        value={value.excerpt}
-                        // droppedExcerpt={value.droppedExcerpt}
-                        image={entryImage}
-                        imageRaw={value.imageRaw}
-                        readOnly={readOnly}
-                        // FIXME: pass this after image drag/drop is implemented
-                        leadImageUrl={undefined}
-                    />
-                </Container>
+                    Untagged Entry
+                </Tag>
             )}
-            <List
-                data={primaryTagging ?? undefined}
-                rendererParams={sectionRendererParams}
-                rendererClassName={_cs(
-                    styles.section,
-                    sectionContainerClassName,
+            <div
+                className={_cs(
+                    styles.content,
                     compactMode && styles.compact,
                     displayHorizontally && styles.horizontal,
                 )}
-                renderer={CompactSection}
-                keySelector={sectionKeySelector}
-            />
-            <CompactSection
-                className={_cs(
-                    styles.secondaryTagging,
-                    secondaryTaggingContainerClassName,
+            >
+                <NonFieldError error={error} />
+                {(!compactMode || excerptShown) && (
+                    <Container
+                        className={styles.excerpt}
+                        heading={(
+                            <>
+                                {!hideEntryId && isDefined(value.id) && (
+                                    <NumberOutput
+                                        className={styles.entryId}
+                                        prefix="#"
+                                        value={Number(value.id)}
+                                    />
+                                )}
+                                {!hideEntryId && isNotDefined(value.id) && (
+                                    <span className={styles.unsavedEntry}>(unsaved entry)</span>
+                                )}
+                            </>
+                        )}
+                        headingSize="extraSmall"
+                        headingClassName={styles.heading}
+                        headerActions={excerptHeaderActions}
+                        headerActionsContainerClassName={styles.headerActions}
+                        headingSectionClassName={styles.headingSection}
+                        contentClassName={styles.excerptContent}
+                    >
+                        <ExcerptInput
+                            className={styles.excerptInput}
+                            name="excerpt"
+                            onChange={onFieldChange}
+                            entryType={value.entryType}
+                            value={value.excerpt}
+                            // droppedExcerpt={value.droppedExcerpt}
+                            image={entryImage}
+                            imageRaw={value.imageRaw}
+                            readOnly={readOnly}
+                            // FIXME: pass this after image drag/drop is implemented
+                            leadImageUrl={undefined}
+                        />
+                    </Container>
                 )}
-                title="Secondary Tagging"
-                attributesMap={attributesMap}
-                onAttributeChange={onAttributeChange}
-                readOnly={readOnly}
-                onAddButtonClick={onAddButtonClick}
-                emptyValueHidden={emptyValueHidden}
-                widgets={secondaryTagging}
-                error={error?.attributes}
-                geoAreaOptions={geoAreaOptions}
-                onGeoAreaOptionsChange={onGeoAreaOptionsChange}
-                addButtonHidden={addButtonHidden}
-                onApplyToAll={onApplyToAll}
-                entryClientId={value.clientId}
-                allWidgets={allWidgets}
-                widgetsHints={widgetsHints}
-                recommendations={recommendations}
-                emptyMessageHidden={variant === 'nlp'}
-                suggestionMode={variant === 'nlp'}
-                rightComponent={rightComponent}
-                noPadding={noPaddingInWidgetContainer}
-            />
+                <List
+                    data={primaryTagging ?? undefined}
+                    rendererParams={sectionRendererParams}
+                    rendererClassName={_cs(
+                        styles.section,
+                        sectionContainerClassName,
+                        compactMode && styles.compact,
+                        displayHorizontally && styles.horizontal,
+                    )}
+                    renderer={CompactSection}
+                    keySelector={sectionKeySelector}
+                />
+                <CompactSection
+                    className={_cs(
+                        styles.secondaryTagging,
+                        secondaryTaggingContainerClassName,
+                    )}
+                    title="Secondary Tagging"
+                    attributesMap={attributesMap}
+                    onAttributeChange={onAttributeChange}
+                    readOnly={readOnly}
+                    onAddButtonClick={onAddButtonClick}
+                    emptyValueHidden={emptyValueHidden}
+                    widgets={secondaryTagging}
+                    error={error?.attributes}
+                    geoAreaOptions={geoAreaOptions}
+                    onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                    addButtonHidden={addButtonHidden}
+                    onApplyToAll={onApplyToAll}
+                    entryClientId={value.clientId}
+                    allWidgets={allWidgets}
+                    widgetsHints={widgetsHints}
+                    recommendations={recommendations}
+                    emptyMessageHidden={variant === 'nlp'}
+                    suggestionMode={variant === 'nlp'}
+                    rightComponent={rightComponent}
+                    noPadding={noPaddingInWidgetContainer}
+                />
+            </div>
         </div>
     );
 }
