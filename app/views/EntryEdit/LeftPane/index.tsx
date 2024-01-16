@@ -558,7 +558,10 @@ function LeftPane(props: Props) {
         if (isDefined(leadPreviewData?.project?.lead?.connectorLead)) {
             return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The connector associated with the chosen source may be outdated or incompatible with the NLP extraction functionality.';
         }
-        if (leadPreviewData?.project?.lead?.extractionStatus !== 'SUCCESS') {
+        if (
+            leadPreviewData?.project?.lead?.extractionStatus === 'FAILED'
+            || leadPreviewData?.project?.lead?.extractionStatus === 'PENDING'
+        ) {
             return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The content from the selected source could not be adequately simplified for NLP extraction, possibly due to complex language structures or formatting issues.';
         }
         return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The selected source appears to be outdated, and the NLP extraction feature is not compatible with older content formats.';
