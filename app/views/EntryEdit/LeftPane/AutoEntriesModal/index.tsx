@@ -391,13 +391,6 @@ function AutoEntriesModal(props: Props) {
     } = props;
 
     const alert = useAlert();
-    const draftEntriesMap = useMemo(() => (
-        listToMap(
-            createdEntries?.filter((item) => isDefined(item.draftEntry)) ?? [],
-            (item) => item.draftEntry ?? '',
-            () => true,
-        )
-    ), [createdEntries]);
 
     const [
         selectedTab,
@@ -559,6 +552,11 @@ function AutoEntriesModal(props: Props) {
     ]);
 
     const [
+        relevantEntries,
+        setRelevantEntries,
+    ] = useState<Record<string, boolean> | undefined>(undefined);
+
+    const [
         allRecommendations,
         setAllRecommendations,
     ] = useState<Record<string, PartialAttributeType[] | undefined> | undefined>(undefined);
@@ -623,10 +621,6 @@ function AutoEntriesModal(props: Props) {
                         geoAreas: entryGeoAreas,
                     } = handleMappingsFetch(entryAttributeData);
 
-                    if (!entryHints && !entryRecommendations && !entryGeoAreas) {
-                        return undefined;
-                    }
-
                     const entryId = randomString();
                     const requiredEntry = {
                         clientId: entryId,
@@ -655,8 +649,9 @@ function AutoEntriesModal(props: Props) {
                         recommendations: entryRecommendations,
                         hints: entryHints,
                         entry: requiredEntry,
+                        relevant: !!entryHints || !!entryRecommendations || !!entryGeoAreas,
                     };
-                }).filter(isDefined);
+                });
                 const requiredDraftEntries = transformedEntries?.map(
                     (draftEntry) => draftEntry.entry,
                 );
@@ -675,10 +670,16 @@ function AutoEntriesModal(props: Props) {
                     (item) => item.entryId,
                     (item) => item.geoLocations,
                 );
+                const tempRelevantEntries = listToMap(
+                    transformedEntries,
+                    (item) => item.entryId,
+                    (item) => item.relevant,
+                );
                 setValue({
                     entries: requiredDraftEntries,
                 });
                 setAllRecommendations(entryRecommendations);
+                setRelevantEntries(tempRelevantEntries);
                 setAllHints(entryHints);
                 setGeoAreaOptions(entryGeoAreas);
             },
@@ -831,6 +832,7 @@ function AutoEntriesModal(props: Props) {
     ) => {
         const onEntryCreateButtonClick = () => handleEntryCreateButtonClick(entryId);
         const index = value?.entries?.findIndex((item) => item.clientId === entryId);
+
         const footerActions = (selectedTab === 'extracted' ? (
             <div className={styles.footerButtons}>
                 <Button
@@ -882,9 +884,10 @@ function AutoEntriesModal(props: Props) {
             excerptShown: true,
             displayHorizontally: true,
             footerActions,
-            relevant: !!(datum.draftEntry && !draftEntriesMap[datum.draftEntry]),
+            relevant: relevantEntries?.[entryId],
         });
     }, [
+        relevantEntries,
         value?.entries,
         handleEntryCreateButtonClick,
         onEntryChange,
@@ -896,7 +899,6 @@ function AutoEntriesModal(props: Props) {
         handleUpdateDraftEntryClick,
         handleUndiscardEntryClick,
         selectedTab,
-        draftEntriesMap,
     ]);
 
     const isPending = autoEntriesLoading
