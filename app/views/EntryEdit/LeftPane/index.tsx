@@ -29,6 +29,7 @@ import {
     QuickActionLink,
     PendingMessage,
     Message,
+    Tooltip,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -39,6 +40,7 @@ import {
     IoClose,
     IoBrush,
     IoCheckmark,
+    IoInformation,
 } from 'react-icons/io5';
 
 import { GeoArea } from '#components/GeoMultiSelectInput';
@@ -71,6 +73,7 @@ const LEAD_PREVIEW = gql`
             lead(id: $leadId) {
                 id
                 extractionStatus
+                connectorLead
                 confidentiality
                 leadPreview {
                     textExtract
@@ -544,6 +547,27 @@ function LeftPane(props: Props) {
         && frameworkDetails?.assistedTaggingEnabled
         && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
 
+    const errorMessageForAutoExtraction = useMemo(() => {
+        const isConfidential = lead?.confidentiality === 'CONFIDENTIAL';
+        if (isAutoExtractionCompatible) {
+            return undefined;
+        }
+        if (isConfidential) {
+            return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. Extraction through NLP is restricted for confidential sources to ensure the utmost data security and privacy.';
+        }
+        if (isDefined(leadPreviewData?.project?.lead?.connectorLead)) {
+            return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The connector associated with the chosen source may be outdated or incompatible with the NLP extraction functionality.';
+        }
+        if (leadPreviewData?.project?.lead?.extractionStatus !== 'SUCCESS') {
+            return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The content from the selected source could not be adequately simplified for NLP extraction, possibly due to complex language structures or formatting issues.';
+        }
+        return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The selected source appears to be outdated, and the NLP extraction feature is not compatible with older content formats.';
+    }, [
+        lead?.confidentiality,
+        isAutoExtractionCompatible,
+        leadPreviewData?.project?.lead,
+    ]);
+
     return (
         <div className={_cs(styles.sourcePreview, className)}>
             <Tabs
@@ -583,19 +607,31 @@ function LeftPane(props: Props) {
                     >
                         <>
                             <div className={styles.simplifiedHeader}>
-                                <Button
-                                    className={styles.autoEntriesButton}
-                                    name={undefined}
-                                    title={!isAutoExtractionCompatible
-                                        ? 'Ooops. Looks like this source does not support Auto extraction at the moment. Please try it with a new source.'
-                                        : 'Extract entries for this source'}
-                                    onClick={showAutoEntriesModal}
-                                    variant="nlp-tertiary"
-                                    spacing="compact"
-                                    disabled={!isAutoExtractionCompatible}
-                                >
-                                    NLP Extract and Classify
-                                </Button>
+                                {!isEntrySelectionActive && (
+                                    <div className={styles.extraction}>
+                                        <Button
+                                            className={styles.autoEntriesButton}
+                                            name={undefined}
+                                            title={!isAutoExtractionCompatible
+                                                ? 'Ooops. Looks like this source does not support Auto extraction at the moment. Please try it with a new source.'
+                                                : 'Extract entries for this source'}
+                                            onClick={showAutoEntriesModal}
+                                            variant="nlp-tertiary"
+                                            spacing="compact"
+                                            disabled={!isAutoExtractionCompatible}
+                                        >
+                                            NLP Extract and Classify
+                                        </Button>
+                                        {isDefined(errorMessageForAutoExtraction) && (
+                                            <div className={styles.info}>
+                                                <IoInformation />
+                                                <Tooltip>
+                                                    {errorMessageForAutoExtraction}
+                                                </Tooltip>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                                 <div className={styles.actions}>
                                     <QuickActionButton
                                         name={undefined}
