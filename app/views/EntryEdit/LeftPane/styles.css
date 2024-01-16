@@ -35,12 +35,13 @@
 
         .simplified-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             gap: var(--dui-spacing-large);
 
             .extraction {
                 display: flex;
                 align-items: center;
+                flex-grow: 1;
                 gap: var(--dui-spacing-extra-small);
 
                 .auto-entries-button {

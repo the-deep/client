@@ -1,4 +1,11 @@
-import React, { useContext, useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import React, {
+    useContext,
+    useState,
+    useMemo,
+    useEffect,
+    useCallback,
+    useRef,
+} from 'react';
 import {
     _cs,
     isNotDefined,
@@ -384,9 +391,6 @@ function LeftPane(props: Props) {
         setShowCanvasDrawModalTrue();
     }, [fullScreenMode, setShowCanvasDrawModalTrue, setShowScreenshotFalse]);
 
-    const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId)
-        && leadPreviewData?.project?.lead?.confidentiality !== 'CONFIDENTIAL';
-
     const originalTabContent = (
         <Container
             elementRef={containerRef}
@@ -547,6 +551,10 @@ function LeftPane(props: Props) {
         && frameworkDetails?.assistedTaggingEnabled
         && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
 
+    const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId)
+        && leadPreviewData?.project?.lead?.confidentiality !== 'CONFIDENTIAL'
+        && assistedTaggingShown;
+
     const errorMessageForAutoExtraction = useMemo(() => {
         const isConfidential = lead?.confidentiality === 'CONFIDENTIAL';
         if (isAutoExtractionCompatible) {
@@ -607,7 +615,7 @@ function LeftPane(props: Props) {
                     >
                         <>
                             <div className={styles.simplifiedHeader}>
-                                {!isEntrySelectionActive && (
+                                {!isEntrySelectionActive && assistedTaggingShown && (
                                     <div className={styles.extraction}>
                                         <Button
                                             className={styles.autoEntriesButton}
