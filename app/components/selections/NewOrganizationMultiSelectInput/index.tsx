@@ -28,7 +28,7 @@ const MULTI_ORGANIZATIONS = gql`
             search: $search,
             page: $page,
             pageSize: $pageSize,
-            usedInProject: $usedInProject,
+            usedInProjectByLead: $usedInProject,
         ) {
             page
             results {
