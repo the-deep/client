@@ -227,6 +227,13 @@ function MetadataForm(props: Props) {
                         labelSelector={enumLabelSelector}
                         options={coordinationJointOptions}
                     />
+                    <NumberInput
+                        label="Cost Estimates in USD"
+                        name="costEstimatesUsd"
+                        value={value.costEstimatesUsd}
+                        onChange={setFieldValue}
+                        error={error?.costEstimatesUsd}
+                    />
                 </div>
             </div>
             <div className={styles.formElement}>

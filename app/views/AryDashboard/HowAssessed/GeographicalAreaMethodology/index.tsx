@@ -102,10 +102,10 @@ interface MethodologyType {
         description?: string | null;
     }[] | null;
     value: {
-        adminLevelId: number
-        geoArea: number;
+        adminLevelId: string;
+        geoArea: string;
         count: number;
-        region: number;
+        region: string;
         dataCollectionTechnique?: AssessmentRegistryDataCollectionTechniqueTypeEnum;
         samplingApproach?: AssessmentRegistrySamplingApproachTypeEnum;
         unitOfAnanlysis?: AssessmentRegistryUnitOfAnalysisTypeEnum;
@@ -238,7 +238,7 @@ function GeographicalAreaMethodology(props: Props) {
             const attributeValue = methodologyDataMap[category].value?.filter(
                 (technique) => technique.dataCollectionTechnique === subCategory,
             )?.map((selection) => ({
-                id: selection.geoArea,
+                id: Number(selection.geoArea),
                 value: selection.count,
             }));
 
@@ -248,7 +248,7 @@ function GeographicalAreaMethodology(props: Props) {
             const attributeValue = methodologyDataMap[category].value?.filter(
                 (technique) => technique.samplingApproach === subCategory,
             )?.map((selection) => ({
-                id: selection.geoArea,
+                id: Number(selection.geoArea),
                 value: selection.count,
             }));
             return attributeValue;
@@ -257,7 +257,7 @@ function GeographicalAreaMethodology(props: Props) {
             const attributeValue = methodologyDataMap[category].value?.filter(
                 (technique) => technique.unitOfAnanlysis === subCategory,
             )?.map((selection) => ({
-                id: selection.geoArea,
+                id: Number(selection.geoArea),
                 value: selection.count,
             }));
             return attributeValue;
@@ -266,7 +266,7 @@ function GeographicalAreaMethodology(props: Props) {
             const attributeValue = methodologyDataMap[category].value?.filter(
                 (technique) => technique.unitOfReporting === subCategory,
             )?.map((selection) => ({
-                id: selection.geoArea,
+                id: Number(selection.geoArea),
                 value: selection.count,
             }));
             return attributeValue;

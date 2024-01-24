@@ -341,6 +341,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         bgPreparedness
         clientId
         confidentiality
+        costEstimatesUsd
         coordinatedJoint
         dataCollectionEndDate
         dataCollectionStartDate

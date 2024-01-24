@@ -152,7 +152,7 @@ function GeographicalAreaAssessments(props: Props) {
     const assessmentCountAttribute = useMemo(() => (
         data?.assessmentGeographicAreas?.map(
             (selection) => ({
-                id: selection.geoArea,
+                id: Number(selection.geoArea),
                 value: selection.count,
             }),
         ) ?? []
