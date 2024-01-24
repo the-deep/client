@@ -63,7 +63,7 @@ import {
     UpdateDraftEntryMutationVariables,
 } from '#generated/types';
 import AssistPopup from '../AssistItem/AssistPopup';
-import { createDefaultAttributes } from '../../utils';
+import { createDefaultAttributes } from '../utils';
 import {
     createOrganigramAttr,
     createMatrix1dAttr,

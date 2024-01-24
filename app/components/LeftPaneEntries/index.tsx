@@ -69,8 +69,8 @@ import {
 
 import CanvasDrawModal from './CanvasDrawModal';
 import SimplifiedTextView from './SimplifiedTextView';
-import EntryItem, { ExcerptModal } from './EntryItem';
 import AutoEntriesModal from './AutoEntriesModal';
+import EntryItem, { ExcerptModal } from './EntryItem';
 import styles from './styles.css';
 
 type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
