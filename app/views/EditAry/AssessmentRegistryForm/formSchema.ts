@@ -115,6 +115,7 @@ export const schema: FormSchema = {
             confidentiality: [requiredCondition],
             language: [requiredCondition],
             noOfPages: [],
+            costEstimatesUsd: [],
             dataCollectionStartDate: [],
             dataCollectionEndDate: [],
             publicationDate: [],

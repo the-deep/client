@@ -398,6 +398,7 @@ function AryDashboard(props: Props) {
                         >
                             How was it assessed?
                         </Tab>
+                        {/*
                         <Tab
                             name="quality"
                             transparentBorder
@@ -416,6 +417,7 @@ function AryDashboard(props: Props) {
                         >
                             What are the main findings?
                         </Tab>
+                        */}
                     </TabList>
                     <TabPanel
                         name="what"
