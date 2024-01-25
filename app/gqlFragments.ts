@@ -292,6 +292,7 @@ export const LAST_ACTIVE_PROJECT_FRAGMENT = gql`
         isAssessmentEnabled
         id
         isPrivate
+        isProjectPinned
         title
         isVisualizationEnabled
         isVisualizationAvailable
@@ -484,5 +485,58 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
                 subDimensionDisplay
             }
         }
+    }
+`;
+
+export const PROJECT_DETAIL_FRAGMENT = gql`
+    fragment ProjectDetail on ProjectDetailType {
+        id
+        title
+        isPrivate
+        isProjectPinned
+        description
+        startDate
+        endDate
+        analysisFramework {
+            id
+            title
+        }
+        createdBy {
+            displayName
+        }
+        leads {
+            totalCount
+        }
+        topTaggers {
+            userId
+            count
+            name
+        }
+        topSourcers {
+            userId
+            count
+            name
+        }
+        recentActiveUsers {
+            userId
+            name
+            date
+        }
+        stats {
+            entriesActivity {
+                count
+                date
+            }
+            leadsActivity {
+                count
+                date
+            }
+            numberOfEntries
+            numberOfLeads
+            numberOfLeadsTagged
+            numberOfLeadsInProgress
+            numberOfUsers
+        }
+        allowedPermissions
     }
 `;
