@@ -36,7 +36,7 @@ export interface Option {
 const keySelector = (d: Option) => d.key;
 const labelSelector = (d: Option) => d.value;
 
-interface Props<T extends Option, K extends string | undefined> {
+interface Props<T extends Option, K extends string | number | undefined> {
     className?: string;
     name: K;
     options: T[] | null | undefined;
@@ -52,9 +52,10 @@ interface Props<T extends Option, K extends string | undefined> {
     readOnly?: boolean;
     type?: 'select' | 'segment';
     variant?: 'form' | 'general';
+    spacing?: 'compact' | 'none' | 'comfortable' | 'loose';
 }
 
-function BooleanInput<T extends Option, K extends string | undefined>(props: Props<T, K>) {
+function BooleanInput<T extends Option, K extends string | number | undefined>(props: Props<T, K>) {
     const {
         className,
         name,
@@ -63,6 +64,7 @@ function BooleanInput<T extends Option, K extends string | undefined>(props: Pro
         options,
         type = 'select',
         variant,
+        spacing,
         ...otherProps
     } = props;
 
@@ -100,6 +102,7 @@ function BooleanInput<T extends Option, K extends string | undefined>(props: Pro
             value={currentValue}
             onChange={handleChange}
             name={name}
+            spacing={spacing}
             {...otherProps}
         />
     );

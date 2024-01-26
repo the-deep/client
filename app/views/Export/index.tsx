@@ -52,7 +52,7 @@ function Export() {
                         >
                             Export History
                         </Tab>
-                        {project?.hasAssessmentTemplate && (
+                        {project?.isAssessmentEnabled && (
                             <Tab
                                 name="export-assessment-history"
                                 transparentBorder
@@ -75,7 +75,7 @@ function Export() {
                         >
                             New Export
                         </SmartButtonLikeLink>
-                        {project?.hasAssessmentTemplate && (
+                        {project?.isAssessmentEnabled && (
                             <SmartButtonLikeLink
                                 variant="secondary"
                                 icons={(<IoAdd />)}
@@ -102,7 +102,7 @@ function Export() {
                         />
                     )}
                 </TabPanel>
-                {project?.hasAssessmentTemplate && (
+                {project?.isAssessmentEnabled && (
                     <TabPanel
                         name="export-assessment-history"
                         activeClassName={styles.tabPanel}

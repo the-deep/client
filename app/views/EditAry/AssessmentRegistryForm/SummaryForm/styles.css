@@ -1,0 +1,36 @@
+.summary-form {
+    display: grid;
+    padding: var(--dui-spacing-large);
+    gap: var(--dui-spacing-large);
+
+    .pillar-content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: auto;
+        gap: var(--dui-spacing-extra-large);
+
+        .pillars {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .dimension-content {
+        .tab-list {
+            display: flex;
+            flex-shrink: 0;
+
+            .tab {
+                &.error {
+                    color: var(--dui-color-danger);
+                }
+            }
+
+            .dummy {
+                flex-grow: 1;
+                border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-separator);
+            }
+        }
+    }
+}

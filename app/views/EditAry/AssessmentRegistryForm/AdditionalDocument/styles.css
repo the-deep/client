@@ -1,0 +1,7 @@
+.additional-document {
+    display: grid;
+    grid-template-rows: repeat(2, 50%);
+    grid-template-columns: 1fr 1fr;
+    gap: var(--dui-spacing-extra-large);
+    padding: var(--dui-spacing-large);
+}

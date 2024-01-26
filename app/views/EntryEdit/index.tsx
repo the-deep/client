@@ -84,6 +84,8 @@ import usePromptOnCloseAndRefresh from '#hooks/usePromptOnCloseAndRefresh';
 import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 import getSchema, { defaultFormValues, PartialEntryType, PartialFormType } from '#components/entry/schema';
 import { Entry, EntryInput as EntryInputType, Framework } from '#components/entry/types';
+import LeftPane, { TabOptions } from '#components/LeftPaneEntries';
+import { createDefaultAttributes } from '#components/LeftPaneEntries/utils';
 import {
     PROJECT_FRAMEWORK,
     BULK_UPDATE_ENTRIES,
@@ -92,9 +94,6 @@ import {
 } from './queries';
 
 import SourceDetails from './SourceDetails';
-import LeftPane, { TabOptions } from './LeftPane';
-
-import { createDefaultAttributes } from './utils';
 
 import styles from './styles.css';
 
@@ -1172,19 +1171,20 @@ function EntryEdit(props: Props) {
                         authors: leadData.authors?.map((author) => author.id),
                     });
                     const {
-                        leadGroup,
+                        // leadGroup,
                         assignee,
                         authors,
                         source,
                     } = leadData;
 
+                    /*
                     if (leadGroup) {
-                        /*
                         setLeadGroupOptions((oldVal) => (
                             oldVal ? [...oldVal, leadGroup] : [leadGroup]
                         ));
-                         */
                     }
+                    */
+
                     if (assignee) {
                         setProjectUserOptions((oldVal) => (
                             oldVal ? [...oldVal, assignee] : [assignee]

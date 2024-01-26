@@ -392,7 +392,7 @@ const assessments = wrap({
         if (!project) {
             return false;
         }
-        return project.hasAssessmentTemplate;
+        return project.isAssessmentEnabled;
     },
     visibility: 'is-authenticated',
 });
@@ -411,7 +411,7 @@ const leadGroups = wrap({
         if (!project) {
             return false;
         }
-        return project.hasAssessmentTemplate;
+        return project.isAssessmentEnabled;
     },
     visibility: 'is-authenticated',
 });
@@ -444,18 +444,6 @@ const aryDashboard = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (_, project, skipProjectPermissionCheck) => {
-        if (skipProjectPermissionCheck) {
-            return true;
-        }
-        if (!project) {
-            return false;
-        }
-        return (
-            project.isVisualizationEnabled
-            && project.hasAssessmentTemplate
-        );
-    },
 });
 
 const exportRoute = wrap({
@@ -516,12 +504,12 @@ const newAssessmentExportCreateRoute = wrap({
     },
 });
 
-const assessmentEditRoute = wrap({
+const newAssessmentEditRoute = wrap({
     parent: { path: projectRoute.path },
-    path: '/assessments/leads/:leadId(\\d+)/',
+    path: '/assessments/:assessmentId(\\d+)/',
     title: 'Edit Assessment',
     navbarVisibility: false,
-    component: lazy(() => import('#views/EditAssessment')),
+    component: lazy(() => import('#views/EditAry')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -533,7 +521,31 @@ const assessmentEditRoute = wrap({
             return false;
         }
         // NOTE: using permission for LEAD as we don't have one for assessment
-        return project.hasAssessmentTemplate && (
+        return project.isAssessmentEnabled && (
+            project.allowedPermissions.includes('CREATE_LEAD')
+            || project.allowedPermissions.includes('UPDATE_LEAD')
+        );
+    },
+});
+
+const createNewAssessmentEditRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/assessments/new/',
+    title: 'Create Assessment',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/EditAry')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        // NOTE: using permission for LEAD as we don't have one for assessment
+        return project.isAssessmentEnabled && (
             project.allowedPermissions.includes('CREATE_LEAD')
             || project.allowedPermissions.includes('UPDATE_LEAD')
         );
@@ -557,7 +569,7 @@ const groupAssessmentEditRoute = wrap({
             return false;
         }
         // NOTE: using permission for LEAD as we don't have one for assessment
-        return project.hasAssessmentTemplate && (
+        return project.isAssessmentEnabled && (
             project.allowedPermissions.includes('CREATE_LEAD')
             || project.allowedPermissions.includes('UPDATE_LEAD')
         );
@@ -675,8 +687,9 @@ const routes = {
     newReport: newReportRoute,
     assessmentExportCreate: newAssessmentExportCreateRoute,
     entryEdit: entryEditRoute,
-    assessmentEdit: assessmentEditRoute,
     groupAssessmentEdit: groupAssessmentEditRoute,
+    newAssessmentEdit: newAssessmentEditRoute,
+    createNewAssessmentEdit: createNewAssessmentEditRoute,
     entryEditRedirect,
     documentViewerRedirect,
     projectRedirect,

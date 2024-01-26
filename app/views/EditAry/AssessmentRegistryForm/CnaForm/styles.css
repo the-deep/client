@@ -1,0 +1,36 @@
+.cna-form {
+    display: flex;
+    flex-direction: column;
+    padding: var(--dui-spacing-large);
+    gap: var(--dui-spacing-extra-large);
+
+    .sector-stats {
+        display: flex;
+        gap: var(--dui-spacing-medium);
+
+        .sector-stats-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-small);
+            background-color: var(--dui-color-background-information);
+            padding: var(--dui-spacing-medium);
+        }
+    }
+
+    .sector-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+
+        .sub-sector-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-large);
+            padding: 0 var(--dui-spacing-medium);
+
+            .sub-sector-heading {
+                color: var(--dui-color-accent);
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { doesObjectHaveNoData } from '@togglecorp/fujs';
 import { IoClose } from 'react-icons/io5';
 import {
@@ -10,36 +10,47 @@ import {
     ObjectSchema,
     useForm,
 } from '@togglecorp/toggle-form';
-
-import {
-    AssessmentListQueryVariables,
-} from '#generated/types';
+import ProjectMemberMultiSelectInput, {
+    ProjectMember,
+} from '#components/selections/ProjectMemberMultiSelectInput';
 
 import styles from './styles.css';
 
-type FormType = Omit<AssessmentListQueryVariables, 'projectId'>;
-type FormSchema = ObjectSchema<FormType>;
+export type FilterFormType = {
+    search?: string;
+    createdBy?: string[];
+    createdAtLte?: string;
+    createdAtGte?: string;
+    publicationDateLte?: string;
+    publicationDateGte?: string;
+};
+type FormSchema = ObjectSchema<FilterFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         search: [],
-        startDate: [],
-        endDate: [],
+        createdBy: [],
+        createdAtLte: [],
+        createdAtGte: [],
+        publicationDateLte: [],
+        publicationDateGte: [],
     }),
 };
 
-const initialValue: FormType = {};
+const initialValue: FilterFormType = {};
 
 interface Props {
-    filters: Omit<AssessmentListQueryVariables, 'projectId'> | undefined;
-    onFiltersChange: (filters: Omit<AssessmentListQueryVariables, 'projectId'> | undefined) => void;
+    filters: FilterFormType | undefined;
+    onFiltersChange: (filters: FilterFormType | undefined) => void;
+    projectId?: string;
 }
 
 function AssessmentFilterForm(props: Props) {
     const {
         filters,
         onFiltersChange,
+        projectId,
     } = props;
 
     const {
@@ -52,6 +63,11 @@ function AssessmentFilterForm(props: Props) {
     useEffect(() => {
         setValue(filters ?? initialValue);
     }, [filters, setValue]);
+
+    const [
+        projectUserOptions,
+        setProjectUserOptions,
+    ] = useState<ProjectMember[] | undefined | null>(undefined);
 
     const isFilterEmpty = useMemo(() => (
         doesObjectHaveNoData(value, [''])
@@ -78,14 +94,34 @@ function AssessmentFilterForm(props: Props) {
                     placeholder="any"
                 />
                 <DateDualRangeInput
-                    label="Created At"
-                    fromName="startDate"
-                    toName="endDate"
+                    label="Creation Date"
+                    fromName="createdAtGte"
+                    toName="createdAtLte"
                     fromOnChange={setFieldValue}
                     toOnChange={setFieldValue}
-                    fromValue={value?.startDate}
-                    toValue={value?.endDate}
+                    fromValue={value?.createdAtGte}
+                    toValue={value?.createdAtLte}
                 />
+                <DateDualRangeInput
+                    label="Publication Date"
+                    fromName="publicationDateGte"
+                    toName="publicationDateLte"
+                    fromOnChange={setFieldValue}
+                    toOnChange={setFieldValue}
+                    fromValue={value?.publicationDateGte}
+                    toValue={value?.publicationDateLte}
+                />
+                {projectId && (
+                    <ProjectMemberMultiSelectInput
+                        label="Created by"
+                        name="createdBy"
+                        options={projectUserOptions}
+                        onOptionsChange={setProjectUserOptions}
+                        onChange={setFieldValue}
+                        value={value?.createdBy}
+                        projectId={projectId}
+                    />
+                )}
             </div>
             <div className={styles.buttonContainer}>
                 <Button

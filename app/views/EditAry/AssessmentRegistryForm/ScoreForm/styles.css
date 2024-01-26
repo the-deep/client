@@ -1,0 +1,36 @@
+.score-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-small);
+    overflow-y: auto;
+
+    .dummy {
+        flex-grow: 1;
+        border-bottom: var(--dui-width-separator-medium) solid var(--dui-color-separator);
+    }
+
+    .list {
+        flex-shrink: 0;
+
+        .tab {
+            &.error {
+                color: var(--dui-color-danger);
+            }
+        }
+    }
+
+    .scores {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--dui-spacing-small);
+        gap: var(--dui-spacing-small);
+    }
+
+    .tab-panel {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: var(--dui-spacing-extra-large);
+        overflow-y: auto;
+    }
+}

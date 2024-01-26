@@ -1,0 +1,17 @@
+.sub-dimension-item {
+    display: grid;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    border-radius: var(--dui-border-radius-card);
+    padding: var(--dui-spacing-medium);
+    min-width: 300px;
+    gap: var(--dui-spacing-large);
+
+    .indicator {
+        font-size: var(--dui-font-size-extra-large);
+    }
+
+    .issue-input {
+        display: grid;
+        gap: var(--dui-spacing-extra-large);
+    }
+}

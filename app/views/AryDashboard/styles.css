@@ -1,24 +1,59 @@
 .dashboard {
     background-color: var(--dui-color-foreground);
-    padding: 0;
+    padding-right: unset;
+    padding-left: unset;
+    overflow-y: auto;
+
+    .header {
+        padding-right: var(--dui-spacing-super-large);
+        padding-left: var(--dui-spacing-super-large);
+
+        .heading-description {
+            display: flex;
+            align-items: center;
+            gap: var(--dui-spacing-small);
+
+            .date-range-output {
+                flex-grow: 1;
+            }
+        }
+
+        .header-description {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-medium);
+        }
+
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(359deg);
+            }
+        }
+
+        .loading {
+            animation: rotation 500ms infinite linear;
+        }
+    }
 
     .content {
         display: flex;
-        flex-grow: 1;
-        padding: 0;
+        flex-direction: column;
+        padding-right: var(--dui-spacing-super-large);
+        padding-left: var(--dui-spacing-super-large);
+        gap: var(--dui-spacing-large);
+        overflow: unset;
 
-        .iframe {
-            flex-grow: 1;
-            border: 0;
-            object-fit: contain;
-            object-position: center center;
-        }
+        .container {
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            border-radius: var(--dui-border-radius-card);
+            background-color: var(--dui-color-foreground);
 
-        .message {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-            justify-content: center;
+            .content-header {
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            }
         }
     }
 }

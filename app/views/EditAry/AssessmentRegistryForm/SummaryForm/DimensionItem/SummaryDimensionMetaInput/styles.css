@@ -1,0 +1,13 @@
+.meta-input {
+    display: flex;
+    align-items: center;
+
+    .input-metadata {
+        background: var(--dui-color-background);
+        padding: var(--dui-spacing-small);
+
+        .input-section {
+            height: 100%;
+        }
+    }
+}

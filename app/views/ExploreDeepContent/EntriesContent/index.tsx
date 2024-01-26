@@ -11,9 +11,8 @@ import {
 import useSizeTracking from '#hooks/useSizeTracking';
 import EntriesHeatMap from '#components/HeatMap';
 import { getTimeseriesWithoutGaps } from '#utils/temporal';
-
-import EntityCreationLineChart from '../EntityCreationLineChart';
-import BrushLineChart from '../BrushLineChart';
+import BrushLineChart from '#components/BrushLineChart';
+import EntityCreationLineChart from '#components/EntityCreationLineChart';
 
 import styles from './styles.css';
 

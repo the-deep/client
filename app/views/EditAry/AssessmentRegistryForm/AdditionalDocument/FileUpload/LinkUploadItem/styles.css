@@ -1,0 +1,33 @@
+.upload-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--dui-spacing-small);
+
+    .icons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .icon {
+            color: var(--dui-color-accent);
+            font-size: var(--dui-font-size-extra-large);
+        }
+    }
+
+    .actions {
+        visibility: hidden;
+        padding-right: var(--dui-spacing-small);
+    }
+
+    .content {
+        display: flex;
+    }
+
+    &:hover {
+        background-color: var(--dui-color-grey4);
+        .actions {
+            visibility: visible;
+        }
+    }
+}

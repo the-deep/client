@@ -1,0 +1,15 @@
+.attributes-form {
+    display: flex;
+    gap: var(--dui-spacing-large);
+
+    .sampling-input {
+        display: flex;
+        gap: var(--dui-spacing-extra-small);
+    }
+
+    .remove-button {
+        background-color: transparent;
+        color: var(--dui-color-danger);
+        font-size: var(--dui-font-size-large);
+    }
+}

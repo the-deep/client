@@ -78,6 +78,7 @@ export interface Props<T extends string> {
     sourceStatus: LeadStatusEnum;
     projectId: string;
     duplicateLeadsCount: number | null | undefined;
+    assessmentId?: string | undefined;
 }
 
 function Actions<T extends string>(props: Props<T>) {
@@ -96,6 +97,7 @@ function Actions<T extends string>(props: Props<T>) {
         projectId,
         duplicateLeadsCount,
         onShowDuplicatesClick,
+        assessmentId,
     } = props;
 
     const hasDuplicates = (duplicateLeadsCount ?? 0) > 0;
@@ -270,17 +272,35 @@ function Actions<T extends string>(props: Props<T>) {
                         )}
                     </QuickActionDropdownMenu>
                 )}
-                {isAssessmentLead && (
+                {isAssessmentLead && hasAssessment && (
                     <SmartButtonLikeLink
                         className={styles.button}
                         variant="secondary"
-                        title={hasAssessment ? 'Edit assessment' : 'Add assessment'}
+                        title="Edit assessment"
                         disabled={disabled}
-                        route={routes.assessmentEdit}
+                        route={routes.newAssessmentEdit}
                         attrs={{
-                            leadId: id,
+                            projectId,
+                            assessmentId,
                         }}
-                        icons={hasAssessment ? <MdModeEdit /> : <IoAdd />}
+                        icons={<MdModeEdit />}
+                    >
+                        Assessment
+                    </SmartButtonLikeLink>
+                )}
+                {isAssessmentLead && !hasAssessment && (
+                    <SmartButtonLikeLink
+                        className={styles.button}
+                        variant="secondary"
+                        title="Add assessment"
+                        disabled={disabled}
+                        route={routes.createNewAssessmentEdit}
+                        attrs={{
+                            projectId,
+                            assessmentId,
+                        }}
+                        search={`?source=${id}`}
+                        icons={<IoAdd />}
                     >
                         Assessment
                     </SmartButtonLikeLink>

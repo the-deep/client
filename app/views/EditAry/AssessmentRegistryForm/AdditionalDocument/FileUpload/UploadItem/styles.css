@@ -1,0 +1,32 @@
+.upload-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--dui-spacing-small);
+
+    .icons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .icon {
+            color: var(--dui-color-accent);
+            font-size: var(--dui-font-size-extra-large);
+        }
+    }
+
+    .content {
+        display: flex;
+    }
+}
+
+.modal {
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+
+        .lead-preview {
+            flex-grow: 1;
+        }
+    }
+}

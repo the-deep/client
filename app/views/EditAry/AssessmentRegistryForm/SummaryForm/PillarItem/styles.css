@@ -1,0 +1,31 @@
+.pillar-item {
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .input-metadata {
+        background: var(--dui-color-background);
+        padding: var(--dui-spacing-small);
+
+        .input-section {
+            height: 100%;
+        }
+    }
+    .header {
+        .heading-container {
+            align-self: center;
+
+            .heading {
+                color: var(--dui-color-danger);
+            }
+        }
+
+        .header-actions {
+            display: flex;
+        }
+    }
+
+    .sub-pillar-item {
+        display: grid;
+        grid-auto-flow: column;
+        gap: var(--dui-spacing-large);
+    }
+}

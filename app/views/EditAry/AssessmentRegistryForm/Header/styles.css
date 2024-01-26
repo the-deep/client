@@ -1,0 +1,10 @@
+.heading-container {
+    .title {
+        color: var(--dui-color-text);
+    }
+
+    .icons {
+        color: var(--dui-color-accent);
+        font-size: var(--dui-font-size-large);
+    }
+}

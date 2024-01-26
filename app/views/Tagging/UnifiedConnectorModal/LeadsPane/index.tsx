@@ -117,7 +117,7 @@ const PROJECT_CONNECTOR_DETAILS = gql`
         }
         project(id: $projectId) {
             id
-            hasAssessmentTemplate
+            isAssessmentEnabled
             unifiedConnector {
                 unifiedConnector(id: $connectorId) {
                     id
@@ -771,7 +771,7 @@ function LeadsPane(props: Props) {
                             // onLeadGroupOptionsChange={onLeadGroupOptionsChange}
                             assigneeOptions={assigneeOptions}
                             onAssigneeOptionChange={onAssigneeOptionChange}
-                            hasAssessment={connectorDetailsData?.project?.hasAssessmentTemplate}
+                            hasAssessment={connectorDetailsData?.project?.isAssessmentEnabled}
                             disabled={disabled}
                         />
                         <LeadPreview

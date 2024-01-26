@@ -289,7 +289,7 @@ export const LAST_ACTIVE_PROJECT_FRAGMENT = gql`
         analysisFramework {
             id
         }
-        hasAssessmentTemplate
+        isAssessmentEnabled
         id
         isPrivate
         title
@@ -326,5 +326,160 @@ export const BORDER_STYLE_FRAGMENT = gql`
         opacity
         style
         width
+    }
+`;
+
+export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
+    fragment AssessmentRegistryResponse on AssessmentRegistryType {
+        bgCountries {
+            id
+            title
+        }
+        bgCrisisStartDate
+        bgCrisisType
+        bgCrisisTypeDisplay
+        bgPreparedness
+        clientId
+        confidentiality
+        costEstimatesUsd
+        coordinatedJoint
+        dataCollectionEndDate
+        dataCollectionStartDate
+        detailsType
+        family
+        externalSupport
+        frequency
+        id
+        lead {
+            id
+        }
+        noOfPages
+        publicationDate
+        objectives
+        limitations
+        language
+        methodologyAttributes {
+            id
+            clientId
+            samplingSize
+            dataCollectionTechnique
+            proximity
+            samplingApproach
+            unitOfAnalysis
+            unitOfReporting
+        }
+        focuses
+        sectors
+        affectedGroups
+        protectionInfoMgmts
+        locations {
+            id
+            adminLevelTitle
+            regionTitle
+            parentTitles
+            title
+        }
+        cna {
+            id
+            answer
+            clientId
+            question {
+                id
+                question
+            }
+        }
+        executiveSummary
+        additionalDocuments {
+            clientId
+            documentType
+            externalLink
+            id
+            file {
+                title
+                mimeType
+                id
+                file {
+                    url
+                    name
+                }
+            }
+        }
+        stakeholders {
+            clientId
+            id
+            organization {
+                id
+                title
+                mergedAs {
+                    id
+                    title
+                }
+            }
+            organizationType
+        }
+        scoreRatings {
+            id
+            scoreType
+            rating
+            reason
+            clientId
+        }
+        scoreAnalyticalDensity {
+            id
+            analysisLevelCovered
+            clientId
+            figureProvided
+            sector
+        }
+        summarySubPillarIssue {
+            id
+            order
+            clientId
+            text
+            summaryIssue {
+                id
+                subPillar
+                subPillarDisplay
+                label
+            }
+        }
+        summaryPillarMeta {
+            id
+            totalDead
+            percentageOfPeopleFacingHumAccessCons
+            totalInjured
+            totalMissing
+            totalPeopleAssessed
+            totalPeopleFacingHumAccessCons
+        }
+        summaryDimensionMeta {
+            id
+            clientId
+            sector
+            percentageOfPeopleAffected
+            totalPeopleAffected
+            percentageOfModerate
+            percentageOfSevere
+            percentageOfCritical
+            percentageInNeed
+            totalModerate
+            totalSevere
+            totalCritical
+            totalInNeed
+        }
+        summarySubDimensionIssue {
+            id
+            clientId
+            sector
+            sectorDisplay
+            order
+            text
+            summaryIssue {
+                id
+                label
+                subDimension
+                subDimensionDisplay
+            }
+        }
     }
 `;

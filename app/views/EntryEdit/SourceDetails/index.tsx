@@ -126,7 +126,7 @@ function SourceDetails(props: Props) {
                     confidentialityOptions={
                         leadOptions?.leadConfidentialityOptions?.enumValues
                     }
-                    hasAssessment={project?.hasAssessmentTemplate}
+                    hasAssessment={project?.isAssessmentEnabled}
                 />
             </Card>
         </div>

@@ -1,23 +1,32 @@
 import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, randomString } from '@togglecorp/fujs';
+import {
+    PurgeNull,
+    PartialForm,
+} from '@togglecorp/toggle-form';
 import {
     List,
     DropContainer,
 } from '@the-deep/deep-ui';
 
 import { BasicOrganization } from '#types';
-import { ProjectOrganizationTypeEnum } from '#generated/types';
+import {
+    ProjectOrganizationGqInputType,
+    ProjectOrganizationTypeEnum,
+} from '#generated/types';
 
 import StakeholderRow from './StakeholderRow';
 
 import styles from './styles.css';
 
-const stakeholderRowKeySelector = (d: string) => d;
+export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>
+    & { clientId: string };
+const stakeholderRowKeySelector = (d: PartialForm<BasicProjectOrganization, 'clientId'>) => d.clientId;
 
 interface Props {
     className?: string;
-    value?: string[];
-    onChange: (stakeholders: string[], name: ProjectOrganizationTypeEnum) => void;
+    value?: PartialForm<BasicProjectOrganization[], 'clientId'>;
+    onChange: (stakeholders: PartialForm<BasicProjectOrganization[], 'clientId'>, name: ProjectOrganizationTypeEnum) => void;
     options: BasicOrganization[];
     onOptionsChange: (value: BasicOrganization[]) => void;
     label: string;
@@ -44,25 +53,41 @@ function StakeholderList(props: Props) {
             onOptionsChange([...options, typedVal]);
         }
         if (!value) {
-            onChange([typedVal.id], name);
-        } else if (value.findIndex((v) => v === typedVal.id) === -1) {
-            onChange([...value, typedVal.id], name);
+            onChange([
+                {
+                    organization: typedVal.id,
+                    organizationType: name,
+                    clientId: randomString(),
+                },
+            ], name);
+        } else if (value.findIndex((v) => v.organization === typedVal.id) === -1) {
+            onChange([
+                ...value,
+                {
+                    organization: typedVal.id,
+                    organizationType: name,
+                    clientId: randomString(),
+                },
+            ], name);
         }
     }, [value, name, onChange, onOptionsChange, options]);
 
-    const getValueLabel = useCallback((val: string) => (
-        options.find((v) => v.id === val)?.title
+    const getValueLabel = useCallback((val: PartialForm<BasicProjectOrganization>) => (
+        options.find((v) => v.id === val.organization)?.title
     ), [options]);
 
     const onRowRemove = useCallback((id: string) => {
         if (value) {
-            onChange(value.filter((v) => v !== id), name);
+            onChange(value.filter((v) => v.clientId !== id), name);
         }
     }, [value, name, onChange]);
 
-    const rowRendererParams = useCallback((_: string, val: string) => ({
+    const rowRendererParams = useCallback((
+        _: string,
+        val: PartialForm<BasicProjectOrganization, 'clientId'>,
+    ) => ({
         onRemove: onRowRemove,
-        value: val,
+        value: val.clientId,
         displayValue: getValueLabel(val),
     }), [onRowRemove, getValueLabel]);
 

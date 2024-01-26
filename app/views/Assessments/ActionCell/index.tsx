@@ -23,7 +23,7 @@ const ASSESSMENT_DELETE = gql`
         $assessmentId: ID!,
     ) {
         project(id: $projectId) {
-            assessmentDelete(id: $assessmentId) {
+            deleteAssessmentRegistry(id: $assessmentId) {
                 ok
             }
         }
@@ -33,8 +33,6 @@ const ASSESSMENT_DELETE = gql`
 export interface Props {
     assessmentId: string;
     projectId?: string;
-    leadId?: string;
-    leadGroupId?: string;
     className?: string;
     disabled?: boolean;
     onDeleteSuccess: () => void;
@@ -44,8 +42,6 @@ function ActionCell(props: Props) {
     const {
         className,
         projectId,
-        leadId,
-        leadGroupId,
         assessmentId,
         onDeleteSuccess,
         disabled,
@@ -59,7 +55,7 @@ function ActionCell(props: Props) {
         ASSESSMENT_DELETE,
         {
             onCompleted: (result) => {
-                if (result?.project?.assessmentDelete?.ok) {
+                if (result?.project?.deleteAssessmentRegistry?.ok) {
                     onDeleteSuccess();
                     alert.show(
                         'Successfully deleted assessment.',
@@ -98,29 +94,13 @@ function ActionCell(props: Props) {
 
     return (
         <div className={_cs(styles.actionCell, className)}>
-            {leadId && (
+            {assessmentId && (
                 <SmartQuickActionLink
                     className={styles.button}
-                    // TODO: Link this to actual assessment edit page
                     attrs={{
-                        leadId,
+                        assessmentId,
                     }}
-                    route={routes.assessmentEdit}
-                    disabled={disabled}
-                    title="Edit"
-                >
-                    <FiEdit2 />
-                </SmartQuickActionLink>
-            )}
-            {/* FIXME: Remove lead group Id association with assessment registry later */}
-            {leadGroupId && (
-                <SmartQuickActionLink
-                    className={styles.button}
-                    // TODO: Link this to actual assessment edit page
-                    attrs={{
-                        leadGroupId,
-                    }}
-                    route={routes.groupAssessmentEdit}
+                    route={routes.newAssessmentEdit}
                     disabled={disabled}
                     title="Edit"
                 >

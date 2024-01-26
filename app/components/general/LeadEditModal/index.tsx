@@ -310,19 +310,12 @@ function LeadEditModal(props: Props) {
                         authors: leadData?.authors?.map((author) => author.id),
                     });
                     const {
-                        leadGroup,
+                        // leadGroup,
                         assignee,
                         authors,
                         source,
                     } = leadData;
 
-                    if (leadGroup) {
-                        /*
-                        setLeadGroupOptions((oldVal) => (
-                            oldVal ? [...oldVal, leadGroup] : [leadGroup]
-                        ));
-                         */
-                    }
                     if (assignee) {
                         setProjectUserOptions((oldVal) => (
                             oldVal ? [...oldVal, assignee] : [assignee]
@@ -502,7 +495,7 @@ function LeadEditModal(props: Props) {
                     // onLeadGroupOptionsChange={setLeadGroupOptions}
                     assigneeOptions={projectUserOptions}
                     onAssigneeOptionChange={setProjectUserOptions}
-                    hasAssessment={project?.hasAssessmentTemplate}
+                    hasAssessment={project?.isAssessmentEnabled}
                 />
             </Card>
         </Modal>

@@ -31,6 +31,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     ObjectSchema,
+    defaultUndefinedType,
     requiredStringCondition,
     removeNull,
     useForm,
@@ -65,7 +66,6 @@ import generateString from '#utils/string';
 
 import _ts from '#ts';
 import {
-    ProjectOrganizationGqInputType,
     UserLastActiveProjectQuery,
     UserLastActiveProjectQueryVariables,
     ProjectCreateInputType,
@@ -81,6 +81,7 @@ import {
     ProjectOrganizationTypeEnum,
 } from '#generated/types';
 import { LAST_ACTIVE_PROJECT_FRAGMENT } from '#gqlFragments';
+import { DeepMandatory } from '#utils/types';
 
 import StakeholderList from './StakeholderList';
 import RequestPrivateProjectButton from './RequestPrivateProjectButton';
@@ -88,6 +89,7 @@ import RequestPrivateProjectButton from './RequestPrivateProjectButton';
 import styles from './styles.css';
 
 const privacyTooltip = 'Public projects will be visible in the "Explore DEEP" section. Any registered users will be able to see the project name, the target country, a scheenshot of the framework and the number of users, entries and sources it contains. This is the default option in DEEP as to foster collaboration and avoid duplication or efforts.  Private projects will not be visible in the "Explore DEEP" section. This feature can be exceptionally requested for projects dealing with sensitive information or topics. Requests are assessed case by case and the feature is activated only in the case specific harm to the users, data or the platform itself is possible.';
+const assessmentTooltip = 'Enable assessment tagging.';
 
 const DELETE_PROJECT = gql`
     mutation deleteProject($projectId: ID!) {
@@ -139,28 +141,16 @@ const projectVisibilityOptions: BooleanOption[] = [
     },
 ];
 
-type PartialFormType = PartialForm<PurgeNull<ProjectCreateInputType>, 'organizations'>;
+type ProjectCreateType = DeepMandatory<PurgeNull<ProjectCreateInputType>, 'clientId'>
+type PartialFormType = PartialForm<ProjectCreateType, 'clientId'>
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-type PartialOrganizationType = ProjectOrganizationGqInputType;
-
-type StakeholderSchema = ObjectSchema<PartialOrganizationType, PartialFormType>;
-type StakeholderSchemaFields = ReturnType<StakeholderSchema['fields']>;
-const organizationSchema: StakeholderSchema = {
-    fields: (): StakeholderSchemaFields => ({
-        organization: [requiredCondition],
-        organizationType: [requiredCondition],
-    }),
-};
-
-type StakeholderListSchema = ArraySchema<PartialOrganizationType, PartialFormType>;
-type StakeholderListMember = ReturnType<StakeholderListSchema['member']>;
-
-const organizationListSchema: StakeholderListSchema = {
-    keySelector: (d) => d.organization,
-    member: (): StakeholderListMember => organizationSchema,
-};
+type PartialOrganizationType = NonNullable<PartialFormType['organizations']>[number];
+type OrganizationsSchema = ObjectSchema<PartialOrganizationType, PartialFormType>;
+type OrganizationsSchemaFields = ReturnType<OrganizationsSchema['fields']>;
+type OrganizationsListSchema = ArraySchema<PartialOrganizationType, PartialFormType>;
+type OrganizationsListMember = ReturnType<OrganizationsListSchema['member']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
@@ -168,12 +158,23 @@ const schema: FormSchema = {
         startDate: [],
         endDate: [],
         description: [],
-        organizations: organizationListSchema,
+        organizations: {
+            keySelector: (org) => org.clientId,
+            member: (): OrganizationsListMember => ({
+                fields: (): OrganizationsSchemaFields => ({
+                    id: [defaultUndefinedType],
+                    clientId: [requiredCondition],
+                    organization: [],
+                    organizationType: [],
+                }),
+            }),
+        },
         hasPubliclyViewableUnprotectedLeads: [requiredCondition],
         hasPubliclyViewableRestrictedLeads: [requiredCondition],
         hasPubliclyViewableConfidentialLeads: [requiredCondition],
         enablePubliclyViewableAnalysisReportSnapshot: [requiredCondition],
         isPrivate: [],
+        isAssessmentEnabled: [],
         isTest: [],
         isVisualizationEnabled: [requiredCondition],
     }),
@@ -189,22 +190,6 @@ const schema: FormSchema = {
     },
 };
 
-/*
-const getOrganizationValues = (project: ProjectDetails) => (
-    project.organizations.map((v) => ({
-        organization: v.organization,
-        organizationType: v.organizationType,
-    }))
-);
-
-const getOrganizationOptions = (project: ProjectDetails) => (
-    project.organizations.map((v) => ({
-        id: v.organization,
-        title: organizationTitleSelector(v.organizationDetails),
-    }))
-);
- */
-
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 
 const initialValue: PartialFormType = {
@@ -212,6 +197,7 @@ const initialValue: PartialFormType = {
     isVisualizationEnabled: false,
     isPrivate: false,
     isTest: false,
+    isAssessmentEnabled: false,
     hasPubliclyViewableUnprotectedLeads: false,
     hasPubliclyViewableConfidentialLeads: false,
     hasPubliclyViewableRestrictedLeads: false,
@@ -236,9 +222,11 @@ const LAST_ACTIVE_PROJECT = gql`
 `;
 
 const CURRENT_PROJECT = gql`
+    ${LAST_ACTIVE_PROJECT_FRAGMENT}
     query UserCurrentProject($projectId: ID!) {
         project(id: $projectId) {
             id
+            ...LastActiveProjectResponse
             title
             startDate
             endDate
@@ -250,12 +238,14 @@ const CURRENT_PROJECT = gql`
             isPrivate
             isVisualizationEnabled
             isTest
+            isAssessmentEnabled
             hasPubliclyViewableUnprotectedLeads
             hasPubliclyViewableConfidentialLeads
             hasPubliclyViewableRestrictedLeads
             enablePubliclyViewableAnalysisReportSnapshot
             organizations {
                 id
+                clientId
                 organization {
                     id
                     title
@@ -273,15 +263,18 @@ const CURRENT_PROJECT = gql`
 `;
 
 const PROJECT_CREATE = gql`
+${LAST_ACTIVE_PROJECT_FRAGMENT}
 mutation ProjectCreate($data: ProjectCreateInputType!) {
     projectCreate(data: $data) {
         ok
         result {
+            ...LastActiveProjectResponse
             id
             title
             isVisualizationEnabled
             startDate
             endDate
+            isAssessmentEnabled
             hasPubliclyViewableUnprotectedLeads
             hasPubliclyViewableConfidentialLeads
             hasPubliclyViewableRestrictedLeads
@@ -294,6 +287,7 @@ mutation ProjectCreate($data: ProjectCreateInputType!) {
             isPrivate
             organizations {
                 id
+                clientId
                 organization {
                     id
                     title
@@ -319,6 +313,7 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
             ok
             result {
                 id
+                ...LastActiveProjectResponse
                 title
                 startDate
                 endDate
@@ -330,12 +325,14 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 isVisualizationEnabled
                 isPrivate
                 isTest
+                isAssessmentEnabled
                 hasPubliclyViewableUnprotectedLeads
                 hasPubliclyViewableConfidentialLeads
                 hasPubliclyViewableRestrictedLeads
                 enablePubliclyViewableAnalysisReportSnapshot
                 organizations {
                     id
+                    clientId
                     organization {
                         id
                         title
@@ -414,7 +411,10 @@ function ProjectDetailsForm(props: Props) {
                     const cleanProject = removeNull(response.project);
                     setValue({
                         ...cleanProject,
+                        analysisFramework: cleanProject.analysisFramework?.id,
                         organizations: cleanProject?.organizations?.map((org) => ({
+                            clientId: org.clientId,
+                            id: org.id,
                             organization: org.organization.id,
                             organizationType: org.organizationType,
                         })),
@@ -500,8 +500,9 @@ function ProjectDetailsForm(props: Props) {
                     );
                 } else if (ok) {
                     setPristine(true);
-                    const project = response.project.projectUpdate.result;
-                    setProject(project ?? undefined);
+                    if (response?.project?.projectUpdate?.result) {
+                        setProject(response?.project?.projectUpdate?.result);
+                    }
                     alert.show(
                         'Successfully updated project!',
                         { variant: 'success' },
@@ -790,6 +791,27 @@ function ProjectDetailsForm(props: Props) {
                     </ContainerCard>
                 </div>
                 <div className={styles.right}>
+                    <Container
+                        className={styles.visibility}
+                        headingSize="extraSmall"
+                        contentClassName={styles.items}
+                        heading="Assessment Registry"
+                        inlineHeadingDescription
+                        headerDescriptionClassName={styles.infoIconContainer}
+                        headingDescription={(
+                            <IoInformationCircleOutline
+                                className={styles.infoIcon}
+                                title={assessmentTooltip}
+                            />
+                        )}
+                    >
+                        <Switch
+                            name="isAssessmentEnabled"
+                            label="Is Assessment Enabled"
+                            value={value?.isAssessmentEnabled}
+                            onChange={setFieldValue}
+                        />
+                    </Container>
                     <Container
                         className={styles.visibility}
                         headingSize="extraSmall"

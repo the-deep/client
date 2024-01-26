@@ -450,6 +450,7 @@ function SourcesTable(props: Props) {
                 entriesCount: data.entriesCount?.total ?? 0,
                 filteredEntriesCount: data.filteredEntriesCount,
                 hasAssessment: !!data.assessmentId,
+                assessmentId: data.assessmentId ?? undefined,
                 isAssessmentLead: data.isAssessmentLead,
                 sourceStatus: data.status,
                 duplicateLeadsCount: data.duplicateLeadsCount,

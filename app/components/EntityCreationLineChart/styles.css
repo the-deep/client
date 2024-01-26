@@ -1,0 +1,18 @@
+.entity-creation-line-chart {
+    flex-shrink: 0;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        justify-content: center;
+        padding: var(--dui-spacing-large);
+        height: 20rem;
+        overflow: unset;
+
+        .responsive-container {
+            height: 100%;
+        }
+    }
+}

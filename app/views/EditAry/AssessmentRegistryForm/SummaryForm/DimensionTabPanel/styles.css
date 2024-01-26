@@ -1,0 +1,41 @@
+.dimension-tab-panel {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
+
+    .summary-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+        grid-template-rows: auto auto;
+        gap: var(--dui-spacing-large);
+        padding: var(--dui-spacing-medium);
+
+        .left {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            width: 30rem;
+            font-size: var(--dui-font-size-large);
+            gap: var(--dui-spacing-extra-large);
+        }
+
+        .chart {
+            display: grid;
+            gap: var(--dui-spacing-large);
+
+            .stack-chart {
+                overflow: hidden;
+
+                .tooltip {
+                    font-size: var(--dui-font-size-large);
+                }
+            }
+
+            .bar-chart {
+                height: 400px;
+                overflow: hidden;
+            }
+        }
+    }
+}

@@ -1,5 +1,12 @@
-import React, { useMemo, useState, useContext } from 'react';
-import { useQuery, gql } from '@apollo/client';
+import React, {
+    useMemo,
+    useState,
+    useContext,
+} from 'react';
+import {
+    useQuery,
+    gql,
+} from '@apollo/client';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -24,52 +31,65 @@ import {
     AssessmentListQuery,
     AssessmentListQueryVariables,
 } from '#generated/types';
-import ActionCell, { Props as ActionCellProps } from './ActionCell';
+import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
+import ActionCell,
+{
+    Props as ActionCellProps,
+} from './ActionCell';
 
-import AssessmentFilterForm from './AssessmentFilterForm';
+import AssessmentFilterForm, { type FilterFormType } from './AssessmentFilterForm';
 
 import styles from './styles.css';
 
 const ASSESSMENT_LIST = gql`
     query AssessmentList(
         $search: String,
-        $startDate: DateTime,
-        $endDate: DateTime,
+        $createdAtGte: DateTime,
+        $createdAtLte: DateTime,
         $page: Int,
         $pageSize: Int,
         $projectId: ID!,
+        $publicationDateLte: Date,
+        $publicationDateGte: Date,
+        $createdBy: [ID],
     ) {
         project(id: $projectId) {
             id
-            assessments (
+            assessmentRegistries (
                 search: $search,
-                createdAtLte: $endDate,
-                createdAtGte: $startDate,
+                createdAtLte: $createdAtLte,
+                createdAtGte: $createdAtGte,
                 page: $page,
                 pageSize: $pageSize,
+                publicationDateLte: $publicationDateLte,
+                publicationDateGte: $publicationDateGte,
+                createdBy: $createdBy,
             ) {
+                totalCount
                 results {
                     id
-                    lead {
-                        id
-                        title
-                    }
-                    leadGroup {
-                        id
-                        title
-                    }
+                    clientId
+                    publicationDate
+                    detailsTypeDisplay
                     createdAt
                     createdBy {
                         displayName
                     }
+                    lead {
+                        title
+                        id
+                        authors {
+                            title
+                            id
+                        }
+                    }
                 }
-                totalCount
             }
         }
     }
 `;
 
-export type Assessment = NonNullable<NonNullable<NonNullable<NonNullable<AssessmentListQuery['project']>['assessments']>['results']>[number]>;
+export type Assessment = NonNullable<NonNullable<NonNullable<NonNullable<AssessmentListQuery['project']>['assessmentRegistries']>['results']>[number]>;
 const assessmentKeySelector = (assessment: Assessment) => assessment.id;
 
 interface Props {
@@ -81,19 +101,20 @@ function Assessments(props: Props) {
         className,
     } = props;
 
-    const [filters, setFilters] = useState<Omit<AssessmentListQueryVariables, 'projectId'> | undefined>(undefined);
+    const [filters, setFilters] = useState<FilterFormType | undefined>(undefined);
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(25);
 
     const { project } = useContext(ProjectContext);
-    // FIXME: rename startDate to createdAtGte
-    // FIXME: rename endDate to createdAtLte
+
     const variables = useMemo(
         () => (
             project ? ({
                 ...filters,
-                startDate: convertDateToIsoDateTime(filters?.startDate),
-                endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
+                createdAtLte: convertDateToIsoDateTime(filters?.createdAtLte),
+                createdAtGte: convertDateToIsoDateTime(filters?.createdAtGte, { endOfDay: true }),
+                publicationDateLte: filters?.publicationDateLte,
+                publicationDateGte: filters?.publicationDateGte,
                 page,
                 pageSize,
                 projectId: project.id,
@@ -128,11 +149,9 @@ function Assessments(props: Props) {
                 sortable: false,
             },
             cellRenderer: ActionCell,
-            cellRendererParams: (assessmentId, assessment) => ({
+            cellRendererParams: (assessmentId) => ({
                 assessmentId,
                 projectId: project?.id,
-                leadId: assessment.lead?.id,
-                leadGroupId: assessment.leadGroup?.id,
                 onDeleteSuccess: refetch,
                 disabled: !canEditEntry,
             }),
@@ -142,25 +161,35 @@ function Assessments(props: Props) {
             createStringColumn<Assessment, string>(
                 'title',
                 'Title',
-                (item) => item?.lead?.title ?? item?.leadGroup?.title,
+                (item) => item.lead.title,
             ),
             createStringColumn<Assessment, string>(
-                'type',
-                'Type',
-                (item) => (item?.lead?.id ? 'Source' : 'Source Group'),
+                'author',
+                'Author',
+                (item) => item.lead.authors?.map(organizationTitleSelector).join(', '),
+                {
+                    sortable: false,
+                },
+            ),
+            createDateColumn<Assessment, string>(
+                'publication_date',
+                'Publication date',
+                (item) => item?.publicationDate ?? '',
+            ),
+            createDateColumn<Assessment, string>(
+                'created_at',
+                'Creation date',
+                (item) => item?.createdAt,
             ),
             createStringColumn<Assessment, string>(
                 'created_by',
                 'Created By',
                 (item) => item?.createdBy?.displayName,
             ),
-            createDateColumn<Assessment, string>(
-                'created_at',
-                'Created At',
-                (item) => item?.createdAt,
-                {
-                    columnWidth: 116,
-                },
+            createStringColumn<Assessment, string>(
+                'assessment_type',
+                'Assessment type',
+                (item) => item?.detailsTypeDisplay,
             ),
             actionColumn,
         ]);
@@ -177,12 +206,13 @@ function Assessments(props: Props) {
                 <AssessmentFilterForm
                     filters={filters}
                     onFiltersChange={setFilters}
+                    projectId={project?.id}
                 />
             )}
             footerActions={(
                 <Pager
                     activePage={page}
-                    itemsCount={(data?.project?.assessments?.totalCount) ?? 0}
+                    itemsCount={(data?.project?.assessmentRegistries?.totalCount) ?? 0}
                     maxItemsPerPage={pageSize}
                     onActivePageChange={setPage}
                     onItemsPerPageChange={setPageSize}
@@ -193,7 +223,7 @@ function Assessments(props: Props) {
                 className={styles.table}
                 columns={columns}
                 keySelector={assessmentKeySelector}
-                data={data?.project?.assessments?.results}
+                data={data?.project?.assessmentRegistries?.results}
                 pending={loading}
                 filtered={isFiltered(filters)}
                 errored={false}
