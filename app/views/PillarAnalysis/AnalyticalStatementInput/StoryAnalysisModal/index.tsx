@@ -74,10 +74,16 @@ function generateReportText(entry: Entry) {
         ?.map((author) => organizationTitleSelector(author)).join(', ');
     const publisher = entry.lead.source ? organizationTitleSelector(entry.lead.source) : '';
     const organizations = (authors?.length ?? 0) > 0 ? authors : publisher;
-    const entryCreatedDate = new Date(entry.createdAt);
     const entryText = entry.excerpt.replace(/[.,\s]*$/, ' ');
 
     const url = entry.lead.url.length > 0 ? entry.lead.url : entry.lead.shareViewUrl;
+
+    if (!entry.lead.publishedOn) {
+        return `${entryText}([${organizations}](${url})).`;
+    }
+
+    const entryCreatedDate = new Date(entry.lead.publishedOn);
+
     return `${entryText}([${organizations}](${url}), ${encodeDate(entryCreatedDate)}).`;
 }
 
