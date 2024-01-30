@@ -143,15 +143,10 @@ function Home(props: ViewProps) {
     });
 
     const recentProjects: ProjectDetail[] | undefined = useMemo(() => {
-        /*
-        if (selectedProject && selectedProjectResponse?.project) {
-            return [selectedProjectResponse.project];
-        }
-         */
         if (recentProjectsResponse?.recentProjects) {
             return recentProjectsResponse.recentProjects;
         }
-        return undefined;
+        return [];
     }, [recentProjectsResponse]);
 
     const selectedProjectDetail: ProjectDetail | undefined = useMemo(() => {
@@ -194,7 +189,10 @@ function Home(props: ViewProps) {
         ],
     );
 
-    const pinnedProjects = pinnedProjectsResponse?.userPinnedProjects;
+    const pinnedProjects = pinnedProjectsResponse?.userPinnedProjects
+        && pinnedProjectsResponse?.userPinnedProjects?.filter(
+            (item) => isDefined(item.project?.id),
+        );
 
     const pinnedProjectsRendererParams = useCallback(
         (_: string, data: PinnedProjectDetailType): RecentProjectItemProps => ({
@@ -305,35 +303,23 @@ function Home(props: ViewProps) {
                         disablePinButton={pinButtonDisabled}
                     />
                 )}
-                <Heading size="medium">
-                    Pinned Projects
-                </Heading>
-                <ListView
-                    className={styles.projectList}
-                    data={pinnedProjects}
-                    rendererParams={pinnedProjectsRendererParams}
-                    renderer={ProjectItem}
-                    pending={pinnedProjectsPending}
-                    keySelector={pinnedProjectKeySelector}
-                    filtered={false}
-                    errored={false}
-                    emptyIcon={(
-                        <Kraken
-                            variant="search"
-                            size="medium"
+                {(pinnedProjects?.length ?? 0) >= 1 && (
+                    <>
+                        <Heading size="medium">
+                            Pinned Projects
+                        </Heading>
+                        <ListView
+                            className={styles.projectList}
+                            data={pinnedProjects}
+                            rendererParams={pinnedProjectsRendererParams}
+                            renderer={ProjectItem}
+                            pending={pinnedProjectsPending}
+                            keySelector={pinnedProjectKeySelector}
+                            filtered={false}
+                            errored={false}
                         />
-                    )}
-                    emptyMessage={(
-                        <div className={styles.emptyText}>
-                            {/* FIXME: use strings with appropriate wording */}
-                            Looks like you do not have any recent project,
-                            <br />
-                            please select a project to view it&apos;s details
-                        </div>
-                    )}
-                    messageIconShown
-                    messageShown
-                />
+                    </>
+                )}
                 <Heading size="medium">
                     Recent Projects
                 </Heading>
