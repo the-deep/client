@@ -3,7 +3,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import {
     _cs,
     compareDate,
-    isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     IoBookmarkOutline,
@@ -268,6 +268,10 @@ function ProjectItem(props: RecentProjectItemProps) {
         pinProject,
     ]);
 
+    if (isNotDefined(projectId)) {
+        return null;
+    }
+
     return (
         <ContainerCard
             spacing="loose"
@@ -283,7 +287,7 @@ function ProjectItem(props: RecentProjectItemProps) {
             )}
             headerActions={(
                 <>
-                    {isDefined(projectId) && (isPinned ? (
+                    {isPinned ? (
                         <QuickActionButton
                             name={projectId}
                             onClick={handleUnpinProject}
@@ -300,7 +304,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                         >
                             <RiPushpinFill />
                         </QuickActionButton>
-                    ))}
+                    )}
                     <Element
                         className={styles.privacyBadge}
                         actions={isPrivate && (
