@@ -17,8 +17,8 @@
 
         &.compact {
             --height-entry-item: initial;
-            --inner-width: unset;
             flex-direction: column;
+            --inner-width: 100%;
         }
 
         .heading-section {
@@ -64,6 +64,7 @@
 
         &.horizontal {
             flex-direction: row;
+
             .excerpt {
                 width: 100%;
                 max-width: 30rem;
