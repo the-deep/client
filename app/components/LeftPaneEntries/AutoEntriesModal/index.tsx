@@ -118,6 +118,14 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
                             threshold
                             value
                         }
+                        relatedGeoareas {
+                            adminLevelLevel
+                            adminLevelTitle
+                            id
+                            parentTitles
+                            regionTitle
+                            title
+                        }
                     }
                 }
             }
