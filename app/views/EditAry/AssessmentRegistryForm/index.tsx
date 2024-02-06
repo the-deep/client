@@ -44,7 +44,6 @@ const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
     dataCollectionEndDate: true,
     publicationDate: true,
     stakeholders: true,
-    costEstimatesUsd: true,
 };
 
 const fieldsInAdditionalDocuments: { [key in keyof PartialFormType]?: true } = {

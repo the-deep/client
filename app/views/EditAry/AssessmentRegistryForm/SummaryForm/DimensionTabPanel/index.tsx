@@ -210,7 +210,7 @@ function DimensionTabPanel(props: Props) {
                 rendererParams={dimensionRendererParams}
             />
             <ExpandableContainer
-                heading="Summary"
+                heading="Key figures"
                 headingSize="extraSmall"
                 withoutBorder
                 contentClassName={styles.summaryContent}

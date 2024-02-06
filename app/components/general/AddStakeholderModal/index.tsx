@@ -114,6 +114,7 @@ export interface Props<T> {
     onOptionsChange: (value: BasicOrganization[]) => void;
     value?: BasicProjectOrganization[] | null;
     onModalClose: () => void;
+    fromAssessment?: boolean;
 }
 
 const defaultFormValues: FormType = {};
@@ -126,6 +127,7 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
         options,
         onOptionsChange,
         onModalClose,
+        fromAssessment,
     } = props;
 
     const groupOrganizations = useCallback(
@@ -209,7 +211,9 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
                     onOptionsChange={onOptionsChange}
                     name="LEAD_ORGANIZATION"
                     value={value.LEAD_ORGANIZATION}
-                    label={_ts('project.detail.stakeholders', 'leadOrganization')}
+                    label={fromAssessment
+                        ? 'Assessment Lead'
+                        : _ts('project.detail.stakeholders', 'leadOrganization')}
                 />
                 <StakeholderList
                     onChange={handleChange}

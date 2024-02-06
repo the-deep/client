@@ -9,12 +9,14 @@ import _ts from '#ts';
 type Props<T> = Omit<AddStakeholderModalProps<T>, 'onModalClose'> & {
     className?: string;
     disabled?: boolean;
+    fromAssessment?: boolean;
 }
 
 function AddStakeholderButton<T extends string>(props: Props<T>) {
     const {
         className,
         disabled,
+        fromAssessment,
         ...stakeholderModalProps
     } = props;
 
@@ -40,6 +42,7 @@ function AddStakeholderButton<T extends string>(props: Props<T>) {
                 <AddStakeholderModal
                     {...stakeholderModalProps}
                     onModalClose={hideModal}
+                    fromAssessment={fromAssessment}
                 />
             )}
         </>
