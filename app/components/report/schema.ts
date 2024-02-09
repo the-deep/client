@@ -19,6 +19,7 @@ import {
     AnalysisReportPaddingStyleType,
     AnalysisReportContainerStyleType,
     AnalysisReportTextStyleType,
+    AnalysisReportKpiItemConfigurationType,
 } from '#generated/types';
 
 // NOTE: New DeepReplace is not compatible with old that is present in other
@@ -48,17 +49,24 @@ type InitialFormType = PartialForm<PurgeNull<AnalysisReportInputType>, 'clientId
 type InitialReportContainerType = NonNullable<InitialFormType['containers']>[number];
 type InitialContentDataType = NonNullable<InitialReportContainerType['contentData']>[number];
 
+type InitialKpiItemType = PurgeNull<AnalysisReportKpiItemConfigurationType>;
+
 type FinalReportContainerType = Omit<InitialReportContainerType, 'clientId'> & { clientId: string };
 type FinalContentDataType = Omit<InitialContentDataType, 'clientId'> & { clientId: string };
+export type FinalKpiItemType = Omit<InitialKpiItemType, 'clientId'> & { clientId: string };
 
 export type PartialFormType = DeepReplace<
     DeepReplace<
-        InitialFormType,
-        InitialReportContainerType,
-        FinalReportContainerType
+        DeepReplace<
+            InitialFormType,
+            InitialReportContainerType,
+            FinalReportContainerType
+        >,
+        InitialContentDataType,
+        FinalContentDataType
     >,
-    InitialContentDataType,
-    FinalContentDataType
+    InitialKpiItemType,
+    FinalKpiItemType
 >;
 
 export type ReportContainerType = NonNullable<PartialFormType['containers']>[number];
@@ -234,6 +242,16 @@ export type TextConfigType = NonNullable<ContentConfigType['text']>;
 type TextConfigSchema = ObjectSchema<TextConfigType, PartialFormType>;
 type TextConfigSchemaFields = ReturnType<TextConfigSchema['fields']>;
 
+export type KpiConfigType = NonNullable<ContentConfigType['kpi']>;
+type KpiConfigSchema = ObjectSchema<KpiConfigType, PartialFormType>;
+type KpiConfigSchemaFields = ReturnType<KpiConfigSchema['fields']>;
+
+type KpiItemSchema = ObjectSchema<PartialForm<FinalKpiItemType, 'clientId'>, PartialFormType>;
+type KpiItemSchemaFields = ReturnType<KpiItemSchema['fields']>;
+
+type KpiItemFormSchema = ArraySchema<PartialForm<FinalKpiItemType, 'clientId'>, PartialFormType>;
+type KpiItemFormSchemaMember = ReturnType<KpiItemFormSchema['member']>;
+
 export type UrlConfigType = NonNullable<ContentConfigType['url']>;
 type UrlConfigSchema = ObjectSchema<UrlConfigType, PartialFormType>;
 type UrlConfigSchemaFields = ReturnType<UrlConfigSchema['fields']>;
@@ -322,6 +340,33 @@ const schema: FormSchema = {
                                             fields: (): TextConfigSchemaFields => ({
                                                 content: [],
                                                 style: textContentStyleSchema,
+                                            }),
+                                        },
+                                    };
+                                } else if (containerValue?.contentType === 'KPI') {
+                                    configSchema = {
+                                        ...configSchema,
+                                        kpi: {
+                                            fields: (): KpiConfigSchemaFields => ({
+                                                items: {
+                                                    keySelector: (item) => item.clientId,
+                                                    member: (): KpiItemFormSchemaMember => ({
+                                                        fields: (): KpiItemSchemaFields => ({
+                                                            clientId: [requiredCondition],
+                                                            title: [requiredCondition],
+                                                            value: [requiredCondition],
+                                                            color: [],
+                                                            date: [],
+                                                            subtitle: [],
+                                                            source: [],
+                                                            sourceUrl: [],
+                                                        }),
+                                                    }),
+                                                },
+                                                sourceContentStyle: textContentStyleSchema,
+                                                subtitleContentStyle: textContentStyleSchema,
+                                                titleContentStyle: textContentStyleSchema,
+                                                valueContentStyle: textContentStyleSchema,
                                             }),
                                         },
                                     };
