@@ -73,13 +73,11 @@ const AUTOMATIC_STORY_ANALYSIS = gql`
                     status
                     entryGeo {
                         data {
-                            geoids {
-                                countrycode
-                                featurecode
-                                geonameid
+                            meta {
                                 latitude
                                 longitude
-                                match
+                                offsetEnd
+                                offsetStart
                             }
                         }
                     }
