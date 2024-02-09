@@ -53,6 +53,7 @@ import ContentAddModal from './ContentAddModal';
 import HeadingEdit from './HeadingEdit';
 import ContainerStylesEdit from './ContainerStylesEdit';
 import UrlEdit from './UrlEdit';
+import KpiEdit from './KpiEdit';
 import TextEdit from './TextEdit';
 import TimeseriesChartEdit from './TimeseriesChartEdit';
 import ImageEdit from './ImageEdit';
@@ -557,6 +558,14 @@ function ReportContainer(props: Props) {
                                 onChange={onConfigChange}
                                 value={undefined}
                                 error={undefined}
+                            />
+                        )}
+                        {contentType === 'KPI' && (
+                            <KpiEdit
+                                name="kpi"
+                                onChange={onConfigChange}
+                                value={configuration?.kpi}
+                                error={getErrorObject(error?.contentConfiguration)?.kpi}
                             />
                         )}
                         {contentType === 'URL' && (
