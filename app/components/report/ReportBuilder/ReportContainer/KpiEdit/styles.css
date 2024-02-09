@@ -1,0 +1,11 @@
+.kpi-edit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-large);
+
+    .expanded-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+    }
+}

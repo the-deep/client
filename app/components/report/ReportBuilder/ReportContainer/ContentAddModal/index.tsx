@@ -71,6 +71,13 @@ function ContentAddModal(props: Props) {
             >
                 Timeline Chart
             </RawButton>
+            <RawButton
+                name="KPI"
+                onClick={onSelect}
+                className={_cs(styles.button, isNotDefined(reportId) && styles.disabled)}
+            >
+                KPIs
+            </RawButton>
         </Modal>
     );
 }
