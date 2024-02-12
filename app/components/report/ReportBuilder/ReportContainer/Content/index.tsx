@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { removeNull } from '@togglecorp/toggle-form';
 import {
     Message,
+    ListView,
     Kraken,
+    KeyFigure,
 } from '@the-deep/deep-ui';
 import ReactMarkdown from 'react-markdown';
 
@@ -15,6 +17,7 @@ import {
 import {
     type ContentDataType,
     type ConfigType,
+    type FinalKpiItemType,
 } from '../../../schema';
 import {
     resolveTextStyle,
@@ -22,6 +25,8 @@ import {
 } from '../../../utils';
 
 import styles from './styles.css';
+
+type KpiItemType = FinalKpiItemType;
 
 interface Props {
     contentType: AnalysisReportContainerContentTypeEnum;
@@ -41,6 +46,10 @@ function Content(props: Props) {
     } = props;
 
     const configuration = removeNull(configurationFromProps);
+    const kpiRendererParams = useCallback((kpi: KpiItemType) => ({
+        value: kpi.value,
+        label: kpi.title,
+    }), []);
 
     if (contentType === 'HEADING') {
         const content = configuration?.heading?.content;
@@ -122,6 +131,30 @@ function Content(props: Props) {
                     generalConfiguration?.textContentStyle?.content,
                 )}
             >
+                <ReactMarkdown className={styles.markdown}>
+                    {content || 'Content goes here'}
+                </ReactMarkdown>
+            </div>
+        );
+    }
+
+    if (contentType === 'KPI') {
+        const kpis = configuration?.kpi?.items;
+        const kpiKeySelector = (kpi: KpiItemType) => kpi.clientId;
+
+        return (
+            <div
+                style={resolveTextStyle(
+                    style?.content,
+                    generalConfiguration?.textContentStyle?.content,
+                )}
+            >
+                <ListView
+                    data={kpis}
+                    keySelector={kpiKeySelector}
+                    renderer={KeyFigure}
+                    rendererParams={kpiRendererParams}
+                />
                 <ReactMarkdown className={styles.markdown}>
                     {content || 'Content goes here'}
                 </ReactMarkdown>
