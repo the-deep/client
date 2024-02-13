@@ -215,11 +215,32 @@ type UrlConfigurationType {
   url: String
 }
 
+type KpiItemConfigType {
+  abbreviateValue: String
+  clientId: String
+  color: String
+  date: String
+  source: String
+  sourceUrl: String
+  subtitle: String
+  title: String
+  value: Int
+}
+
+type KpiConfigurationType {
+  items: [KpiItemConfigType!]
+  sourceContentStyle: TextConfigurationStyleType
+  subtitleContentStyle: TextConfigurationStyleType
+  titleContentStyle: TextConfigurationStyleType
+  valueContentStyle: TextConfigurationStyleType
+}
+
 type ContentConfigurationType {
   heading: HeadingConfigurationType
   image: ImageConfigurationType
   text: TextConfigurationType
   url: UrlConfigurationType
+  kpi: KpiConfigurationType
 }
 
 enum ReportContentEnum {
