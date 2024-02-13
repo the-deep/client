@@ -11,13 +11,13 @@ import ReactMarkdown from 'react-markdown';
 
 import {
     AnalysisReportContainerContentTypeEnum,
-    AnalysisReportContainerContentConfigurationType,
 } from '#generated/types';
 
 import {
     type ContentDataType,
     type ConfigType,
     type FinalKpiItemType,
+    type ContentConfigType,
 } from '../../../schema';
 import {
     resolveTextStyle,
@@ -31,7 +31,7 @@ type KpiItemType = FinalKpiItemType;
 interface Props {
     contentType: AnalysisReportContainerContentTypeEnum;
     contentData: ContentDataType[] | undefined;
-    configuration: AnalysisReportContainerContentConfigurationType | undefined;
+    configuration: ContentConfigType | undefined;
     generalConfiguration: ConfigType | undefined;
     contentDataToFileMap: ContentDataFileMap | undefined;
 }
@@ -46,10 +46,14 @@ function Content(props: Props) {
     } = props;
 
     const configuration = removeNull(configurationFromProps);
-    const kpiRendererParams = useCallback((kpi: KpiItemType) => ({
-        value: kpi.value,
-        label: kpi.title,
+    const kpiRendererParams = useCallback((_: string, kpi: KpiItemType) => ({
+        value: kpi.value ?? 0,
+        label: kpi.title ?? '',
     }), []);
+    const kpiKeySelector = useCallback(
+        (kpi: KpiItemType) => kpi.clientId || '',
+        [],
+    );
 
     if (contentType === 'HEADING') {
         const content = configuration?.heading?.content;
@@ -140,25 +144,18 @@ function Content(props: Props) {
 
     if (contentType === 'KPI') {
         const kpis = configuration?.kpi?.items;
-        const kpiKeySelector = (kpi: KpiItemType) => kpi.clientId;
 
         return (
-            <div
-                style={resolveTextStyle(
-                    style?.content,
-                    generalConfiguration?.textContentStyle?.content,
-                )}
-            >
-                <ListView
-                    data={kpis}
-                    keySelector={kpiKeySelector}
-                    renderer={KeyFigure}
-                    rendererParams={kpiRendererParams}
-                />
-                <ReactMarkdown className={styles.markdown}>
-                    {content || 'Content goes here'}
-                </ReactMarkdown>
-            </div>
+            <ListView
+                className={styles.kpiContainer}
+                data={kpis}
+                keySelector={kpiKeySelector}
+                renderer={KeyFigure}
+                rendererParams={kpiRendererParams}
+                pending={false}
+                filtered={false}
+                errored={false}
+            />
         );
     }
 
