@@ -234,6 +234,39 @@ const REPORT_DETAILS = gql`
                                 fit
                             }
                         }
+                        kpi {
+                            items {
+                                abbreviateValue
+                                clientId
+                                color
+                                date
+                                source
+                                sourceUrl
+                                subtitle
+                                title
+                                value
+                            }
+                            sourceContentStyle {
+                                content {
+                                    ...TextStyle
+                                }
+                            }
+                            subtitleContentStyle {
+                                content {
+                                    ...TextStyle
+                                }
+                            }
+                            titleContentStyle {
+                                content {
+                                    ...TextStyle
+                                }
+                            }
+                            valueContentStyle {
+                                content {
+                                    ...TextStyle
+                                }
+                            }
+                        }
                         text {
                             content
                             style {
