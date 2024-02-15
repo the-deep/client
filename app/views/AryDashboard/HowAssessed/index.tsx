@@ -142,7 +142,7 @@ function HowAssessed(props: Props) {
     const variables: AryDashboardHowAssessedQueryVariables = useMemo(() => ({
         projectId,
         filter: {
-            ...filters,
+            assessment: filters,
             dateFrom: formatDateToString(new Date(startDate), 'yyyy-MM-dd'),
             dateTo: formatDateToString(new Date(endDate), 'yyyy-MM-dd'),
         },
