@@ -24,6 +24,12 @@
         flex-wrap: wrap;
         padding: var(--dui-spacing-small);
         gap: var(--dui-spacing-small);
+
+        .score-box {
+            &:last-child {
+                margin-left: auto;
+            }
+        }
     }
 
     .tab-panel {

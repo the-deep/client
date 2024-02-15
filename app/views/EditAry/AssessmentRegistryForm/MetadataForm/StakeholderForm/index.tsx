@@ -105,7 +105,7 @@ function StakeholderForm(props: Props) {
                     onChange={setFieldValue}
                     onOptionsChange={setStakeholderOptions}
                     options={stakeholderOptions}
-                    fromAssessment
+                    label="Assessment Lead"
                 />
             )}
         >

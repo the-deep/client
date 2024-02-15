@@ -109,6 +109,7 @@ export const schema: FormSchema = {
             bgPreparedness: [requiredCondition],
             externalSupport: [requiredCondition],
             coordinatedJoint: [requiredCondition],
+            status: [requiredCondition],
             detailsType: [requiredCondition],
             family: [requiredCondition],
             frequency: [requiredCondition],

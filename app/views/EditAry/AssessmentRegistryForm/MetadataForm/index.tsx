@@ -23,6 +23,7 @@ import { EnumOptions } from '#types/common';
 import {
     GetOptionsQuery,
     GetOptionsQueryVariables,
+    AssessmentRegistryStatusTypeEnum,
     AssessmentRegistryCrisisTypeEnum,
     AssessmentRegistryPreparednessTypeEnum,
     AssessmentRegistryExternalTypeEnum,
@@ -42,6 +43,12 @@ import styles from './styles.css';
 
 const GET_METADATA_OPTIONS = gql`
 query GetOptions {
+    statusOptions: __type(name: "AssessmentRegistryStatusTypeEnum") {
+        enumValues {
+            name
+            description
+        }
+    }
     crisisOptions: __type(name: "AssessmentRegistryCrisisTypeEnum") {
         enumValues {
             name
@@ -132,6 +139,7 @@ function MetadataForm(props: Props) {
     );
 
     const [
+        statusOptions,
         crisisOptions,
         preparednessOptions,
         externalOptions,
@@ -142,6 +150,7 @@ function MetadataForm(props: Props) {
         confidentialityOptions,
         languageOptions,
     ] = useMemo(() => ([
+        data?.statusOptions?.enumValues as EnumOptions<AssessmentRegistryStatusTypeEnum>,
         data?.crisisOptions?.enumValues as EnumOptions<AssessmentRegistryCrisisTypeEnum>,
         data?.preparednessOptions?.enumValues as EnumOptions<
             AssessmentRegistryPreparednessTypeEnum
@@ -232,6 +241,16 @@ function MetadataForm(props: Props) {
             <div className={styles.formElement}>
                 <Header title="Details" />
                 <div className={styles.inputs}>
+                    <SelectInput
+                        label="Status"
+                        name="status"
+                        value={value.status}
+                        onChange={setFieldValue}
+                        error={error?.status}
+                        keySelector={enumKeySelector}
+                        labelSelector={enumLabelSelector}
+                        options={statusOptions}
+                    />
                     <SelectInput
                         label="Type"
                         name="detailsType"

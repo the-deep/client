@@ -344,6 +344,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         coordinatedJoint
         dataCollectionEndDate
         dataCollectionStartDate
+        status
         detailsType
         family
         externalSupport

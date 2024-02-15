@@ -9,11 +9,18 @@ import {
 } from '@the-deep/deep-ui';
 import { EntriesAsList, Error, analyzeErrors, getErrorObject, removeNull } from '@togglecorp/toggle-form';
 import { gql, useQuery } from '@apollo/client';
-import { _cs, isDefined, isNotDefined, listToGroupList } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+    isNotDefined,
+    listToGroupList,
+    listToMap,
+} from '@togglecorp/fujs';
 
 import {
     AssessmentRegistrySectorTypeEnum,
     AssessmentRegistrySummaryFocusDimensionTypeEnum,
+    AssessmentRegistryFocusTypeEnum,
     AssessmentRegistrySummaryPillarTypeEnum,
     AssessmentRegistrySummarySubDimensionTypeEnum,
     AssessmentRegistrySummarySubPillarTypeEnum,
@@ -131,6 +138,14 @@ function SummaryForm(props: Props) {
         },
     );
 
+    const selectedFocusesMap = useMemo(() => (
+        listToMap(
+            value?.focuses,
+            (item) => item,
+            () => true,
+        )
+    ), [value?.focuses]);
+
     const pillarList: PillarType[] = useMemo(() => {
         const pillarOptions = removeNull(data?.project?.assessmentRegistryOptions?.summaryOptions);
         const groupByPillar = listToGroupList(pillarOptions ?? [], (d) => d.pillar);
@@ -145,8 +160,14 @@ function SummaryForm(props: Props) {
             }),
         );
 
-        return finalPillarList;
-    }, [data]);
+        // FIXME: Need to remove this type cast
+        return finalPillarList.filter((item) => selectedFocusesMap?.[
+            item.pillar as AssessmentRegistryFocusTypeEnum
+        ]);
+    }, [
+        data,
+        selectedFocusesMap,
+    ]);
 
     const dimensionList: DimensionType[] = useMemo(() => {
         const dimensionOptions = removeNull(
@@ -163,8 +184,14 @@ function SummaryForm(props: Props) {
                 })),
             }),
         );
-        return finalDimensionList;
-    }, [data]);
+        // FIXME: Need to remove this type cast
+        return finalDimensionList.filter((item) => selectedFocusesMap?.[
+            item.dimension as AssessmentRegistryFocusTypeEnum
+        ]);
+    }, [
+        data,
+        selectedFocusesMap,
+    ]);
 
     const pillarRenderParams = useCallback(
         (_: string, pillarData: PillarType): PillarItemProps => ({
@@ -239,9 +266,12 @@ function SummaryForm(props: Props) {
                     keySelector={keySelectorPillar}
                     renderer={PillarItem}
                     rendererParams={pillarRenderParams}
+                    emptyMessage="Looks like none of the operational environment pillar is selected in Focus tab."
                     pending={false}
                     errored={false}
                     filtered={false}
+                    messageShown
+                    messageIconShown
                 />
             </div>
             {isDefined(value.sectors) && value.sectors.length > 0 && (

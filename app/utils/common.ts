@@ -2,7 +2,6 @@ import { memo, ReactElement } from 'react';
 
 import {
     isDefined,
-    capitalize,
     isNotDefined,
     compareNumber,
     listToMap,

@@ -34,6 +34,7 @@ const fieldsInMetadata: { [key in keyof PartialFormType]?: true } = {
     bgPreparedness: true,
     externalSupport: true,
     coordinatedJoint: true,
+    status: true,
     detailsType: true,
     family: true,
     frequency: true,
@@ -186,6 +187,12 @@ function AssessmentRegistryForm(props: Props) {
         )
     ), [error]);
 
+    const isCnaShown = useMemo(() => (
+        value?.coordinatedJoint === 'COORDINATED' || value?.coordinatedJoint === 'HARMONIZED'
+    ), [
+        value?.coordinatedJoint,
+    ]);
+
     return (
         <div className={_cs(styles.assessmentRegistryForm, className)}>
             <Tabs
@@ -248,15 +255,17 @@ function AssessmentRegistryForm(props: Props) {
                     >
                         Score
                     </Tab>
-                    <Tab
-                        className={_cs(
-                            styles.tab,
-                            errorInCna && styles.error,
-                        )}
-                        name="cna"
-                    >
-                        CNA
-                    </Tab>
+                    {isCnaShown && (
+                        <Tab
+                            className={_cs(
+                                styles.tab,
+                                errorInCna && styles.error,
+                            )}
+                            name="cna"
+                        >
+                            CNA
+                        </Tab>
+                    )}
                     <div className={styles.dummy} />
                 </TabList>
                 <TabPanel
@@ -344,17 +353,19 @@ function AssessmentRegistryForm(props: Props) {
                         loading={loading}
                     />
                 </TabPanel>
-                <TabPanel
-                    name="cna"
-                    activeClassName={styles.tabPanel}
-                >
-                    <CnaForm
-                        value={value}
-                        setFieldValue={setFieldValue}
-                        error={error}
-                        projectId={projectId}
-                    />
-                </TabPanel>
+                {isCnaShown && (
+                    <TabPanel
+                        name="cna"
+                        activeClassName={styles.tabPanel}
+                    >
+                        <CnaForm
+                            value={value}
+                            setFieldValue={setFieldValue}
+                            error={error}
+                            projectId={projectId}
+                        />
+                    </TabPanel>
+                )}
             </Tabs>
         </div>
     );
