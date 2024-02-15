@@ -294,7 +294,7 @@ function Actions<T extends string>(props: Props<T>) {
                         variant="secondary"
                         title="Add assessment"
                         disabled={disabled}
-                        route={routes.createNewAssessmentEdit}
+                        route={routes.createNewAssessment}
                         attrs={{
                             projectId,
                             assessmentId,

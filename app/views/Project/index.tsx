@@ -224,15 +224,9 @@ function Project(props: Props) {
                 </Route>
                 <Route
                     exact
-                    path={routes.createNewAssessmentEdit.path}
+                    path={routes.createNewAssessment.path}
                 >
-                    {routes.createNewAssessmentEdit.load({ className })}
-                </Route>
-                <Route
-                    exact
-                    path={routes.groupAssessmentEdit.path}
-                >
-                    {routes.groupAssessmentEdit.load({ className })}
+                    {routes.createNewAssessment.load({ className })}
                 </Route>
                 <Route
                     path={routes.projectEdit.path}
