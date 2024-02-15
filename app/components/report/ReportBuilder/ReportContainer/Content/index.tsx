@@ -5,7 +5,6 @@ import {
     Message,
     ListView,
     Kraken,
-    KeyFigure,
 } from '@the-deep/deep-ui';
 import ReactMarkdown from 'react-markdown';
 
@@ -23,6 +22,7 @@ import {
     resolveTextStyle,
     type ContentDataFileMap,
 } from '../../../utils';
+import KpiItem from './KpiItem';
 
 import styles from './styles.css';
 
@@ -46,10 +46,7 @@ function Content(props: Props) {
     } = props;
 
     const configuration = removeNull(configurationFromProps);
-    const kpiRendererParams = useCallback((_: string, kpi: KpiItemType) => ({
-        value: kpi.value ?? 0,
-        label: kpi.title ?? '',
-    }), []);
+
     const kpiKeySelector = useCallback(
         (kpi: KpiItemType) => kpi.clientId || '',
         [],
@@ -144,13 +141,31 @@ function Content(props: Props) {
 
     if (contentType === 'KPI') {
         const kpis = configuration?.kpi?.items;
+        const sourceStyle = configuration?.kpi?.sourceContentStyle?.content ?? {};
+        const subtitleStyle = configuration?.kpi?.subtitleContentStyle?.content ?? {};
+        const titleStyle = configuration?.kpi?.titleContentStyle?.content ?? {};
+        const valueStyle = configuration?.kpi?.valueContentStyle?.content ?? {};
+
+        const kpiRendererParams = ((_: string, kpi: KpiItemType) => ({
+            value: kpi.value ?? 0,
+            title: kpi.title ?? '',
+            subtitle: kpi.subtitle ?? '',
+            // abbreviateValue: kpi.abbreviateValue,
+            sourceTitle: kpi.source,
+            sourceUrl: kpi.sourceUrl,
+            date: kpi.date,
+            sourceStyle,
+            subtitleStyle,
+            titleStyle,
+            valueStyle,
+        }));
 
         return (
             <ListView
                 className={styles.kpiContainer}
                 data={kpis}
                 keySelector={kpiKeySelector}
-                renderer={KeyFigure}
+                renderer={KpiItem}
                 rendererParams={kpiRendererParams}
                 pending={false}
                 filtered={false}
