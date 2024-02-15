@@ -38,7 +38,7 @@ interface Props<NAME extends string> {
     value: KpiConfigType | undefined;
     onChange: (value: SetValueArg<KpiConfigType | undefined>, name: NAME) => void;
     error?: Error<KpiConfigType>;
-    disabled?: boolean;
+    // disabled?: boolean;
 }
 
 function KpiEdit<NAME extends string>(props: Props<NAME>) {
@@ -48,7 +48,7 @@ function KpiEdit<NAME extends string>(props: Props<NAME>) {
         value,
         onChange,
         error: riskyError,
-        disabled,
+        // disabled,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -101,7 +101,7 @@ function KpiEdit<NAME extends string>(props: Props<NAME>) {
     }, [onFieldChange]);
 
     return (
-        <div className={_cs(className, styles.imageEdit)}>
+        <div className={_cs(className, styles.kpiEdit)}>
             <NonFieldError error={error} />
             <ExpandableContainer
                 heading="Configuration"
