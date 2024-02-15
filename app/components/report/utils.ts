@@ -123,6 +123,32 @@ export function resolveTextStyle(
     };
 }
 
+export function resolveKpiTextStyle(
+    kpiTextStyle: PurgeNull<AnalysisReportTextStyleType> | undefined,
+): React.CSSProperties {
+    if (!kpiTextStyle) {
+        return {};
+    }
+
+    const {
+        align,
+        color,
+        family,
+        weight,
+        size,
+    } = kpiTextStyle ?? {};
+
+    const textAlign = align ? alignStyleToValueMap[align] : undefined;
+
+    return {
+        textAlign,
+        color,
+        fontFamily: family,
+        fontWeight: weight,
+        fontSize: size,
+    };
+}
+
 export type ContentDataFileMap = Record<string, {
     url: string | undefined;
     name: string | undefined;
