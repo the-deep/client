@@ -20,6 +20,7 @@
 
         .header-actions {
             display: flex;
+            gap: var(--dui-spacing-super-small);
         }
     }
 

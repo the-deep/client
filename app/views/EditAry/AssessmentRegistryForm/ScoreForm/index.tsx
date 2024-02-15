@@ -227,6 +227,7 @@ function ScoreForm(props: Props) {
                 data={scoreStatsValue}
                 keySelector={keySelector}
                 renderer={KeyFigure}
+                rendererClassName={styles.scoreBox}
                 rendererParams={scoreStatsValueParams}
                 pending={false}
                 filtered={false}

@@ -100,7 +100,7 @@ function AnalyticalDensityInput(props: Props) {
                 heading={(
                     <>
                         <div>
-                            Analysis Levels Covered by the Assessment:
+                            Analysis levels covered by the assessment:
                         </div>
                         <div>
                             {analysisLevelValue}
@@ -130,7 +130,7 @@ function AnalyticalDensityInput(props: Props) {
                 heading={(
                     <>
                         <div>
-                            Figures Provided by the Assessment:
+                            Figures provided by the assessment:
                         </div>
                         <div>
                             {figureProvidedValue}

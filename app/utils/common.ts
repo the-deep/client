@@ -2,7 +2,6 @@ import { memo, ReactElement } from 'react';
 
 import {
     isDefined,
-    capitalize,
     isNotDefined,
     compareNumber,
     listToMap,
@@ -134,7 +133,7 @@ export const enumKeySelector = <T>(d: EnumEntity<T>) => (
 
 export const enumLabelSelector = <T extends string | number>(d: EnumEntity<T>) => (
     // FIXME: why are we doing this
-    capitalize(d.description ?? String(d.name))
+    (d.description ?? String(d.name))
 );
 
 interface Options {

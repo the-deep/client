@@ -96,7 +96,7 @@ function PillarItem(props: Props) {
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
                         label="Total people assessed"
-                        placeholder="Any"
+                        placeholder="write your number here"
                         name="totalPeopleAssessed"
                         onChange={onPillarMetaChange}
                         value={value?.summaryPillarMeta?.totalPeopleAssessed}
@@ -110,8 +110,8 @@ function PillarItem(props: Props) {
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
                             name="totalDead"
-                            label="Total death"
-                            placeholder="Any"
+                            label="Total deaths"
+                            placeholder="write your number here"
                             value={value?.summaryPillarMeta?.totalDead}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalDead}
@@ -122,7 +122,7 @@ function PillarItem(props: Props) {
                             inputSectionClassName={styles.inputSection}
                             name="totalInjured"
                             label="Total injured"
-                            placeholder="Any"
+                            placeholder="write your number here"
                             value={value?.summaryPillarMeta?.totalInjured}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalInjured}
@@ -133,7 +133,7 @@ function PillarItem(props: Props) {
                             inputSectionClassName={styles.inputSection}
                             name="totalMissing"
                             label="Total missing"
-                            placeholder="Any"
+                            placeholder="write your number here"
                             value={value?.summaryPillarMeta?.totalMissing}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalMissing}
@@ -148,23 +148,27 @@ function PillarItem(props: Props) {
                             inputSectionClassName={styles.inputSection}
                             name="totalPeopleFacingHumAccessCons"
                             label="People facing humanitarian access constraints"
-                            placeholder="Any"
+                            placeholder="write your number here"
                             value={value?.summaryPillarMeta?.totalPeopleFacingHumAccessCons}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.totalPeopleFacingHumAccessCons}
                             disabled={disabled}
                         />
+                        {/*
+                        NOTE: This can be uncommented after we write
+                        logic to calculate this on totalPeopleFacingHumAccessCons change
                         <NumberInput
                             className={styles.inputMetadata}
                             inputSectionClassName={styles.inputSection}
                             name="percentageOfPeopleFacingHumAccessCons"
                             label="% of people facing humanitarian access constraints"
-                            placeholder="Any"
+                            placeholder="write your number here"
                             value={value?.summaryPillarMeta?.percentageOfPeopleFacingHumAccessCons}
                             onChange={onPillarMetaChange}
                             error={summaryPillarMetaError?.percentageOfPeopleFacingHumAccessCons}
                             disabled={disabled}
                         />
+                          */}
                     </div>
                 )}
             </div>

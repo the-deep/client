@@ -45,7 +45,7 @@ function SummaryDimensionMetaInput(props: Props) {
                     className={styles.inputMetadata}
                     inputSectionClassName={styles.inputSection}
                     label="Total people affected"
-                    placeholder="Any"
+                    placeholder="write your number here"
                     name="totalPeopleAffected"
                     onChange={onValueChange}
                     value={value?.totalPeopleAffected}
@@ -59,7 +59,7 @@ function SummaryDimensionMetaInput(props: Props) {
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
                         label="Total Moderate"
-                        placeholder="Any"
+                        placeholder="write your number here"
                         name="totalModerate"
                         onChange={onValueChange}
                         error={error?.totalModerate}
@@ -69,7 +69,7 @@ function SummaryDimensionMetaInput(props: Props) {
                     <NumberInput
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Any"
+                        placeholder="write your number here"
                         label="Total Severe"
                         name="totalSevere"
                         onChange={onValueChange}
@@ -80,7 +80,7 @@ function SummaryDimensionMetaInput(props: Props) {
                     <NumberInput
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
-                        placeholder="Any"
+                        placeholder="write your number here"
                         label="Total Critical"
                         name="totalCritical"
                         onChange={onValueChange}
@@ -92,7 +92,7 @@ function SummaryDimensionMetaInput(props: Props) {
                         className={styles.inputMetadata}
                         inputSectionClassName={styles.inputSection}
                         label="Total in need"
-                        placeholder="Any"
+                        placeholder="write your number here"
                         name="totalInNeed"
                         onChange={onValueChange}
                         value={value?.totalInNeed}
