@@ -129,7 +129,7 @@ function ScoreForm(props: Props) {
 
         const analyticalDensityValue = {
             key: 'ANALYTICAL_DENSITY',
-            label: 'Analytical density',
+            label: 'Analytical Density',
             score: Math.round((median(sectorWiseDensityValue ?? []) ?? 0) * 100) / 100,
         };
 
