@@ -3,6 +3,12 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     listToMap,
+    isNotDefined,
+    isDefined,
+    sum,
+    mean,
+    median,
+    listToGroupList,
 } from '@togglecorp/fujs';
 
 import {
@@ -153,3 +159,59 @@ export type ContentDataFileMap = Record<string, {
     url: string | undefined;
     name: string | undefined;
 }>;
+
+export function aggregate<T, X extends string | number>(
+    data: T[] | undefined,
+    xSelector: (data: T) => X,
+    ySelector: (data: T) => unknown,
+    aggregator: 'sum' | 'mean' | 'count' | 'median' | 'min' | 'max',
+): { key: string, value: number | undefined }[] | undefined {
+    if (isNotDefined(data)) {
+        return undefined;
+    }
+
+    const dataGroupedByX = listToGroupList(
+        data,
+        xSelector,
+        ySelector,
+    );
+    return Object.keys(dataGroupedByX).map((item) => {
+        let aggregatedValue;
+
+        const cleanData: number[] = dataGroupedByX[item].map((unsafeItem) => {
+            const convertedNumber = unsafeItem === '' ? NaN : Number(unsafeItem);
+            if (!Number.isNaN(convertedNumber)) {
+                return Number(unsafeItem);
+            }
+
+            return undefined;
+        }).filter(isDefined);
+
+        if (cleanData.length === 0) {
+            return undefined;
+        }
+
+        if (aggregator === 'sum') {
+            aggregatedValue = sum(cleanData);
+        } else if (aggregator === 'mean') {
+            aggregatedValue = mean(cleanData);
+        } else if (aggregator === 'median') {
+            aggregatedValue = median(cleanData);
+        } else if (aggregator === 'min') {
+            aggregatedValue = Math.min(...cleanData);
+        } else if (aggregator === 'max') {
+            aggregatedValue = Math.max(...cleanData);
+        } else if (aggregator === 'count') {
+            aggregatedValue = dataGroupedByX[item].length;
+        }
+
+        if (isNotDefined(aggregatedValue)) {
+            return undefined;
+        }
+
+        return {
+            key: item,
+            value: aggregatedValue,
+        };
+    }).filter(isDefined);
+}
