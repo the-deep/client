@@ -1,0 +1,20 @@
+.expandable-container {
+    border: none;
+
+    .header-description {
+        display: flex;
+        gap: var(--dui-spacing-small);
+    }
+}
+.column-header {
+    background-color: transparent;
+    color: var(--dui-color-text);
+
+    .column-heading {
+        color: var(--dui-color-text);
+    }
+}
+.column-content {
+    display: flex;
+    gap: var(--dui-spacing-medium);
+}

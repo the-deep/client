@@ -1,9 +1,14 @@
 import React, { useCallback, useState } from 'react';
+import { IoCloudUpload } from 'react-icons/io5';
 import {
     type PartialForm,
     type ObjectSchema,
     type PurgeNull,
     requiredCondition,
+    useFormObject,
+    useFormArray,
+    useForm,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     isNotDefined,
@@ -17,26 +22,33 @@ import {
     Container,
     useBooleanState,
     FileInput,
-    ExpandableContainer,
-    TextInput,
-    NumberInput,
+    ListView,
 } from '@the-deep/deep-ui';
 
-import { IoCloudUpload } from 'react-icons/io5';
-
 import {
+    AnalysisReportVariableInputType,
     AnalysisReportUploadMetadataInputType,
     AnalysisReportUploadMetadataXlsxInputType,
 } from '#generated/types';
 
 import { DeepReplace } from '../../schema';
+import SheetItem from './SheetItem';
 import styles from './styles.css';
 
 type InitialFormType = PartialForm<PurgeNull<AnalysisReportUploadMetadataInputType>>;
 type InitialSheetType = PartialForm<NonNullable<NonNullable<NonNullable<AnalysisReportUploadMetadataXlsxInputType>['sheets']>[number]>>;
-type SheetType = PartialForm<Omit<InitialSheetType, 'clientId'>> & { clientId: string };
+type FinalSheetType = PartialForm<Omit<InitialSheetType, 'clientId'>> & { clientId: string };
 
-type PartialFormType = DeepReplace<InitialFormType, InitialSheetType, SheetType>;
+type InitialVariableType = NonNullable<InitialSheetType['variables']>[number];
+type FinalVariableType = PartialForm<Omit<AnalysisReportVariableInputType, 'clientId'>> & { clientId: string };
+
+type PartialFormType = DeepReplace<
+    DeepReplace<InitialFormType, InitialSheetType, FinalSheetType>,
+    InitialVariableType,
+    FinalVariableType
+>;
+export type SheetType = NonNullable<NonNullable<PartialFormType['xlsx']>['sheets']>[number];
+export type VariableType = NonNullable<NonNullable<NonNullable<NonNullable<PartialFormType['xlsx']>['sheets']>[number]>['variables']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -56,6 +68,17 @@ const schema: FormSchema = {
                             clientId: [requiredCondition],
                             headerRow: [],
                         }),
+                        variables: {
+                            keySelector: (column: VariableType) => column.clientId,
+                            member: () => ({
+                                fields: () => ({
+                                    name: [requiredCondition],
+                                    clientId: [requiredCondition],
+                                    type: [],
+                                    completeness: [],
+                                }),
+                            }),
+                        },
                     }),
                 },
             }),
@@ -65,7 +88,9 @@ const schema: FormSchema = {
     }),
 };
 
-console.log('here', schema);
+const defaultValue: PartialFormType = {};
+
+const sheetKeySelector = (sheet: SheetType) => sheet.clientId;
 
 interface Props {
     className?: string;
@@ -75,6 +100,19 @@ function DatasetsConfigureButton(props: Props) {
     const {
         className,
     } = props;
+
+    const {
+        setFieldValue,
+        // value,
+        validate,
+        setError,
+    } = useForm(schema, defaultValue);
+
+    const setXlsxFieldValue = useFormObject<'xlsx', XlsxFormType>('xlsx', setFieldValue, {});
+
+    const {
+        setValue: setSheetValue,
+    } = useFormArray('sheets', setXlsxFieldValue);
 
     const [
         datasetToConfigure,
@@ -89,6 +127,20 @@ function DatasetsConfigureButton(props: Props) {
     const alert = useAlert();
 
     const [sheets, setSheets] = useState<SheetType[]>([]);
+
+    const handleSubmit = useCallback(() => {
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (sheetData) => {
+                console.log('value', sheetData);
+            },
+        );
+        submit();
+    }, [
+        setError,
+        validate,
+    ]);
 
     const handleFileInputChange = useCallback(
         async (fileValue: File | null | undefined) => {
@@ -124,6 +176,20 @@ function DatasetsConfigureButton(props: Props) {
         [alert],
     );
 
+    const sheetItemRendererParams = useCallback(
+        (
+            _: string,
+            datum: SheetType,
+            index: number,
+        ) => ({
+            item: datum,
+            setSheetValue,
+            index,
+        }), [
+            setSheetValue,
+        ],
+    );
+
     return (
         <>
             <Button
@@ -140,6 +206,23 @@ function DatasetsConfigureButton(props: Props) {
                     heading="Configure Datasets"
                     onCloseButtonClick={hideModal}
                     bodyClassName={styles.modalBody}
+                    footerActions={(
+                        <>
+                            <Button
+                                name={undefined}
+                                onClick={hideModal}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                name={undefined}
+                                onClick={handleSubmit}
+                                variant="nlp-primary"
+                            >
+                                Save
+                            </Button>
+                        </>
+                    )}
                 >
                     <Container
                         heading="Existing Datasets"
@@ -171,45 +254,16 @@ function DatasetsConfigureButton(props: Props) {
                                 <IoCloudUpload />
                             </FileInput>
                         )}
-                        {sheets?.map((item) => (
-                            <ExpandableContainer
-                                key={item.clientId}
-                                heading={item.name}
-                                className={styles.expandableContainer}
-                                headingSize="small"
-                                headerDescriptionClassName={styles.headerDescription}
-                                headerDescription={(
-                                    <>
-                                        <TextInput
-                                            name={undefined}
-                                            label="Name"
-                                            value={item.name}
-                                            disabled
-                                        />
-                                        <NumberInput
-                                            name={undefined}
-                                            label="Header Row"
-                                            value={item.headerRow}
-                                        />
-                                    </>
-                                )}
-                            >
-                                {item.variables?.map((column) => (
-                                    <ExpandableContainer
-                                        key={column.clientId}
-                                        heading={column.name}
-                                        headingClassName={styles.columnHeading}
-                                        className={styles.expandableContainer}
-                                        headerClassName={styles.columnHeader}
-                                        spacing="compact"
-                                        headingSize="extraSmall"
-                                        borderBelowHeader
-                                    >
-                                        {column.name}
-                                    </ExpandableContainer>
-                                ))}
-                            </ExpandableContainer>
-                        ))}
+                        <ListView
+                            data={sheets}
+                            renderer={SheetItem}
+                            keySelector={sheetKeySelector}
+                            rendererParams={sheetItemRendererParams}
+                            className={styles.sheets}
+                            pending={false}
+                            errored={false}
+                            filtered={false}
+                        />
                     </div>
                 </Modal>
             )}

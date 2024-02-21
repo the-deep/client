@@ -25,7 +25,7 @@ interface Props<NAME extends string> {
     error?: Error<TextConfigType>;
 }
 
-function TimeseriesChartEdit<NAME extends string>(props: Props<NAME>) {
+function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
     const {
         className,
         onChange,
@@ -36,7 +36,7 @@ function TimeseriesChartEdit<NAME extends string>(props: Props<NAME>) {
     const error = getErrorObject(riskyError);
 
     return (
-        <div className={_cs(className, styles.timeseriesChartEdit)}>
+        <div className={_cs(className, styles.timelineChartEdit)}>
             <NonFieldError error={error} />
             <ExpandableContainer
                 heading="Configure"
@@ -51,4 +51,4 @@ function TimeseriesChartEdit<NAME extends string>(props: Props<NAME>) {
     );
 }
 
-export default TimeseriesChartEdit;
+export default TimelineChartEdit;
