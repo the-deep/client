@@ -12,6 +12,10 @@ import {
     useFormObject,
     useFormArray,
 } from '@togglecorp/toggle-form';
+import {
+    utils,
+    type WorkSheet,
+} from 'xlsx';
 
 import VariableItem from './VariableItem';
 import { type SheetType, type VariableType } from '..';
@@ -26,6 +30,9 @@ interface Props {
         index: number
     ) => void;
     index: number;
+    workSheet: WorkSheet | undefined;
+    disabled?: boolean;
+    readOnly?: boolean;
 }
 
 const defaultSheetItem = (): SheetType => ({
@@ -36,7 +43,10 @@ function SheetItem(props: Props) {
     const {
         item,
         setSheetValue,
+        workSheet,
         index,
+        disabled,
+        readOnly,
     } = props;
 
     const setFieldValue = useFormObject(
@@ -44,6 +54,23 @@ function SheetItem(props: Props) {
         setSheetValue,
         defaultSheetItem,
     );
+
+    const handleHeaderRowChange = useCallback((newHeaderRow: number | undefined) => {
+        setFieldValue(newHeaderRow, 'headerRow');
+        if (!workSheet || !newHeaderRow) {
+            return;
+        }
+        const rawData = utils.sheet_to_json(workSheet, { header: 1 });
+        const columns = (rawData[newHeaderRow - 1] as string[]).map((rawItem) => ({
+            clientId: randomString(),
+            name: rawItem,
+            type: 'TEXT' as const,
+        }));
+        setFieldValue(columns, 'variables');
+    }, [
+        setFieldValue,
+        workSheet,
+    ]);
 
     const {
         setValue: setVariableValue,
@@ -58,7 +85,11 @@ function SheetItem(props: Props) {
             column: datum,
             setVariableValue,
             index: variableIndex,
+            disabled,
+            readOnly,
         }), [
+            disabled,
+            readOnly,
             setVariableValue,
         ],
     );
@@ -78,12 +109,16 @@ function SheetItem(props: Props) {
                         label="Name"
                         value={item?.name}
                         onChange={setFieldValue}
+                        disabled={disabled}
+                        readOnly
                     />
                     <NumberInput
                         name="headerRow"
                         label="Header Row"
                         value={item.headerRow}
-                        onChange={setFieldValue}
+                        onChange={handleHeaderRowChange}
+                        disabled={disabled}
+                        readOnly={readOnly}
                     />
                 </>
             )}
@@ -97,6 +132,7 @@ function SheetItem(props: Props) {
                 filtered={false}
                 errored={false}
                 pending={false}
+                borderBetweenItem
             />
         </ExpandableContainer>
     );
