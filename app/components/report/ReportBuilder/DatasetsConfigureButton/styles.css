@@ -15,22 +15,10 @@
         gap: var(--dui-spacing-small);
         overflow-y: auto;
 
-        .expandable-container {
-            border: none;
-
-            .header-description {
-                display: flex;
-                gap: var(--dui-spacing-small);
-            }
-        }
-
-        .column-header {
-            background-color: transparent;
-            color: var(--dui-color-text);
-
-            .column-heading {
-                color: var(--dui-color-text);
-            }
+        .sheets {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-small);
         }
     }
 }
