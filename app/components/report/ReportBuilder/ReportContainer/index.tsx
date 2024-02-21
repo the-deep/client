@@ -55,7 +55,7 @@ import ContainerStylesEdit from './ContainerStylesEdit';
 import UrlEdit from './UrlEdit';
 import KpiEdit from './KpiEdit';
 import TextEdit from './TextEdit';
-import TimeseriesChartEdit from './TimeseriesChartEdit';
+import TimelineChartEdit from './TimelineChartEdit';
 import ImageEdit from './ImageEdit';
 import Content from './Content';
 import {
@@ -553,10 +553,10 @@ function ReportContainer(props: Props) {
                             />
                         )}
                         {contentType === 'TIMELINE_CHART' && (
-                            <TimeseriesChartEdit
+                            <TimelineChartEdit
                                 name="text"
                                 onChange={onConfigChange}
-                                value={undefined}
+                                // value={undefined}
                                 error={undefined}
                             />
                         )}
