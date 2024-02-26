@@ -14,6 +14,7 @@ import { setMapboxToken } from '@togglecorp/re-map';
 import ReactGA from 'react-ga4';
 
 import '@the-deep/deep-ui/build/esm/index.css';
+import '@the-deep/reporting-module-components/build/esm/index.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import Init from '#base/components/Init';
