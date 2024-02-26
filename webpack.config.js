@@ -106,6 +106,16 @@ module.exports = () => {
                     ],
                 },
                 {
+                    test: /\.less/,
+                    sideEffects: true,
+                    include: getPath('node_modules/'),
+                    use: [
+                        isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+                        'css-loader',
+                        'less-loader',
+                    ],
+                },
+                {
                     test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
                     exclude: /(node_modules)/,
                     include: getPath('app/'),
