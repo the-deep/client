@@ -6,6 +6,9 @@ import {
     ListView,
     Kraken,
 } from '@the-deep/deep-ui';
+import {
+    KPIs,
+} from '@the-deep/reporting-module-components';
 import ReactMarkdown from 'react-markdown';
 
 import {
@@ -20,9 +23,9 @@ import {
 } from '../../../schema';
 import {
     resolveTextStyle,
+    resolveKpiTextStyle,
     type ContentDataFileMap,
 } from '../../../utils';
-import KpiItem from './KpiItem';
 
 import styles from './styles.css';
 
@@ -146,30 +149,22 @@ function Content(props: Props) {
         const titleStyle = configuration?.kpi?.titleContentStyle?.content ?? {};
         const valueStyle = configuration?.kpi?.valueContentStyle?.content ?? {};
 
-        const kpiRendererParams = ((_: string, kpi: KpiItemType) => ({
+        const finalKpiData = kpis?.map((kpi) => ({
             value: kpi.value ?? 0,
             title: kpi.title ?? '',
             subtitle: kpi.subtitle ?? '',
-            // abbreviateValue: kpi.abbreviateValue,
-            sourceTitle: kpi.source,
-            sourceUrl: kpi.sourceUrl,
+            source: kpi.source,
+            url: kpi.sourceUrl,
             date: kpi.date,
-            sourceStyle,
-            subtitleStyle,
-            titleStyle,
-            valueStyle,
+            sourceStyle: resolveKpiTextStyle(sourceStyle),
+            subtitleStyle: resolveKpiTextStyle(subtitleStyle),
+            titleStyle: resolveKpiTextStyle(titleStyle),
+            valueStyle: resolveKpiTextStyle(valueStyle),
         }));
 
         return (
-            <ListView
-                className={styles.kpiContainer}
-                data={kpis}
-                keySelector={kpiKeySelector}
-                renderer={KpiItem}
-                rendererParams={kpiRendererParams}
-                pending={false}
-                filtered={false}
-                errored={false}
+            <KPIs
+                data={finalKpiData}
             />
         );
     }
