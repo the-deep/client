@@ -2672,6 +2672,14 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@knight-lab/timelinejs@^3.9.3":
+  version "3.9.3"
+  resolved "https://registry.yarnpkg.com/@knight-lab/timelinejs/-/timelinejs-3.9.3.tgz#cf836dc28f5e58effb2d9b942dd247babad78c2e"
+  integrity sha512-vR4WaWcYFLjcJsY+MMoHEA2JD0CErJ+eN0HhF0apb1FgzHW55xkcvJIFMu6DOTQiznwQE+inWjqgxF2mv6odiw==
+  dependencies:
+    dompurify "^2.2.7"
+    wicg-inert "^3.1.2"
+
 "@kwsites/file-exists@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@kwsites/file-exists/-/file-exists-1.1.1.tgz#ad1efcac13e1987d8dbaf235ef3be5b0d96faa99"
@@ -3189,6 +3197,15 @@
     react-icons "^4.3.1"
     react-zoom-pan-pinch "^2.1.3"
     resize-observer-polyfill "^1.5.1"
+
+"@the-deep/reporting-module-components@1.1.0-beta.0":
+  version "1.1.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@the-deep/reporting-module-components/-/reporting-module-components-1.1.0-beta.0.tgz#3a86325a3202b063eaf640beaaea48cdb8ad3a88"
+  integrity sha512-NDrf9yLGPPpohYkivArBYYroE0KivC3VR80SchNy+/BCkxBTvhVvdDiFJGy/HHfrU5MmxVt8mib0e8/FdNtp1w==
+  dependencies:
+    "@babel/runtime-corejs3" "^7.22.3"
+    "@knight-lab/timelinejs" "^3.9.3"
+    react-icons "^5.0.1"
 
 "@togglecorp/fujs@^1.9.2-beta.0", "@togglecorp/fujs@^1.9.3":
   version "1.9.3"
@@ -6170,6 +6187,11 @@ domhandler@^4.0.0, domhandler@^4.2.0, domhandler@^4.3.1:
   integrity sha512-GrwoxYN+uWlzO8uhUXRl0P+kHE4GtVPfYzVLcUxPL7KNdHKj66vvlhiweIHqYYXWlw+T8iLMp42Lm67ghw4WMQ==
   dependencies:
     domelementtype "^2.2.0"
+
+dompurify@^2.2.7:
+  version "2.4.7"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.4.7.tgz#277adeb40a2c84be2d42a8bcd45f582bfa4d0cfc"
+  integrity sha512-kxxKlPEDa6Nc5WJi+qRgPbOAbgTpSULL+vI3NUXsZMlkJxTqYI9wg5ZTay2sFrdZRWHPWNi+EdAhcJf81WtoMQ==
 
 domutils@^2.5.2, domutils@^2.8.0:
   version "2.8.0"
@@ -11762,6 +11784,11 @@ react-icons@^4.2.0, react-icons@^4.3.1:
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.10.1.tgz#3f3b5eec1f63c1796f6a26174a1091ca6437a500"
   integrity sha512-/ngzDP/77tlCfqthiiGNZeYFACw85fUjZtLbedmJ5DTlNDIwETxhwBzdOJ21zj4iJdvc0J3y7yOsX3PpxAJzrw==
 
+react-icons@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-5.0.1.tgz#1694e11bfa2a2888cab47dcc30154ce90485feee"
+  integrity sha512-WqLZJ4bLzlhmsvme6iFdgO8gfZP17rfjYEJ2m9RsZjZ+cc4k1hTzknEz63YS1MeT50kVzoa1Nz36f4BEx+Wigw==
+
 react-is@^16.10.2, react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -14762,6 +14789,11 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+wicg-inert@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/wicg-inert/-/wicg-inert-3.1.2.tgz#df10cf756b773a96fce107c3ddcd43be5d1e3944"
+  integrity sha512-Ba9tGNYxXwaqKEi9sJJvPMKuo063umUPsHN0JJsjrs2j8KDSzkWLMZGZ+MH1Jf1Fq4OWZ5HsESJID6nRza2ang==
 
 wildcard@^2.0.0:
   version "2.0.1"
