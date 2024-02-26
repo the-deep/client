@@ -46,6 +46,7 @@
         "@sentry/react": "^6.16.0",
         "@sentry/tracing": "^6.16.0",
         "@the-deep/deep-ui": "^2.0.6",
+        "@the-deep/reporting-module-components": "1.1.0-beta.0",
         "@togglecorp/fujs": "^2.0.0",
         "@togglecorp/re-map": "^0.1.3",
         "@togglecorp/toggle-form": "^1.2.2-beta.2",
