@@ -2,7 +2,7 @@
     "presets": [
         "@babel/preset-env",
         "@babel/preset-react",
-        "@babel/preset-typescript",
+        "@babel/preset-typescript"
     ],
     "plugins": [
         // Reuse babel's injected headers
@@ -10,10 +10,10 @@
 
         // Polyfill
         ["polyfill-corejs3", {
-            "method": "usage-global",
+            "method": "usage-global"
         }],
         ["polyfill-regenerator", {
-            "method": "usage-global",
+            "method": "usage-global"
         }],
 
         // Handle absolute imports
@@ -31,8 +31,8 @@
                 "#redirects": "./app/redirects",
                 "#utils": "./app/utils",
                 "#hooks": "./app/hooks",
-                "#types": "./app/types",
-            },
+                "#types": "./app/types"
+            }
         }],
 
         // Extends javascript support
@@ -43,6 +43,6 @@
         // "@babel/plugin-transform-react-inline-elements",
 
         // Extends graphql support
-        'babel-plugin-graphql-tag',
-    ],
+        "babel-plugin-graphql-tag"
+    ]
 }
