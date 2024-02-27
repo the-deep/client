@@ -25,7 +25,6 @@ import {
 } from '@togglecorp/fujs';
 import {
     read,
-    utils,
     type WorkBook,
 } from 'xlsx';
 import {
@@ -51,6 +50,13 @@ import {
     AnalysisReportUploadMetadataXlsxInputType,
 } from '#generated/types';
 
+import {
+    categorizeData,
+    getColumnType,
+    getCompleteness,
+    getColumnsFromWorkSheet,
+    getRawDataForWorkSheet,
+} from '../../utils';
 import { DeepReplace } from '../../schema';
 import DatasetItem from './DatasetItem';
 import SheetItem from './SheetItem';
@@ -314,6 +320,7 @@ function DatasetsConfigureButton(props: Props) {
     const {
         data: datasetsList,
         loading: datasetsListLoading,
+        refetch,
     } = useQuery<XlsxCsvFilesListQuery, XlsxCsvFilesListQueryVariables>(
         XLSX_CSV_FILES,
         {
@@ -340,7 +347,7 @@ function DatasetsConfigureButton(props: Props) {
         {
             skip: !reportFileVariables,
             variables: reportFileVariables,
-            onCompleted: async (response) => {
+            onCompleted: (response) => {
                 if (
                     !response
                     || !response.project
@@ -349,16 +356,18 @@ function DatasetsConfigureButton(props: Props) {
                     return;
                 }
                 setUploadedFileId(undefined);
+                /* TODO: Handle this gracefully with proper error handling
+                 * Not needed at this point because, we don't need to edit any further
                 const {
                     file,
                 } = response.project.analysisReportUpload;
                 if (file?.file?.url) {
-                    // TODO: Handle this gracefully with proper error handling
                     const workbookFromUrl = read(
                         await (await fetch(file?.file?.url)).arrayBuffer(),
                     );
                     setWorkbook(workbookFromUrl);
                 }
+                */
                 const newVal = removeNull(
                     response.project.analysisReportUpload.metadata as PartialFormType,
                 );
@@ -393,7 +402,9 @@ function DatasetsConfigureButton(props: Props) {
                         { variant: 'error' },
                     );
                 } else if (ok) {
+                    refetch();
                     setDatasetToConfigure(result.id);
+                    setUploadedFileId(undefined);
                 }
             },
             onError: () => {
@@ -462,15 +473,25 @@ function DatasetsConfigureButton(props: Props) {
 
                 const uploadedSheets: SheetType[] = Object.keys(newWorkbook.Sheets)?.map(
                     (sheet) => {
-                        const rawData = utils.sheet_to_json(
-                            newWorkbook.Sheets[sheet],
-                            { header: 1 },
+                        const workSheet = newWorkbook.Sheets[sheet];
+                        const rawColumns = getColumnsFromWorkSheet(workSheet, 1);
+                        const dataInObject = getRawDataForWorkSheet(
+                            workSheet,
+                            rawColumns,
+                            1,
                         );
-                        const columns = (rawData[0] as string[]).map((item) => ({
-                            clientId: randomString(),
-                            name: item,
-                            type: 'TEXT' as const,
-                        }));
+
+                        const columns = rawColumns.map((rawItem) => {
+                            const categorizedData = categorizeData(dataInObject, rawItem);
+                            const dataType = getColumnType(categorizedData);
+                            return ({
+                                clientId: randomString(),
+                                name: rawItem,
+                                type: dataType,
+                                completeness: getCompleteness(categorizedData, dataType),
+                            });
+                        });
+
                         return ({
                             clientId: randomString(),
                             name: sheet,

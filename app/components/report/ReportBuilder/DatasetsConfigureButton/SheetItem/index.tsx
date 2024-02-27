@@ -1,24 +1,29 @@
 import React, { useCallback } from 'react';
-
 import {
     ExpandableContainer,
     TextInput,
     NumberInput,
     ListView,
 } from '@the-deep/deep-ui';
-import { randomString } from '@togglecorp/fujs';
+import {
+    randomString,
+} from '@togglecorp/fujs';
 import {
     SetValueArg,
     useFormObject,
     useFormArray,
 } from '@togglecorp/toggle-form';
-import {
-    utils,
-    type WorkSheet,
-} from 'xlsx';
+import { type WorkSheet } from 'xlsx';
 
 import VariableItem from './VariableItem';
 import { type SheetType, type VariableType } from '..';
+import {
+    categorizeData,
+    getColumnType,
+    getCompleteness,
+    getColumnsFromWorkSheet,
+    getRawDataForWorkSheet,
+} from '../../../utils';
 import styles from './styles.css';
 
 const variableKeySelector = (column: VariableType) => column.clientId;
@@ -60,12 +65,23 @@ function SheetItem(props: Props) {
         if (!workSheet || !newHeaderRow) {
             return;
         }
-        const rawData = utils.sheet_to_json(workSheet, { header: 1 });
-        const columns = (rawData[newHeaderRow - 1] as string[]).map((rawItem) => ({
-            clientId: randomString(),
-            name: rawItem,
-            type: 'TEXT' as const,
-        }));
+        const rawColumns = getColumnsFromWorkSheet(workSheet, newHeaderRow);
+        const dataInObject = getRawDataForWorkSheet(
+            workSheet,
+            rawColumns,
+            newHeaderRow,
+        );
+
+        const columns = rawColumns.map((rawItem) => {
+            const categorizedData = categorizeData(dataInObject, rawItem);
+            const dataType = getColumnType(categorizedData);
+            return ({
+                clientId: randomString(),
+                name: rawItem,
+                type: dataType,
+                completeness: getCompleteness(categorizedData, dataType),
+            });
+        });
         setFieldValue(columns, 'variables');
     }, [
         setFieldValue,

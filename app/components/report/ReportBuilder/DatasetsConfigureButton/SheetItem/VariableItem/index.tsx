@@ -96,8 +96,13 @@ function VariableItem(props: Props) {
             </Heading>
             <TextOutput
                 className={styles.heading}
+                value={column.completeness}
                 label="Completeness"
-                value="90%"
+                valueType="number"
+                valueProps={{
+                    suffix: '%',
+                    precision: 2,
+                }}
             />
             <SelectInput
                 className={styles.heading}

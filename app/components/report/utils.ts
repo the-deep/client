@@ -9,12 +9,18 @@ import {
     mean,
     median,
     listToGroupList,
+    mapToMap,
 } from '@togglecorp/fujs';
+import {
+    utils,
+    type WorkSheet,
+} from 'xlsx';
 
 import {
     AnalysisReportBorderStyleStyleEnum,
     AnalysisReportTextStyleAlignEnum,
     AnalysisReportTextStyleType,
+    AnalysisReportVariableTypeEnum,
 } from '#generated/types';
 
 import {
@@ -214,4 +220,134 @@ export function aggregate<T, X extends string | number>(
             value: aggregatedValue,
         };
     }).filter(isDefined);
+}
+
+type DataTypeCountType = Record<AnalysisReportVariableTypeEnum | 'UNDEFINED', number>;
+
+// TODO: Write tests
+export function categorizeData(
+    data: Record<string, unknown>[],
+    key: string,
+): DataTypeCountType {
+    const selectedData = data.map((item) => item[key]);
+
+    const x = selectedData.reduce((acc: DataTypeCountType, item: unknown) => {
+        const convertedNumber = item === '' ? NaN : Number(item);
+
+        if (
+            typeof item === 'number'
+            || !Number.isNaN(convertedNumber)
+        ) {
+            return {
+                ...acc,
+                NUMBER: acc.NUMBER + 1,
+            };
+        }
+        if (
+            typeof item === 'string' && !Number.isNaN(new Date(item).getTime())
+        ) {
+            return {
+                ...acc,
+                DATE: acc.DATE + 1,
+            };
+        }
+        if (
+            typeof item === 'string' && (item.toLowerCase() === 'true' || item.toLowerCase() === 'false')
+        ) {
+            return {
+                ...acc,
+                BOOLEAN: acc.BOOLEAN + 1,
+            };
+        }
+        if (
+            typeof item === 'string'
+        ) {
+            return {
+                ...acc,
+                TEXT: acc.TEXT + 1,
+            };
+        }
+        if (
+            typeof item === 'undefined' || item === null
+        ) {
+            return {
+                ...acc,
+                UNDEFINED: acc.UNDEFINED + 1,
+            };
+        }
+
+        return acc;
+    }, {
+        TEXT: 0,
+        NUMBER: 0,
+        UNDEFINED: 0,
+        BOOLEAN: 0,
+        DATE: 0,
+    } as DataTypeCountType);
+
+    return x;
+}
+
+// TODO: Write tests
+export function getColumnType(
+    counts: DataTypeCountType,
+): AnalysisReportVariableTypeEnum {
+    const withoutUndefined = {
+        TEXT: counts.TEXT,
+        NUMBER: counts.NUMBER,
+        BOOLEAN: counts.BOOLEAN,
+        DATE: counts.DATE,
+    };
+    const maxCount = Math.max(...Object.values(withoutUndefined));
+    const typeByCount = mapToMap(
+        withoutUndefined,
+        (_, value) => value,
+        (_, key) => key as unknown as AnalysisReportVariableTypeEnum,
+    );
+
+    return typeByCount[maxCount];
+}
+
+// TODO: Write tests
+export function getCompleteness(
+    counts: DataTypeCountType,
+    type: AnalysisReportVariableTypeEnum,
+): number {
+    const dataLength = Math.max(...Object.values(counts));
+    const typeCount = counts[type];
+    return (typeCount / dataLength) * 100;
+}
+
+// TODO: Write tests
+export function getColumnsFromWorkSheet(
+    workSheet: WorkSheet,
+    headerRow: number,
+): string[] {
+    const rawData = utils.sheet_to_json(workSheet, { header: 1 });
+
+    const rawColumns = (rawData[headerRow - 1] as unknown[]);
+    return (new Array(rawColumns.length).fill(undefined)).map(
+        (_: unknown, columnIndex: number) => (
+            rawColumns[columnIndex] ? String(rawColumns[columnIndex]) : `Column ${columnIndex + 1}`
+        ),
+    );
+}
+
+// TODO: Write tests
+export function getRawDataForWorkSheet(
+    workSheet: WorkSheet,
+    columns: string[],
+    headerRow: number,
+): Record<string, unknown>[] {
+    const rawData = utils.sheet_to_json(workSheet, { header: 1 });
+
+    rawData.splice(0, headerRow);
+
+    return (rawData as unknown[][]).map((rawDataItem) => {
+        const obj: Record<string, unknown> = {};
+        columns.forEach((column, columnIndex) => {
+            obj[column] = rawDataItem[columnIndex];
+        });
+        return obj;
+    });
 }
