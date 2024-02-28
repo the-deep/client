@@ -143,9 +143,9 @@ function BoxBarChart<
             borderBelowHeaderWidth="thin"
         >
             {((data?.length ?? 0) === 0 && loading) && <PendingMessage />}
-            {finalData.length === 0 && <Message empty /> }
+            {isDefined(data) && finalData.length === 0 && <Message empty /> }
             <div className={styles.content}>
-                {isDefined(data) && (
+                {isDefined(data) && finalData.length > 0 && (
                     <div className={styles.row}>
                         <div />
                         {columns?.map((column) => (

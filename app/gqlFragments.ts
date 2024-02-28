@@ -298,6 +298,7 @@ export const LAST_ACTIVE_PROJECT_FRAGMENT = gql`
         membershipPending
         enablePubliclyViewableAnalysisReportSnapshot
         isRejected
+        createdAt
     }
 `;
 
