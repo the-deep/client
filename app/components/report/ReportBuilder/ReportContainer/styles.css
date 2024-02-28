@@ -7,6 +7,7 @@
     transition: 0.2s all ease-in-out;
     border: var(--dui-width-separator-thin) solid transparent;
     padding: var(--dui-spacing-small);
+    overflow: auto;
 
     .add-button {
         position: absolute;
