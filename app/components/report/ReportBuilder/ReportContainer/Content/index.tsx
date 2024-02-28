@@ -1,9 +1,8 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { removeNull } from '@togglecorp/toggle-form';
 import {
     Message,
-    ListView,
     Kraken,
 } from '@the-deep/deep-ui';
 import {
@@ -18,7 +17,6 @@ import {
 import {
     type ContentDataType,
     type ConfigType,
-    type FinalKpiItemType,
     type ContentConfigType,
 } from '../../../schema';
 import {
@@ -28,8 +26,6 @@ import {
 } from '../../../utils';
 
 import styles from './styles.css';
-
-type KpiItemType = FinalKpiItemType;
 
 interface Props {
     contentType: AnalysisReportContainerContentTypeEnum;
@@ -49,11 +45,6 @@ function Content(props: Props) {
     } = props;
 
     const configuration = removeNull(configurationFromProps);
-
-    const kpiKeySelector = useCallback(
-        (kpi: KpiItemType) => kpi.clientId || '',
-        [],
-    );
 
     if (contentType === 'HEADING') {
         const content = configuration?.heading?.content;
@@ -150,9 +141,9 @@ function Content(props: Props) {
         const valueStyle = configuration?.kpi?.valueContentStyle?.content ?? {};
 
         const finalKpiData = kpis?.map((kpi) => ({
-            value: kpi.value ?? 0,
-            title: kpi.title ?? '',
-            subtitle: kpi.subtitle ?? '',
+            value: kpi.value,
+            title: kpi.title,
+            subtitle: kpi.subtitle,
             source: kpi.source,
             url: kpi.sourceUrl,
             date: kpi.date,
@@ -164,7 +155,7 @@ function Content(props: Props) {
 
         return (
             <KPIs
-                data={finalKpiData}
+                data={finalKpiData ?? []}
             />
         );
     }
