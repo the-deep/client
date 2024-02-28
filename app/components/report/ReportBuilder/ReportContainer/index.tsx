@@ -380,12 +380,43 @@ function ReportContainer(props: Props) {
             )}
             style={{
                 ...containerStyles,
-                height,
+                height: `${height}px`,
                 gridRow: row,
                 gridColumn: `span ${width}`,
             }}
         >
             <NonFieldError error={error} />
+            {!contentType && (
+                <Message
+                    className={styles.message}
+                    message="No content yet."
+                    icon={(
+                        <Kraken
+                            variant="sleep"
+                            size="extraSmall"
+                        />
+                    )}
+                    actions={!readOnly && (
+                        <Button
+                            name={undefined}
+                            onClick={showContentAddModal}
+                            variant="tertiary"
+                            spacing="compact"
+                        >
+                            Add content
+                        </Button>
+                    )}
+                />
+            )}
+            {contentType && (
+                <Content
+                    contentType={contentType}
+                    configuration={configuration}
+                    generalConfiguration={generalConfiguration}
+                    contentData={contentData}
+                    contentDataToFileMap={contentDataToFileMap}
+                />
+            )}
             {!readOnly && (
                 <>
                     <QuickActionButton
@@ -429,37 +460,6 @@ function ReportContainer(props: Props) {
                         <IoAdd />
                     </QuickActionButton>
                 </>
-            )}
-            {!contentType && (
-                <Message
-                    className={styles.message}
-                    message="No content yet."
-                    icon={(
-                        <Kraken
-                            variant="sleep"
-                            size="extraSmall"
-                        />
-                    )}
-                    actions={!readOnly && (
-                        <Button
-                            name={undefined}
-                            onClick={showContentAddModal}
-                            variant="tertiary"
-                            spacing="compact"
-                        >
-                            Add content
-                        </Button>
-                    )}
-                />
-            )}
-            {contentType && (
-                <Content
-                    contentType={contentType}
-                    configuration={configuration}
-                    generalConfiguration={generalConfiguration}
-                    contentData={contentData}
-                    contentDataToFileMap={contentDataToFileMap}
-                />
             )}
             {!readOnly && (
                 <Footer
