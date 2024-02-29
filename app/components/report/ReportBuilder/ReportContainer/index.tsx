@@ -56,6 +56,7 @@ import UrlEdit from './UrlEdit';
 import KpiEdit from './KpiEdit';
 import TextEdit from './TextEdit';
 import TimelineChartEdit from './TimelineChartEdit';
+import BarChartEdit from './BarChartEdit';
 import ImageEdit from './ImageEdit';
 import Content from './Content';
 import {
@@ -558,6 +559,14 @@ function ReportContainer(props: Props) {
                                 onChange={onConfigChange}
                                 value={configuration?.timelineChart}
                                 error={getErrorObject(error?.contentConfiguration)?.timelineChart}
+                            />
+                        )}
+                        {contentType === 'BAR_CHART' && (
+                            <BarChartEdit
+                                name="barChart"
+                                onChange={onConfigChange}
+                                // value={undefined}
+                                error={undefined}
                             />
                         )}
                         {contentType === 'KPI' && (

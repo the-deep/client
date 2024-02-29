@@ -13,12 +13,19 @@ import {
     AnalysisReportInputType,
     AnalysisReportImageContentStyleType,
     AnalysisReportTextContentStyleType,
+    AnalysisReportBarChartStyleType,
     AnalysisReportHeadingContentStyleType,
     AnalysisReportBackgroundStyleType,
     AnalysisReportBorderStyleType,
     AnalysisReportPaddingStyleType,
     AnalysisReportContainerStyleType,
     AnalysisReportTextStyleType,
+    AnalysisReportGridLineStyleType,
+    AnalysisReportTickStyleType,
+    AnalysisReportBarStyleType,
+    AnalysisReportHorizontalAxisType,
+    AnalysisReportVerticalAxisType,
+    AnalysisReportCategoricalLegendStyleType,
     AnalysisReportKpiItemConfigurationType,
 } from '#generated/types';
 
@@ -50,23 +57,29 @@ type InitialReportContainerType = NonNullable<InitialFormType['containers']>[num
 type InitialContentDataType = NonNullable<InitialReportContainerType['contentData']>[number];
 
 type InitialKpiItemType = PurgeNull<AnalysisReportKpiItemConfigurationType>;
+type InitialVerticalAxisType = PurgeNull<AnalysisReportVerticalAxisType>;
 
 type FinalReportContainerType = Omit<InitialReportContainerType, 'clientId'> & { clientId: string };
 type FinalContentDataType = Omit<InitialContentDataType, 'clientId'> & { clientId: string };
 export type FinalKpiItemType = Omit<InitialKpiItemType, 'clientId'> & { clientId: string };
+export type FinalVerticalAxisType = Omit<InitialVerticalAxisType, 'clientId'> & { clientId: string };
 
 export type PartialFormType = DeepReplace<
     DeepReplace<
         DeepReplace<
-            InitialFormType,
-            InitialReportContainerType,
-            FinalReportContainerType
+            DeepReplace<
+                InitialFormType,
+                InitialReportContainerType,
+                FinalReportContainerType
+            >,
+            InitialContentDataType,
+            FinalContentDataType
         >,
-        InitialContentDataType,
-        FinalContentDataType
+        InitialKpiItemType,
+        FinalKpiItemType
     >,
-    InitialKpiItemType,
-    FinalKpiItemType
+    InitialVerticalAxisType,
+    FinalVerticalAxisType
 >;
 
 export type ReportContainerType = NonNullable<PartialFormType['containers']>[number];
@@ -149,6 +162,73 @@ const textStyleSchema: TextStyleFormSchema = {
     }),
 };
 
+// Bar
+type BarStyleFormType = PartialForm<PurgeNull<AnalysisReportBarStyleType>>;
+type BarStyleFormSchema = ObjectSchema<BarStyleFormType, PartialFormType>;
+type BarStyleFormSchemaFields = ReturnType<BarStyleFormSchema['fields']>;
+
+const barStyleSchema: BarStyleFormSchema = {
+    fields: (): BarStyleFormSchemaFields => ({
+        border: borderStyleSchema,
+    }),
+};
+
+// Horizontal Axis
+type HorizontalAxisFormType = PartialForm<PurgeNull<AnalysisReportHorizontalAxisType>>;
+type HorizontalAxisFormSchema = ObjectSchema<HorizontalAxisFormType, PartialFormType>;
+type HorizontalAxisFormSchemaFields = ReturnType<HorizontalAxisFormSchema['fields']>;
+
+const horizontalAxisSchema: HorizontalAxisFormSchema = {
+    fields: (): HorizontalAxisFormSchemaFields => ({
+        field: [requiredCondition],
+        type: [requiredCondition],
+    }),
+};
+
+// GridLine
+type GridLineStyleFormType = PartialForm<PurgeNull<AnalysisReportGridLineStyleType>>;
+type GridLineStyleFormSchema = ObjectSchema<GridLineStyleFormType, PartialFormType>;
+type GridLineStyleFormSchemaFields = ReturnType<GridLineStyleFormSchema['fields']>;
+
+const gridLineStyleSchema: GridLineStyleFormSchema = {
+    fields: (): GridLineStyleFormSchemaFields => ({
+        lineColor: [defaultUndefinedType],
+        lineWidth: [defaultUndefinedType],
+        lineOpacity: [defaultUndefinedType],
+    }),
+};
+
+// Tick
+type TickStyleFormType = PartialForm<PurgeNull<AnalysisReportTickStyleType>>;
+type TickStyleFormSchema = ObjectSchema<TickStyleFormType, PartialFormType>;
+type TickStyleFormSchemaFields = ReturnType<TickStyleFormSchema['fields']>;
+
+const tickStyleSchema: TickStyleFormSchema = {
+    fields: (): TickStyleFormSchemaFields => ({
+        lineColor: [defaultUndefinedType],
+        lineWidth: [defaultUndefinedType],
+        lineOpacity: [defaultUndefinedType],
+    }),
+};
+
+// Legend
+type CategoricalLegendStyleFormType = PartialForm<PurgeNull<
+    AnalysisReportCategoricalLegendStyleType
+>>;
+type CategoricalLegendStyleFormSchema = ObjectSchema<
+    CategoricalLegendStyleFormType, PartialFormType
+>;
+type CategoricalLegendStyleFormSchemaFields = ReturnType<CategoricalLegendStyleFormSchema['fields']>;
+
+const categoricalLegendStyleSchema: CategoricalLegendStyleFormSchema = {
+    fields: (): CategoricalLegendStyleFormSchemaFields => ({
+        position: [requiredCondition],
+        shape: [requiredCondition],
+        heading: textStyleSchema,
+        label: textStyleSchema,
+    }),
+};
+
 // Image
 export type ImageContentStyleFormType = PartialForm<PurgeNull<AnalysisReportImageContentStyleType>>;
 type ImageContentStyleFormSchema = ObjectSchema<ImageContentStyleFormType, PartialFormType>;
@@ -185,6 +265,29 @@ const headingContentStyleSchema: HeadingContentStyleFormSchema = {
         h2: textStyleSchema,
         h3: textStyleSchema,
         h4: textStyleSchema,
+    }),
+};
+
+// Bar Chart
+export type BarChartStyleFormType = PartialForm<PurgeNull<AnalysisReportBarChartStyleType>>;
+type BarChartStyleFormSchema = ObjectSchema<BarChartStyleFormType, PartialFormType>;
+type BarChartStyleFormSchemaFields = ReturnType<BarChartStyleFormSchema['fields']>;
+
+const barChartStyleSchema: BarChartStyleFormSchema = {
+    fields: (): BarChartStyleFormSchemaFields => ({
+        title: textStyleSchema,
+        subTitle: textStyleSchema,
+        legend: categoricalLegendStyleSchema,
+        bar: barStyleSchema,
+        horizontalAxisTitle: textStyleSchema,
+        verticalAxisTitle: textStyleSchema,
+        horizontalAxisTickLabel: textStyleSchema,
+        verticalAxisTickLabel: textStyleSchema,
+
+        verticalGridLine: gridLineStyleSchema,
+        horizontalGridLine: gridLineStyleSchema,
+        verticalTick: tickStyleSchema,
+        horizontalTick: tickStyleSchema,
     }),
 };
 
@@ -242,6 +345,10 @@ export type TextConfigType = NonNullable<ContentConfigType['text']>;
 type TextConfigSchema = ObjectSchema<TextConfigType, PartialFormType>;
 type TextConfigSchemaFields = ReturnType<TextConfigSchema['fields']>;
 
+export type BarChartConfigType = NonNullable<ContentConfigType['barChart']>;
+type BarChartConfigSchema = ObjectSchema<BarChartConfigType, PartialFormType>;
+type BarChartConfigSchemaFields = ReturnType<BarChartConfigSchema['fields']>;
+
 export type KpiConfigType = NonNullable<ContentConfigType['kpi']>;
 type KpiConfigSchema = ObjectSchema<KpiConfigType, PartialFormType>;
 type KpiConfigSchemaFields = ReturnType<KpiConfigSchema['fields']>;
@@ -251,6 +358,12 @@ type KpiItemSchemaFields = ReturnType<KpiItemSchema['fields']>;
 
 type KpiItemFormSchema = ArraySchema<PartialForm<FinalKpiItemType, 'clientId'>, PartialFormType>;
 type KpiItemFormSchemaMember = ReturnType<KpiItemFormSchema['member']>;
+
+type VerticalAxisSchema = ObjectSchema<PartialForm<FinalVerticalAxisType, 'clientId'>, PartialFormType>;
+type VerticalAxisSchemaFields = ReturnType<VerticalAxisSchema['fields']>;
+
+type VerticalAxisFormSchema = ArraySchema<PartialForm<FinalVerticalAxisType, 'clientId'>, PartialFormType>;
+type VerticalAxisFormSchemaMember = ReturnType<VerticalAxisFormSchema['member']>;
 
 export type UrlConfigType = NonNullable<ContentConfigType['url']>;
 type UrlConfigSchema = ObjectSchema<UrlConfigType, PartialFormType>;
@@ -344,6 +457,50 @@ const schema: FormSchema = {
                                             fields: (): TextConfigSchemaFields => ({
                                                 content: [],
                                                 style: textContentStyleSchema,
+                                            }),
+                                        },
+                                    };
+                                } else if (containerValue?.contentType === 'BAR_CHART') {
+                                    configSchema = {
+                                        ...configSchema,
+                                        barChart: {
+                                            fields: (): BarChartConfigSchemaFields => ({
+                                                sheet: [],
+                                                direction: [requiredCondition],
+                                                type: [requiredCondition],
+
+                                                horizontalAxis: horizontalAxisSchema,
+                                                verticalAxis: {
+                                                    keySelector: (item) => item.clientId,
+                                                    member: (): VerticalAxisFormSchemaMember => ({
+                                                        fields: (): VerticalAxisSchemaFields => ({
+                                                            clientId: [requiredCondition],
+                                                            color: [],
+                                                            field: [requiredCondition],
+                                                            aggregationType: [defaultUndefinedType],
+                                                        }),
+                                                    }),
+                                                },
+
+                                                horizontalAxisTitle: [],
+                                                verticalAxisTitle: [],
+
+                                                title: [],
+                                                subTitle: [],
+
+                                                legendHeading: [],
+
+                                                horizontalTickLabelRotation: [],
+                                                horizontalAxisLineVisible: [],
+                                                verticalAxisLineVisible: [],
+                                                verticalAxisExtendMaximumValue: [],
+                                                verticalAxisExtendMinimumValue: [],
+                                                verticalGridLineVisible: [],
+                                                horizontalGridLineVisible: [],
+                                                verticalTickVisible: [],
+                                                horizontalTickVisible: [],
+
+                                                style: barChartStyleSchema,
                                             }),
                                         },
                                     };
