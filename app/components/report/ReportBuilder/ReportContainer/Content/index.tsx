@@ -1,5 +1,8 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import { removeNull } from '@togglecorp/toggle-form';
 import {
     Message,
@@ -37,54 +40,159 @@ export interface TimelineData {
     link: string;
 }
 
-const dummy: TimelineData[] = [
+const rawData: Record<string, string | number | undefined>[] = [
     {
-        date: '2023-08-16',
-        category: 'Security',
-        title: 'Ukraine Retakes Southeast Village of Urozhaine',
-        details: 'The move signals Ukraine is proceeding with its southern offensive toward the Sea of Azov; Ukraine has struggled to make progress due to extensive Russian minefields and defensive lines',
-        source: 'Reuters',
-        link: 'https://www.reuters.com/world/europe/ukraine-says-recaptures-urozhaine-donetsk-region-russian-forces-2023-08-16//',
+        hmgmeqzbs8m0tz3i: '132bf30a-db75-47a6-8c66-55361df6ac42',
+        j28h53euavvxy7zg: 'Office',
+        '7bzwe1uh4dutgzgq': '',
+        o9bqs855t5nehkfd: '1/8/2024',
+        '95lvo974ku7grles': '11:30 PM',
+        '2mtvloppia78qbnc': 'European Languages',
+        '7e3ac3despy870gn': 'Optimized national project',
+        qglvj5gw9awto7o2: 'Multi-lateral demand-driven info-mediaries',
+        duhumvlxiern5av2: 'Balanced impactful hardware',
+        obpqsdq7ko1akfr1: 'Configurable leading edge Graphic Interface',
+        j7rphv9voiemo330: 'Universal asynchronous emulation',
+        oruecwkfwj8py49s: '10/7/2023',
+        cyqo6se5akjny8cz: 87879921,
+        eoukx319f5w9emoy: 27776323,
+        ukkfcomr1khxrbgg: 97823582,
     },
     {
-        date: '2023-08-04',
-        category: 'Politics',
-        title: 'Saudi Arabia Hosts Talks on Path to Peace in Ukraine',
-        details: 'Officials from some forty countries, including the United States and Ukraine, will meet in Jeddah to discuss a peace blueprint for ending the war in Ukraine; envoys from India, Brazil, and South Africa will attend, while Russia will not',
-        source: 'Reuters',
-        link: 'https://www.reuters.com/world/europe/ukraine-seeks-global-support-peace-blueprint-saudi-talks-2023-08-03/',
+        hmgmeqzbs8m0tz3i: '9c21bcb0-281d-48c8-9c93-5c7fcb4f3071',
+        j28h53euavvxy7zg: 'Office',
+        '7bzwe1uh4dutgzgq': '',
+        o9bqs855t5nehkfd: '4/22/2023',
+        '95lvo974ku7grles': '2:42 PM',
+        '2mtvloppia78qbnc': 'Visual SVN',
+        '7e3ac3despy870gn': 'Multi-layered 24 hour standardization',
+        qglvj5gw9awto7o2: 'Organized executive product',
+        duhumvlxiern5av2: 'Innovative eco-centric functionalities',
+        obpqsdq7ko1akfr1: 'Fundamental optimizing ability',
+        j7rphv9voiemo330: 'Fundamental analyzing capacity',
+        oruecwkfwj8py49s: '5/30/2022',
+        cyqo6se5akjny8cz: 3008196,
+        eoukx319f5w9emoy: 5443595,
+        ukkfcomr1khxrbgg: 92484798,
     },
     {
-        date: '2023-08-02',
-        category: 'Security',
-        title: 'Russia Strikes Ukrainian Port',
-        details: 'The port is situated across the Danube River that has served as Kyiv’s main channel for exporting grains since Moscow pulled out of the Black Sea grain deal last month; the attacks have sent grain prices higher as Russia escalates its attempt to prevent Ukraine from exporting grain. overall, Russian strikes have destroyed 180,000 tons of grain since they withdrew from the deal last month, sending global grain prices soaring',
-        source: 'Reuters',
-        link: 'https://link.cfr.org/click/32270698.41059/aHR0cHM6Ly93d3cucmV1dGVycy5jb20vd29ybGQvZXVyb3BlL3J1c3NpYS1oaXRzLXBvcnQtZ3JhaW4tc2lsby11a3JhaW5lcy1vZGVzYS1yZWdpb24tb2ZmaWNpYWwtMjAyMy0wOC0wMi8_dXRtX3NvdXJjZT1kYWlseWJyaWVm/62ebdaab3aab00bdd8097cdeB208055ef?_gl=1*c02wgk*_ga*ODI1NzMzMDk0LjE2OTMxNDAwMTI.&_ga=2.205057296.1487289274.1693140012-825733094.1693140012',
+        hmgmeqzbs8m0tz3i: 'd76946f9-5ad2-442e-a6f7-e915d035c7f5',
+        j28h53euavvxy7zg: 'Office',
+        '7bzwe1uh4dutgzgq': '',
+        o9bqs855t5nehkfd: '3/25/2023',
+        '95lvo974ku7grles': '6:08 AM',
+        '2mtvloppia78qbnc': 'HP Procurve Networking',
+        '7e3ac3despy870gn': 'Polarised tertiary circuit',
+        qglvj5gw9awto7o2: 'Focused methodical neural-net',
+        duhumvlxiern5av2: 'Object-based non-volatile alliance',
+        obpqsdq7ko1akfr1: 'Profit-focused modular extranet',
+        j7rphv9voiemo330: 'Fully-configurable client-server knowledge user',
+        oruecwkfwj8py49s: '8/24/2023',
+        cyqo6se5akjny8cz: 81797314,
+        eoukx319f5w9emoy: 18561542,
+        ukkfcomr1khxrbgg: 48356227,
     },
     {
-        date: '2023-07-27',
-        category: 'Security',
-        title: 'Ukraine Sends New Troops into Battle in Country’s South',
-        details: 'The move constitutes a new push in Ukraine’s ongoing counteroffensive against Russian forces; heavy fighting was reported around the village of Robotyne in southern Ukraine',
-        source: 'Economist',
-        link: 'https://www.economist.com/international/2023/07/27/the-ukrainian-army-commits-new-forces-in-a-big-southward-push',
+        hmgmeqzbs8m0tz3i: '41046e05-4f99-43e0-ad03-d1d8aedf90e6',
+        j28h53euavvxy7zg: 'Office',
+        '7bzwe1uh4dutgzgq': '',
+        o9bqs855t5nehkfd: '3/10/2023',
+        '95lvo974ku7grles': '5:21 PM',
+        '2mtvloppia78qbnc': 'Hospital Sales',
+        '7e3ac3despy870gn': 'Digitized foreground algorithm',
+        qglvj5gw9awto7o2: 'Managed encompassing neural-net',
+        duhumvlxiern5av2: 'Business-focused tangible adapter',
+        obpqsdq7ko1akfr1: 'Fundamental 3rd generation standardization',
+        j7rphv9voiemo330: 'Cross-platform logistical hardware',
+        oruecwkfwj8py49s: '1/29/2023',
+        cyqo6se5akjny8cz: 21247382,
+        eoukx319f5w9emoy: 10333477,
+        ukkfcomr1khxrbgg: 28266345,
     },
     {
-        date: '2023-07-25',
-        category: 'Security',
-        title: 'Russia Strikes Ukrainian Alternative Grain Export Route',
-        details: 'Following Moscow’s dissolution of the Black Sea Grain Initiative, Russian drones yesterday attacked Ukrainian grain warehouses and other facilities on the Danube River, an alternative route for Ukraine to export grain without using the Black Sea ports currently blocked by Russia',
-        source: 'Guardian',
-        link: 'https://www.theguardian.com/world/2023/jul/24/russian-drones-destroy-grain-warehouses-ukraine-danube-ports',
+        hmgmeqzbs8m0tz3i: '5dc2b74f-3a10-44ff-a6a8-040d4f67da6f',
+        j28h53euavvxy7zg: 'Personal',
+        '7bzwe1uh4dutgzgq': '',
+        o9bqs855t5nehkfd: '7/19/2023',
+        '95lvo974ku7grles': '2:29 AM',
+        '2mtvloppia78qbnc': 'Typesetting',
+        '7e3ac3despy870gn': 'Synergized reciprocal framework',
+        qglvj5gw9awto7o2: 'Multi-lateral methodical success',
+        duhumvlxiern5av2: 'Self-enabling upward-trending encryption',
+        obpqsdq7ko1akfr1: 'Monitored coherent process improvement',
+        j7rphv9voiemo330: 'Ergonomic multi-state productivity',
+        oruecwkfwj8py49s: '2/20/2023',
+        cyqo6se5akjny8cz: 61701549,
+        eoukx319f5w9emoy: 93332321,
+        ukkfcomr1khxrbgg: 70445173,
     },
     {
-        date: '2023-07-23',
-        category: 'Security',
-        title: 'Russia Strikes Odesa Port Infrastructure and city for the fifth consecutive day',
-        details: 'Russia said it struck a fuel storage facility and a weapons plant in the port city of Odesa in Ukraine today in retaliation for yesterday’s attack by Ukrainian forces on a bridge leading to Russia-occupied Crimea',
-        source: 'Guardian',
-        link: 'https://www.theguardian.com/world/2023/jul/24/russian-drones-destroy-grain-warehouses-ukraine-danube-ports',
+        hmgmeqzbs8m0tz3i: '3292a91b-a1dc-485e-90f7-56a947fed63d',
+        j28h53euavvxy7zg: 'Entertainment',
+        '7bzwe1uh4dutgzgq': '',
+        o9bqs855t5nehkfd: '3/5/2022',
+        '95lvo974ku7grles': '9:04 PM',
+        '2mtvloppia78qbnc': 'DHCP',
+        '7e3ac3despy870gn': 'Multi-layered content-based protocol',
+        qglvj5gw9awto7o2: 'Innovative multi-state product',
+        duhumvlxiern5av2: 'Down-sized upward-trending interface',
+        obpqsdq7ko1akfr1: 'Multi-channelled national initiative',
+        j7rphv9voiemo330: 'Reduced high-level algorithm',
+        oruecwkfwj8py49s: '12/26/2023',
+        cyqo6se5akjny8cz: 13640036,
+        eoukx319f5w9emoy: 31448787,
+        ukkfcomr1khxrbgg: 4701782,
+    },
+    {
+        hmgmeqzbs8m0tz3i: '413a4cef-8f99-4d6c-bdcc-d6926076e0b2',
+        j28h53euavvxy7zg: 'Personal',
+        '7bzwe1uh4dutgzgq': '',
+        o9bqs855t5nehkfd: '2/28/2022',
+        '95lvo974ku7grles': '4:03 AM',
+        '2mtvloppia78qbnc': 'Objection Handling',
+        '7e3ac3despy870gn': 'Managed 6th generation budgetary management',
+        qglvj5gw9awto7o2: 'Fundamental fault-tolerant system engine',
+        duhumvlxiern5av2: 'Enterprise-wide value-added contingency',
+        obpqsdq7ko1akfr1: 'Cross-group multi-tasking flexibility',
+        j7rphv9voiemo330: 'Fully-configurable foreground Graphical User Interface',
+        oruecwkfwj8py49s: '1/9/2023',
+        cyqo6se5akjny8cz: 96572993,
+        eoukx319f5w9emoy: 32334976,
+        ukkfcomr1khxrbgg: 28919787,
+    },
+    {
+        hmgmeqzbs8m0tz3i: 'caa67b86-cd64-4af9-a36d-4b903a494f03',
+        j28h53euavvxy7zg: 'Entertainment',
+        '7bzwe1uh4dutgzgq': '',
+        o9bqs855t5nehkfd: '1/25/2024',
+        '95lvo974ku7grles': '12:27 AM',
+        '2mtvloppia78qbnc': 'PPC',
+        '7e3ac3despy870gn': 'User-friendly 3rd generation standardization',
+        qglvj5gw9awto7o2: 'Fully-configurable well-modulated leverage',
+        duhumvlxiern5av2: 'Profit-focused bandwidth-monitored approach',
+        obpqsdq7ko1akfr1: 'Total tangible implementation',
+        j7rphv9voiemo330: 'Object-based 24 hour moratorium',
+        oruecwkfwj8py49s: '2/28/2023',
+        cyqo6se5akjny8cz: 1867225,
+        eoukx319f5w9emoy: 26232735,
+        ukkfcomr1khxrbgg: 12521712,
+    },
+    {
+        hmgmeqzbs8m0tz3i: 'fe056162-6a9f-4b42-806d-b4290243323d',
+        j28h53euavvxy7zg: 'Personal',
+        '7bzwe1uh4dutgzgq': '',
+        o9bqs855t5nehkfd: '5/20/2022',
+        '95lvo974ku7grles': '7:40 PM',
+        '2mtvloppia78qbnc': 'SRDS',
+        '7e3ac3despy870gn': 'Pre-emptive contextually-based functionalities',
+        qglvj5gw9awto7o2: 'Front-line human-resource extranet',
+        duhumvlxiern5av2: 'Polarised bandwidth-monitored installation',
+        obpqsdq7ko1akfr1: 'Function-based content-based concept',
+        j7rphv9voiemo330: 'Centralized actuating attitude',
+        oruecwkfwj8py49s: '2/18/2023',
+        cyqo6se5akjny8cz: 26601519,
+        eoukx319f5w9emoy: 23913667,
+        ukkfcomr1khxrbgg: 98005803,
     },
 ];
 
@@ -273,14 +381,39 @@ function Content(props: Props) {
             </div>
         );
     }
-
     if (contentType === 'TIMELINE_CHART') {
-        const timelineData = dummy;
+        const timelineConfig = configuration?.timelineChart;
+
+        const transformedData = rawData?.map(
+            (row) => {
+                const {
+                    title,
+                    detail,
+                    date,
+                    category,
+                    source,
+                    sourceUrl,
+                } = timelineConfig ?? {};
+
+                if (!date || !title) {
+                    return undefined;
+                }
+
+                return ({
+                    title: String(row[title]),
+                    details: isDefined(detail) ? String(row[detail]) : undefined,
+                    date: String(row[date]),
+                    category: isDefined(category) ? String(row[category]) : undefined,
+                    source: isDefined(source) ? String(row[source]) : undefined,
+                    link: isDefined(sourceUrl) ? String(row[sourceUrl]) : undefined,
+                });
+            },
+        ).filter(isDefined);
 
         return (
             <div className={styles.timeline}>
                 <Timeline
-                    data={timelineData}
+                    data={transformedData}
                 />
             </div>
         );
