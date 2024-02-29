@@ -279,7 +279,7 @@ function DatasetsConfigureButton(props: Props) {
 
     const [activePage, setActivePage] = useState(1);
     const [uploadedFileId, setUploadedFileId] = useState<string>();
-    const [workbook, setWorkbook] = useState<WorkBook>();
+    const [workBook, setWorkBook] = useState<WorkBook>();
 
     const [
         datasetToConfigure,
@@ -355,6 +355,7 @@ function DatasetsConfigureButton(props: Props) {
                 ) {
                     return;
                 }
+                setWorkBook(undefined);
                 setUploadedFileId(undefined);
                 /* TODO: Handle this gracefully with proper error handling
                  * Not needed at this point because, we don't need to edit any further
@@ -447,16 +448,6 @@ function DatasetsConfigureButton(props: Props) {
         validate,
     ]);
 
-    const handleDatasetToConfigureChange = useCallback(
-        (newDatasetToConfigure: string | undefined) => {
-            setUploadedFileId(undefined);
-            setWorkbook(undefined);
-            setValue(defaultValue);
-            setDatasetToConfigure(newDatasetToConfigure);
-        },
-        [setValue],
-    );
-
     const handleFileInputChange = useCallback(
         async ({ id: newFileId }: { id: string }, file: File | undefined) => {
             if (!file) {
@@ -469,7 +460,7 @@ function DatasetsConfigureButton(props: Props) {
             try {
                 const arrayB = await file.arrayBuffer();
                 const newWorkbook = read(arrayB, { type: 'binary' });
-                setWorkbook(newWorkbook);
+                setWorkBook(newWorkbook);
 
                 const uploadedSheets: SheetType[] = Object.keys(newWorkbook.Sheets)?.map(
                     (sheet) => {
@@ -513,6 +504,7 @@ function DatasetsConfigureButton(props: Props) {
             setXlsxFieldValue,
         ],
     );
+    console.log('here', value);
 
     const sheetItemRendererParams = useCallback(
         (
@@ -520,19 +512,19 @@ function DatasetsConfigureButton(props: Props) {
             datum: SheetType,
             index: number,
         ) => {
-            const workSheet = datum.name ? workbook?.Sheets[datum.name] : undefined;
+            const workSheet = datum.name ? workBook?.Sheets[datum.name] : undefined;
             return ({
                 item: datum,
                 setSheetValue,
                 workSheet,
                 index,
-                disabled: isDefined(datasetToConfigure) && isNotDefined(workbook),
+                disabled: isDefined(datasetToConfigure) && isNotDefined(workBook),
                 readOnly: isDefined(datasetToConfigure),
             });
         }, [
             datasetToConfigure,
             setSheetValue,
-            workbook,
+            workBook,
         ],
     );
 
@@ -543,9 +535,8 @@ function DatasetsConfigureButton(props: Props) {
         datasetId,
         title: datasetItem.file.title,
         active: datasetToConfigure === datasetId,
-        onClick: handleDatasetToConfigureChange,
+        onClick: setDatasetToConfigure,
     }), [
-        handleDatasetToConfigureChange,
         datasetToConfigure,
     ]);
 

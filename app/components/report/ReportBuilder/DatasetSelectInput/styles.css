@@ -1,0 +1,15 @@
+.dataset-select-input {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-small);
+
+    .top {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-small);
+
+        .select-input {
+            flex-grow: 1;
+        }
+    }
+}

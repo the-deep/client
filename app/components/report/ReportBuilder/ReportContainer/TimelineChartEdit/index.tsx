@@ -1,7 +1,6 @@
-import React from 'react';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import React, { useCallback } from 'react';
+import { _cs } from '@togglecorp/fujs';
+import { useParams } from 'react-router-dom';
 import {
     type SetValueArg,
     type Error,
@@ -15,7 +14,6 @@ import {
 
 import NonFieldError from '#components/NonFieldError';
 
-import DatasetsConfigureButton from '../../DatasetsConfigureButton';
 import {
     type TimelineChartConfigType,
 } from '../../../schema';
@@ -144,6 +142,17 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
     >(name, onChange, {});
 
     const error = getErrorObject(riskyError);
+    const {
+        reportId,
+        projectId,
+    } = useParams<{
+        projectId: string | undefined,
+        reportId: string | undefined,
+    }>();
+
+    const handleDataFetch = useCallback((columns: string[], data: unknown[]) => {
+        console.log('data', columns, data);
+    }, []);
 
     const textColumns = metadata?.filter(
         (datum) => datum.type === 'TEXT',
@@ -166,7 +175,6 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
                 contentClassName={styles.expandedBody}
                 withoutBorder
             >
-                <DatasetsConfigureButton />
                 <SelectInput
                     name="date"
                     label="Date selector"
