@@ -256,6 +256,10 @@ export type UrlConfigType = NonNullable<ContentConfigType['url']>;
 type UrlConfigSchema = ObjectSchema<UrlConfigType, PartialFormType>;
 type UrlConfigSchemaFields = ReturnType<UrlConfigSchema['fields']>;
 
+export type TimelineChartConfigType = NonNullable<ContentConfigType['timelineChart']>;
+type TimelineConfigSchema = ObjectSchema<TimelineChartConfigType, PartialFormType>;
+type TimelineConfigSchemaFields = ReturnType<TimelineConfigSchema['fields']>;
+
 const schema: FormSchema = {
     fields: (): FormSchemaFields => {
         const baseSchema: FormSchemaFields = {
@@ -367,6 +371,21 @@ const schema: FormSchema = {
                                                 subtitleContentStyle: textContentStyleSchema,
                                                 titleContentStyle: textContentStyleSchema,
                                                 valueContentStyle: textContentStyleSchema,
+                                            }),
+                                        },
+                                    };
+                                } else if (containerValue?.contentType === 'TIMELINE_CHART') {
+                                    configSchema = {
+                                        ...configSchema,
+                                        timelineChart: {
+                                            fields: (): TimelineConfigSchemaFields => ({
+                                                title: [requiredCondition],
+                                                detail: [],
+                                                date: [requiredCondition],
+                                                category: [],
+                                                sheet: [],
+                                                source: [],
+                                                sourceUrl: [],
                                             }),
                                         },
                                     };

@@ -554,10 +554,10 @@ function ReportContainer(props: Props) {
                         )}
                         {contentType === 'TIMELINE_CHART' && (
                             <TimelineChartEdit
-                                name="text"
+                                name="timelineChart"
                                 onChange={onConfigChange}
-                                // value={undefined}
-                                error={undefined}
+                                value={configuration?.timelineChart}
+                                error={getErrorObject(error?.contentConfiguration)?.timelineChart}
                             />
                         )}
                         {contentType === 'KPI' && (
