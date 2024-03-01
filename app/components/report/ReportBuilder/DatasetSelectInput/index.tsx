@@ -9,6 +9,7 @@ import { useQuery, gql } from '@apollo/client';
 import {
     AnalysisReportUploadTypeEnum,
     AnalysisReportUploadsQuery,
+    AnalysisReportVariableType,
     AnalysisReportUploadsQueryVariables,
 } from '#generated/types';
 import {
@@ -111,7 +112,7 @@ type AnalysisReportUploadSelectInputProps<
     sheetValue?: string;
     onChange: (newVal: string | undefined) => void;
     onSheetValueChange: (newVal: string | undefined) => void;
-    onDataFetch: (columns: string[], data: unknown[]) => void;
+    onDataFetch: (columns: AnalysisReportVariableType[], data: unknown[]) => void;
 };
 const keySelector = (d: BasicAnalysisReportUpload) => d.id;
 const labelSelector = (d: BasicAnalysisReportUpload) => d.file.title;
@@ -142,7 +143,7 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
     const [workBook, setWorkBook] = useState<WorkBook>();
     const debouncedSearchText = useDebouncedValue(searchText);
 
-    const variables = useMemo(
+    const uploadsListQueryVariable = useMemo(
         (): AnalysisReportUploadsQueryVariables => ({
             search: debouncedSearchText,
             projectId,
@@ -166,7 +167,7 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
     } = useQuery<AnalysisReportUploadsQuery, AnalysisReportUploadsQueryVariables>(
         ANALYSIS_REPORT_UPLOADS,
         {
-            variables,
+            variables: uploadsListQueryVariable,
             skip: !opened,
         },
     );
@@ -174,7 +175,7 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
     const handleShowMoreClick = useCallback(() => {
         fetchMore({
             variables: {
-                ...variables,
+                ...uploadsListQueryVariable,
                 page: (data?.project?.analysisReportUploads?.page ?? 1) + 1,
             },
             updateQuery: (previousResult, { fetchMoreResult }) => {
@@ -206,7 +207,7 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
         });
     }, [
         fetchMore,
-        variables,
+        uploadsListQueryVariable,
         data?.project?.analysisReportUploads?.page,
     ]);
 
@@ -233,8 +234,10 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
         }
         const {
             name: sheetName,
+            variables,
             headerRow,
         } = selectedSheetDetails;
+
         const workSheet = workBook?.Sheets[sheetName];
         const rawColumns = getColumnsFromWorkSheet(workSheet, headerRow ?? 1);
         const dataInObject = getRawDataForWorkSheet(
@@ -242,7 +245,7 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
             rawColumns,
             headerRow ?? 1,
         );
-        onDataFetch(rawColumns, dataInObject);
+        onDataFetch(variables, dataInObject);
     }, [
         workBook,
         onDataFetch,

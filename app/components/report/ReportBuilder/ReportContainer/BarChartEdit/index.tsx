@@ -1,39 +1,127 @@
-import React, { useCallback, useState } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useMemo, useCallback, useState } from 'react';
+import { _cs, randomString } from '@togglecorp/fujs';
 import { useParams } from 'react-router-dom';
+import { useQuery, gql } from '@apollo/client';
+import {
+    Button,
+    ContainerCard,
+    ExpandableContainer,
+    TextInput,
+    NumberInput,
+    SelectInput,
+    SegmentInput,
+    Checkbox,
+} from '@the-deep/deep-ui';
 import {
     type SetValueArg,
     type Error,
     getErrorObject,
+    useFormObject,
+    useFormArray,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
+import {
+    AnalysisReportVariableType,
+    ReportBarChartEnumsQuery,
+} from '#generated/types';
+import {
+    newEnumKeySelector,
+    newEnumLabelSelector,
+} from '#utils/common';
 
 import DatasetSelectInput, {
-    BasicAnalysisReportUpload,
+    type BasicAnalysisReportUpload,
 } from '../../DatasetSelectInput';
 import {
+    type FinalVerticalAxisType,
     type BarChartConfigType,
+    type HorizontalAxisFormType,
 } from '../../../schema';
+import VerticalAxisInput from './VerticalAxisInput';
 
 import styles from './styles.css';
+
+type VerticalAxisType = FinalVerticalAxisType;
+
+const BAR_CHART_ENUMS = gql`
+    query ReportBarChartEnums {
+        enums {
+            AnalysisReportHorizontalAxisSerializerType {
+                description
+                enum
+                label
+            }
+            AnalysisReportBarChartConfigurationSerializerType {
+                description
+                enum
+                label
+            }
+            AnalysisReportBarChartConfigurationSerializerDirection {
+                description
+                enum
+                label
+            }
+            AnalysisReportVerticalAxisSerializerAggregationType {
+                description
+                enum
+                label
+            }
+        }
+    }
+`;
+const columnKeySelector = (item: AnalysisReportVariableType) => item.clientId ?? '';
+const columnLabelSelector = (item: AnalysisReportVariableType) => item.name ?? '';
 
 interface Props<NAME extends string> {
     name: NAME;
     className?: string;
+    value: BarChartConfigType | undefined;
     onChange: (value: SetValueArg<BarChartConfigType | undefined>, name: NAME) => void;
     error?: Error<BarChartConfigType>;
+    disabled?: boolean;
 }
 
 function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
     const {
         className,
+        value,
         onChange,
         name,
         error: riskyError,
+        disabled,
     } = props;
 
+    const {
+        data: enumsData,
+    } = useQuery<ReportBarChartEnumsQuery>(
+        BAR_CHART_ENUMS,
+    );
+
+    const {
+        horizontalAxisTypeOptions,
+        barChartTypeOptions,
+        barChartDirectionOptions,
+        aggregationTypeOptions,
+    } = useMemo(() => ({
+        horizontalAxisTypeOptions: enumsData?.enums?.AnalysisReportHorizontalAxisSerializerType,
+        barChartTypeOpions: enumsData?.enums?.AnalysisReportBarChartConfigurationSerializerType,
+        barChartDirectionOptions: enumsData
+            ?.enums?.AnalysisReportBarChartConfigurationSerializerDirection,
+        aggregationTypeOptions: enumsData
+            ?.enums?.AnalysisReportVerticalAxisSerializerAggregationType,
+    }), [enumsData]);
+
     const error = getErrorObject(riskyError);
+
+    const onFieldChange = useFormObject<
+        NAME, BarChartConfigType
+    >(name, onChange, {});
+
+    const onHorizontalAxisChange = useFormObject<
+        'horizontalAxis', HorizontalAxisFormType
+    >('horizontalAxis', onFieldChange, {});
+
     const [selectedFile, setSelectedFile] = useState<string>();
     const [selectedSheet, setSelectedSheet] = useState<string>();
     const [options, setOptions] = useState<BasicAnalysisReportUpload[] | undefined | null>();
@@ -46,12 +134,46 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
         reportId: string | undefined,
     }>();
 
-    const handleDataFetch = useCallback((columns: string[], data: unknown[]) => {
-        console.log('data', columns, data);
+    const [rawData, setRawData] = useState<unknown[]>();
+    const [columns, setColumns] = useState<AnalysisReportVariableType[]>();
+
+    const handleDataFetch = useCallback((
+        columnsFromData: AnalysisReportVariableType[],
+        data: unknown[],
+    ) => {
+        setRawData(data);
+        setColumns(columnsFromData);
     }, []);
 
+    const {
+        setValue: onVerticalAxisChange,
+        removeValue: onVerticalAxisRemove,
+    } = useFormArray<
+        'verticalAxis',
+        VerticalAxisType
+    >('verticalAxis', onFieldChange);
+
+    const verticalAxisError = useMemo(
+        () => getErrorObject(error?.verticalAxis),
+        [error?.verticalAxis],
+    );
+
+    const handleAddVerticalAxis = useCallback(() => {
+        onFieldChange(
+            (oldValue: BarChartConfigType['verticalAxis']) => {
+                const safeOldValue = oldValue ?? [];
+                const newClientId = randomString();
+                const newVerticalAxis: VerticalAxisType = {
+                    clientId: newClientId,
+                };
+                return [...safeOldValue, newVerticalAxis];
+            },
+            'verticalAxis',
+        );
+    }, [onFieldChange]);
+
     return (
-        <div className={_cs(className, styles.barChartChartEdit)}>
+        <div className={_cs(className, styles.barChartEdit)}>
             <NonFieldError error={error} />
             {projectId && reportId && (
                 <DatasetSelectInput
@@ -61,7 +183,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     projectId={projectId}
                     reportId={reportId}
                     options={options}
-                    label="Here"
+                    label="Dataset"
                     onOptionsChange={setOptions}
                     types={['XLSX']}
                     sheetValue={selectedSheet}
@@ -69,6 +191,177 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     onDataFetch={handleDataFetch}
                 />
             )}
+            <ExpandableContainer
+                heading="General"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                defaultVisibility
+                withoutBorder
+            >
+                <ContainerCard
+                    className={styles.container}
+                    heading="Horizontal Axis"
+                    headingSize="extraSmall"
+                    spacing="compact"
+                >
+                    <SelectInput
+                        label="Column"
+                        name="field"
+                        value={value?.horizontalAxis?.field}
+                        onChange={onHorizontalAxisChange}
+                        keySelector={columnKeySelector}
+                        labelSelector={columnLabelSelector}
+                        options={columns}
+                    />
+                    <SegmentInput
+                        label="Data Type"
+                        name="type"
+                        value={value?.horizontalAxis?.type}
+                        onChange={onHorizontalAxisChange}
+                        keySelector={newEnumKeySelector}
+                        labelSelector={newEnumLabelSelector}
+                        options={horizontalAxisTypeOptions ?? []}
+                    />
+                </ContainerCard>
+                <ContainerCard
+                    className={styles.container}
+                    heading="Vertical Axis"
+                    headingSize="extraSmall"
+                    spacing="compact"
+                    headerActions={(
+                        <Button
+                            title="Add"
+                            name={undefined}
+                            onClick={handleAddVerticalAxis}
+                            className={styles.addButton}
+                            variant="tertiary"
+                            spacing="compact"
+                        >
+                            Add Item
+                        </Button>
+                    )}
+                >
+                    {value?.verticalAxis?.map((attribute, index) => (
+                        <VerticalAxisInput
+                            key={attribute.clientId}
+                            value={attribute}
+                            index={index}
+                            onChange={onVerticalAxisChange}
+                            error={verticalAxisError?.[attribute.clientId]}
+                            onRemove={onVerticalAxisRemove}
+                            aggregationTypeOptions={aggregationTypeOptions ?? []}
+                            columns={columns}
+                        />
+                    ))}
+                </ContainerCard>
+                <TextInput
+                    value={value?.title}
+                    name="title"
+                    label="Title"
+                    onChange={onFieldChange}
+                    error={error?.title}
+                    disabled={disabled}
+                />
+                <TextInput
+                    value={value?.subTitle}
+                    name="subTitle"
+                    label="Subtitle"
+                    onChange={onFieldChange}
+                    error={error?.subTitle}
+                    disabled={disabled}
+                />
+                <TextInput
+                    value={value?.horizontalAxisTitle}
+                    name="horizontalAxisTitle"
+                    label="Horizontal axis title"
+                    onChange={onFieldChange}
+                    error={error?.horizontalAxisTitle}
+                    disabled={disabled}
+                />
+                <TextInput
+                    value={value?.verticalAxisTitle}
+                    name="verticalAxisTitle"
+                    label="Vertical axis title"
+                    onChange={onFieldChange}
+                    error={error?.verticalAxisTitle}
+                    disabled={disabled}
+                />
+                <TextInput
+                    value={value?.legendHeading}
+                    name="legendHeading"
+                    label="Legend heading"
+                    onChange={onFieldChange}
+                    error={error?.legendHeading}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    value={value?.horizontalTickLabelRotation}
+                    name="horizontalTickLabelRotation"
+                    label="Horizontal tick label rotation"
+                    onChange={onFieldChange}
+                    error={error?.horizontalTickLabelRotation}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    value={value?.verticalAxisExtendMaximumValue}
+                    name="verticalAxisExtendMaximumValue"
+                    label="Vertical axis extend maximum value"
+                    onChange={onFieldChange}
+                    error={error?.verticalAxisExtendMaximumValue}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    value={value?.verticalAxisExtendMinimumValue}
+                    name="verticalAxisExtendMinimumValue"
+                    label="Vertical axis extend minimum value"
+                    onChange={onFieldChange}
+                    error={error?.verticalAxisExtendMinimumValue}
+                    disabled={disabled}
+                />
+                <Checkbox
+                    value={value?.horizontalAxisLineVisible}
+                    name="horizontalAxisLineVisible"
+                    label="Horizontal axis line visible"
+                    onChange={onFieldChange}
+                    disabled={disabled}
+                />
+                <Checkbox
+                    value={value?.verticalAxisLineVisible}
+                    name="verticalAxisLineVisible"
+                    label="Vertical axis line visible"
+                    onChange={onFieldChange}
+                    disabled={disabled}
+                />
+                <Checkbox
+                    value={value?.horizontalGridLineVisible}
+                    name="horizontalGridLineVisible"
+                    label="Horizontal grid line visible"
+                    onChange={onFieldChange}
+                    disabled={disabled}
+                />
+                <Checkbox
+                    value={value?.verticalGridLineVisible}
+                    name="verticalGridLineVisible"
+                    label="Vertical grid line visible"
+                    onChange={onFieldChange}
+                    disabled={disabled}
+                />
+                <Checkbox
+                    value={value?.horizontalTickVisible}
+                    name="horizontalTickVisible"
+                    label="Horizontal tick visible"
+                    onChange={onFieldChange}
+                    disabled={disabled}
+                />
+                <Checkbox
+                    value={value?.verticalTickVisible}
+                    name="verticalTickVisible"
+                    label="Vertical tick visible"
+                    onChange={onFieldChange}
+                    disabled={disabled}
+                />
+            </ExpandableContainer>
         </div>
     );
 }

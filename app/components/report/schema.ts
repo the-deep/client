@@ -174,7 +174,7 @@ const barStyleSchema: BarStyleFormSchema = {
 };
 
 // Horizontal Axis
-type HorizontalAxisFormType = PartialForm<PurgeNull<AnalysisReportHorizontalAxisType>>;
+export type HorizontalAxisFormType = PartialForm<PurgeNull<AnalysisReportHorizontalAxisType>>;
 type HorizontalAxisFormSchema = ObjectSchema<HorizontalAxisFormType, PartialFormType>;
 type HorizontalAxisFormSchemaFields = ReturnType<HorizontalAxisFormSchema['fields']>;
 
@@ -490,6 +490,7 @@ const schema: FormSchema = {
 
                                                 legendHeading: [],
 
+                                                // TODO: Add min max for rotation
                                                 horizontalTickLabelRotation: [],
                                                 horizontalAxisLineVisible: [],
                                                 verticalAxisLineVisible: [],

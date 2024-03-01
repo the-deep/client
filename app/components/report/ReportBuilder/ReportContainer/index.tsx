@@ -564,8 +564,8 @@ function ReportContainer(props: Props) {
                         {contentType === 'BAR_CHART' && (
                             <BarChartEdit
                                 name="barChart"
+                                value={configuration?.barChart}
                                 onChange={onConfigChange}
-                                // value={undefined}
                                 error={undefined}
                             />
                         )}
