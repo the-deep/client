@@ -148,9 +148,53 @@ type FileType {
   id: String!
 }
 
+enum AnalysisReportUploadTypeEnum {
+  CSV
+  XLSX
+  GEOJSON
+  IMAGE
+}
+
+enum AnalysisReportVariableTypeEnum {
+  TEXT
+  NUMBER
+  DATE
+  BOOLEAN
+}
+
+type VariableType {
+  name: String
+  clientId: String
+  type: AnalysisReportVariableTypeEnum
+  completeness: Int
+}
+
+type CsvMetadataType {
+  headerRow: Int
+  variables: [VariableType!]!
+}
+
+type SheetType {
+  name: String
+  headerRow: Int
+  clientId: String
+  variables: [VariableType!]!
+}
+
+type XlsxMetadataType {
+  sheets: [SheetType!]!
+}
+
+type ContentUploadMetadata {
+  csv: CsvMetadataType
+  xlsx: XlsxMetadataType
+}
+
 type ContentUploadType {
   id: String!
-  file: FileType
+  type: AnalysisReportUploadTypeEnum!
+  file: FileType!
+  metadata: ContentUploadMetadata
 }
 
 type ContentDataType {
@@ -235,7 +279,120 @@ type KpiConfigurationType {
   valueContentStyle: TextConfigurationStyleType
 }
 
+enum AnalysisReportBarChartDirectionEnum {
+  VERTICAL
+  HORIZONTAL
+}
+
+enum AnalysisReportBarChartTypeEnum {
+  SIDE_BY_SIDE
+  STACKED
+}
+
+enum AnalysisReportHorizontalAxisTypeEnum {
+  CATEGORICAL
+  NUMERIC
+  DATE
+}
+
+enum AnalysisReportAggregationTypeEnum {
+  COUNT
+  SUM
+  MEAN
+  MEDIAN
+  MIN
+  MAX
+}
+
+enum AnalysisReportLegendDotShapeEnum {
+  CIRCLE
+  TRIANGLE
+  SQUARE
+  DIAMOND
+}
+
+enum AnalysisReportLegendPositionEnum {
+  TOP
+  LEFT
+  BOTTOM
+  RIGHT
+}
+
+type ReportHorizontalAxisType {
+  field: String!
+  type: AnalysisReportHorizontalAxisTypeEnum!
+}
+
+type ReportVerticalAxisType {
+  field: String!
+  clientId: String
+  color: String
+  aggregationType: AnalysisReportAggregationTypeEnum!
+}
+
+type BarChartBarStyleType {
+  border: BorderStyle
+}
+
+type GridLineStyle {
+  lineColor: String
+  lineWidth: Int
+  lineOpacity: Int
+}
+
+type TickStyle {
+  lineColor: String
+  lineWidth: Int
+  lineOpacity: Int
+}
+
+type LegendType {
+  heading: TextStyle
+  label: TextStyle
+  position: AnalysisReportLegendPositionEnum
+  shape: AnalysisReportLegendDotShapeEnum
+}
+
+type BarChartStyleType {
+  bar: BarChartBarStyleType
+  horizontalAxisTickLabel: TextStyle
+  horizontalAxisTitle: TextStyle
+  horizontalGridLine: GridLineStyle
+  horizontalTick: TickStyle
+  legend: LegendType
+  subTitle: TextStyle
+  title: TextStyle
+  verticalAxisTickLabel: TextStyle
+  verticalAxisTitle: TextStyle
+  verticalGridLine: GridLineStyle
+  verticalTick: TickStyle
+}
+
+type BarChartConfigurationType {
+  direction: AnalysisReportBarChartDirectionEnum
+  horizontalAxis: ReportHorizontalAxisType
+  horizontalAxisLineVisible: Boolean
+  horizontalAxisTitle: String
+  horizontalGridLineVisible: Boolean
+  horizontalTickVisible: Boolean
+  legendHeading: String
+  sheet: String
+  subTitle: String
+  title: String
+  type: AnalysisReportBarChartTypeEnum!
+  verticalAxis: [ReportVerticalAxisType!]!
+  verticalAxisExtendMinimumValue: Int
+  verticalAxisExtendMaximumValue: Int
+  verticalAxisLineVisible: Boolean
+  verticalAxisTitle: String
+  verticalGridLineVisible: Boolean
+  verticalTickVisible: Boolean
+  horizontalTickLabelRotation: Int
+  style: BarChartStyleType
+}
+
 type ContentConfigurationType {
+  barChart: BarChartConfigurationType
   heading: HeadingConfigurationType
   image: ImageConfigurationType
   text: TextConfigurationType

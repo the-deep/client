@@ -36,6 +36,7 @@ const PUBLIC_REPORT_SNAPSHOT = gql`
             id
             files {
                 id
+                title
                 file {
                     name
                     url
@@ -180,6 +181,31 @@ const PUBLIC_REPORT_DETAILS = gql`
                         file {
                             id
                         }
+                        type
+                        metadata {
+                            csv {
+                                headerRow
+                                variables {
+                                    clientId
+                                    completeness
+                                    name
+                                    type
+                                }
+                            }
+                            xlsx {
+                                sheets {
+                                    clientId
+                                    headerRow
+                                    name
+                                    variables {
+                                        clientId
+                                        completeness
+                                        name
+                                        type
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 contentConfiguration {
@@ -210,6 +236,55 @@ const PUBLIC_REPORT_DETAILS = gql`
                             fit
                         }
                     }
+                    kpi {
+                        items {
+                            abbreviateValue
+                            clientId
+                            color
+                            date
+                            source
+                            sourceUrl
+                            subtitle
+                            title
+                            value
+                        }
+                        sourceContentStyle {
+                            content {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                        }
+                        subtitleContentStyle {
+                            content {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                        }
+                        titleContentStyle {
+                            content {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                        }
+                        valueContentStyle {
+                            content {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                        }
+                    }
                     text {
                         content
                         style {
@@ -224,6 +299,35 @@ const PUBLIC_REPORT_DETAILS = gql`
                     }
                     url {
                         url
+                    }
+                    barChart {
+                        direction
+                        horizontalAxis {
+                            field
+                            type
+                        }
+                        horizontalAxisLineVisible
+                        horizontalAxisTitle
+                        horizontalGridLineVisible
+                        horizontalTickVisible
+                        legendHeading
+                        sheet
+                        subTitle
+                        title
+                        type
+                        verticalAxis {
+                            aggregationType
+                            clientId
+                            color
+                            field
+                        }
+                        verticalAxisExtendMinimumValue
+                        verticalAxisExtendMaximumValue
+                        verticalAxisLineVisible
+                        verticalAxisTitle
+                        verticalGridLineVisible
+                        verticalTickVisible
+                        horizontalTickLabelRotation
                     }
                 }
             }
@@ -283,19 +387,21 @@ function PublicReportView(props: Props) {
     const {
         finalData,
         organizationOptions,
-        contentDataToFileMap,
+        quantitativeReportUploads,
+        imageReportUploads,
     } = useMemo(() => {
         if (!snapshotData?.publicReportDetails) {
             return {
                 finalData: undefined,
                 organizationOptions: undefined,
-                contentDataToFileMap: undefined,
+                quantitativeReportUploads: undefined,
+                imageReportUploads: undefined,
             };
         }
         const fileToFileDetailsMap = listToMap(
             removeNull(completeData?.publicAnalysisReportSnapshot?.files),
             (item) => item.id,
-            (item) => item.file,
+            (item) => item,
         );
 
         const data = removeNull(snapshotData.publicReportDetails);
@@ -304,15 +410,51 @@ function PublicReportView(props: Props) {
             .flat()
             .filter(isDefined);
 
-        const contentDataToFile = listToMap(
-            uploadItems,
-            (item) => item.clientId,
-            (item) => ({
-                url: item.upload?.file?.id
-                    ? fileToFileDetailsMap?.[item.upload.file.id]?.url : undefined,
-                name: item.upload?.file?.id
-                    ? fileToFileDetailsMap?.[item.upload.file.id]?.name : undefined,
-            }),
+        const imageFiles = (
+            uploadItems
+                ?.filter((item) => (item.upload?.type === 'IMAGE'))
+                .map((item) => {
+                    const fileId = item.upload?.file?.id;
+                    if (!item.upload || !fileId) {
+                        return undefined;
+                    }
+
+                    return ({
+                        ...item.upload,
+                        file: {
+                            id: fileId,
+                            title: fileToFileDetailsMap[fileId].title,
+                            file: {
+                                name: fileToFileDetailsMap[fileId]?.file?.name,
+                                url: fileToFileDetailsMap[fileId]?.file?.url,
+                            },
+                        },
+                    });
+                })
+                .filter(isDefined)
+        );
+        const quantitativeFiles = (
+            uploadItems
+                ?.filter((item) => (item.upload?.type === 'CSV') || item.upload?.type === 'XLSX')
+                .map((item) => {
+                    const fileId = item.upload?.file?.id;
+                    if (!item.upload || !fileId) {
+                        return undefined;
+                    }
+
+                    return ({
+                        ...item.upload,
+                        file: {
+                            id: fileId,
+                            title: fileToFileDetailsMap[fileId].title,
+                            file: {
+                                name: fileToFileDetailsMap[fileId]?.file?.name,
+                                url: fileToFileDetailsMap[fileId]?.file?.url,
+                            },
+                        },
+                    });
+                })
+                .filter(isDefined)
         );
 
         const newContainers = [...(data.containers ?? [])];
@@ -335,7 +477,8 @@ function PublicReportView(props: Props) {
         return {
             finalData: final,
             organizationOptions: data.organizations,
-            contentDataToFileMap: contentDataToFile,
+            quantitativeReportUploads: quantitativeFiles,
+            imageReportUploads: imageFiles,
         };
     }, [
         snapshotData,
@@ -372,10 +515,12 @@ function PublicReportView(props: Props) {
                         readOnly
                         organizationOptions={organizationOptions}
                         onOrganizationOptionsChange={handleUpdate}
-                        contentDataToFileMap={contentDataToFileMap}
-                        setContentDataToFileMap={handleUpdate}
                         leftContentRef={undefined}
                         onContentEditChange={handleUpdate}
+                        quantitativeReportUploads={quantitativeReportUploads}
+                        imageReportUploads={imageReportUploads}
+                        onImageReportUploadsChange={handleUpdate}
+                        onQuantitativeReportUploadsChange={handleUpdate}
                     />
                 </>
             ) : (

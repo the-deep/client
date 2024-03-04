@@ -27,6 +27,7 @@ import {
     organizationLogoSelector,
 } from '#components/selections/NewOrganizationMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
+import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
 
 import {
     type PartialFormType,
@@ -60,8 +61,14 @@ interface Props {
     onOrganizationOptionsChange: React.Dispatch<React.SetStateAction<
         BasicOrganization[] | undefined | null
     >>;
-    contentDataToFileMap: ContentDataFileMap | undefined;
-    setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
+    imageReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    onImageReportUploadsChange: React.Dispatch<React.SetStateAction<
+        BasicAnalysisReportUpload[] | undefined | null
+    >>;
+    quantitativeReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    onQuantitativeReportUploadsChange: React.Dispatch<React.SetStateAction<
+        BasicAnalysisReportUpload[] | undefined | null
+    >>;
     leftContentRef: React.RefObject<HTMLDivElement> | undefined;
     onContentEditChange: (newVal: boolean) => void;
 }
@@ -77,10 +84,12 @@ function ReportBuilder(props: Props) {
         disabled,
         organizationOptions,
         onOrganizationOptionsChange,
-        contentDataToFileMap,
-        setContentDataToFileMap,
         onContentEditChange,
         leftContentRef,
+        imageReportUploads,
+        onImageReportUploadsChange,
+        quantitativeReportUploads,
+        onQuantitativeReportUploadsChange,
     } = props;
 
     const [containerToEdit, setContainerToEdit] = useState<string>();
@@ -133,6 +142,10 @@ function ReportBuilder(props: Props) {
                 configuration: item.contentConfiguration,
                 contentType: item.contentType,
                 generalConfiguration: value?.configuration,
+                imageReportUploads,
+                onImageReportUploadsChange,
+                quantitativeReportUploads,
+                onQuantitativeReportUploadsChange,
                 leftContentRef,
                 style: item.style,
                 reportId,
@@ -140,15 +153,15 @@ function ReportBuilder(props: Props) {
                 setFieldValue,
                 readOnly,
                 disabled,
-                contentDataToFileMap,
-                setContentDataToFileMap,
             });
         },
         [
             reportId,
-            contentDataToFileMap,
             containerToEdit,
-            setContentDataToFileMap,
+            imageReportUploads,
+            onImageReportUploadsChange,
+            quantitativeReportUploads,
+            onQuantitativeReportUploadsChange,
             handleContainerEdit,
             leftContentRef,
             error,

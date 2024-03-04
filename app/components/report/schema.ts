@@ -222,8 +222,8 @@ type CategoricalLegendStyleFormSchemaFields = ReturnType<CategoricalLegendStyleF
 
 const categoricalLegendStyleSchema: CategoricalLegendStyleFormSchema = {
     fields: (): CategoricalLegendStyleFormSchemaFields => ({
-        position: [requiredCondition],
-        shape: [requiredCondition],
+        position: [defaultUndefinedType],
+        shape: [defaultUndefinedType],
         heading: textStyleSchema,
         label: textStyleSchema,
     }),
@@ -466,6 +466,7 @@ const schema: FormSchema = {
                                         barChart: {
                                             fields: (): BarChartConfigSchemaFields => ({
                                                 sheet: [],
+
                                                 direction: [requiredCondition],
                                                 type: [requiredCondition],
 

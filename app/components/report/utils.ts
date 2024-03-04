@@ -161,11 +161,6 @@ export function resolveKpiTextStyle(
     };
 }
 
-export type ContentDataFileMap = Record<string, {
-    url: string | undefined;
-    name: string | undefined;
-}>;
-
 export function aggregate<T, X extends string | number>(
     data: T[] | undefined,
     xSelector: (data: T) => X,

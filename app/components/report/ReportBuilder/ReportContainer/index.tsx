@@ -39,6 +39,7 @@ import {
     AnalysisReportUploadType,
     AnalysisReportContainerContentTypeEnum,
 } from '#generated/types';
+import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
 
 import {
     type PartialFormType,
@@ -60,7 +61,6 @@ import BarChartEdit from './BarChartEdit';
 import ImageEdit from './ImageEdit';
 import Content from './Content';
 import {
-    type ContentDataFileMap,
     resolveContainerStyle,
 } from '../../utils';
 
@@ -91,9 +91,15 @@ export interface Props {
     configuration: ContentConfigType | undefined;
     generalConfiguration: ConfigType | undefined;
     setFieldValue: ((...entries: EntriesAsList<PartialFormType>) => void);
-    contentDataToFileMap: ContentDataFileMap | undefined;
     style: ContainerStyleFormType | undefined;
-    setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
+    quantitativeReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    onQuantitativeReportUploadsChange: React.Dispatch<React.SetStateAction<
+        BasicAnalysisReportUpload[] | undefined | null
+    >>;
+    imageReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    onImageReportUploadsChange: React.Dispatch<React.SetStateAction<
+        BasicAnalysisReportUpload[] | undefined | null
+    >>;
     readOnly?: boolean;
     disabled?: boolean;
     leftContentRef: React.RefObject<HTMLDivElement> | undefined;
@@ -118,13 +124,15 @@ function ReportContainer(props: Props) {
         contentData,
         setFieldValue,
         readOnly,
-        contentDataToFileMap,
-        setContentDataToFileMap,
         disabled,
         generalConfiguration,
         isBeingEdited,
         onContentEditChange,
         leftContentRef,
+        imageReportUploads,
+        onImageReportUploadsChange,
+        quantitativeReportUploads,
+        onQuantitativeReportUploadsChange,
     } = props;
 
     const index = useMemo(() => (
@@ -341,17 +349,27 @@ function ReportContainer(props: Props) {
                 clientId: newClientId,
             },
         ], 'contentData');
-        setContentDataToFileMap((oldVal) => ({
-            ...(oldVal ?? {}),
-            [newClientId]: {
-                url: file.file.file?.url ?? undefined,
-                name: file.file.file?.name ?? undefined,
-            },
-        }));
+        onImageReportUploadsChange((oldFiles) => ([
+            file,
+            ...(oldFiles ?? []),
+        ]));
     }, [
+        onImageReportUploadsChange,
         onFieldChange,
-        setContentDataToFileMap,
     ]);
+
+    const handleBarChartFileUploadChange = useCallback((file: string | undefined) => {
+        if (!file) {
+            onFieldChange(undefined, 'contentData');
+        }
+        const newClientId = randomString();
+        onFieldChange([
+            {
+                upload: file,
+                clientId: newClientId,
+            },
+        ], 'contentData');
+    }, [onFieldChange]);
 
     const isErrored = analyzeErrors(error);
 
@@ -415,7 +433,8 @@ function ReportContainer(props: Props) {
                     configuration={configuration}
                     generalConfiguration={generalConfiguration}
                     contentData={contentData}
-                    contentDataToFileMap={contentDataToFileMap}
+                    imageReportUploads={imageReportUploads}
+                    quantitativeReportUploads={quantitativeReportUploads}
                 />
             )}
             {!readOnly && (
@@ -566,7 +585,14 @@ function ReportContainer(props: Props) {
                                 name="barChart"
                                 value={configuration?.barChart}
                                 onChange={onConfigChange}
-                                error={undefined}
+                                error={getErrorObject(error?.contentConfiguration)?.barChart}
+                                // NOTE: Barchart only supports one content data at a time
+                                contentData={contentData?.[0]}
+                                onFileUploadChange={handleBarChartFileUploadChange}
+                                quantitativeReportUploads={quantitativeReportUploads}
+                                onQuantitativeReportUploadsChange={
+                                    onQuantitativeReportUploadsChange
+                                }
                             />
                         )}
                         {contentType === 'KPI' && (

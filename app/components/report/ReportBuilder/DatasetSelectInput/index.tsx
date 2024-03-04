@@ -51,6 +51,7 @@ const ANALYSIS_REPORT_UPLOADS = gql`
                 results {
                     id
                     file {
+                        id
                         file {
                             name
                             url
@@ -104,13 +105,13 @@ type AnalysisReportUploadSelectInputProps<
     NAME,
     BasicAnalysisReportUpload,
     Def,
-    'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange' | 'onChange'
+    'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
 > & {
     projectId: string;
     reportId: string;
     types?: AnalysisReportUploadTypeEnum[];
     sheetValue?: string;
-    onChange: (newVal: string | undefined) => void;
+    onChange: (newVal: string | undefined, name: NAME) => void;
     onSheetValueChange: (newVal: string | undefined) => void;
     onDataFetch: (columns: AnalysisReportVariableType[], data: unknown[]) => void;
 };
@@ -287,6 +288,7 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
             }
             const {
                 name: sheetName,
+                variables,
                 headerRow,
             } = selectedSheetDetails;
             const workSheet = workBookFromUrl?.Sheets[sheetName];
@@ -296,7 +298,7 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
                 rawColumns,
                 headerRow ?? 1,
             );
-            onDataFetch(rawColumns, dataInObject);
+            onDataFetch(variables, dataInObject);
         },
     });
 

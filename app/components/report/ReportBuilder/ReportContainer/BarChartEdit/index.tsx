@@ -37,6 +37,7 @@ import {
     type FinalVerticalAxisType,
     type BarChartConfigType,
     type HorizontalAxisFormType,
+    type ContentDataType,
 } from '../../../schema';
 import VerticalAxisInput from './VerticalAxisInput';
 
@@ -80,6 +81,12 @@ interface Props<NAME extends string> {
     onChange: (value: SetValueArg<BarChartConfigType | undefined>, name: NAME) => void;
     error?: Error<BarChartConfigType>;
     disabled?: boolean;
+    contentData: ContentDataType | undefined;
+    quantitativeReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    onFileUploadChange: (newFile: string | undefined) => void;
+    onQuantitativeReportUploadsChange: React.Dispatch<React.SetStateAction<
+        BasicAnalysisReportUpload[] | undefined | null
+    >>;
 }
 
 function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
@@ -90,6 +97,10 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
         name,
         error: riskyError,
         disabled,
+        contentData,
+        onFileUploadChange,
+        quantitativeReportUploads,
+        onQuantitativeReportUploadsChange,
     } = props;
 
     const {
@@ -105,7 +116,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
         aggregationTypeOptions,
     } = useMemo(() => ({
         horizontalAxisTypeOptions: enumsData?.enums?.AnalysisReportHorizontalAxisSerializerType,
-        barChartTypeOpions: enumsData?.enums?.AnalysisReportBarChartConfigurationSerializerType,
+        barChartTypeOptions: enumsData?.enums?.AnalysisReportBarChartConfigurationSerializerType,
         barChartDirectionOptions: enumsData
             ?.enums?.AnalysisReportBarChartConfigurationSerializerDirection,
         aggregationTypeOptions: enumsData
@@ -122,9 +133,10 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
         'horizontalAxis', HorizontalAxisFormType
     >('horizontalAxis', onFieldChange, {});
 
-    const [selectedFile, setSelectedFile] = useState<string>();
-    const [selectedSheet, setSelectedSheet] = useState<string>();
-    const [options, setOptions] = useState<BasicAnalysisReportUpload[] | undefined | null>();
+    const {
+        upload: selectedFile,
+        clientId: selectedFileClientId,
+    } = contentData ?? {};
 
     const {
         reportId,
@@ -172,6 +184,10 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
         );
     }, [onFieldChange]);
 
+    const handleSheetChange = useCallback((item: string | undefined) => {
+        onFieldChange(item, 'sheet');
+    }, [onFieldChange]);
+
     return (
         <div className={_cs(className, styles.barChartEdit)}>
             <NonFieldError error={error} />
@@ -179,15 +195,15 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                 <DatasetSelectInput
                     name="here"
                     value={selectedFile}
-                    onChange={setSelectedFile}
+                    onChange={onFileUploadChange}
                     projectId={projectId}
                     reportId={reportId}
-                    options={options}
+                    options={quantitativeReportUploads}
                     label="Dataset"
-                    onOptionsChange={setOptions}
+                    onOptionsChange={onQuantitativeReportUploadsChange}
                     types={['XLSX']}
-                    sheetValue={selectedSheet}
-                    onSheetValueChange={setSelectedSheet}
+                    sheetValue={value?.sheet}
+                    onSheetValueChange={handleSheetChange}
                     onDataFetch={handleDataFetch}
                 />
             )}
@@ -213,6 +229,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                         keySelector={columnKeySelector}
                         labelSelector={columnLabelSelector}
                         options={columns}
+                        error={getErrorObject(error?.horizontalAxis)?.field}
                     />
                     <SegmentInput
                         label="Data Type"
@@ -222,6 +239,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                         keySelector={newEnumKeySelector}
                         labelSelector={newEnumLabelSelector}
                         options={horizontalAxisTypeOptions ?? []}
+                        error={getErrorObject(error?.horizontalAxis)?.type}
                     />
                 </ContainerCard>
                 <ContainerCard
@@ -255,6 +273,26 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                         />
                     ))}
                 </ContainerCard>
+                <SegmentInput
+                    label="Chart Type"
+                    name="type"
+                    value={value?.type}
+                    onChange={onFieldChange}
+                    keySelector={newEnumKeySelector}
+                    labelSelector={newEnumLabelSelector}
+                    options={barChartTypeOptions ?? []}
+                    error={error?.type}
+                />
+                <SegmentInput
+                    label="Chart Direction"
+                    name="direction"
+                    value={value?.direction}
+                    onChange={onFieldChange}
+                    keySelector={newEnumKeySelector}
+                    labelSelector={newEnumLabelSelector}
+                    options={barChartDirectionOptions ?? []}
+                    error={error?.direction}
+                />
                 <TextInput
                     value={value?.title}
                     name="title"
