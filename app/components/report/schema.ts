@@ -476,6 +476,8 @@ const schema: FormSchema = {
                                                     member: (): VerticalAxisFormSchemaMember => ({
                                                         fields: (): VerticalAxisSchemaFields => ({
                                                             clientId: [requiredCondition],
+                                                            // TODO: Add duplicate check in list
+                                                            label: [requiredCondition],
                                                             color: [],
                                                             field: [requiredCondition],
                                                             aggregationType: [defaultUndefinedType],

@@ -316,6 +316,7 @@ const PUBLIC_REPORT_DETAILS = gql`
                         title
                         type
                         verticalAxis {
+                            label
                             aggregationType
                             clientId
                             color

@@ -4,6 +4,7 @@ import {
     Container,
     SelectInput,
     ColorInput,
+    TextInput,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
@@ -91,6 +92,14 @@ function VerticalAxisInput(props: Props) {
             )}
             contentClassName={styles.verticalAxisItemContent}
         >
+            <TextInput
+                label="Label"
+                name="label"
+                value={value?.label}
+                onChange={onFieldChange}
+                error={error?.label}
+                disabled={disabled}
+            />
             <SelectInput
                 label="Column"
                 name="field"

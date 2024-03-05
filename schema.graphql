@@ -327,6 +327,7 @@ type ReportVerticalAxisType {
   field: String!
   clientId: String
   color: String
+  label: String
   aggregationType: AnalysisReportAggregationTypeEnum!
 }
 

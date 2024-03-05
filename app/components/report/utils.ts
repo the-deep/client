@@ -21,6 +21,7 @@ import {
     AnalysisReportTextStyleAlignEnum,
     AnalysisReportTextStyleType,
     AnalysisReportVariableTypeEnum,
+    AnalysisReportAggregationTypeEnum,
 } from '#generated/types';
 
 import {
@@ -161,21 +162,37 @@ export function resolveKpiTextStyle(
     };
 }
 
-export function aggregate<T, X extends string | number>(
+export function aggregate<T>(
     data: T[] | undefined,
-    xSelector: (data: T) => X,
+    xSelector: (data: T) => unknown,
     ySelector: (data: T) => unknown,
-    aggregator: 'sum' | 'mean' | 'count' | 'median' | 'min' | 'max',
+    aggregator: AnalysisReportAggregationTypeEnum = 'COUNT',
 ): { key: string, value: number | undefined }[] | undefined {
     if (isNotDefined(data)) {
         return undefined;
     }
 
+    const xValues = data.map(
+        (item) => {
+            const xValue = xSelector(item);
+
+            if (isNotDefined(xValue)) {
+                return undefined;
+            }
+
+            return {
+                x: String(xValue),
+                originalData: item,
+            };
+        },
+    ).filter(isDefined);
+
     const dataGroupedByX = listToGroupList(
-        data,
-        xSelector,
-        ySelector,
+        xValues,
+        (item) => item.x,
+        (item) => ySelector(item.originalData),
     );
+
     return Object.keys(dataGroupedByX).map((item) => {
         let aggregatedValue;
 
@@ -192,17 +209,17 @@ export function aggregate<T, X extends string | number>(
             return undefined;
         }
 
-        if (aggregator === 'sum') {
+        if (aggregator === 'SUM') {
             aggregatedValue = sum(cleanData);
-        } else if (aggregator === 'mean') {
+        } else if (aggregator === 'MEAN') {
             aggregatedValue = mean(cleanData);
-        } else if (aggregator === 'median') {
+        } else if (aggregator === 'MEDIAN') {
             aggregatedValue = median(cleanData);
-        } else if (aggregator === 'min') {
+        } else if (aggregator === 'MIN') {
             aggregatedValue = Math.min(...cleanData);
-        } else if (aggregator === 'max') {
+        } else if (aggregator === 'MAX') {
             aggregatedValue = Math.max(...cleanData);
-        } else if (aggregator === 'count') {
+        } else if (aggregator === 'COUNT') {
             aggregatedValue = dataGroupedByX[item].length;
         }
 

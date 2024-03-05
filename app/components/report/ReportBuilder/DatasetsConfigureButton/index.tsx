@@ -462,7 +462,7 @@ function DatasetsConfigureButton(props: Props) {
                 const newWorkbook = read(arrayB, { type: 'binary' });
                 setWorkBook(newWorkbook);
 
-                const uploadedSheets: SheetType[] = Object.keys(newWorkbook.Sheets)?.map(
+                const uploadedSheets: SheetType[] = Object.keys(newWorkbook.Sheets).map(
                     (sheet) => {
                         const workSheet = newWorkbook.Sheets[sheet];
                         const rawColumns = getColumnsFromWorkSheet(workSheet, 1);
@@ -504,7 +504,6 @@ function DatasetsConfigureButton(props: Props) {
             setXlsxFieldValue,
         ],
     );
-    console.log('here', value);
 
     const sheetItemRendererParams = useCallback(
         (

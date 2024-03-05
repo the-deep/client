@@ -202,7 +202,6 @@ interface Props {
     configuration: ContentConfigType | undefined;
     generalConfiguration: ConfigType | undefined;
     imageReportUploads: BasicAnalysisReportUpload[] | undefined | null;
-    quantitativeReportUploads: BasicAnalysisReportUpload[] | undefined | null;
 }
 
 function Content(props: Props) {
@@ -212,7 +211,6 @@ function Content(props: Props) {
         generalConfiguration,
         contentData,
         imageReportUploads,
-        quantitativeReportUploads,
     } = props;
 
     const configuration = removeNull(configurationFromProps);

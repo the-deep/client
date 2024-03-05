@@ -325,6 +325,7 @@ const REPORT_DETAILS = gql`
                             title
                             type
                             verticalAxis {
+                                label
                                 aggregationType
                                 clientId
                                 color
@@ -648,12 +649,12 @@ function ReportEdit(props: Props) {
                 );
                 const uploadItems = valueToSet.containers?.flatMap((item) => item.contentData);
                 setImageReportUploads(
-                    uploadItems.filter((item) => (
+                    uploadItems?.filter((item) => (
                         item.upload.type === 'IMAGE'
                     )).map((item) => (item.upload)),
                 );
                 setQuantitativeReportUploads(
-                    uploadItems.filter((item) => (
+                    uploadItems?.filter((item) => (
                         item.upload.type === 'CSV'
                         || item.upload.type === 'XLSX'
                     )).map((item) => (item.upload)),

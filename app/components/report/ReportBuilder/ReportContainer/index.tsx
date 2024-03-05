@@ -10,6 +10,7 @@ import {
 import {
     _cs,
     sum,
+    isNotDefined,
     isDefined,
     randomString,
     compareNumber,
@@ -371,6 +372,28 @@ function ReportContainer(props: Props) {
         ], 'contentData');
     }, [onFieldChange]);
 
+    const handleBarCacheDataChange = useCallback((
+        newCache: Record<string, string | number | undefined>[] | undefined,
+        clientId: string,
+    ) => {
+        onFieldChange((oldVal: ContentDataType[] | undefined) => {
+            if (!oldVal) {
+                return oldVal;
+            }
+            const selectedItemIndex = oldVal?.findIndex((item) => item.clientId === clientId);
+            if (isNotDefined(selectedItemIndex) || selectedItemIndex === -1) {
+                return oldVal;
+            }
+            const newVal = [...oldVal];
+            const newIndividualVal = {
+                ...oldVal[selectedItemIndex],
+                data: newCache,
+            };
+            newVal.splice(selectedItemIndex, 1, newIndividualVal);
+            return newVal;
+        }, 'contentData');
+    }, [onFieldChange]);
+
     const isErrored = analyzeErrors(error);
 
     const containerStyles = resolveContainerStyle(style, generalConfiguration?.containerStyle);
@@ -434,7 +457,7 @@ function ReportContainer(props: Props) {
                     generalConfiguration={generalConfiguration}
                     contentData={contentData}
                     imageReportUploads={imageReportUploads}
-                    quantitativeReportUploads={quantitativeReportUploads}
+                    // quantitativeReportUploads={quantitativeReportUploads}
                 />
             )}
             {!readOnly && (
@@ -589,6 +612,7 @@ function ReportContainer(props: Props) {
                                 // NOTE: Barchart only supports one content data at a time
                                 contentData={contentData?.[0]}
                                 onFileUploadChange={handleBarChartFileUploadChange}
+                                onCacheChange={handleBarCacheDataChange}
                                 quantitativeReportUploads={quantitativeReportUploads}
                                 onQuantitativeReportUploadsChange={
                                     onQuantitativeReportUploadsChange

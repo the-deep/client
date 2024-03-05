@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { useParams } from 'react-router-dom';
 import {
@@ -121,8 +121,8 @@ const metadata: Metadata[] = [
 ];
 
 interface Props<NAME extends string> {
-    name: NAME;
     className?: string;
+    name: NAME;
     value: TimelineChartConfigType | undefined;
     onChange: (value: SetValueArg<TimelineChartConfigType | undefined>, name: NAME) => void;
     error?: Error<TimelineChartConfigType>;
@@ -132,9 +132,9 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
     const {
         className,
         value,
+        error: riskyError,
         onChange,
         name,
-        error: riskyError,
     } = props;
 
     const onFieldChange = useFormObject<
@@ -142,6 +142,7 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
     >(name, onChange, {});
 
     const error = getErrorObject(riskyError);
+
     const {
         reportId,
         projectId,
@@ -150,9 +151,8 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
         reportId: string | undefined,
     }>();
 
-    const handleDataFetch = useCallback((columns: string[], data: unknown[]) => {
-        console.log('data', columns, data);
-    }, []);
+    // eslint-disable-next-line no-console
+    console.log('here', reportId, projectId, onChange, name);
 
     const textColumns = metadata?.filter(
         (datum) => datum.type === 'TEXT',

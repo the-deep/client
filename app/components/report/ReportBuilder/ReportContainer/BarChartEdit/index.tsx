@@ -1,5 +1,12 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import { _cs, randomString } from '@togglecorp/fujs';
+import {
+    _cs,
+    isNotDefined,
+    randomString,
+    unique,
+    listToMap,
+    isDefined,
+} from '@togglecorp/fujs';
 import { useParams } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
 import {
@@ -15,6 +22,7 @@ import {
 import {
     type SetValueArg,
     type Error,
+    isCallable,
     getErrorObject,
     useFormObject,
     useFormArray,
@@ -40,6 +48,9 @@ import {
     type BarChartStyleFormType,
     type ContentDataType,
 } from '../../../schema';
+import {
+    aggregate,
+} from '../../../utils';
 import TextElementsStylesEdit from '../TextElementsStylesEdit';
 import LegendElementsStylesEdit from '../LegendStylesEdit';
 import GridLineStylesEdit from '../GridLineStylesEdit';
@@ -89,6 +100,10 @@ interface Props<NAME extends string> {
     contentData: ContentDataType | undefined;
     quantitativeReportUploads: BasicAnalysisReportUpload[] | undefined | null;
     onFileUploadChange: (newFile: string | undefined) => void;
+    onCacheChange: (
+        newCache: Record<string, string | number | undefined>[] | undefined,
+        clientId: string,
+    ) => void;
     onQuantitativeReportUploadsChange: React.Dispatch<React.SetStateAction<
         BasicAnalysisReportUpload[] | undefined | null
     >>;
@@ -104,6 +119,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
         disabled,
         contentData,
         onFileUploadChange,
+        onCacheChange,
         quantitativeReportUploads,
         onQuantitativeReportUploadsChange,
     } = props;
@@ -140,7 +156,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
 
     const {
         upload: selectedFile,
-        clientId: selectedFileClientId,
+        clientId: selectedClientId,
     } = contentData ?? {};
 
     const {
@@ -151,12 +167,12 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
         reportId: string | undefined,
     }>();
 
-    const [rawData, setRawData] = useState<unknown[]>();
+    const [rawData, setRawData] = useState<Record<string | number, unknown>[]>();
     const [columns, setColumns] = useState<AnalysisReportVariableType[]>();
 
     const handleDataFetch = useCallback((
         columnsFromData: AnalysisReportVariableType[],
-        data: unknown[],
+        data: Record<string | number, unknown>[],
     ) => {
         setRawData(data);
         setColumns(columnsFromData);
@@ -169,6 +185,96 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
         'verticalAxis',
         VerticalAxisType
     >('verticalAxis', onFieldChange);
+
+    const handleAggregationChange = useCallback((
+        horizontalAxisField: string | undefined,
+        verticalAxis: FinalVerticalAxisType[] | undefined,
+    ) => {
+        if (
+            isNotDefined(horizontalAxisField)
+            || !verticalAxis
+            || (verticalAxis?.length ?? 0) < 1
+        ) {
+            return;
+        }
+        const horizontalKeySelector = (
+            data: Record<string | number, unknown>,
+        ) => data[horizontalAxisField];
+
+        const axisData = verticalAxis.map((axis) => {
+            const verticalKeySelector = (
+                data: Record<string | number, unknown>,
+            ) => (axis.field ? data[axis.field] : undefined);
+
+            const dataForAxis = aggregate(
+                rawData,
+                horizontalKeySelector,
+                verticalKeySelector,
+                axis.aggregationType,
+            );
+            return dataForAxis?.map((item) => ({
+                key: item.key,
+                [axis.label ?? axis.clientId]: item.value,
+            }));
+        }).filter(isDefined);
+        const uniqueCategories = unique(axisData.flat().map((item) => item.key));
+        const axisDataObjectByX = axisData.map((item) => (
+            listToMap(item, (x) => x.key, (x) => x)
+        ));
+        const zippedData = uniqueCategories.map((item) => {
+            const newObj: Record<string, string | number | undefined> = {
+                [horizontalAxisField]: item,
+            };
+            return axisDataObjectByX.reduce((acc, axisIndividualData) => ({
+                ...acc,
+                ...axisIndividualData[item],
+            }), newObj);
+        });
+        if (selectedClientId) {
+            onCacheChange(zippedData, selectedClientId);
+        }
+    }, [
+        onCacheChange,
+        selectedClientId,
+        rawData,
+    ]);
+
+    const handleHorizontalFieldChange = useCallback((newField: string | undefined) => {
+        onHorizontalAxisChange(newField, 'field');
+        handleAggregationChange(
+            newField,
+            value?.verticalAxis,
+        );
+    }, [
+        value?.verticalAxis,
+        handleAggregationChange,
+        onHorizontalAxisChange,
+    ]);
+
+    const handleVerticalAxisChange = useCallback((
+        newVal: SetValueArg<FinalVerticalAxisType>,
+        index: number | undefined,
+    ) => {
+        onVerticalAxisChange(newVal, index);
+        if (isNotDefined(index)) {
+            return;
+        }
+
+        // TODO: Check if it works with @tnagorra
+        const actualVal = !isCallable(newVal) ? newVal : newVal(value?.verticalAxis?.[index]);
+        const newVerticalAxis = [...(value?.verticalAxis ?? [])];
+        newVerticalAxis.splice(index, 1, actualVal);
+
+        handleAggregationChange(
+            value?.horizontalAxis?.field,
+            newVerticalAxis,
+        );
+    }, [
+        handleAggregationChange,
+        value?.verticalAxis,
+        value?.horizontalAxis,
+        onVerticalAxisChange,
+    ]);
 
     const verticalAxisError = useMemo(
         () => getErrorObject(error?.verticalAxis),
@@ -202,7 +308,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
             <NonFieldError error={error} />
             {projectId && reportId && (
                 <DatasetSelectInput
-                    name="here"
+                    name=""
                     value={selectedFile}
                     onChange={onFileUploadChange}
                     projectId={projectId}
@@ -234,7 +340,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                         label="Column"
                         name="field"
                         value={value?.horizontalAxis?.field}
-                        onChange={onHorizontalAxisChange}
+                        onChange={handleHorizontalFieldChange}
                         keySelector={columnKeySelector}
                         labelSelector={columnLabelSelector}
                         options={columns}
@@ -274,7 +380,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                             key={attribute.clientId}
                             value={attribute}
                             index={index}
-                            onChange={onVerticalAxisChange}
+                            onChange={handleVerticalAxisChange}
                             error={verticalAxisError?.[attribute.clientId]}
                             onRemove={onVerticalAxisRemove}
                             aggregationTypeOptions={aggregationTypeOptions ?? []}

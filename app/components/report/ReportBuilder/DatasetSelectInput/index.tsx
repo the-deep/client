@@ -22,7 +22,6 @@ import { useRequest } from '#base/utils/restRequest';
 
 import DatasetsConfigureButton from '../DatasetsConfigureButton';
 import {
-    getColumnsFromWorkSheet,
     getRawDataForWorkSheet,
 } from '../../utils';
 
@@ -113,7 +112,10 @@ type AnalysisReportUploadSelectInputProps<
     sheetValue?: string;
     onChange: (newVal: string | undefined, name: NAME) => void;
     onSheetValueChange: (newVal: string | undefined) => void;
-    onDataFetch: (columns: AnalysisReportVariableType[], data: unknown[]) => void;
+    onDataFetch: (
+        columns: AnalysisReportVariableType[],
+        data: Record<string | number, unknown>[],
+    ) => void;
 };
 const keySelector = (d: BasicAnalysisReportUpload) => d.id;
 const labelSelector = (d: BasicAnalysisReportUpload) => d.file.title;
@@ -240,10 +242,9 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
         } = selectedSheetDetails;
 
         const workSheet = workBook?.Sheets[sheetName];
-        const rawColumns = getColumnsFromWorkSheet(workSheet, headerRow ?? 1);
         const dataInObject = getRawDataForWorkSheet(
             workSheet,
-            rawColumns,
+            variables.map((item) => item.clientId ?? ''),
             headerRow ?? 1,
         );
         onDataFetch(variables, dataInObject);
@@ -292,10 +293,9 @@ function AnalysisReportUploadSelectInput<GT extends string, NAME extends string>
                 headerRow,
             } = selectedSheetDetails;
             const workSheet = workBookFromUrl?.Sheets[sheetName];
-            const rawColumns = getColumnsFromWorkSheet(workSheet, headerRow ?? 1);
             const dataInObject = getRawDataForWorkSheet(
                 workSheet,
-                rawColumns,
+                variables.map((item) => item.clientId ?? ''),
                 headerRow ?? 1,
             );
             onDataFetch(variables, dataInObject);
