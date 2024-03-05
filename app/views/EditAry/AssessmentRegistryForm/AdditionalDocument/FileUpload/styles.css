@@ -13,7 +13,7 @@
         flex-grow: 1;
         border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         border-radius: var(--dui-border-radius-card);
-        padding-top: var(--dui-spacing-medium);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-small);
         gap: var(--dui-spacing-small);
         height: 300px;
         overflow-y: auto;
@@ -21,7 +21,7 @@
         .file-item {
             display: flex;
             background-color: var(--dui-color-deep6);
-            padding: var(--dui-spacing-small) 0;
+            padding: var(--dui-spacing-small);
         }
     }
 }
