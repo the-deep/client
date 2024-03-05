@@ -3,4 +3,8 @@
     gap: var(--dui-spacing-large);
     align-items: center;
     font-size: var(--dui-font-size-medium);
+
+    .input {
+        flex-shrink: 0;
+    }
 }

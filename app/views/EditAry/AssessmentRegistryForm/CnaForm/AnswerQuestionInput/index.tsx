@@ -51,6 +51,7 @@ function AnswerQuestionInput(props: Props) {
         <div className={styles.question}>
             <BooleanInput
                 name="answer"
+                className={styles.input}
                 type="segment"
                 options={answerOptions}
                 onChange={onAnswerChange}
