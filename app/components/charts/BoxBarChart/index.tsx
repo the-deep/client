@@ -7,6 +7,7 @@ import {
     sum,
     getColorOnBgColor,
     isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     ContainerCard,
@@ -70,6 +71,9 @@ function BoxBarChart<
     } = props;
 
     const finalData = useMemo(() => {
+        if (isNotDefined(data) || data?.length <= 0) {
+            return [];
+        }
         const itemsGroupedByRow = listToGroupList(
             data ?? [],
             rowSelector,
@@ -139,12 +143,12 @@ function BoxBarChart<
             borderBelowHeaderWidth="thin"
         >
             {((data?.length ?? 0) === 0 && loading) && <PendingMessage />}
-            {finalData.length === 0 && <Message empty /> }
+            {isDefined(data) && finalData.length === 0 && <Message empty /> }
             <div className={styles.content}>
-                {isDefined(data) && (
+                {isDefined(data) && finalData.length > 0 && (
                     <div className={styles.row}>
                         <div />
-                        {columns.map((column) => (
+                        {columns?.map((column) => (
                             <div
                                 className={_cs(
                                     styles.cell,
@@ -159,7 +163,7 @@ function BoxBarChart<
                         <div />
                     </div>
                 )}
-                {finalData.map((item) => (
+                {finalData?.map((item) => (
                     <div
                         key={item.rowLabel}
                         className={styles.row}
@@ -167,7 +171,7 @@ function BoxBarChart<
                         <div className={_cs(styles.cell, styles.label)}>
                             {item.rowLabel}
                         </div>
-                        {item.columnsForRow.map((countItem, index) => {
+                        {item.columnsForRow?.map((countItem, index) => {
                             const bgColor = getColorForValue(countItem);
 
                             return (

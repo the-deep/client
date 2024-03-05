@@ -17,11 +17,7 @@ import {
 import { gql, useQuery } from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
 
-import {
-    todaysDate,
-    lastYearStartDate,
-    DEEP_START_DATE,
-} from '#utils/common';
+import { lastYearStartDate, todaysDate } from '#utils/common';
 import { resolveTime } from '#utils/temporal';
 import ProjectContext from '#base/context/ProjectContext';
 import {
@@ -199,10 +195,16 @@ function AryDashboard(props: Props) {
     const [selectedRegion, setSelectedRegion] = useState<string>();
     const [activeAdminLevel, setActiveAdminLevel] = useState<string>();
 
+    const activeProjectStartDate = resolveTime(
+        project?.createdAt ? new Date(project?.createdAt) : lastYearStartDate,
+        'day',
+    ).getTime();
+    // eslint-disable-next-line max-len
+    const projectStartDate = Math.max(activeProjectStartDate, new Date(lastYearStartDate).getTime());
     const [
-        startDate = todaysDateTime,
+        startDate = projectStartDate,
         setStartDate,
-    ] = useState<number | undefined>(todaysDateTime);
+    ] = useState<number | undefined>(projectStartDate);
     const [
         endDate = todaysDateTime,
         setEndDate,
@@ -234,11 +236,6 @@ function AryDashboard(props: Props) {
             skip: !activeProject,
             variables: activeProject ? { projectId: activeProject } : undefined,
             onCompleted: (response) => {
-                const projectStartDate = resolveTime(
-                    new Date(response.project?.createdAt ?? todaysDateTime),
-                    'day',
-                ).getTime();
-                setStartDate(Math.max(projectStartDate, new Date(lastYearStartDate).getTime()));
                 setSelectedRegion(response.project?.regions?.[0].id);
 
                 if (isDefined(activeAdminLevel)) {
@@ -293,9 +290,6 @@ function AryDashboard(props: Props) {
     }, [projectMetadata]);
 
     const projectData = removeNull(data?.project);
-    const projectStartDate = useMemo(() => (
-        resolveTime(new Date(projectMetadata?.createdAt ?? DEEP_START_DATE), 'day').getTime()
-    ), [projectMetadata?.createdAt]);
 
     const handleEndDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
@@ -427,7 +421,7 @@ function AryDashboard(props: Props) {
                                 regions={projectMetadata?.regions}
                                 filters={filters}
                                 projectId={activeProject}
-                                projectStartDate={projectStartDate}
+                                projectStartDate={activeProjectStartDate}
                                 startDate={startDate}
                                 endDate={endDate}
                                 onStartDateChange={setStartDate}
@@ -472,7 +466,7 @@ function AryDashboard(props: Props) {
                                 onRegionChange={handleRegionChange}
                                 selectedAdminLevel={activeAdminLevel}
                                 onAdminLevelChange={setActiveAdminLevel}
-                                projectStartDate={projectStartDate}
+                                projectStartDate={activeProjectStartDate}
                                 startDate={startDate}
                                 endDate={endDate}
                                 onStartDateChange={setStartDate}
