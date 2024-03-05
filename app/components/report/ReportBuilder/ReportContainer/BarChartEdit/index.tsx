@@ -37,8 +37,13 @@ import {
     type FinalVerticalAxisType,
     type BarChartConfigType,
     type HorizontalAxisFormType,
+    type BarChartStyleFormType,
     type ContentDataType,
 } from '../../../schema';
+import TextElementsStylesEdit from '../TextElementsStylesEdit';
+import LegendElementsStylesEdit from '../LegendStylesEdit';
+import GridLineStylesEdit from '../GridLineStylesEdit';
+import TickStylesEdit from '../TickStylesEdit';
 import VerticalAxisInput from './VerticalAxisInput';
 
 import styles from './styles.css';
@@ -187,6 +192,10 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
     const handleSheetChange = useCallback((item: string | undefined) => {
         onFieldChange(item, 'sheet');
     }, [onFieldChange]);
+
+    const onStyleChange = useFormObject<
+        'style', BarChartStyleFormType
+    >('style', onFieldChange, {});
 
     return (
         <div className={_cs(className, styles.barChartEdit)}>
@@ -397,6 +406,91 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     name="verticalTickVisible"
                     label="Vertical tick visible"
                     onChange={onFieldChange}
+                    disabled={disabled}
+                />
+            </ExpandableContainer>
+            <ExpandableContainer
+                heading="Styling"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                <TextElementsStylesEdit
+                    name="title"
+                    label="Title"
+                    value={value?.style?.title}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <TextElementsStylesEdit
+                    name="subTitle"
+                    label="Subtitle"
+                    value={value?.style?.subTitle}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <LegendElementsStylesEdit
+                    name="legend"
+                    label="Legend"
+                    value={value?.style?.legend}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <TextElementsStylesEdit
+                    name="horizontalAxisTitle"
+                    label="Horizontal Axis Title"
+                    value={value?.style?.horizontalAxisTitle}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <TextElementsStylesEdit
+                    name="horizontalAxisTickLabel"
+                    label="Horizontal Tick Label"
+                    value={value?.style?.horizontalAxisTickLabel}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <TextElementsStylesEdit
+                    name="verticalAxisTitle"
+                    label="Vertical Axis Title"
+                    value={value?.style?.verticalAxisTitle}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <TextElementsStylesEdit
+                    name="verticalAxisTickLabel"
+                    label="Vertical Tick Label"
+                    value={value?.style?.verticalAxisTickLabel}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <GridLineStylesEdit
+                    name="verticalGridLine"
+                    label="Vertical Grid Label"
+                    value={value?.style?.verticalGridLine}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <GridLineStylesEdit
+                    name="horizontalGridLine"
+                    label="Horizontal Grid Label"
+                    value={value?.style?.horizontalGridLine}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <TickStylesEdit
+                    name="verticalTick"
+                    label="Vertical Grid Label"
+                    value={value?.style?.verticalTick}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <TickStylesEdit
+                    name="horizontalTick"
+                    label="Horizontal Grid Label"
+                    value={value?.style?.horizontalTick}
+                    onChange={onStyleChange}
                     disabled={disabled}
                 />
             </ExpandableContainer>

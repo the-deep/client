@@ -163,7 +163,7 @@ const textStyleSchema: TextStyleFormSchema = {
 };
 
 // Bar
-type BarStyleFormType = PartialForm<PurgeNull<AnalysisReportBarStyleType>>;
+export type BarStyleFormType = PartialForm<PurgeNull<AnalysisReportBarStyleType>>;
 type BarStyleFormSchema = ObjectSchema<BarStyleFormType, PartialFormType>;
 type BarStyleFormSchemaFields = ReturnType<BarStyleFormSchema['fields']>;
 

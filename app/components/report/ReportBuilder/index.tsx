@@ -36,7 +36,6 @@ import {
 
 import ReportContainer, { Props as ReportContainerProps } from './ReportContainer';
 import MetadataEdit from './MetadataEdit';
-import { ContentDataFileMap } from '../utils';
 
 import styles from './styles.css';
 
