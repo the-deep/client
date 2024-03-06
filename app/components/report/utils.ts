@@ -9,12 +9,19 @@ import {
     mean,
     median,
     listToGroupList,
+    mapToMap,
 } from '@togglecorp/fujs';
+import {
+    utils,
+    type WorkSheet,
+} from 'xlsx';
 
 import {
     AnalysisReportBorderStyleStyleEnum,
     AnalysisReportTextStyleAlignEnum,
     AnalysisReportTextStyleType,
+    AnalysisReportVariableTypeEnum,
+    AnalysisReportAggregationTypeEnum,
 } from '#generated/types';
 
 import {
@@ -155,26 +162,37 @@ export function resolveKpiTextStyle(
     };
 }
 
-export type ContentDataFileMap = Record<string, {
-    url: string | undefined;
-    name: string | undefined;
-}>;
-
-export function aggregate<T, X extends string | number>(
+export function aggregate<T>(
     data: T[] | undefined,
-    xSelector: (data: T) => X,
+    xSelector: (data: T) => unknown,
     ySelector: (data: T) => unknown,
-    aggregator: 'sum' | 'mean' | 'count' | 'median' | 'min' | 'max',
+    aggregator: AnalysisReportAggregationTypeEnum = 'COUNT',
 ): { key: string, value: number | undefined }[] | undefined {
     if (isNotDefined(data)) {
         return undefined;
     }
 
+    const xValues = data.map(
+        (item) => {
+            const xValue = xSelector(item);
+
+            if (isNotDefined(xValue)) {
+                return undefined;
+            }
+
+            return {
+                x: String(xValue),
+                originalData: item,
+            };
+        },
+    ).filter(isDefined);
+
     const dataGroupedByX = listToGroupList(
-        data,
-        xSelector,
-        ySelector,
+        xValues,
+        (item) => item.x,
+        (item) => ySelector(item.originalData),
     );
+
     return Object.keys(dataGroupedByX).map((item) => {
         let aggregatedValue;
 
@@ -191,17 +209,17 @@ export function aggregate<T, X extends string | number>(
             return undefined;
         }
 
-        if (aggregator === 'sum') {
+        if (aggregator === 'SUM') {
             aggregatedValue = sum(cleanData);
-        } else if (aggregator === 'mean') {
+        } else if (aggregator === 'MEAN') {
             aggregatedValue = mean(cleanData);
-        } else if (aggregator === 'median') {
+        } else if (aggregator === 'MEDIAN') {
             aggregatedValue = median(cleanData);
-        } else if (aggregator === 'min') {
+        } else if (aggregator === 'MIN') {
             aggregatedValue = Math.min(...cleanData);
-        } else if (aggregator === 'max') {
+        } else if (aggregator === 'MAX') {
             aggregatedValue = Math.max(...cleanData);
-        } else if (aggregator === 'count') {
+        } else if (aggregator === 'COUNT') {
             aggregatedValue = dataGroupedByX[item].length;
         }
 
@@ -214,4 +232,134 @@ export function aggregate<T, X extends string | number>(
             value: aggregatedValue,
         };
     }).filter(isDefined);
+}
+
+type DataTypeCountType = Record<AnalysisReportVariableTypeEnum | 'UNDEFINED', number>;
+
+// TODO: Write tests
+export function categorizeData(
+    data: Record<string, unknown>[],
+    key: string,
+): DataTypeCountType {
+    const selectedData = data.map((item) => item[key]);
+
+    const x = selectedData.reduce((acc: DataTypeCountType, item: unknown) => {
+        const convertedNumber = item === '' ? NaN : Number(item);
+
+        if (
+            typeof item === 'number'
+            || !Number.isNaN(convertedNumber)
+        ) {
+            return {
+                ...acc,
+                NUMBER: acc.NUMBER + 1,
+            };
+        }
+        if (
+            typeof item === 'string' && !Number.isNaN(new Date(item).getTime())
+        ) {
+            return {
+                ...acc,
+                DATE: acc.DATE + 1,
+            };
+        }
+        if (
+            typeof item === 'string' && (item.toLowerCase() === 'true' || item.toLowerCase() === 'false')
+        ) {
+            return {
+                ...acc,
+                BOOLEAN: acc.BOOLEAN + 1,
+            };
+        }
+        if (
+            typeof item === 'string'
+        ) {
+            return {
+                ...acc,
+                TEXT: acc.TEXT + 1,
+            };
+        }
+        if (
+            typeof item === 'undefined' || item === null
+        ) {
+            return {
+                ...acc,
+                UNDEFINED: acc.UNDEFINED + 1,
+            };
+        }
+
+        return acc;
+    }, {
+        TEXT: 0,
+        NUMBER: 0,
+        UNDEFINED: 0,
+        BOOLEAN: 0,
+        DATE: 0,
+    } as DataTypeCountType);
+
+    return x;
+}
+
+// TODO: Write tests
+export function getColumnType(
+    counts: DataTypeCountType,
+): AnalysisReportVariableTypeEnum {
+    const withoutUndefined = {
+        TEXT: counts.TEXT,
+        NUMBER: counts.NUMBER,
+        BOOLEAN: counts.BOOLEAN,
+        DATE: counts.DATE,
+    };
+    const maxCount = Math.max(...Object.values(withoutUndefined));
+    const typeByCount = mapToMap(
+        withoutUndefined,
+        (_, value) => value,
+        (_, key) => key as unknown as AnalysisReportVariableTypeEnum,
+    );
+
+    return typeByCount[maxCount];
+}
+
+// TODO: Write tests
+export function getCompleteness(
+    counts: DataTypeCountType,
+    type: AnalysisReportVariableTypeEnum,
+): number {
+    const dataLength = Math.max(...Object.values(counts));
+    const typeCount = counts[type];
+    return (typeCount / dataLength) * 100;
+}
+
+// TODO: Write tests
+export function getColumnsFromWorkSheet(
+    workSheet: WorkSheet,
+    headerRow: number,
+): string[] {
+    const rawData = utils.sheet_to_json(workSheet, { header: 1 });
+
+    const rawColumns = (rawData[headerRow - 1] as unknown[]);
+    return (new Array(rawColumns.length).fill(undefined)).map(
+        (_: unknown, columnIndex: number) => (
+            rawColumns[columnIndex] ? String(rawColumns[columnIndex]) : `Column ${columnIndex + 1}`
+        ),
+    );
+}
+
+// TODO: Write tests
+export function getRawDataForWorkSheet(
+    workSheet: WorkSheet,
+    columns: string[],
+    headerRow: number,
+): Record<string, unknown>[] {
+    const rawData = utils.sheet_to_json(workSheet, { header: 1 });
+
+    rawData.splice(0, headerRow);
+
+    return (rawData as unknown[][]).map((rawDataItem) => {
+        const obj: Record<string, unknown> = {};
+        columns.forEach((column, columnIndex) => {
+            obj[column] = rawDataItem[columnIndex];
+        });
+        return obj;
+    });
 }

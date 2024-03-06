@@ -17,6 +17,7 @@ import ReactMarkdown from 'react-markdown';
 import {
     AnalysisReportContainerContentTypeEnum,
 } from '#generated/types';
+import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
 
 import {
     type ContentDataType,
@@ -26,7 +27,6 @@ import {
 import {
     resolveTextStyle,
     resolveKpiTextStyle,
-    type ContentDataFileMap,
 } from '../../../utils';
 
 import styles from './styles.css';
@@ -201,7 +201,7 @@ interface Props {
     contentData: ContentDataType[] | undefined;
     configuration: ContentConfigType | undefined;
     generalConfiguration: ConfigType | undefined;
-    contentDataToFileMap: ContentDataFileMap | undefined;
+    imageReportUploads: BasicAnalysisReportUpload[] | undefined | null;
 }
 
 function Content(props: Props) {
@@ -210,7 +210,7 @@ function Content(props: Props) {
         configuration: configurationFromProps,
         generalConfiguration,
         contentData,
-        contentDataToFileMap,
+        imageReportUploads,
     } = props;
 
     const configuration = removeNull(configurationFromProps);
@@ -349,13 +349,16 @@ function Content(props: Props) {
         const style = configuration?.image?.style;
 
         const imageContentData = contentData?.[0];
+        const selectedImageData = imageReportUploads?.find(
+            (item) => item.id === imageContentData?.upload,
+        );
 
-        if (imageContentData && contentDataToFileMap) {
+        if (imageContentData && selectedImageData) {
             return (
                 <div className={styles.imageContainer}>
                     <img
                         className={styles.image}
-                        src={contentDataToFileMap[imageContentData.clientId]?.url ?? ''}
+                        src={selectedImageData?.file?.file?.url ?? ''}
                         alt={altText ?? ''}
                     />
                     {caption && (

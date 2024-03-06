@@ -330,6 +330,22 @@ export const BORDER_STYLE_FRAGMENT = gql`
     }
 `;
 
+export const GRID_LINE_STYLE_FRAGMENT = gql`
+    fragment GridLineStyle on AnalysisReportGridLineStyleType {
+        lineColor
+        lineOpacity
+        lineWidth
+    }
+`;
+
+export const TICK_STYLE_FRAGMENT = gql`
+    fragment TickStyle on AnalysisReportTickStyleType {
+        lineColor
+        lineOpacity
+        lineWidth
+    }
+`;
+
 export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
     fragment AssessmentRegistryResponse on AssessmentRegistryType {
         bgCountries {

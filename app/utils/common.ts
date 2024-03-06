@@ -136,6 +136,19 @@ export const enumLabelSelector = <T extends string | number>(d: EnumEntity<T>) =
     (d.description ?? String(d.name))
 );
 
+export type NewEnumEntity<E> = {
+    enum: E;
+    label: string;
+    description?: string | undefined | null;
+};
+
+export function newEnumKeySelector<E>(d: NewEnumEntity<E>) {
+    return d.enum;
+}
+export function newEnumLabelSelector<E>(d: NewEnumEntity<E>) {
+    return d.label;
+}
+
 interface Options {
     endOfDay?: boolean;
 }

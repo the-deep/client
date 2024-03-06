@@ -78,6 +78,15 @@ function ContentAddModal(props: Props) {
             >
                 KPIs
             </RawButton>
+            <RawButton
+                name="BAR_CHART"
+                onClick={onSelect}
+                className={_cs(styles.button, isNotDefined(reportId) && styles.disabled)}
+                title={isNotDefined(reportId) ? 'Charts can be added only after the report is saved' : undefined}
+                disabled={isNotDefined(reportId)}
+            >
+                Bar Chart
+            </RawButton>
         </Modal>
     );
 }
