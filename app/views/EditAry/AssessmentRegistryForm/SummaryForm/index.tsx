@@ -14,13 +14,11 @@ import {
     isDefined,
     isNotDefined,
     listToGroupList,
-    listToMap,
 } from '@togglecorp/fujs';
 
 import {
     AssessmentRegistrySectorTypeEnum,
     AssessmentRegistrySummaryFocusDimensionTypeEnum,
-    AssessmentRegistryFocusTypeEnum,
     AssessmentRegistrySummaryPillarTypeEnum,
     AssessmentRegistrySummarySubDimensionTypeEnum,
     AssessmentRegistrySummarySubPillarTypeEnum,
@@ -138,6 +136,9 @@ function SummaryForm(props: Props) {
         },
     );
 
+    /*
+     * TODO: This logic doesn't work due to typo in server side.
+     * Find other ways to accomplisht this.
     const selectedFocusesMap = useMemo(() => (
         listToMap(
             value?.focuses,
@@ -145,6 +146,7 @@ function SummaryForm(props: Props) {
             () => true,
         )
     ), [value?.focuses]);
+     */
 
     const pillarList: PillarType[] = useMemo(() => {
         const pillarOptions = removeNull(data?.project?.assessmentRegistryOptions?.summaryOptions);
@@ -160,13 +162,16 @@ function SummaryForm(props: Props) {
             }),
         );
 
-        // FIXME: Need to remove this type cast
+        /* FIXME: This filter does not work as intended due to typo in server side.
+         * FIXME: Need to remove this type cast
         return finalPillarList.filter((item) => selectedFocusesMap?.[
             item.pillar as AssessmentRegistryFocusTypeEnum
         ]);
+         */
+        return finalPillarList;
     }, [
         data,
-        selectedFocusesMap,
+        // selectedFocusesMap,
     ]);
 
     const dimensionList: DimensionType[] = useMemo(() => {
@@ -184,13 +189,16 @@ function SummaryForm(props: Props) {
                 })),
             }),
         );
-        // FIXME: Need to remove this type cast
+        /* FIXME: This filter does not work as intended due to typo in server side.
+         * FIXME: Need to remove this type cast
         return finalDimensionList.filter((item) => selectedFocusesMap?.[
             item.dimension as AssessmentRegistryFocusTypeEnum
         ]);
+         */
+        return finalDimensionList;
     }, [
         data,
-        selectedFocusesMap,
+        // selectedFocusesMap,
     ]);
 
     const pillarRenderParams = useCallback(
