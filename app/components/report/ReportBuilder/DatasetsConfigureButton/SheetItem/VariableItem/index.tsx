@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-    ExpandableContainer,
+    Heading,
     TextOutput,
     SelectInput,
 } from '@the-deep/deep-ui';
@@ -59,6 +59,8 @@ interface Props {
         index: number,
     ) => void | undefined;
     index: number;
+    disabled?: boolean;
+    readOnly?: boolean;
 }
 
 function VariableItem(props: Props) {
@@ -66,6 +68,8 @@ function VariableItem(props: Props) {
         column,
         setVariableValue,
         index,
+        disabled,
+        readOnly,
     } = props;
 
     const setFieldValue = useFormObject(
@@ -83,21 +87,25 @@ function VariableItem(props: Props) {
         ?.enums?.AnalysisReportVariableSerializerType;
 
     return (
-        <ExpandableContainer
-            key={column.clientId}
-            heading={column.name}
-            headingClassName={styles.columnHeading}
-            className={styles.expandableContainer}
-            headerClassName={styles.columnHeader}
-            spacing="compact"
-            headingSize="extraSmall"
-            contentClassName={styles.columnContent}
-        >
+        <div className={styles.variableItem}>
+            <Heading
+                className={styles.heading}
+                size="extraSmall"
+            >
+                {column.name}
+            </Heading>
             <TextOutput
+                className={styles.heading}
+                value={column.completeness}
                 label="Completeness"
-                value="90%"
+                valueType="number"
+                valueProps={{
+                    suffix: '%',
+                    precision: 2,
+                }}
             />
             <SelectInput
+                className={styles.heading}
                 name="type"
                 options={columnDataTypeOptions ?? undefined}
                 label="Column data type"
@@ -105,8 +113,11 @@ function VariableItem(props: Props) {
                 labelSelector={enumLabelSelector}
                 value={column.type}
                 onChange={setFieldValue}
+                disabled={disabled}
+                readOnly={readOnly}
+                nonClearable
             />
-        </ExpandableContainer>
+        </div>
     );
 }
 

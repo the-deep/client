@@ -16,6 +16,9 @@ import {
 } from '#base/configs/restRequest';
 import { deepEnvironment } from '#base/configs/env';
 
+const CONTENT_TYPE_JSON = 'application/json';
+const CONTENT_TYPE_STREAM = 'application/octet-stream';
+
 function getCookie(name: string) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -95,6 +98,7 @@ function alterResponse(errors: ErrorFromServer['errors']): Error['value']['faram
 }
 
 export interface OptionBase {
+    isFile?: boolean;
     formData?: boolean;
     failureMessage?: React.ReactNode;
 }
@@ -160,6 +164,18 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
             body: requestBody,
             ...otherOptions,
         };
+    } else if (requestOptions.isFile) {
+        finalOptions = {
+            method: 'GET',
+            headers: {
+                // FIXME: Better define this for security reasons?
+                Accept: '*/*',
+                'Content-Type': 'application/octet-stream',
+                ...headers,
+            },
+            body: undefined,
+            ...otherOptions,
+        };
     } else {
         const requestBody = body ? JSON.stringify(body) : undefined;
         finalOptions = {
@@ -201,21 +217,23 @@ export const processDeepResponse: DeepContextInterface['transformResponse'] = as
     ctx,
     */
 ) => {
-    const resText = await res.text();
-    if (resText.length > 0) {
-        const json = JSON.parse(resText);
-        /*
-        const { schemaName } = ctx;
-        if (schemaName && options.method !== 'DELETE') {
-            try {
-                schema.validate(json, schemaName);
-            } catch (e) {
-                console.error(url, options.method, json, e.message);
+    if (res.status >= 200 && res.status < 300) {
+        if (res.headers.get('content-type') === CONTENT_TYPE_JSON) {
+            const resText = await res.text();
+
+            if (resText.length > 0 && res.headers.get('content-type') === CONTENT_TYPE_JSON) {
+                const json = JSON.parse(resText);
+                return json;
             }
+            return undefined;
         }
-        */
-        return json;
+
+        if (res.headers.get('content-type') === CONTENT_TYPE_STREAM) {
+            const arrayBuffer = await res.arrayBuffer();
+            return arrayBuffer;
+        }
     }
+
     return undefined;
 };
 

@@ -1,0 +1,15 @@
+.bar-chart-edit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-extra-small);
+
+    .expanded-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-small);
+
+        .container {
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        }
+    }
+}

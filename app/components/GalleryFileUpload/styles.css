@@ -1,0 +1,11 @@
+.gallery-file-upload {
+    &.button-only {
+        --height-border: 0;
+    }
+
+    .children {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-small);
+    }
+}

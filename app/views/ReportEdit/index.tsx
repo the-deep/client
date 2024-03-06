@@ -10,7 +10,6 @@ import {
     randomString,
     isDefined,
     compareDate,
-    listToMap,
     compareNumber,
 } from '@togglecorp/fujs';
 import {
@@ -45,11 +44,14 @@ import SubNavbar from '#components/SubNavbar';
 import {
     BasicOrganization,
 } from '#components/selections/NewOrganizationMultiSelectInput';
+import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
 import {
     ORGANIZATION_FRAGMENT,
     TEXT_STYLE_FRAGMENT,
     PADDING_STYLE_FRAGMENT,
     BORDER_STYLE_FRAGMENT,
+    TICK_STYLE_FRAGMENT,
+    GRID_LINE_STYLE_FRAGMENT,
 } from '#gqlFragments';
 
 import {
@@ -77,7 +79,7 @@ import schema, {
     type PartialFormType,
     type ReportContainerType,
 } from '#components/report/schema';
-import { ContentDataFileMap } from '#components/report/utils';
+
 import styles from './styles.css';
 
 const PILLARS_FOR_REPORT = gql`
@@ -112,6 +114,7 @@ const PILLARS_FOR_REPORT = gql`
     }
 `;
 
+// TODO: Remaining for BarChart
 // NOTE: The same schema is being used to generate snapshot
 // So, if we need to change anything here, lets change it in
 // server/apps/common/schema_snapshots.py
@@ -121,6 +124,8 @@ const REPORT_DETAILS = gql`
     ${TEXT_STYLE_FRAGMENT}
     ${BORDER_STYLE_FRAGMENT}
     ${PADDING_STYLE_FRAGMENT}
+    ${TICK_STYLE_FRAGMENT}
+    ${GRID_LINE_STYLE_FRAGMENT}
     query ReportDetails(
         $projectId: ID!,
         $reportId: ID!,
@@ -205,11 +210,37 @@ const REPORT_DETAILS = gql`
                         id
                         upload {
                             id
+                            type
                             file {
                                 id
                                 file {
                                     name
                                     url
+                                }
+                                title
+                            }
+                            metadata {
+                                csv {
+                                    headerRow
+                                    variables {
+                                        clientId
+                                        completeness
+                                        name
+                                        type
+                                    }
+                                }
+                                xlsx {
+                                    sheets {
+                                        clientId
+                                        headerRow
+                                        name
+                                        variables {
+                                            clientId
+                                            completeness
+                                            name
+                                            type
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -277,6 +308,83 @@ const REPORT_DETAILS = gql`
                         }
                         url {
                             url
+                        }
+                        barChart {
+                            direction
+                            horizontalAxis {
+                                field
+                                type
+                            }
+                            horizontalAxisLineVisible
+                            horizontalAxisTitle
+                            horizontalGridLineVisible
+                            horizontalTickVisible
+                            legendHeading
+                            sheet
+                            subTitle
+                            title
+                            type
+                            verticalAxis {
+                                label
+                                aggregationType
+                                clientId
+                                color
+                                field
+                            }
+                            verticalAxisExtendMinimumValue
+                            verticalAxisExtendMaximumValue
+                            verticalAxisLineVisible
+                            verticalAxisTitle
+                            verticalGridLineVisible
+                            verticalTickVisible
+                            horizontalTickLabelRotation
+                            style {
+                                bar {
+                                    border {
+                                        ...BorderStyle
+                                    }
+                                }
+                                horizontalAxisTickLabel {
+                                    ...TextStyle
+                                }
+                                horizontalAxisTitle {
+                                    ...TextStyle
+                                }
+                                horizontalGridLine {
+                                    ...GridLineStyle
+                                }
+                                horizontalTick {
+                                    ...TickStyle
+                                }
+                                legend {
+                                    heading {
+                                        ...TextStyle
+                                    }
+                                    label {
+                                        ...TextStyle
+                                    }
+                                    position
+                                    shape
+                                }
+                                subTitle {
+                                    ...TextStyle
+                                }
+                                title {
+                                    ...TextStyle
+                                }
+                                verticalAxisTickLabel {
+                                    ...TextStyle
+                                }
+                                verticalAxisTitle {
+                                    ...TextStyle
+                                }
+                                verticalGridLine {
+                                    ...GridLineStyle
+                                }
+                                verticalTick {
+                                    ...TickStyle
+                                }
+                            }
                         }
                     }
                 }
@@ -383,9 +491,14 @@ function ReportEdit(props: Props) {
     ] = useState<BasicOrganization[] | null | undefined>();
 
     const [
-        contentDataToFileMap,
-        setContentDataToFileMap,
-    ] = useState<ContentDataFileMap>();
+        imageReportUploads,
+        setImageReportUploads,
+    ] = useState<BasicAnalysisReportUpload[] | null | undefined>();
+
+    const [
+        quantitativeReportUploads,
+        setQuantitativeReportUploads,
+    ] = useState<BasicAnalysisReportUpload[] | null | undefined>();
 
     const analysisId = new URL(window.location.href).searchParams.get('analysis');
 
@@ -535,14 +648,17 @@ function ReportEdit(props: Props) {
                     },
                 );
                 const uploadItems = valueToSet.containers?.flatMap((item) => item.contentData);
-                setContentDataToFileMap(listToMap(
-                    uploadItems,
-                    (item) => item.clientId,
-                    (item) => ({
-                        name: item.upload.file.file?.name,
-                        url: item.upload.file.file?.url,
-                    }),
-                ));
+                setImageReportUploads(
+                    uploadItems?.filter((item) => (
+                        item.upload.type === 'IMAGE'
+                    )).map((item) => (item.upload)),
+                );
+                setQuantitativeReportUploads(
+                    uploadItems?.filter((item) => (
+                        item.upload.type === 'CSV'
+                        || item.upload.type === 'XLSX'
+                    )).map((item) => (item.upload)),
+                );
                 setOrganizationOptions(valueToSet.organizations);
             },
         },
@@ -853,8 +969,10 @@ function ReportEdit(props: Props) {
                         readOnly={false}
                         organizationOptions={organizationOptions}
                         onOrganizationOptionsChange={setOrganizationOptions}
-                        contentDataToFileMap={contentDataToFileMap}
-                        setContentDataToFileMap={setContentDataToFileMap}
+                        imageReportUploads={imageReportUploads}
+                        onImageReportUploadsChange={setImageReportUploads}
+                        quantitativeReportUploads={quantitativeReportUploads}
+                        onQuantitativeReportUploadsChange={setQuantitativeReportUploads}
                         leftContentRef={leftContentRef}
                         onContentEditChange={setContentEditPaneVisibility}
                     />

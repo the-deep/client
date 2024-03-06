@@ -1,20 +1,29 @@
 import React, { useCallback } from 'react';
-
 import {
     ExpandableContainer,
     TextInput,
     NumberInput,
     ListView,
 } from '@the-deep/deep-ui';
-import { randomString } from '@togglecorp/fujs';
+import {
+    randomString,
+} from '@togglecorp/fujs';
 import {
     SetValueArg,
     useFormObject,
     useFormArray,
 } from '@togglecorp/toggle-form';
+import { type WorkSheet } from 'xlsx';
 
 import VariableItem from './VariableItem';
 import { type SheetType, type VariableType } from '..';
+import {
+    categorizeData,
+    getColumnType,
+    getCompleteness,
+    getColumnsFromWorkSheet,
+    getRawDataForWorkSheet,
+} from '../../../utils';
 import styles from './styles.css';
 
 const variableKeySelector = (column: VariableType) => column.clientId;
@@ -26,6 +35,9 @@ interface Props {
         index: number
     ) => void;
     index: number;
+    workSheet: WorkSheet | undefined;
+    disabled?: boolean;
+    readOnly?: boolean;
 }
 
 const defaultSheetItem = (): SheetType => ({
@@ -36,7 +48,10 @@ function SheetItem(props: Props) {
     const {
         item,
         setSheetValue,
+        workSheet,
         index,
+        disabled,
+        readOnly,
     } = props;
 
     const setFieldValue = useFormObject(
@@ -44,6 +59,34 @@ function SheetItem(props: Props) {
         setSheetValue,
         defaultSheetItem,
     );
+
+    const handleHeaderRowChange = useCallback((newHeaderRow: number | undefined) => {
+        setFieldValue(newHeaderRow, 'headerRow');
+        if (!workSheet || !newHeaderRow) {
+            return;
+        }
+        const rawColumns = getColumnsFromWorkSheet(workSheet, newHeaderRow);
+        const dataInObject = getRawDataForWorkSheet(
+            workSheet,
+            rawColumns,
+            newHeaderRow,
+        );
+
+        const columns = rawColumns.map((rawItem) => {
+            const categorizedData = categorizeData(dataInObject, rawItem);
+            const dataType = getColumnType(categorizedData);
+            return ({
+                clientId: randomString(),
+                name: rawItem,
+                type: dataType,
+                completeness: getCompleteness(categorizedData, dataType),
+            });
+        });
+        setFieldValue(columns, 'variables');
+    }, [
+        setFieldValue,
+        workSheet,
+    ]);
 
     const {
         setValue: setVariableValue,
@@ -58,7 +101,11 @@ function SheetItem(props: Props) {
             column: datum,
             setVariableValue,
             index: variableIndex,
+            disabled,
+            readOnly,
         }), [
+            disabled,
+            readOnly,
             setVariableValue,
         ],
     );
@@ -78,12 +125,16 @@ function SheetItem(props: Props) {
                         label="Name"
                         value={item?.name}
                         onChange={setFieldValue}
+                        disabled={disabled}
+                        readOnly
                     />
                     <NumberInput
                         name="headerRow"
                         label="Header Row"
                         value={item.headerRow}
-                        onChange={setFieldValue}
+                        onChange={handleHeaderRowChange}
+                        disabled={disabled}
+                        readOnly={readOnly}
                     />
                 </>
             )}
@@ -97,6 +148,7 @@ function SheetItem(props: Props) {
                 filtered={false}
                 errored={false}
                 pending={false}
+                borderBetweenItem
             />
         </ExpandableContainer>
     );
