@@ -45,7 +45,7 @@ const data = [
 
 test('aggregate', () => {
     expect(
-        aggregate(data, (item) => item.gender, (item) => item.salary, 'sum'),
+        aggregate(data, (item) => item.gender, (item) => item.salary, 'SUM'),
     ).toEqual([
         {
             key: 'Female',
@@ -57,7 +57,7 @@ test('aggregate', () => {
         },
     ]);
     expect(
-        aggregate(data, (item) => item.gender, (item) => item.salary, 'mean'),
+        aggregate(data, (item) => item.gender, (item) => item.salary, 'MEAN'),
     ).toEqual([
         {
             key: 'Female',
@@ -83,7 +83,7 @@ test('aggregate', () => {
     ]);
     */
     expect(
-        aggregate(data, (item) => item.gender, (item) => item.salary, 'min'),
+        aggregate(data, (item) => item.gender, (item) => item.salary, 'MIN'),
     ).toEqual([
         {
             key: 'Female',
@@ -95,7 +95,7 @@ test('aggregate', () => {
         },
     ]);
     expect(
-        aggregate(data, (item) => item.gender, (item) => item.salary, 'max'),
+        aggregate(data, (item) => item.gender, (item) => item.salary, 'MAX'),
     ).toEqual([
         {
             key: 'Female',
