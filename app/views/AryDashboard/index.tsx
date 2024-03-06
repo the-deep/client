@@ -201,10 +201,12 @@ function AryDashboard(props: Props) {
     ).getTime();
     // eslint-disable-next-line max-len
     const projectStartDate = Math.max(activeProjectStartDate, new Date(lastYearStartDate).getTime());
+
     const [
         startDate = projectStartDate,
         setStartDate,
     ] = useState<number | undefined>(projectStartDate);
+
     const [
         endDate = todaysDateTime,
         setEndDate,
@@ -301,11 +303,12 @@ function AryDashboard(props: Props) {
 
     const handleStartDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
-            setStartDate(Math.max(newDate, projectStartDate));
+            // FIXME: Add a fallback later
+            setStartDate(newDate);
         } else {
             setStartDate(undefined);
         }
-    }, [projectStartDate]);
+    }, []);
 
     const handleFromDateChange = useCallback((newDate: string | undefined) => {
         if (isDefined(newDate)) {
