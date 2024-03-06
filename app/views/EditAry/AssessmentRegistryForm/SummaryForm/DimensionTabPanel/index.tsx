@@ -11,8 +11,6 @@ import {
     Cell,
     LabelList,
     ResponsiveContainer,
-    Tooltip,
-    TooltipProps,
     XAxis,
     YAxis,
 } from 'recharts';
@@ -27,21 +25,6 @@ import DimensionItem, { Props as DimensionItemProps } from '../DimensionItem';
 import { DimensionType } from '..';
 
 import styles from './styles.css';
-
-// NOTE: These types are copied from 'recharts/types/component/DefaultTooltipContent'
-type ValueType = number | string | Array<number | string>;
-type NameType = number | string;
-
-const customTooltip = (tooltipProps: TooltipProps<ValueType, NameType>) => {
-    const { active, payload } = tooltipProps;
-    if (active && payload && payload.length) {
-        return (
-            <div className={styles.tooltip}>{`${payload[0].value}%`}</div>
-        );
-    }
-
-    return null;
-};
 
 const NOT_AFFECTED_COLOR = '#9ce5b9';
 const AFFECTED_COLOR = '#f2f3b9';
@@ -262,12 +245,36 @@ function DimensionTabPanel(props: Props) {
                             >
                                 <YAxis hide type="category" dataKey="name" />
                                 <XAxis hide type="number" />
-                                <Tooltip shared={false} content={customTooltip} />
-                                <Bar dataKey="totalNotAffectedPercentage" stackId="a" fill={NOT_AFFECTED_COLOR} />
-                                <Bar dataKey="totalAffectedPercentage" stackId="a" fill={AFFECTED_COLOR} />
-                                <Bar dataKey="totalModeratelyInNeedPercentage" stackId="a" fill={MODERATELY_COLOR} />
-                                <Bar dataKey="totalSeverelyInNeedPercentage" stackId="a" fill={SEVERELY_COLOR} />
-                                <Bar dataKey="totalCriticallyInNeedPercentage" stackId="a" fill={CRITICALLY_COLOR} />
+                                <Bar
+                                    dataKey="totalNotAffectedPercentage"
+                                    stackId="a"
+                                    fill={NOT_AFFECTED_COLOR}
+                                    label
+                                />
+                                <Bar
+                                    dataKey="totalAffectedPercentage"
+                                    stackId="a"
+                                    fill={AFFECTED_COLOR}
+                                    label
+                                />
+                                <Bar
+                                    dataKey="totalModeratelyInNeedPercentage"
+                                    stackId="a"
+                                    fill={MODERATELY_COLOR}
+                                    label
+                                />
+                                <Bar
+                                    dataKey="totalSeverelyInNeedPercentage"
+                                    stackId="a"
+                                    fill={SEVERELY_COLOR}
+                                    label
+                                />
+                                <Bar
+                                    dataKey="totalCriticallyInNeedPercentage"
+                                    stackId="a"
+                                    fill={CRITICALLY_COLOR}
+                                    label
+                                />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -278,7 +285,11 @@ function DimensionTabPanel(props: Props) {
                                     {barChartData?.map((entry) => (
                                         <Cell key={entry.key} fill={entry.color} />
                                     ))}
-                                    <LabelList dataKey="value" position="top" />
+                                    <LabelList
+                                        dataKey="value"
+                                        position="top"
+                                        fill="black"
+                                    />
                                 </Bar>
                                 <XAxis
                                     dataKey="name"
