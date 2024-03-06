@@ -1,20 +1,15 @@
-.expandable-container {
-    border: none;
-
-    .header-description {
-        display: flex;
-        gap: var(--dui-spacing-small);
-    }
-}
-.column-header {
-    background-color: transparent;
-    color: var(--dui-color-text);
-
-    .column-heading {
-        color: var(--dui-color-text);
-    }
-}
-.column-content {
+.variable-item {
     display: flex;
-    gap: var(--dui-spacing-medium);
+    align-items: flex-end;
+    gap: var(--dui-spacing-extra-small);
+
+    .heading {
+        width: 10rem;
+    }
+    .completeness {
+        width: 10rem;
+    }
+    .type {
+        width: 20rem;
+    }
 }

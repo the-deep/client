@@ -1,7 +1,5 @@
 import React, { useCallback } from 'react';
-import {
-    useParams,
-} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAlert } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';

@@ -1,7 +1,6 @@
 import React from 'react';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
+import { useParams } from 'react-router-dom';
 import {
     type SetValueArg,
     type Error,
@@ -15,7 +14,6 @@ import {
 
 import NonFieldError from '#components/NonFieldError';
 
-import DatasetsConfigureButton from '../../DatasetsConfigureButton';
 import {
     type TimelineChartConfigType,
 } from '../../../schema';
@@ -123,8 +121,8 @@ const metadata: Metadata[] = [
 ];
 
 interface Props<NAME extends string> {
-    name: NAME;
     className?: string;
+    name: NAME;
     value: TimelineChartConfigType | undefined;
     onChange: (value: SetValueArg<TimelineChartConfigType | undefined>, name: NAME) => void;
     error?: Error<TimelineChartConfigType>;
@@ -134,9 +132,9 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
     const {
         className,
         value,
+        error: riskyError,
         onChange,
         name,
-        error: riskyError,
     } = props;
 
     const onFieldChange = useFormObject<
@@ -144,6 +142,17 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
     >(name, onChange, {});
 
     const error = getErrorObject(riskyError);
+
+    const {
+        reportId,
+        projectId,
+    } = useParams<{
+        projectId: string | undefined,
+        reportId: string | undefined,
+    }>();
+
+    // eslint-disable-next-line no-console
+    console.log('here', reportId, projectId, onChange, name);
 
     const textColumns = metadata?.filter(
         (datum) => datum.type === 'TEXT',
@@ -166,7 +175,6 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
                 contentClassName={styles.expandedBody}
                 withoutBorder
             >
-                <DatasetsConfigureButton />
                 <SelectInput
                     name="date"
                     label="Date selector"
