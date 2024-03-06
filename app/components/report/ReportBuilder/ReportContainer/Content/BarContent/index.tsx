@@ -16,6 +16,7 @@ import {
 } from '../../../../schema';
 import {
     resolveTextStyle,
+    resolveLineStyle,
 } from '../../../../utils';
 
 import styles from './styles.css';
@@ -39,10 +40,14 @@ function BarContent(props: Props) {
         }
         const yKeys = configuration?.verticalAxis?.map((item) => item.label).filter(isDefined);
         const yValueSelector = (axis: Datum) => (
-            configuration?.verticalAxis?.map((item) => ({
-                key: item.label ?? '',
-                value: Number((item.label ? axis[item.label] : undefined)) ?? 0,
-            }))
+            configuration?.verticalAxis?.map((item) => {
+                const safeNumber = Number((item.label ? axis[item.label] : undefined));
+
+                return ({
+                    key: item.label ?? '',
+                    value: !Number.isNaN(safeNumber) ? safeNumber : 0,
+                });
+            })
         ) ?? [];
         const colorSelector = (key: string) => (
             listToMap(
@@ -50,7 +55,7 @@ function BarContent(props: Props) {
                 (item) => item.label ?? '',
                 (item) => item.color ?? '',
             )?.[key] ?? '#717171'
-        ) ?? [];
+        );
         return {
             data: cacheData,
             title: {
@@ -90,18 +95,34 @@ function BarContent(props: Props) {
                         undefined,
                     ),
                 },
-                xAxisLineStyle: {
+                xAxisLineStyle: configuration?.horizontalAxisLineVisible ? {
                     stroke: 'gray',
-                },
-                xAxisGridLineStyle: {
+                    ...resolveLineStyle(
+                        configuration?.style?.horizontalGridLine,
+                        undefined,
+                    ),
+                } : undefined,
+                xAxisGridLineStyle: configuration?.horizontalGridLineVisible ? {
                     stroke: 'lightgray',
-                },
-                yAxisLineStyle: {
+                    ...resolveLineStyle(
+                        configuration?.style?.horizontalGridLine,
+                        undefined,
+                    ),
+                } : undefined,
+                yAxisLineStyle: configuration?.verticalAxisLineVisible ? {
                     stroke: 'lightgray',
-                },
-                yAxisGridLineStyle: {
+                    ...resolveLineStyle(
+                        configuration?.style?.verticalGridLine,
+                        undefined,
+                    ),
+                } : undefined,
+                yAxisGridLineStyle: configuration?.verticalGridLineVisible ? {
                     stroke: 'lightgray',
-                },
+                    ...resolveLineStyle(
+                        configuration?.style?.verticalGridLine,
+                        undefined,
+                    ),
+                } : undefined,
             },
             barListOptions: {
                 //  barGroupGap
