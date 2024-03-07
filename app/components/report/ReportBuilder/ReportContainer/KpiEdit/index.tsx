@@ -23,7 +23,6 @@ import NonFieldError from '#components/NonFieldError';
 import KpiItemEdit from './KpiItemEdit';
 import {
     type KpiConfigType,
-    type TextContentStyleFormType,
     type FinalKpiItemType,
 } from '../../../schema';
 import TextElementsStylesEdit from '../TextElementsStylesEdit';
@@ -38,7 +37,7 @@ interface Props<NAME extends string> {
     value: KpiConfigType | undefined;
     onChange: (value: SetValueArg<KpiConfigType | undefined>, name: NAME) => void;
     error?: Error<KpiConfigType>;
-    // disabled?: boolean;
+    disabled?: boolean;
 }
 
 function KpiEdit<NAME extends string>(props: Props<NAME>) {
@@ -48,7 +47,7 @@ function KpiEdit<NAME extends string>(props: Props<NAME>) {
         value,
         onChange,
         error: riskyError,
-        // disabled,
+        disabled,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -56,22 +55,6 @@ function KpiEdit<NAME extends string>(props: Props<NAME>) {
     const onFieldChange = useFormObject<
         NAME, KpiConfigType
     >(name, onChange, {});
-
-    const onTitleStyleChange = useFormObject<
-        'titleContentStyle', TextContentStyleFormType
-    >('titleContentStyle', onFieldChange, {});
-
-    const onSubtitleStyleChange = useFormObject<
-        'subtitleContentStyle', TextContentStyleFormType
-    >('subtitleContentStyle', onFieldChange, {});
-
-    const onSourceContentStyleChange = useFormObject<
-        'sourceContentStyle', TextContentStyleFormType
-    >('sourceContentStyle', onFieldChange, {});
-
-    const onValueContentStyleChange = useFormObject<
-        'valueContentStyle', TextContentStyleFormType
-    >('valueContentStyle', onFieldChange, {});
 
     const {
         setValue: onKpiItemChange,
@@ -127,6 +110,7 @@ function KpiEdit<NAME extends string>(props: Props<NAME>) {
                     className={styles.addButton}
                     variant="tertiary"
                     spacing="compact"
+                    disabled={disabled}
                 >
                     Add Item
                 </Button>
@@ -139,28 +123,32 @@ function KpiEdit<NAME extends string>(props: Props<NAME>) {
                 withoutBorder
             >
                 <TextElementsStylesEdit
-                    name="content"
+                    name="titleContentStyle"
                     label="Title"
-                    value={value?.titleContentStyle?.content}
-                    onChange={onTitleStyleChange}
+                    value={value?.titleContentStyle}
+                    onChange={onFieldChange}
+                    disabled={disabled}
                 />
                 <TextElementsStylesEdit
-                    name="content"
+                    name="subtitleContentStyle"
                     label="Subtitle"
-                    value={value?.subtitleContentStyle?.content}
-                    onChange={onSubtitleStyleChange}
+                    value={value?.subtitleContentStyle}
+                    onChange={onFieldChange}
+                    disabled={disabled}
                 />
                 <TextElementsStylesEdit
-                    name="content"
+                    name="sourceContentStyle"
                     label="Source"
-                    value={value?.sourceContentStyle?.content}
-                    onChange={onSourceContentStyleChange}
+                    value={value?.sourceContentStyle}
+                    onChange={onFieldChange}
+                    disabled={disabled}
                 />
                 <TextElementsStylesEdit
-                    name="content"
+                    name="valueContentStyle"
                     label="Value"
-                    value={value?.valueContentStyle?.content}
-                    onChange={onValueContentStyleChange}
+                    value={value?.valueContentStyle}
+                    onChange={onFieldChange}
+                    disabled={disabled}
                 />
             </ExpandableContainer>
         </div>

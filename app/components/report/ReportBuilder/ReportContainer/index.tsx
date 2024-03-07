@@ -363,6 +363,41 @@ function ReportContainer(props: Props) {
         onFieldChange,
     ]);
 
+    const handleTimelineFileUploadChange = useCallback((file: string | undefined) => {
+        if (!file) {
+            onFieldChange(undefined, 'contentData');
+        }
+        const newClientId = randomString();
+        onFieldChange([
+            {
+                upload: file,
+                clientId: newClientId,
+            },
+        ], 'contentData');
+    }, [onFieldChange]);
+
+    const handleTimelineCacheDataChange = useCallback((
+        newCache: Record<string, string | number | undefined>[] | undefined,
+        clientId: string,
+    ) => {
+        onFieldChange((oldVal: ContentDataType[] | undefined) => {
+            if (!oldVal) {
+                return oldVal;
+            }
+            const selectedItemIndex = oldVal?.findIndex((item) => item.clientId === clientId);
+            if (isNotDefined(selectedItemIndex) || selectedItemIndex === -1) {
+                return oldVal;
+            }
+            const newVal = [...oldVal];
+            const newIndividualVal = {
+                ...oldVal[selectedItemIndex],
+                data: newCache,
+            };
+            newVal.splice(selectedItemIndex, 1, newIndividualVal);
+            return newVal;
+        }, 'contentData');
+    }, [onFieldChange]);
+
     const handleBarChartFileUploadChange = useCallback((file: string | undefined) => {
         if (!file) {
             onFieldChange(undefined, 'contentData');
@@ -605,6 +640,13 @@ function ReportContainer(props: Props) {
                                 onChange={onConfigChange}
                                 value={configuration?.timelineChart}
                                 error={getErrorObject(error?.contentConfiguration)?.timelineChart}
+                                onFileUploadChange={handleTimelineFileUploadChange}
+                                contentData={contentData?.[0]}
+                                quantitativeReportUploads={quantitativeReportUploads}
+                                onQuantitativeReportUploadsChange={
+                                    onQuantitativeReportUploadsChange
+                                }
+                                onCacheChange={handleTimelineCacheDataChange}
                             />
                         )}
                         {contentType === 'BAR_CHART' && (
