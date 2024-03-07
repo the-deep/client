@@ -259,6 +259,13 @@ type UrlConfigurationType {
   url: String
 }
 
+type KpiItemStyleType {
+  sourceContentStyle: TextStyle
+  subtitleContentStyle: TextStyle
+  titleContentStyle: TextStyle
+  valueContentStyle: TextStyle
+}
+
 type KpiItemConfigType {
   abbreviateValue: String
   clientId: String
@@ -269,14 +276,15 @@ type KpiItemConfigType {
   subtitle: String
   title: String
   value: Int
+  style: KpiItemStyleType
 }
 
 type KpiConfigurationType {
   items: [KpiItemConfigType!]
-  sourceContentStyle: TextConfigurationStyleType
-  subtitleContentStyle: TextConfigurationStyleType
-  titleContentStyle: TextConfigurationStyleType
-  valueContentStyle: TextConfigurationStyleType
+  sourceContentStyle: TextStyle
+  subtitleContentStyle: TextStyle
+  titleContentStyle: TextStyle
+  valueContentStyle: TextStyle
 }
 
 enum AnalysisReportBarChartDirectionEnum {
@@ -392,8 +400,19 @@ type BarChartConfigurationType {
   style: BarChartStyleType
 }
 
+type TimelineChartConfigurationType {
+  category: String
+  date: String
+  detail: String
+  sheet: String
+  source: String
+  sourceUrl: String
+  title: String
+}
+
 type ContentConfigurationType {
   barChart: BarChartConfigurationType
+  timelineChart: TimelineChartConfigurationType
   heading: HeadingConfigurationType
   image: ImageConfigurationType
   text: TextConfigurationType
