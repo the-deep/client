@@ -53,24 +53,16 @@ function GridLineElementStylesEdit<NAME extends string>(props: Props<NAME>) {
     const error = getErrorObject(riskyError);
 
     return (
-        <div className={_cs(className, styles.legendElementsStylesEdit)}>
+        <div className={_cs(className, styles.gridLineStylesEdit)}>
             {label && (
                 <Heading size="extraSmall">{label}</Heading>
             )}
             <NonFieldError error={error} />
             <div className={styles.inputs}>
-                <ColorInput
-                    value={value?.lineColor}
-                    name="lineColor"
-                    // label="Legend heading"
-                    onChange={onFieldChange}
-                    // error={error?.legendHeading}
-                    // disabled={disabled}
-                />
                 <NumberInput
                     value={value?.lineOpacity}
                     name="lineOpacity"
-                    label="Legend opacity"
+                    label="Grid opacity"
                     onChange={onFieldChange}
                     error={error?.lineOpacity}
                     disabled={disabled}
@@ -78,10 +70,18 @@ function GridLineElementStylesEdit<NAME extends string>(props: Props<NAME>) {
                 <NumberInput
                     value={value?.lineWidth}
                     name="lineWidth"
-                    label="Legend opacity"
+                    label="Grid width"
                     onChange={onFieldChange}
                     error={error?.lineWidth}
                     disabled={disabled}
+                />
+                <ColorInput
+                    value={value?.lineColor}
+                    name="lineColor"
+                    // label="Grid heading"
+                    onChange={onFieldChange}
+                    // error={error?.legendHeading}
+                    // disabled={disabled}
                 />
             </div>
         </div>
