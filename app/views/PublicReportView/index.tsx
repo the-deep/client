@@ -247,42 +247,64 @@ const PUBLIC_REPORT_DETAILS = gql`
                             subtitle
                             title
                             value
+                            style {
+                                sourceContentStyle {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                subtitleContentStyle {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                titleContentStyle {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                valueContentStyle {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                            }
                         }
                         sourceContentStyle {
-                            content {
-                                align
-                                color
-                                family
-                                size
-                                weight
-                            }
+                            align
+                            color
+                            family
+                            size
+                            weight
                         }
                         subtitleContentStyle {
-                            content {
-                                align
-                                color
-                                family
-                                size
-                                weight
-                            }
+                            align
+                            color
+                            family
+                            size
+                            weight
                         }
                         titleContentStyle {
-                            content {
-                                align
-                                color
-                                family
-                                size
-                                weight
-                            }
+                            align
+                            color
+                            family
+                            size
+                            weight
                         }
                         valueContentStyle {
-                            content {
-                                align
-                                color
-                                family
-                                size
-                                weight
-                            }
+                            align
+                            color
+                            family
+                            size
+                            weight
                         }
                     }
                     text {
@@ -329,6 +351,15 @@ const PUBLIC_REPORT_DETAILS = gql`
                         verticalGridLineVisible
                         verticalTickVisible
                         horizontalTickLabelRotation
+                    }
+                    timelineChart {
+                        category
+                        date
+                        detail
+                        sheet
+                        source
+                        sourceUrl
+                        title
                     }
                 }
             }

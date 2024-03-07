@@ -24,6 +24,7 @@ import {
     AnalysisReportTickStyleType,
     AnalysisReportBarStyleType,
     AnalysisReportHorizontalAxisType,
+    AnalysisReportKpiItemStyleConfigurationType,
     AnalysisReportVerticalAxisType,
     AnalysisReportCategoricalLegendStyleType,
     AnalysisReportKpiItemConfigurationType,
@@ -359,6 +360,19 @@ type KpiItemSchemaFields = ReturnType<KpiItemSchema['fields']>;
 type KpiItemFormSchema = ArraySchema<PartialForm<FinalKpiItemType, 'clientId'>, PartialFormType>;
 type KpiItemFormSchemaMember = ReturnType<KpiItemFormSchema['member']>;
 
+type KpiItemStyleFormType = PartialForm<PurgeNull<AnalysisReportKpiItemStyleConfigurationType>>;
+type KpiItemStyleFormSchema = ObjectSchema<KpiItemStyleFormType, PartialFormType>;
+type KpiItemStyleFormSchemaFields = ReturnType<KpiItemStyleFormSchema['fields']>;
+
+const kpiItemStyleSchema: KpiItemStyleFormSchema = {
+    fields: (): KpiItemStyleFormSchemaFields => ({
+        sourceContentStyle: textStyleSchema,
+        subtitleContentStyle: textStyleSchema,
+        titleContentStyle: textStyleSchema,
+        valueContentStyle: textStyleSchema,
+    }),
+};
+
 type VerticalAxisSchema = ObjectSchema<PartialForm<FinalVerticalAxisType, 'clientId'>, PartialFormType>;
 type VerticalAxisSchemaFields = ReturnType<VerticalAxisSchema['fields']>;
 
@@ -525,13 +539,14 @@ const schema: FormSchema = {
                                                             subtitle: [],
                                                             source: [],
                                                             sourceUrl: [],
+                                                            style: kpiItemStyleSchema,
                                                         }),
                                                     }),
                                                 },
-                                                sourceContentStyle: textContentStyleSchema,
-                                                subtitleContentStyle: textContentStyleSchema,
-                                                titleContentStyle: textContentStyleSchema,
-                                                valueContentStyle: textContentStyleSchema,
+                                                sourceContentStyle: textStyleSchema,
+                                                subtitleContentStyle: textStyleSchema,
+                                                titleContentStyle: textStyleSchema,
+                                                valueContentStyle: textStyleSchema,
                                             }),
                                         },
                                     };
