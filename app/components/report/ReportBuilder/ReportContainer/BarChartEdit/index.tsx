@@ -87,6 +87,19 @@ const BAR_CHART_ENUMS = gql`
         }
     }
 `;
+
+export const defaultBarChartValue: BarChartConfigType = {
+    verticalAxisLineVisible: true,
+    verticalGridLineVisible: true,
+    horizontalAxisLineVisible: true,
+    horizontalGridLineVisible: true,
+    type: 'SIDE_BY_SIDE',
+    direction: 'HORIZONTAL',
+    horizontalAxis: {
+        type: 'CATEGORICAL' as const,
+    },
+};
+
 const columnKeySelector = (item: AnalysisReportVariableType) => item.clientId ?? '';
 const columnLabelSelector = (item: AnalysisReportVariableType) => item.name ?? '';
 
@@ -330,12 +343,61 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                 defaultVisibility
                 withoutBorder
             >
+                <TextInput
+                    value={value?.title}
+                    name="title"
+                    label="Title"
+                    onChange={onFieldChange}
+                    error={error?.title}
+                    disabled={disabled}
+                />
+                <TextInput
+                    value={value?.subTitle}
+                    name="subTitle"
+                    label="Subtitle"
+                    onChange={onFieldChange}
+                    error={error?.subTitle}
+                    disabled={disabled}
+                />
+                <SegmentInput
+                    label="Chart Type"
+                    name="type"
+                    value={value?.type}
+                    onChange={onFieldChange}
+                    keySelector={newEnumKeySelector}
+                    labelSelector={newEnumLabelSelector}
+                    options={barChartTypeOptions ?? []}
+                    error={error?.type}
+                    spacing="compact"
+                />
+                <SegmentInput
+                    label="Chart Direction"
+                    name="direction"
+                    value={value?.direction}
+                    onChange={onFieldChange}
+                    keySelector={newEnumKeySelector}
+                    labelSelector={newEnumLabelSelector}
+                    options={barChartDirectionOptions ?? []}
+                    error={error?.direction}
+                    spacing="compact"
+                />
                 <ContainerCard
                     className={styles.container}
                     heading="Horizontal Axis"
                     headingSize="extraSmall"
-                    spacing="compact"
+                    contentClassName={styles.containerContent}
                 >
+                    <SegmentInput
+                        label="Data Type"
+                        name="type"
+                        value={value?.horizontalAxis?.type}
+                        onChange={onHorizontalAxisChange}
+                        keySelector={newEnumKeySelector}
+                        labelSelector={newEnumLabelSelector}
+                        options={horizontalAxisTypeOptions ?? []}
+                        error={getErrorObject(error?.horizontalAxis)?.type}
+                        spacing="compact"
+                    />
                     <SelectInput
                         label="Column"
                         name="field"
@@ -346,22 +408,12 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                         options={columns}
                         error={getErrorObject(error?.horizontalAxis)?.field}
                     />
-                    <SegmentInput
-                        label="Data Type"
-                        name="type"
-                        value={value?.horizontalAxis?.type}
-                        onChange={onHorizontalAxisChange}
-                        keySelector={newEnumKeySelector}
-                        labelSelector={newEnumLabelSelector}
-                        options={horizontalAxisTypeOptions ?? []}
-                        error={getErrorObject(error?.horizontalAxis)?.type}
-                    />
                 </ContainerCard>
                 <ContainerCard
                     className={styles.container}
                     heading="Vertical Axis"
                     headingSize="extraSmall"
-                    spacing="compact"
+                    contentClassName={styles.containerContent}
                     headerActions={(
                         <Button
                             title="Add"
@@ -388,42 +440,6 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                         />
                     ))}
                 </ContainerCard>
-                <SegmentInput
-                    label="Chart Type"
-                    name="type"
-                    value={value?.type}
-                    onChange={onFieldChange}
-                    keySelector={newEnumKeySelector}
-                    labelSelector={newEnumLabelSelector}
-                    options={barChartTypeOptions ?? []}
-                    error={error?.type}
-                />
-                <SegmentInput
-                    label="Chart Direction"
-                    name="direction"
-                    value={value?.direction}
-                    onChange={onFieldChange}
-                    keySelector={newEnumKeySelector}
-                    labelSelector={newEnumLabelSelector}
-                    options={barChartDirectionOptions ?? []}
-                    error={error?.direction}
-                />
-                <TextInput
-                    value={value?.title}
-                    name="title"
-                    label="Title"
-                    onChange={onFieldChange}
-                    error={error?.title}
-                    disabled={disabled}
-                />
-                <TextInput
-                    value={value?.subTitle}
-                    name="subTitle"
-                    label="Subtitle"
-                    onChange={onFieldChange}
-                    error={error?.subTitle}
-                    disabled={disabled}
-                />
                 <TextInput
                     value={value?.horizontalAxisTitle}
                     name="horizontalAxisTitle"
@@ -573,28 +589,28 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                 />
                 <GridLineStylesEdit
                     name="verticalGridLine"
-                    label="Vertical Grid Label"
+                    label="Vertical Grid Line"
                     value={value?.style?.verticalGridLine}
                     onChange={onStyleChange}
                     disabled={disabled}
                 />
                 <GridLineStylesEdit
                     name="horizontalGridLine"
-                    label="Horizontal Grid Label"
+                    label="Horizontal Grid Line"
                     value={value?.style?.horizontalGridLine}
                     onChange={onStyleChange}
                     disabled={disabled}
                 />
                 <TickStylesEdit
                     name="verticalTick"
-                    label="Vertical Grid Label"
+                    label="Vertical Tick"
                     value={value?.style?.verticalTick}
                     onChange={onStyleChange}
                     disabled={disabled}
                 />
                 <TickStylesEdit
                     name="horizontalTick"
-                    label="Horizontal Grid Label"
+                    label="Horizontal Tick"
                     value={value?.style?.horizontalTick}
                     onChange={onStyleChange}
                     disabled={disabled}
