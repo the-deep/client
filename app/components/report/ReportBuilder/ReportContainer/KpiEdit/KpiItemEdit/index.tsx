@@ -1,6 +1,7 @@
 import React from 'react';
 import { randomString } from '@togglecorp/fujs';
 import {
+    ColorInput,
     ExpandableContainer,
     DateInput,
     NumberInput,
@@ -137,6 +138,15 @@ function KpiItemEdit(props: Props) {
                 value={value.date}
                 disabled={disabled}
                 readOnly={readOnly}
+            />
+            <ColorInput
+                name="color"
+                value={value?.color}
+                onChange={onFieldChange}
+                /* FIXME Add error, label and disabled in color input
+                 error={error?.color}
+                 disabled={disabled}
+                 */
             />
         </ExpandableContainer>
     );

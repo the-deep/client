@@ -114,11 +114,11 @@ const PILLARS_FOR_REPORT = gql`
     }
 `;
 
-// TODO: Remaining for BarChart
 // NOTE: The same schema is being used to generate snapshot
 // So, if we need to change anything here, lets change it in
 // server/apps/common/schema_snapshots.py
 // SnapshotQuery::AnalysisReport
+// and PublicReportView component
 const REPORT_DETAILS = gql`
     ${ORGANIZATION_FRAGMENT}
     ${TEXT_STYLE_FRAGMENT}
@@ -276,26 +276,32 @@ const REPORT_DETAILS = gql`
                                 subtitle
                                 title
                                 value
+                                style {
+                                    sourceContentStyle {
+                                        ...TextStyle
+                                    }
+                                    subtitleContentStyle {
+                                        ...TextStyle
+                                    }
+                                    titleContentStyle {
+                                        ...TextStyle
+                                    }
+                                    valueContentStyle {
+                                        ...TextStyle
+                                    }
+                                }
                             }
                             sourceContentStyle {
-                                content {
-                                    ...TextStyle
-                                }
+                                ...TextStyle
                             }
                             subtitleContentStyle {
-                                content {
-                                    ...TextStyle
-                                }
+                                ...TextStyle
                             }
                             titleContentStyle {
-                                content {
-                                    ...TextStyle
-                                }
+                                ...TextStyle
                             }
                             valueContentStyle {
-                                content {
-                                    ...TextStyle
-                                }
+                                ...TextStyle
                             }
                         }
                         text {
@@ -385,6 +391,15 @@ const REPORT_DETAILS = gql`
                                     ...TickStyle
                                 }
                             }
+                        }
+                        timelineChart {
+                            category
+                            date
+                            detail
+                            sheet
+                            source
+                            sourceUrl
+                            title
                         }
                     }
                 }
