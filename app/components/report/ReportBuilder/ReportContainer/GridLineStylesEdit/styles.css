@@ -1,4 +1,4 @@
-.grid-line-element-styles-edit {
+.grid-line-styles-edit {
     display: flex;
     flex-direction: column;
     gap: var(--dui-spacing-medium);

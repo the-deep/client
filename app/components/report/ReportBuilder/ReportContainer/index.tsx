@@ -58,7 +58,7 @@ import UrlEdit from './UrlEdit';
 import KpiEdit from './KpiEdit';
 import TextEdit from './TextEdit';
 import TimelineChartEdit from './TimelineChartEdit';
-import BarChartEdit from './BarChartEdit';
+import BarChartEdit, { defaultBarChartValue } from './BarChartEdit';
 import ImageEdit from './ImageEdit';
 import Content from './Content';
 import {
@@ -326,21 +326,25 @@ function ReportContainer(props: Props) {
         row,
     ]);
 
+    const onConfigChange = useFormObject<
+        'contentConfiguration', ContentConfigType
+    >('contentConfiguration', onFieldChange, {});
+
     const handleContentAddClick = useCallback((
         newContentType: AnalysisReportContainerContentTypeEnum,
     ) => {
         hideContentAddModal();
         handleContentEdit();
         onFieldChange(newContentType, 'contentType');
+        if (newContentType === 'BAR_CHART') {
+            onConfigChange(defaultBarChartValue, 'barChart');
+        }
     }, [
+        onConfigChange,
         onFieldChange,
         handleContentEdit,
         hideContentAddModal,
     ]);
-
-    const onConfigChange = useFormObject<
-        'contentConfiguration', ContentConfigType
-    >('contentConfiguration', onFieldChange, {});
 
     const handleImageFileUploadChange = useCallback((file: AnalysisReportUploadType) => {
         const newClientId = randomString();
