@@ -88,7 +88,7 @@ function LegendElementStylesEdit<NAME extends string>(props: Props<NAME>) {
         ?.enums?.AnalysisReportCategoricalLegendStyleSerializerShape;
 
     return (
-        <div className={_cs(className, styles.legendElementsStylesEdit)}>
+        <div className={_cs(className, styles.legendStylesEdit)}>
             {loading && <PendingMessage />}
             {label && (
                 <Heading size="extraSmall">{label}</Heading>

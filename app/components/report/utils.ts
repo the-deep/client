@@ -22,6 +22,8 @@ import {
     AnalysisReportTextStyleType,
     AnalysisReportVariableTypeEnum,
     AnalysisReportAggregationTypeEnum,
+    AnalysisReportGridLineStyleType,
+    AnalysisReportTickStyleType,
 } from '#generated/types';
 
 import {
@@ -133,6 +135,36 @@ export function resolveTextStyle(
         fontFamily: family ?? generalFamily,
         fontWeight: weight ?? generalWeight,
         fontSize: size ?? generalSize,
+    };
+}
+
+export function resolveLineStyle(
+    lineStyle: (
+        PurgeNull<AnalysisReportTickStyleType>
+        | PurgeNull<AnalysisReportGridLineStyleType> | undefined
+    ),
+    generalLineStyle: (
+        PurgeNull<AnalysisReportTickStyleType>
+        | PurgeNull<AnalysisReportGridLineStyleType> | undefined
+    ),
+): React.CSSProperties {
+    if (!lineStyle && !generalLineStyle) {
+        return {};
+    }
+
+    const {
+        lineWidth,
+        lineColor,
+    } = lineStyle ?? {};
+
+    const {
+        lineWidth: generalLineWidth,
+        lineColor: generalLineColor,
+    } = generalLineStyle ?? {};
+
+    return {
+        stroke: lineColor ?? generalLineColor ?? 'lightgray',
+        strokeWidth: lineWidth ?? generalLineWidth,
     };
 }
 

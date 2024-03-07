@@ -28,6 +28,7 @@ import {
     resolveTextStyle,
     resolveKpiTextStyle,
 } from '../../../utils';
+import BarContent from './BarContent';
 
 import styles from './styles.css';
 
@@ -384,6 +385,7 @@ function Content(props: Props) {
             </div>
         );
     }
+
     if (contentType === 'TIMELINE_CHART') {
         const timelineConfig = configuration?.timelineChart;
 
@@ -419,6 +421,20 @@ function Content(props: Props) {
                     data={transformedData}
                 />
             </div>
+        );
+    }
+
+    if (contentType === 'BAR_CHART') {
+        const barChartContentData = contentData?.[0];
+        return (
+            <BarContent
+                configuration={configuration?.barChart}
+                cacheData={
+                    barChartContentData?.data as (
+                        Record<string, string | number | undefined>[] | undefined
+                    )
+                }
+            />
         );
     }
 
