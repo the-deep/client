@@ -383,6 +383,10 @@ export type UrlConfigType = NonNullable<ContentConfigType['url']>;
 type UrlConfigSchema = ObjectSchema<UrlConfigType, PartialFormType>;
 type UrlConfigSchemaFields = ReturnType<UrlConfigSchema['fields']>;
 
+export type MapConfigType = NonNullable<ContentConfigType['map']>;
+type MapConfigSchema = ObjectSchema<MapConfigType, PartialFormType>;
+type MapConfigSchemaFields = ReturnType<MapConfigSchema['fields']>;
+
 export type TimelineChartConfigType = NonNullable<ContentConfigType['timelineChart']>;
 type TimelineConfigSchema = ObjectSchema<TimelineChartConfigType, PartialFormType>;
 type TimelineConfigSchemaFields = ReturnType<TimelineConfigSchema['fields']>;

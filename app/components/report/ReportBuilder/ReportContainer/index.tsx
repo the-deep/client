@@ -55,6 +55,7 @@ import ContentAddModal from './ContentAddModal';
 import HeadingEdit from './HeadingEdit';
 import ContainerStylesEdit from './ContainerStylesEdit';
 import UrlEdit from './UrlEdit';
+import MapEdit from './MapEdit';
 import KpiEdit from './KpiEdit';
 import TextEdit from './TextEdit';
 import TimelineChartEdit from './TimelineChartEdit';
@@ -679,6 +680,14 @@ function ReportContainer(props: Props) {
                                 onChange={onConfigChange}
                                 value={configuration?.url}
                                 error={getErrorObject(error?.contentConfiguration)?.url}
+                            />
+                        )}
+                        {contentType === 'MAP' && (
+                            <MapEdit
+                                name="map"
+                                onChange={onConfigChange}
+                                value={configuration?.map}
+                                error={getErrorObject(error?.contentConfiguration)?.map}
                             />
                         )}
                         <ContainerStylesEdit
