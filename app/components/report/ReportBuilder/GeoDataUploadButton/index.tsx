@@ -19,8 +19,13 @@ import {
     useMutation,
 } from '@apollo/client';
 import {
+    randomString,
     isNotDefined,
+    isDefined,
 } from '@togglecorp/fujs';
+import {
+    featureEach,
+} from '@turf/meta';
 import {
     useAlert,
     Pager,
@@ -43,11 +48,20 @@ import {
     AnalysisReportUploadMetadataGeoJsonInputType,
 } from '#generated/types';
 
+import {
+    categorizeData,
+    getColumnType,
+    getCompleteness,
+} from '../../utils';
 import { DeepReplace } from '../../schema';
 import DatasetItem from '../DatasetItem';
 import VariableItem from '../VariableItem';
 
 import styles from './styles.css';
+
+export declare type Properties = {
+    [name: string]: unknown;
+} | null;
 
 const GEO_FILES = gql`
     query GeoFilesList(
@@ -354,7 +368,7 @@ function GeoDataUploadButton(props: Props) {
         const submit = createSubmitHandler(
             validate,
             setError,
-            (sheetData) => {
+            (variableData) => {
                 uploadAttachment({
                     variables: {
                         projectId,
@@ -362,7 +376,7 @@ function GeoDataUploadButton(props: Props) {
                             file: uploadedFileId,
                             report: reportId,
                             type: 'GEOJSON',
-                            metadata: sheetData as AnalysisReportUploadMetadataInputType,
+                            metadata: variableData as AnalysisReportUploadMetadataInputType,
                         },
                     },
                 });
@@ -383,11 +397,43 @@ function GeoDataUploadButton(props: Props) {
             if (!file) {
                 return;
             }
+            try {
+                const arrayB = await file.arrayBuffer();
+                const parsedJson = JSON.parse(new TextDecoder().decode(arrayB));
+                const features: Properties[] = [];
+                let propObject: Record<string, unknown> = {};
+                featureEach(parsedJson, (feature) => {
+                    features.push(feature.properties);
+                    propObject = {
+                        ...propObject,
+                        ...(feature?.properties ?? {}),
+                    };
+                });
+                const columns = Object.keys(propObject).map((rawItem) => {
+                    const categorizedData = categorizeData(features.filter(isDefined), rawItem);
+                    const dataType = getColumnType(categorizedData);
+                    return ({
+                        clientId: randomString(),
+                        name: rawItem,
+                        type: dataType,
+                        completeness: getCompleteness(categorizedData, dataType),
+                    });
+                });
+                setGeoFieldValue(columns, 'variables');
+            } catch {
+                alert.show(
+                    'There was an error parsing the geojson file.',
+                    { variant: 'error' },
+                );
+            }
 
             setDatasetToConfigure(undefined);
             setUploadedFileId(newFileId);
         },
-        [],
+        [
+            setGeoFieldValue,
+            alert,
+        ],
     );
 
     const {
@@ -403,7 +449,9 @@ function GeoDataUploadButton(props: Props) {
             column: datum,
             setVariableValue,
             index: variableIndex,
+            disabled: isDefined(datasetToConfigure),
         }), [
+            datasetToConfigure,
             setVariableValue,
         ],
     );
@@ -443,7 +491,7 @@ function GeoDataUploadButton(props: Props) {
                         headingSize="extraSmall"
                         headerActions={(
                             <GalleryFileUpload
-                                title="Upload excel"
+                                title="Upload Geojson"
                                 onSuccess={handleFileInputChange}
                                 projectIds={projectId ? [projectId] : undefined}
                                 acceptFileType=".geojson"
