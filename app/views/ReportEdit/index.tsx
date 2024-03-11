@@ -45,6 +45,7 @@ import {
     BasicOrganization,
 } from '#components/selections/NewOrganizationMultiSelectInput';
 import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
+import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 import {
     ORGANIZATION_FRAGMENT,
     TEXT_STYLE_FRAGMENT,
@@ -514,6 +515,11 @@ function ReportEdit(props: Props) {
         quantitativeReportUploads,
         setQuantitativeReportUploads,
     ] = useState<BasicAnalysisReportUpload[] | null | undefined>();
+
+    const [
+        geoDataUploads,
+        setGeoDataUploads,
+    ] = useState<ReportGeoUploadType[] | null | undefined>();
 
     const analysisId = new URL(window.location.href).searchParams.get('analysis');
 
@@ -988,6 +994,8 @@ function ReportEdit(props: Props) {
                         onImageReportUploadsChange={setImageReportUploads}
                         quantitativeReportUploads={quantitativeReportUploads}
                         onQuantitativeReportUploadsChange={setQuantitativeReportUploads}
+                        geoDataUploads={geoDataUploads}
+                        onGeoDataUploadsChange={setGeoDataUploads}
                         leftContentRef={leftContentRef}
                         onContentEditChange={setContentEditPaneVisibility}
                     />

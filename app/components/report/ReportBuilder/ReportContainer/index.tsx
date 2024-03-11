@@ -41,6 +41,7 @@ import {
     AnalysisReportContainerContentTypeEnum,
 } from '#generated/types';
 import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
+import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
     type PartialFormType,
@@ -55,6 +56,7 @@ import ContentAddModal from './ContentAddModal';
 import HeadingEdit from './HeadingEdit';
 import ContainerStylesEdit from './ContainerStylesEdit';
 import UrlEdit from './UrlEdit';
+import MapEdit from './MapEdit';
 import KpiEdit from './KpiEdit';
 import TextEdit from './TextEdit';
 import TimelineChartEdit from './TimelineChartEdit';
@@ -101,6 +103,10 @@ export interface Props {
     onImageReportUploadsChange: React.Dispatch<React.SetStateAction<
         BasicAnalysisReportUpload[] | undefined | null
     >>;
+    geoDataUploads: ReportGeoUploadType[] | undefined | null;
+    onGeoDataUploadsChange: React.Dispatch<React.SetStateAction<
+        ReportGeoUploadType[] | undefined | null
+    >>;
     readOnly?: boolean;
     disabled?: boolean;
     leftContentRef: React.RefObject<HTMLDivElement> | undefined;
@@ -134,6 +140,8 @@ function ReportContainer(props: Props) {
         onImageReportUploadsChange,
         quantitativeReportUploads,
         onQuantitativeReportUploadsChange,
+        geoDataUploads,
+        onGeoDataUploadsChange,
     } = props;
 
     const index = useMemo(() => (
@@ -679,6 +687,16 @@ function ReportContainer(props: Props) {
                                 onChange={onConfigChange}
                                 value={configuration?.url}
                                 error={getErrorObject(error?.contentConfiguration)?.url}
+                            />
+                        )}
+                        {contentType === 'MAP' && (
+                            <MapEdit
+                                name="map"
+                                onChange={onConfigChange}
+                                value={configuration?.map}
+                                error={getErrorObject(error?.contentConfiguration)?.map}
+                                geoDataUploads={geoDataUploads}
+                                onGeoDataUploadsChange={onGeoDataUploadsChange}
                             />
                         )}
                         <ContainerStylesEdit
