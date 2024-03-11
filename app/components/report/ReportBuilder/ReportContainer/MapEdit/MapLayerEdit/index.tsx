@@ -1,11 +1,14 @@
-import React from 'react';
-import { randomString } from '@togglecorp/fujs';
+import React, { useCallback } from 'react';
+import {
+    _cs,
+    randomString,
+} from '@togglecorp/fujs';
 import {
     Container,
-    SegmentInput,
+    SelectInput,
     TextInput,
     NumberInput,
-    QuickActionButton,
+    QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 import {
     SetValueArg,
@@ -28,11 +31,13 @@ import {
 import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
+    type ContentDataType,
     type MapLayerType,
     type MapLayerConfigType,
 } from '../../../../schema';
 
 import SymbolLayerEdit from './SymbolLayer';
+import MapboxLayerEdit from './MapboxLayerEdit';
 
 import styles from './styles.css';
 
@@ -54,6 +59,9 @@ interface Props {
     >>;
     index: number;
     error: Error<MapLayerType> | undefined;
+    contentData: ContentDataType[] | undefined;
+    onContentDataChange: (newContentData: SetValueArg<ContentDataType[] | undefined>) => void;
+    className?: string;
     disabled?: boolean;
     readOnly?: boolean;
 }
@@ -69,7 +77,10 @@ function MapLayerEdit(props: Props) {
         readOnly,
         typeOptions,
         geoDataUploads,
+        contentData,
+        className,
         onGeoDataUploadsChange,
+        onContentDataChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -84,17 +95,24 @@ function MapLayerEdit(props: Props) {
         'layerConfig', MapLayerConfigType
     >('layerConfig', onFieldChange, {});
 
+    const handleRemoveLayer = useCallback(() => {
+        onRemove(index);
+    }, [onRemove, index]);
+
     return (
         <Container
+            className={_cs(className, styles.mapLayerEdit)}
             heading={value.name ?? `Item: ${index + 1}`}
+            headingSize="extraSmall"
             headerActions={(
-                <QuickActionButton
+                <QuickActionConfirmButton
                     title="Remove Attributes"
+                    message="Are you sure you want to remove this layer?"
                     name={index}
-                    onClick={onRemove}
+                    onConfirm={handleRemoveLayer}
                 >
                     <IoTrash />
-                </QuickActionButton>
+                </QuickActionConfirmButton>
             )}
             contentClassName={styles.mapLayer}
         >
@@ -107,7 +125,7 @@ function MapLayerEdit(props: Props) {
                 disabled={disabled}
                 readOnly={readOnly}
             />
-            <SegmentInput
+            <SelectInput
                 label="Layer Type"
                 name="type"
                 value={value?.type}
@@ -116,7 +134,6 @@ function MapLayerEdit(props: Props) {
                 labelSelector={newEnumLabelSelector}
                 options={typeOptions ?? []}
                 error={error?.type}
-                spacing="compact"
             />
             <NumberInput
                 name="opacity"
@@ -130,11 +147,21 @@ function MapLayerEdit(props: Props) {
             {value?.type === 'SYMBOL_LAYER' && (
                 <SymbolLayerEdit
                     name="symbolLayer"
+                    contentData={contentData}
                     value={value?.layerConfig?.symbolLayer}
                     onChange={onLayerConfigChange}
                     geoDataUploads={geoDataUploads}
                     onGeoDataUploadsChange={onGeoDataUploadsChange}
+                    onContentDataChange={onContentDataChange}
                     error={getErrorObject(error?.layerConfig)?.symbolLayer}
+                />
+            )}
+            {value?.type === 'MAPBOX_LAYER' && (
+                <MapboxLayerEdit
+                    name="mapboxLayer"
+                    value={value?.layerConfig?.mapboxLayer}
+                    onChange={onLayerConfigChange}
+                    error={getErrorObject(error?.layerConfig)?.mapboxLayer}
                 />
             )}
         </Container>

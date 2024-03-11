@@ -205,6 +205,14 @@ const PUBLIC_REPORT_DETAILS = gql`
                                     }
                                 }
                             }
+                            geojson {
+                                variables {
+                                    clientId
+                                    completeness
+                                    name
+                                    type
+                                }
+                            }
                         }
                     }
                 }
@@ -420,6 +428,7 @@ function PublicReportView(props: Props) {
         finalData,
         organizationOptions,
         quantitativeReportUploads,
+        geoDataUploads,
         imageReportUploads,
     } = useMemo(() => {
         if (!snapshotData?.publicReportDetails) {
@@ -427,6 +436,7 @@ function PublicReportView(props: Props) {
                 finalData: undefined,
                 organizationOptions: undefined,
                 quantitativeReportUploads: undefined,
+                geoDataUploads: undefined,
                 imageReportUploads: undefined,
             };
         }
@@ -488,6 +498,29 @@ function PublicReportView(props: Props) {
                 })
                 .filter(isDefined)
         );
+        const geoFiles = (
+            uploadItems
+                ?.filter((item) => (item.upload?.type === 'GEOJSON'))
+                .map((item) => {
+                    const fileId = item.upload?.file?.id;
+                    if (!item.upload || !fileId) {
+                        return undefined;
+                    }
+
+                    return ({
+                        ...item.upload,
+                        file: {
+                            id: fileId,
+                            title: fileToFileDetailsMap[fileId].title,
+                            file: {
+                                name: fileToFileDetailsMap[fileId]?.file?.name,
+                                url: fileToFileDetailsMap[fileId]?.file?.url,
+                            },
+                        },
+                    });
+                })
+                .filter(isDefined)
+        );
 
         const newContainers = [...(data.containers ?? [])];
         newContainers.sort((a, b) => (
@@ -510,6 +543,7 @@ function PublicReportView(props: Props) {
             finalData: final,
             organizationOptions: data.organizations,
             quantitativeReportUploads: quantitativeFiles,
+            geoDataUploads: geoFiles,
             imageReportUploads: imageFiles,
         };
     }, [
@@ -553,8 +587,7 @@ function PublicReportView(props: Props) {
                         imageReportUploads={imageReportUploads}
                         onImageReportUploadsChange={handleUpdate}
                         onQuantitativeReportUploadsChange={handleUpdate}
-                        // FIXME: Handle stuff
-                        geoDataUploads={[]}
+                        geoDataUploads={geoDataUploads}
                         onGeoDataUploadsChange={handleUpdate}
                     />
                 </>

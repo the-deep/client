@@ -185,9 +185,14 @@ type XlsxMetadataType {
   sheets: [SheetType!]!
 }
 
+type GeojsonMetadataType {
+  variables: [VariableType!]!
+}
+
 type ContentUploadMetadata {
   csv: CsvMetadataType
   xlsx: XlsxMetadataType
+  geojson: GeojsonMetadataType
 }
 
 type ContentUploadType {
