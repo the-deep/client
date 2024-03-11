@@ -5,6 +5,7 @@ import {
     QuickActionButton,
     SegmentInput,
     TextInput,
+    NumberInput,
 } from '@the-deep/deep-ui';
 import {
     SetValueArg,
@@ -14,6 +15,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { IoTrash } from 'react-icons/io5';
 
+import BooleanInput from '#components/selections/BooleanInput';
 import {
     AnalysisReportMapLayerTypeEnum,
 } from '#generated/types';
@@ -77,6 +79,8 @@ function MapLayerEdit(props: Props) {
         defaultMapLayer,
     );
 
+    console.log('value', value);
+
     const onLayerConfigChange = useFormObject<
         'layerConfig', MapLayerConfigType
     >('layerConfig', onFieldChange, {});
@@ -115,6 +119,21 @@ function MapLayerEdit(props: Props) {
                 options={typeOptions ?? []}
                 error={error?.type}
                 spacing="compact"
+            />
+            <NumberInput
+                name="opacity"
+                label="Opacity"
+                value={value?.opacity}
+                onChange={onFieldChange}
+                error={error?.opacity}
+                disabled={disabled}
+                readOnly={readOnly}
+            />
+            <BooleanInput
+                name="visible"
+                label="Layer Visibility"
+                value={value?.visible}
+                onChange={onFieldChange}
             />
             {value?.type === 'SYMBOL_LAYER' && (
                 <SymbolLayerEdit
