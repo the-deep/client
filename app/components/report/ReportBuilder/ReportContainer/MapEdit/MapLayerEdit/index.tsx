@@ -1,11 +1,11 @@
 import React from 'react';
 import { randomString } from '@togglecorp/fujs';
 import {
-    ExpandableContainer,
-    QuickActionButton,
+    Container,
     SegmentInput,
     TextInput,
     NumberInput,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
     SetValueArg,
@@ -13,9 +13,10 @@ import {
     useFormObject,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { IoTrash } from 'react-icons/io5';
+import {
+    IoTrash,
+} from 'react-icons/io5';
 
-import BooleanInput from '#components/selections/BooleanInput';
 import {
     AnalysisReportMapLayerTypeEnum,
 } from '#generated/types';
@@ -79,14 +80,12 @@ function MapLayerEdit(props: Props) {
         defaultMapLayer,
     );
 
-    console.log('value', value);
-
     const onLayerConfigChange = useFormObject<
         'layerConfig', MapLayerConfigType
     >('layerConfig', onFieldChange, {});
 
     return (
-        <ExpandableContainer
+        <Container
             heading={value.name ?? `Item: ${index + 1}`}
             headerActions={(
                 <QuickActionButton
@@ -98,7 +97,6 @@ function MapLayerEdit(props: Props) {
                 </QuickActionButton>
             )}
             contentClassName={styles.mapLayer}
-            withoutBorder
         >
             <TextInput
                 label="Name"
@@ -129,12 +127,6 @@ function MapLayerEdit(props: Props) {
                 disabled={disabled}
                 readOnly={readOnly}
             />
-            <BooleanInput
-                name="visible"
-                label="Layer Visibility"
-                value={value?.visible}
-                onChange={onFieldChange}
-            />
             {value?.type === 'SYMBOL_LAYER' && (
                 <SymbolLayerEdit
                     name="symbolLayer"
@@ -145,7 +137,7 @@ function MapLayerEdit(props: Props) {
                     error={getErrorObject(error?.layerConfig)?.symbolLayer}
                 />
             )}
-        </ExpandableContainer>
+        </Container>
     );
 }
 
