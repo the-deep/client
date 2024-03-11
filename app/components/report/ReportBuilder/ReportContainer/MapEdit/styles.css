@@ -1,4 +1,25 @@
 .map-edit {
     display: flex;
     flex-direction: column;
+
+    .expanded-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+
+        .content {
+            display: flex;
+            gap: var(--dui-spacing-small);
+
+            .layers {
+                --layer-list-width: 12.5rem;
+                display: flex;
+                flex-direction: column;
+                flex-shrink: 0;
+                width: var(--layer-list-width);
+                gap: var(--dui-spacing-extra-small);
+            }
+        }
+    }
+
 }
