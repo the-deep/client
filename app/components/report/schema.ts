@@ -406,6 +406,7 @@ type MapboxLayerConfigSchemaFields = ReturnType<MapboxLayerConfigSchema['fields'
 const mapboxLayerConfigSchema: MapboxLayerConfigSchema = {
     fields: (): MapboxLayerConfigSchemaFields => ({
         mapboxStyle: [],
+        accessToken: [],
     }),
 };
 
@@ -416,7 +417,7 @@ type LineLayerConfigSchemaFields = ReturnType<LineLayerConfigSchema['fields']>;
 
 const lineLayerConfigSchema: LineLayerConfigSchema = {
     fields: (): LineLayerConfigSchemaFields => ({
-        uploadId: [requiredCondition],
+        contentReferenceId: [requiredCondition],
         labelColumn: [],
         showLabels: [],
         showInLegend: [],
@@ -430,7 +431,7 @@ type PolygonLayerConfigSchemaFields = ReturnType<PolygonLayerConfigSchema['field
 
 const polygonLayerConfigSchema: PolygonLayerConfigSchema = {
     fields: (): PolygonLayerConfigSchemaFields => ({
-        uploadId: [requiredCondition],
+        contentReferenceId: [requiredCondition],
         labelColumn: [],
     }),
 };
@@ -442,7 +443,7 @@ type SymbolLayerConfigSchemaFields = ReturnType<SymbolLayerConfigSchema['fields'
 
 const symbolLayerConfigSchema: SymbolLayerConfigSchema = {
     fields: (): SymbolLayerConfigSchemaFields => ({
-        uploadId: [requiredCondition],
+        contentReferenceId: [requiredCondition],
         labelColumn: [requiredCondition],
     }),
 };
@@ -538,6 +539,7 @@ const schema: FormSchema = {
                             member: (): ContentDataFormSchemaMember => ({
                                 fields: (): ContentDataSchemaFields => ({
                                     clientId: [requiredCondition],
+                                    clientReferenceId: [requiredCondition],
                                     data: [defaultUndefinedType],
                                     id: [defaultUndefinedType],
                                     upload: [requiredCondition],

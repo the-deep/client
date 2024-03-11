@@ -32,17 +32,6 @@ import BarContent from './BarContent';
 
 import styles from './styles.css';
 
-/*
-export interface TimelineData {
-    date: string;
-    category: string;
-    title: string;
-    details: string;
-    source: string;
-    link: string;
-}
- */
-
 type TimelineCacheData = Record<string, string | number | undefined>[] | undefined;
 
 interface Props {
@@ -51,6 +40,8 @@ interface Props {
     configuration: ContentConfigType | undefined;
     generalConfiguration: ConfigType | undefined;
     imageReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    downloadsPending: boolean;
+    downloadedGeoData: Record<string, unknown>;
 }
 
 function Content(props: Props) {
@@ -59,7 +50,9 @@ function Content(props: Props) {
         configuration: configurationFromProps,
         generalConfiguration,
         contentData,
+        downloadsPending,
         imageReportUploads,
+        downloadedGeoData,
     } = props;
 
     const configuration = removeNull(configurationFromProps);
@@ -292,6 +285,9 @@ function Content(props: Props) {
         return (
             <MapContent
                 configuration={configuration?.map}
+                contentData={contentData}
+                downloadedGeoData={downloadedGeoData}
+                downloadsPending={downloadsPending}
             />
         );
     }

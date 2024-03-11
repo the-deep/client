@@ -1,10 +1,13 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
     _cs,
     isDefined,
     listToMap,
+    mapToMap,
+    unique,
 } from '@togglecorp/fujs';
 import {
+    useAlert,
     ListView,
     Button,
     Header,
@@ -21,6 +24,8 @@ import { IoPencil } from 'react-icons/io5';
 
 import Avatar from '#components/Avatar';
 import Portal from '#components/Portal';
+import { useLazyRequest } from '#base/utils/restRequest';
+
 import {
     BasicOrganization,
     organizationTitleSelector,
@@ -39,6 +44,10 @@ import ReportContainer, { Props as ReportContainerProps } from './ReportContaine
 import MetadataEdit from './MetadataEdit';
 
 import styles from './styles.css';
+
+export declare type Properties = {
+    [name: string]: unknown;
+} | null;
 
 const metadataFields: (keyof PartialFormType)[] = [
     'slug',
@@ -127,6 +136,12 @@ function ReportBuilder(props: Props) {
         onContentEditChange(!!containerId);
     }, [onContentEditChange]);
 
+    const alert = useAlert();
+
+    const [geoFilesPending, setGeoFilesPending] = useState(false);
+    const [geoData, setGeoData] = useState<Record<string, unknown>>({});
+    const [downloadedIds, setDownloadedIds] = useState<Record<string, boolean>>({});
+
     const reportContainerRendererParams = useCallback(
         (
             containerKey: string,
@@ -154,6 +169,8 @@ function ReportBuilder(props: Props) {
                 onQuantitativeReportUploadsChange,
                 geoDataUploads,
                 onGeoDataUploadsChange,
+                downloadedGeoData: geoData,
+                downloadsPending: geoFilesPending,
                 leftContentRef,
                 style: item.style,
                 reportId,
@@ -164,6 +181,8 @@ function ReportBuilder(props: Props) {
             });
         },
         [
+            geoFilesPending,
+            geoData,
             reportId,
             containerToEdit,
             imageReportUploads,
@@ -182,6 +201,99 @@ function ReportBuilder(props: Props) {
             disabled,
         ],
     );
+
+    const geoFilesToDownload = useMemo(() => {
+        const contentData = value?.containers
+            ?.filter((item) => item.contentType === 'MAP')
+            ?.map((item) => item.contentData).filter(isDefined).flat();
+        const validFiles = geoDataUploads?.map((item) => {
+            if (!item.file.file?.url) {
+                return undefined;
+            }
+            return {
+                url: item.file.file.url,
+                uploadId: item.id,
+            };
+        }).filter(isDefined);
+
+        const uploadIdToLinkMap = listToMap(
+            validFiles,
+            (item) => item.uploadId,
+            (item) => item.url,
+        );
+        const usedFiles = contentData?.filter(
+            (item) => (item.upload ? isDefined(uploadIdToLinkMap?.[item.upload]) : false),
+        ).map((item) => ((item.upload && uploadIdToLinkMap?.[item.upload]) ? {
+            upload: item.upload,
+            url: uploadIdToLinkMap?.[item.upload],
+        } : undefined)).filter(isDefined);
+        return unique(usedFiles ?? [], (item) => item.upload)
+            .filter((item) => !downloadedIds[item.upload]);
+    }, [
+        downloadedIds,
+        value?.containers,
+        geoDataUploads,
+    ]);
+
+    const {
+        trigger: fetchFile,
+    } = useLazyRequest<ArrayBuffer, { upload: string; url: string; }>({
+        url: (context) => context.url,
+        isFile: true,
+        method: 'GET',
+        onSuccess: (file, context) => {
+            try {
+                const parsedJson = JSON.parse(new TextDecoder().decode(file));
+
+                setGeoData((oldData) => ({
+                    ...oldData,
+                    [context.upload]: parsedJson,
+                }));
+            } catch {
+                alert.show(
+                    'There was an error parsing the geojson file.',
+                    { variant: 'error' },
+                );
+            }
+            const currReportIndex = geoFilesToDownload.findIndex(
+                (item) => item.upload === context.upload,
+            );
+            const nextFile = geoFilesToDownload[currReportIndex + 1];
+            if (nextFile) {
+                fetchFile(geoFilesToDownload[currReportIndex + 1]);
+            } else {
+                setDownloadedIds((oldIds) => ({
+                    ...oldIds,
+                    ...mapToMap(geoData, (item) => item, () => true),
+                    [context.upload]: true,
+                }));
+                setGeoFilesPending(false);
+            }
+        },
+        onFailure: (_, context) => {
+            const currReportIndex = geoFilesToDownload.findIndex(
+                (item) => item.upload === context.upload,
+            );
+            const nextFile = geoFilesToDownload[currReportIndex + 1];
+            if (nextFile) {
+                fetchFile(geoFilesToDownload[currReportIndex + 1]);
+            } else {
+                setGeoFilesPending(false);
+            }
+        },
+    });
+
+    useEffect(() => {
+        if (geoFilesToDownload.length > 0) {
+            setGeoFilesPending(true);
+            setTimeout(() => {
+                fetchFile(geoFilesToDownload[0]);
+            }, 500);
+        }
+    }, [
+        fetchFile,
+        geoFilesToDownload,
+    ]);
 
     const errorInMetadata = useMemo(() => (
         metadataFields.some((field) => analyzeErrors(
