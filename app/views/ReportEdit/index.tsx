@@ -402,6 +402,34 @@ const REPORT_DETAILS = gql`
                             sourceUrl
                             title
                         }
+                        map {
+                            layers {
+                                clientId
+                                name
+                                visible
+                                opacity
+                                type
+                                layerConfig {
+                                    mapboxLayer {
+                                        mapboxStyle
+                                    }
+                                    lineLayer {
+                                        uploadId
+                                        labelColumn
+                                        showLabels
+                                        showInLegend
+                                    }
+                                    polygonLayer {
+                                        uploadId
+                                        labelColumn
+                                    }
+                                    symbolLayer {
+                                        uploadId
+                                        labelColumn
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 isPublic

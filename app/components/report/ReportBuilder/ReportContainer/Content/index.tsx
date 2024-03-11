@@ -27,6 +27,7 @@ import {
 import {
     resolveTextStyle,
 } from '../../../utils';
+import MapContent from './MapContent';
 import BarContent from './BarContent';
 
 import styles from './styles.css';
@@ -283,6 +284,14 @@ function Content(props: Props) {
                         Record<string, string | number | undefined>[] | undefined
                     )
                 }
+            />
+        );
+    }
+
+    if (contentType === 'MAP') {
+        return (
+            <MapContent
+                configuration={configuration?.map}
             />
         );
     }
