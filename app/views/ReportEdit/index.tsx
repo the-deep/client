@@ -207,6 +207,7 @@ const REPORT_DETAILS = gql`
                     }
                     contentData {
                         clientId
+                        clientReferenceId
                         data
                         id
                         upload {
@@ -241,6 +242,14 @@ const REPORT_DETAILS = gql`
                                             name
                                             type
                                         }
+                                    }
+                                }
+                                geojson {
+                                    variables {
+                                        clientId
+                                        completeness
+                                        name
+                                        type
                                     }
                                 }
                             }
@@ -408,23 +417,25 @@ const REPORT_DETAILS = gql`
                                 name
                                 visible
                                 opacity
+                                order
                                 type
                                 layerConfig {
                                     mapboxLayer {
                                         mapboxStyle
+                                        accessToken
                                     }
                                     lineLayer {
-                                        uploadId
+                                        contentReferenceId
                                         labelColumn
                                         showLabels
                                         showInLegend
                                     }
                                     polygonLayer {
-                                        uploadId
+                                        contentReferenceId
                                         labelColumn
                                     }
                                     symbolLayer {
-                                        uploadId
+                                        contentReferenceId
                                         labelColumn
                                     }
                                 }
@@ -706,6 +717,11 @@ function ReportEdit(props: Props) {
                     uploadItems?.filter((item) => (
                         item.upload.type === 'CSV'
                         || item.upload.type === 'XLSX'
+                    )).map((item) => (item.upload)),
+                );
+                setGeoDataUploads(
+                    uploadItems?.filter((item) => (
+                        item.upload.type === 'GEOJSON'
                     )).map((item) => (item.upload)),
                 );
                 setOrganizationOptions(valueToSet.organizations);

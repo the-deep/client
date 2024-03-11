@@ -1,4 +1,5 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     IoEyeOutline,
     IoEyeOffOutline,
@@ -22,6 +23,7 @@ interface Props {
     onVisibilityClick: () => void;
     attributes?: Attributes;
     listeners?: Listeners;
+    selected: boolean;
     index: number;
 }
 
@@ -32,6 +34,7 @@ function MapLayerItem(props: Props) {
         onClick,
         visibility,
         onVisibilityClick,
+        selected,
         attributes,
         listeners,
         index,
@@ -39,7 +42,7 @@ function MapLayerItem(props: Props) {
 
     return (
         <Element
-            className={styles.layer}
+            className={_cs(selected && styles.selected, styles.layer)}
             icons={(
                 <QuickActionButton
                     name={index}
