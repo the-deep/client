@@ -11,13 +11,24 @@
             display: flex;
             gap: var(--dui-spacing-small);
 
-            .layers {
-                --layer-list-width: 12.5rem;
+            .list {
                 display: flex;
                 flex-direction: column;
-                flex-shrink: 0;
-                width: var(--layer-list-width);
-                gap: var(--dui-spacing-extra-small);
+                gap: var(--dui-spacing-small);
+
+                .layers {
+                    --layer-list-width: 12.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    flex-shrink: 0;
+                    width: var(--layer-list-width);
+                    gap: var(--dui-spacing-extra-small);
+                }
+            }
+
+            .map-layer-edit {
+                flex-grow: 1;
+                border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
             }
         }
     }

@@ -8,6 +8,11 @@
     .button {
         border-radius: 0;
         width: 100%;
+        text-align: left;
         text-transform: none;
+    }
+
+    &.selected {
+        background-color: var(--dui-color-background-information);
     }
 }

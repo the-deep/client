@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     type EntriesAsList,
+    type SetValueArg,
     type Error,
     getErrorObject,
     useFormObject,
@@ -112,6 +113,8 @@ export interface Props {
     leftContentRef: React.RefObject<HTMLDivElement> | undefined;
     onContentEditChange: (newVal: string | undefined) => void;
     isBeingEdited: boolean;
+    downloadedGeoData: Record<string, unknown>;
+    downloadsPending: boolean;
 }
 
 function ReportContainer(props: Props) {
@@ -142,6 +145,8 @@ function ReportContainer(props: Props) {
         onQuantitativeReportUploadsChange,
         geoDataUploads,
         onGeoDataUploadsChange,
+        downloadedGeoData,
+        downloadsPending,
     } = props;
 
     const index = useMemo(() => (
@@ -360,6 +365,7 @@ function ReportContainer(props: Props) {
             {
                 upload: file.id,
                 clientId: newClientId,
+                clientReferenceId: newClientId,
             },
         ], 'contentData');
         onImageReportUploadsChange((oldFiles) => ([
@@ -380,6 +386,7 @@ function ReportContainer(props: Props) {
             {
                 upload: file,
                 clientId: newClientId,
+                clientReferenceId: newClientId,
             },
         ], 'contentData');
     }, [onFieldChange]);
@@ -415,9 +422,17 @@ function ReportContainer(props: Props) {
             {
                 upload: file,
                 clientId: newClientId,
+                clientReferenceId: newClientId,
             },
         ], 'contentData');
     }, [onFieldChange]);
+
+    const handleContentDataChange = useCallback(
+        (newContentData: SetValueArg<ContentDataType[] | undefined>) => {
+            onFieldChange(newContentData, 'contentData');
+        },
+        [onFieldChange],
+    );
 
     const handleBarCacheDataChange = useCallback((
         newCache: Record<string, string | number | undefined>[] | undefined,
@@ -504,6 +519,8 @@ function ReportContainer(props: Props) {
                     generalConfiguration={generalConfiguration}
                     contentData={contentData}
                     imageReportUploads={imageReportUploads}
+                    downloadsPending={downloadsPending}
+                    downloadedGeoData={downloadedGeoData}
                     // quantitativeReportUploads={quantitativeReportUploads}
                 />
             )}
@@ -694,9 +711,11 @@ function ReportContainer(props: Props) {
                                 name="map"
                                 onChange={onConfigChange}
                                 value={configuration?.map}
+                                contentData={contentData}
                                 error={getErrorObject(error?.contentConfiguration)?.map}
                                 geoDataUploads={geoDataUploads}
                                 onGeoDataUploadsChange={onGeoDataUploadsChange}
+                                onContentDataChange={handleContentDataChange}
                             />
                         )}
                         <ContainerStylesEdit
