@@ -33,6 +33,7 @@ import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSel
 import MapLayerEdit from './MapLayerEdit';
 import MapLayerItem from './MapLayerItem';
 import {
+    type ContentDataType,
     type MapConfigType,
     type MapLayerType,
 } from '../../../schema';
@@ -61,10 +62,12 @@ interface Props<NAME extends string> {
     onChange: (value: SetValueArg<MapConfigType | undefined>, name: NAME) => void;
     error?: Error<MapConfigType>;
     disabled?: boolean;
+    contentData: ContentDataType[] | undefined;
     geoDataUploads: ReportGeoUploadType[] | undefined | null;
     onGeoDataUploadsChange: React.Dispatch<React.SetStateAction<
         ReportGeoUploadType[] | undefined | null
     >>;
+    onContentDataChange: (newContentData: SetValueArg<ContentDataType[] | undefined>) => void;
 }
 
 function MapEdit<NAME extends string>(props: Props<NAME>) {
@@ -77,6 +80,8 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         disabled,
         geoDataUploads,
         onGeoDataUploadsChange,
+        contentData,
+        onContentDataChange,
     } = props;
 
     const {
@@ -146,14 +151,20 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         );
     }, [onFieldChange]);
 
-    const layerRendererParams = useCallback((_: string, datum: LayerType, index: number) => ({
+    const layerRendererParams = useCallback((
+        layerKey: string,
+        datum: LayerType,
+        index: number,
+    ) => ({
         clientId: datum.clientId,
         title: datum.name ?? `Item ${index + 1}`,
         index,
         onClick: handleLayerClick,
         visibility: !!datum.visible,
+        selected: layerKey === selectedLayerId,
         onVisibilityClick: () => handleLayerVisibilityClick(!!datum.visible, index),
     }), [
+        selectedLayerId,
         handleLayerClick,
         handleLayerVisibilityClick,
     ]);
@@ -178,47 +189,51 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
             >
                 {/* FIXME: Restrict the height of this container */}
                 <div className={styles.content}>
-                    <SortableList
-                        name="layers"
-                        className={styles.layers}
-                        data={value?.layers}
-                        onChange={handleLayerOrderChange}
-                        direction="vertical"
-                        keySelector={layerKeySelector}
-                        rendererParams={layerRendererParams}
-                        rendererClassName={styles.layerButton}
-                        renderer={MapLayerItem}
-                        pending={false}
-                        errored={false}
-                        filtered={false}
-                        showDragOverlay
-
-                    />
+                    <div className={styles.list}>
+                        <SortableList
+                            name="layers"
+                            className={styles.layers}
+                            data={value?.layers}
+                            onChange={handleLayerOrderChange}
+                            direction="vertical"
+                            keySelector={layerKeySelector}
+                            rendererParams={layerRendererParams}
+                            rendererClassName={styles.layerButton}
+                            renderer={MapLayerItem}
+                            pending={false}
+                            errored={false}
+                            filtered={false}
+                            showDragOverlay
+                        />
+                        <Button
+                            title="Add attributes"
+                            name="addAttributes"
+                            onClick={handleAddMapLayer}
+                            className={styles.addButton}
+                            variant="tertiary"
+                            spacing="compact"
+                            disabled={disabled}
+                        >
+                            Add Layer
+                        </Button>
+                    </div>
                     {isDefined(selectedLayerId) && isDefined(selectedLayer) && (
                         <MapLayerEdit
-                            key={selectedLayerId}
-                            value={selectedLayer}
-                            index={value?.layers?.indexOf(selectedLayer) ?? 0}
-                            onChange={onMapLayerChange}
+                            className={styles.mapLayerEdit}
+                            contentData={contentData}
                             error={mapLayersError?.[selectedLayerId]}
-                            typeOptions={mapLayerTypeOptions}
-                            onRemove={onMapLayerRemove}
                             geoDataUploads={geoDataUploads}
+                            index={value?.layers?.indexOf(selectedLayer) ?? 0}
+                            key={selectedLayerId}
+                            onChange={onMapLayerChange}
+                            onContentDataChange={onContentDataChange}
                             onGeoDataUploadsChange={onGeoDataUploadsChange}
+                            onRemove={onMapLayerRemove}
+                            typeOptions={mapLayerTypeOptions}
+                            value={selectedLayer}
                         />
                     )}
                 </div>
-                <Button
-                    title="Add attributes"
-                    name="addAttributes"
-                    onClick={handleAddMapLayer}
-                    className={styles.addButton}
-                    variant="tertiary"
-                    spacing="compact"
-                    disabled={disabled}
-                >
-                    Add Layer
-                </Button>
             </ExpandableContainer>
         </div>
     );

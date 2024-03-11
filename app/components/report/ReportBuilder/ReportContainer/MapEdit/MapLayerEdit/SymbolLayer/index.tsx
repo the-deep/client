@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     Container,
-    TextInput,
+    SelectInput,
 } from '@the-deep/deep-ui';
 import { useParams } from 'react-router-dom';
+import {
+    randomString,
+    isDefined,
+    isNotDefined,
+} from '@togglecorp/fujs';
 import {
     SetValueArg,
     Error,
@@ -11,15 +16,22 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
+import {
+    AnalysisReportVariableType,
+} from '#generated/types';
 import GeoDataSelectInput, {
     ReportGeoUploadType,
 } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
+    type ContentDataType,
     type SymbolLayerConfigType,
 } from '../../../../../schema';
 
 import styles from './styles.css';
+
+const columnKeySelector = (item: AnalysisReportVariableType) => item.clientId ?? '';
+const columnLabelSelector = (item: AnalysisReportVariableType) => item.name ?? '';
 
 interface Props<NAME extends string> {
     name: NAME;
@@ -33,6 +45,8 @@ interface Props<NAME extends string> {
     onGeoDataUploadsChange: React.Dispatch<React.SetStateAction<
         ReportGeoUploadType[] | undefined | null
     >>;
+    contentData: ContentDataType[] | undefined;
+    onContentDataChange: (newContentData: SetValueArg<ContentDataType[] | undefined>) => void;
     disabled?: boolean;
     readOnly?: boolean;
 }
@@ -42,6 +56,8 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
         value,
         onChange,
         error: riskyError,
+        contentData,
+        onContentDataChange,
         disabled,
         readOnly,
         name,
@@ -63,6 +79,69 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
         NAME, SymbolLayerConfigType
     >(name, onChange, {});
 
+    const handleFileUploadChange = useCallback((newFileUploadId: string | undefined) => {
+        const newReferenceId = randomString();
+        onContentDataChange((oldVal) => {
+            if (!oldVal) {
+                return ([{
+                    clientId: newReferenceId,
+                    clientReferenceId: newReferenceId,
+                    upload: newFileUploadId,
+                }]);
+            }
+            const selectedIndex = (oldVal ?? [])?.findIndex(
+                (item) => item.clientReferenceId === value?.contentReferenceId,
+            );
+            if (selectedIndex === -1 && isDefined(newFileUploadId)) {
+                return ([
+                    ...oldVal,
+                    {
+                        clientId: newReferenceId,
+                        clientReferenceId: newReferenceId,
+                        upload: newFileUploadId,
+                    },
+                ]);
+            }
+            const newVal = [...oldVal];
+            if (selectedIndex !== -1 && isNotDefined(newFileUploadId)) {
+                newVal.splice(
+                    selectedIndex,
+                    1,
+                );
+            } else {
+                newVal.splice(
+                    selectedIndex,
+                    1,
+                    {
+                        clientId: newReferenceId,
+                        clientReferenceId: newReferenceId,
+                        upload: newFileUploadId,
+                    },
+                );
+            }
+            return newVal;
+        });
+        onFieldChange(newReferenceId, 'contentReferenceId');
+    }, [
+        onFieldChange,
+        value?.contentReferenceId,
+        onContentDataChange,
+    ]);
+
+    const fileId = useMemo(() => (
+        contentData?.find((item) => item.clientReferenceId === value?.contentReferenceId)?.upload
+    ), [
+        contentData,
+        value?.contentReferenceId,
+    ]);
+
+    const propertyOptions = useMemo(() => (
+        geoDataUploads?.find((item) => item.id === fileId)?.metadata?.geojson?.variables
+    ), [
+        geoDataUploads,
+        fileId,
+    ]);
+
     return (
         <Container
             heading="Layer Properties"
@@ -70,9 +149,9 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
         >
             {projectId && reportId && (
                 <GeoDataSelectInput
-                    name="uploadId"
-                    value={value?.uploadId}
-                    onChange={onFieldChange}
+                    name="contentReferenceId"
+                    value={fileId}
+                    onChange={handleFileUploadChange}
                     projectId={projectId}
                     reportId={reportId}
                     options={geoDataUploads}
@@ -81,17 +160,18 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
                     types={['GEOJSON']}
                     disabled={disabled}
                     readOnly={readOnly}
-                    error={error?.uploadId}
+                    error={error?.contentReferenceId}
                 />
             )}
-            {/*
-                FIXME: Need to change this to select input
-            */}
-            <TextInput
+            <SelectInput
+                label="Column"
                 name="labelColumn"
                 value={value?.labelColumn}
                 onChange={onFieldChange}
+                keySelector={columnKeySelector}
+                labelSelector={columnLabelSelector}
                 error={error?.labelColumn}
+                options={propertyOptions}
                 disabled={disabled}
                 readOnly={readOnly}
             />
