@@ -7,6 +7,7 @@ import {
 } from '@the-deep/deep-ui';
 import { randomString } from '@togglecorp/fujs';
 import {
+    PartialForm,
     SetValueArg,
     useFormObject,
 } from '@togglecorp/toggle-form';
@@ -16,12 +17,14 @@ import {
 } from '@apollo/client';
 
 import {
+    AnalysisReportVariableType,
     ReportVariableTypeEnumQuery,
     ReportVariableTypeEnumQueryVariables,
 } from '#generated/types';
 
-import { type VariableType } from '../..';
 import styles from './styles.css';
+
+type VariableType = PartialForm<Omit<NonNullable<AnalysisReportVariableType>, 'clientId'> & { clientId: string }, 'clientId'>;
 
 const REPORT_VARIABLE_TYPE_ENUM = gql`
     query ReportVariableTypeEnum {

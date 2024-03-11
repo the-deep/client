@@ -28,6 +28,7 @@ import {
 } from '#components/selections/NewOrganizationMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
 import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
+import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
     type PartialFormType,
@@ -64,6 +65,10 @@ interface Props {
     onImageReportUploadsChange: React.Dispatch<React.SetStateAction<
         BasicAnalysisReportUpload[] | undefined | null
     >>;
+    geoDataUploads: ReportGeoUploadType[] | undefined | null;
+    onGeoDataUploadsChange: React.Dispatch<React.SetStateAction<
+        ReportGeoUploadType[] | undefined | null
+    >>;
     quantitativeReportUploads: BasicAnalysisReportUpload[] | undefined | null;
     onQuantitativeReportUploadsChange: React.Dispatch<React.SetStateAction<
         BasicAnalysisReportUpload[] | undefined | null
@@ -89,6 +94,8 @@ function ReportBuilder(props: Props) {
         onImageReportUploadsChange,
         quantitativeReportUploads,
         onQuantitativeReportUploadsChange,
+        geoDataUploads,
+        onGeoDataUploadsChange,
     } = props;
 
     const [containerToEdit, setContainerToEdit] = useState<string>();
@@ -145,6 +152,8 @@ function ReportBuilder(props: Props) {
                 onImageReportUploadsChange,
                 quantitativeReportUploads,
                 onQuantitativeReportUploadsChange,
+                geoDataUploads,
+                onGeoDataUploadsChange,
                 leftContentRef,
                 style: item.style,
                 reportId,
@@ -161,6 +170,8 @@ function ReportBuilder(props: Props) {
             onImageReportUploadsChange,
             quantitativeReportUploads,
             onQuantitativeReportUploadsChange,
+            geoDataUploads,
+            onGeoDataUploadsChange,
             handleContainerEdit,
             leftContentRef,
             error,

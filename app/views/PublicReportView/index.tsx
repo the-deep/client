@@ -553,6 +553,9 @@ function PublicReportView(props: Props) {
                         imageReportUploads={imageReportUploads}
                         onImageReportUploadsChange={handleUpdate}
                         onQuantitativeReportUploadsChange={handleUpdate}
+                        // FIXME: Handle stuff
+                        geoDataUploads={[]}
+                        onGeoDataUploadsChange={handleUpdate}
                     />
                 </>
             ) : (
