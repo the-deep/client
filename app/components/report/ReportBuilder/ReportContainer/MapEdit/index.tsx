@@ -1,7 +1,12 @@
-import React, { useMemo, useCallback } from 'react';
+import React, {
+    useMemo,
+    useCallback,
+    useState,
+} from 'react';
 import {
     _cs,
     randomString,
+    isDefined,
 } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
@@ -17,6 +22,8 @@ import {
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
+import SortableList from '#components/SortableList';
+import { reorder } from '#utils/common';
 import {
     ReportMapEnumsQuery,
 } from '#generated/types';
@@ -24,6 +31,7 @@ import {
 import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import MapLayerEdit from './MapLayerEdit';
+import MapLayerItem from './MapLayerItem';
 import {
     type MapConfigType,
     type MapLayerType,
@@ -42,6 +50,9 @@ const MAP_ENUMS = gql`
         }
     }
 `;
+
+type LayerType = NonNullable<MapConfigType['layers']>[number];
+const layerKeySelector = (l: LayerType) => l.clientId;
 
 interface Props<NAME extends string> {
     name: NAME;
@@ -111,6 +122,50 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         );
     }, [onFieldChange]);
 
+    const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>();
+
+    const handleLayerClick = useCallback((newLayerId: string) => {
+        setSelectedLayerId(newLayerId);
+    }, []);
+
+    const handleLayerVisibilityClick = useCallback((oldVal: boolean, index: number) => {
+        onFieldChange(
+            (oldValue: MapConfigType['layers']) => {
+                const safeOldValue = oldValue ?? [];
+                const selected = safeOldValue[index];
+                if (!selected) {
+                    return oldValue;
+                }
+                const newValue = [
+                    ...safeOldValue,
+                ];
+                newValue.splice(index, 1, { ...selected, visible: !oldVal });
+                return newValue;
+            },
+            'layers',
+        );
+    }, [onFieldChange]);
+
+    const layerRendererParams = useCallback((_: string, datum: LayerType, index: number) => ({
+        clientId: datum.clientId,
+        title: datum.name ?? `Item ${index + 1}`,
+        index,
+        onClick: handleLayerClick,
+        visibility: !!datum.visible,
+        onVisibilityClick: () => handleLayerVisibilityClick(!!datum.visible, index),
+    }), [
+        handleLayerClick,
+        handleLayerVisibilityClick,
+    ]);
+
+    const selectedLayer = value?.layers?.find(
+        (layerItem) => layerItem.clientId === selectedLayerId,
+    );
+
+    const handleLayerOrderChange = useCallback((newOrder: MapLayerType[]) => {
+        onFieldChange(reorder(newOrder), 'layers');
+    }, [onFieldChange]);
+
     return (
         <div className={_cs(className, styles.mapEdit)}>
             <NonFieldError error={error} />
@@ -121,19 +176,38 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
                 contentClassName={styles.expandedBody}
                 withoutBorder
             >
-                {value?.layers?.map((attribute, index) => (
-                    <MapLayerEdit
-                        key={attribute.clientId}
-                        value={attribute}
-                        index={index}
-                        onChange={onMapLayerChange}
-                        error={mapLayersError?.[attribute.clientId]}
-                        typeOptions={mapLayerTypeOptions}
-                        onRemove={onMapLayerRemove}
-                        geoDataUploads={geoDataUploads}
-                        onGeoDataUploadsChange={onGeoDataUploadsChange}
+                {/* FIXME: Restrict the height of this container */}
+                <div className={styles.content}>
+                    <SortableList
+                        name="layers"
+                        className={styles.layers}
+                        data={value?.layers}
+                        onChange={handleLayerOrderChange}
+                        direction="vertical"
+                        keySelector={layerKeySelector}
+                        rendererParams={layerRendererParams}
+                        rendererClassName={styles.layerButton}
+                        renderer={MapLayerItem}
+                        pending={false}
+                        errored={false}
+                        filtered={false}
+                        showDragOverlay
+
                     />
-                ))}
+                    {isDefined(selectedLayerId) && isDefined(selectedLayer) && (
+                        <MapLayerEdit
+                            key={selectedLayerId}
+                            value={selectedLayer}
+                            index={value?.layers?.indexOf(selectedLayer) ?? 0}
+                            onChange={onMapLayerChange}
+                            error={mapLayersError?.[selectedLayerId]}
+                            typeOptions={mapLayerTypeOptions}
+                            onRemove={onMapLayerRemove}
+                            geoDataUploads={geoDataUploads}
+                            onGeoDataUploadsChange={onGeoDataUploadsChange}
+                        />
+                    )}
+                </div>
                 <Button
                     title="Add attributes"
                     name="addAttributes"
