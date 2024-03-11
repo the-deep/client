@@ -443,18 +443,56 @@ type SymbolLayerConfigSchemaFields = ReturnType<SymbolLayerConfigSchema['fields'
 const symbolLayerConfigSchema: SymbolLayerConfigSchema = {
     fields: (): SymbolLayerConfigSchemaFields => ({
         uploadId: [requiredCondition],
-        labelColumn: [],
+        labelColumn: [requiredCondition],
     }),
 };
 
-const mapLayerConfigSchema: MapLayerConfigSchema = {
-    fields: (): MapLayerConfigSchemaFields => ({
-        mapboxLayer: mapboxLayerConfigSchema,
-        lineLayer: lineLayerConfigSchema,
-        polygonLayer: polygonLayerConfigSchema,
-        symbolLayer: symbolLayerConfigSchema,
-    }),
-};
+const mapLayerMemberItem = (): MapLayerFormSchemaMember => ({
+    fields: (layerValue): MapLayerSchemaFields => {
+        let layerConfigSchema: MapLayerConfigSchemaFields = {
+            mapboxLayer: [defaultUndefinedType],
+            lineLayer: [defaultUndefinedType],
+            polygonLayer: [defaultUndefinedType],
+            symbolLayer: [defaultUndefinedType],
+        };
+
+        if (layerValue?.type === 'MAPBOX_LAYER') {
+            layerConfigSchema = {
+                ...layerConfigSchema,
+                mapboxLayer: mapboxLayerConfigSchema,
+            };
+        } else if (layerValue?.type === 'LINE_LAYER') {
+            layerConfigSchema = {
+                ...layerConfigSchema,
+                lineLayer: lineLayerConfigSchema,
+            };
+        } else if (layerValue?.type === 'POLYGON_LAYER') {
+            layerConfigSchema = {
+                ...layerConfigSchema,
+                polygonLayer: polygonLayerConfigSchema,
+            };
+        } else if (layerValue?.type === 'SYMBOL_LAYER') {
+            layerConfigSchema = {
+                ...layerConfigSchema,
+                symbolLayer: symbolLayerConfigSchema,
+            };
+        }
+
+        const baseLayerSchema: MapLayerSchemaFields = ({
+            clientId: [requiredCondition],
+            name: [requiredCondition],
+            order: [requiredCondition],
+            type: [requiredCondition],
+            visible: [requiredCondition],
+            opacity: [],
+            layerConfig: {
+                fields: () => layerConfigSchema,
+            },
+        });
+
+        return baseLayerSchema;
+    },
+});
 
 export type TimelineChartConfigType = NonNullable<ContentConfigType['timelineChart']>;
 type TimelineConfigSchema = ObjectSchema<TimelineChartConfigType, PartialFormType>;
@@ -602,17 +640,7 @@ const schema: FormSchema = {
                                             fields: (): MapConfigSchemaFields => ({
                                                 layers: {
                                                     keySelector: (item) => item.clientId,
-                                                    member: (): MapLayerFormSchemaMember => ({
-                                                        fields: (): MapLayerSchemaFields => ({
-                                                            clientId: [requiredCondition],
-                                                            name: [requiredCondition],
-                                                            order: [requiredCondition],
-                                                            type: [requiredCondition],
-                                                            visible: [requiredCondition],
-                                                            opacity: [],
-                                                            layerConfig: mapLayerConfigSchema,
-                                                        }),
-                                                    }),
+                                                    member: mapLayerMemberItem,
                                                 },
                                             }),
                                         },
