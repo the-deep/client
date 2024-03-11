@@ -1,0 +1,9 @@
+.geo-data-select-input {
+    display: flex;
+    align-items: center;
+    gap: var(--dui-spacing-small);
+
+    .button {
+        flex-shrink: 0;
+    }
+}
