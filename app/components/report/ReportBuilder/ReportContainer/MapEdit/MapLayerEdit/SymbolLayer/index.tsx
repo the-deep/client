@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     Container,
+    TextInput,
 } from '@the-deep/deep-ui';
 import { useParams } from 'react-router-dom';
 import {
@@ -83,6 +84,17 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
                     error={error?.uploadId}
                 />
             )}
+            {/*
+                FIXME: Need to change this to select input
+            */}
+            <TextInput
+                name="labelColumn"
+                value={value?.labelColumn}
+                onChange={onFieldChange}
+                error={error?.labelColumn}
+                disabled={disabled}
+                readOnly={readOnly}
+            />
         </Container>
     );
 }
