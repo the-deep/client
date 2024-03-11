@@ -102,6 +102,8 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
                 const newClientId = randomString();
                 const newMapLayer: MapLayerType = {
                     clientId: newClientId,
+                    visible: true,
+                    order: safeOldValue.length + 1,
                 };
                 return [...safeOldValue, newMapLayer];
             },
