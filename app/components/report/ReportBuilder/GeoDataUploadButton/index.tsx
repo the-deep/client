@@ -19,14 +19,13 @@ import {
     useMutation,
 } from '@apollo/client';
 import {
-    isDefined,
-    isNotDefined,
     randomString,
+    isNotDefined,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
-    read,
-    type WorkBook,
-} from 'xlsx';
+    featureEach,
+} from '@turf/meta';
 import {
     useAlert,
     Pager,
@@ -39,31 +38,33 @@ import {
 
 import GalleryFileUpload from '#components/GalleryFileUpload';
 import {
-    ReportXlsxCsvFileMetadataQuery,
-    ReportXlsxCsvFileMetadataQueryVariables,
-    XlsxCsvFilesListQuery,
-    XlsxCsvFilesListQueryVariables,
-    CreateReportFileMutation,
-    CreateReportFileMutationVariables,
-    AnalysisReportVariableInputType,
+    ReportGeoFileMetadataQuery,
+    ReportGeoFileMetadataQueryVariables,
+    GeoFilesListQuery,
+    GeoFilesListQueryVariables,
+    CreateReportGeoFileMutation,
+    CreateReportGeoFileMutationVariables,
     AnalysisReportUploadMetadataInputType,
-    AnalysisReportUploadMetadataXlsxInputType,
+    AnalysisReportUploadMetadataGeoJsonInputType,
 } from '#generated/types';
 
 import {
     categorizeData,
     getColumnType,
     getCompleteness,
-    getColumnsFromWorkSheet,
-    getRawDataForWorkSheet,
 } from '../../utils';
 import { DeepReplace } from '../../schema';
-import SheetItem from './SheetItem';
 import DatasetItem from '../DatasetItem';
+import VariableItem from '../VariableItem';
+
 import styles from './styles.css';
 
-const XLSX_CSV_FILES = gql`
-    query XlsxCsvFilesList(
+export declare type Properties = {
+    [name: string]: unknown;
+} | null;
+
+const GEO_FILES = gql`
+    query GeoFilesList(
         $projectId: ID!,
         $reportId: ID!,
         $activePage: Int,
@@ -71,7 +72,7 @@ const XLSX_CSV_FILES = gql`
     ) {
         project(id: $projectId) {
             analysisReportUploads(
-                types: [CSV, XLSX],
+                types: [GEOJSON],
                 page: $activePage,
                 pageSize: $pageSize,
                 report: [$reportId],
@@ -92,8 +93,8 @@ const XLSX_CSV_FILES = gql`
     }
 `;
 
-const REPORT_XLSX_CSV_FILE_METADATA = gql`
-    query ReportXlsxCsvFileMetadata(
+const REPORT_GEO_FILE_METADATA = gql`
+    query ReportGeoFileMetadata(
         $reportUploadId: ID!,
         $projectId: ID!,
     ) {
@@ -110,26 +111,12 @@ const REPORT_XLSX_CSV_FILE_METADATA = gql`
                 }
                 type
                 metadata {
-                    csv {
-                        headerRow
+                    geojson {
                         variables {
                             clientId
                             completeness
                             name
                             type
-                        }
-                    }
-                    xlsx {
-                        sheets {
-                            clientId
-                            headerRow
-                            name
-                            variables {
-                                clientId
-                                completeness
-                                name
-                                type
-                            }
                         }
                     }
                 }
@@ -138,8 +125,8 @@ const REPORT_XLSX_CSV_FILE_METADATA = gql`
     }
 `;
 
-const CREATE_REPORT_FILE = gql`
-    mutation CreateReportFile(
+const CREATE_REPORT_GEO_FILE = gql`
+    mutation CreateReportGeoFile(
         $projectId: ID!,
         $data: AnalysisReportUploadInputType!,
     ) {
@@ -163,30 +150,12 @@ const CREATE_REPORT_FILE = gql`
                         }
                     }
                     metadata {
-                        csv {
-                            headerRow
-                            variables {
-                                completeness
-                                name
-                                type
-                            }
-                        }
                         geojson {
                             variables {
+                                clientId
                                 completeness
                                 name
                                 type
-                            }
-                        }
-                        xlsx {
-                            sheets {
-                                headerRow
-                                name
-                                variables {
-                                    completeness
-                                    name
-                                    type
-                                }
                             }
                         }
                     }
@@ -198,72 +167,53 @@ const CREATE_REPORT_FILE = gql`
     }
 `;
 
-type DatasetItemType = NonNullable<NonNullable<NonNullable<XlsxCsvFilesListQuery['project']>['analysisReportUploads']>['results']>[number];
+type DatasetItemType = NonNullable<NonNullable<NonNullable<GeoFilesListQuery['project']>['analysisReportUploads']>['results']>[number];
 const datasetKeySelector = (item: DatasetItemType) => item.id;
 
 type InitialFormType = PartialForm<PurgeNull<AnalysisReportUploadMetadataInputType>>;
-type InitialSheetType = PartialForm<NonNullable<NonNullable<NonNullable<AnalysisReportUploadMetadataXlsxInputType>['sheets']>[number]>>;
-type FinalSheetType = PartialForm<Omit<InitialSheetType, 'clientId'>> & { clientId: string };
+type InitialVariableType = PartialForm<NonNullable<NonNullable<NonNullable<AnalysisReportUploadMetadataGeoJsonInputType>['variables']>[number]>>;
+type FinalVariableType = PartialForm<Omit<InitialVariableType, 'clientId'>> & { clientId: string };
 
-type InitialVariableType = NonNullable<InitialSheetType['variables']>[number];
-type FinalVariableType = PartialForm<Omit<AnalysisReportVariableInputType, 'clientId'>> & { clientId: string };
-
-type PartialFormType = DeepReplace<
-    DeepReplace<InitialFormType, InitialSheetType, FinalSheetType>,
-    InitialVariableType,
-    FinalVariableType
->;
-export type SheetType = NonNullable<NonNullable<PartialFormType['xlsx']>['sheets']>[number];
-export type VariableType = NonNullable<NonNullable<NonNullable<NonNullable<PartialFormType['xlsx']>['sheets']>[number]>['variables']>[number];
+type PartialFormType = DeepReplace<InitialFormType, InitialVariableType, FinalVariableType>;
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-type XlsxFormType = NonNullable<PartialFormType['xlsx']>;
-type XlsxFormSchema = ObjectSchema<XlsxFormType, PartialFormType>;
-type XlsxFormSchemaFields = ReturnType<XlsxFormSchema['fields']>;
+type GeoFormType = NonNullable<PartialFormType['geojson']>;
+type GeoFormSchema = ObjectSchema<GeoFormType, PartialFormType>;
+type GeoFormSchemaFields = ReturnType<GeoFormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        xlsx: {
-            fields: (): XlsxFormSchemaFields => ({
-                sheets: {
-                    keySelector: (sheet) => sheet.clientId,
+        geojson: {
+            fields: (): GeoFormSchemaFields => ({
+                variables: {
+                    keySelector: (column: FinalVariableType) => column.clientId,
                     member: () => ({
                         fields: () => ({
                             name: [requiredCondition],
                             clientId: [requiredCondition],
-                            headerRow: [requiredCondition],
-                            variables: {
-                                keySelector: (column: VariableType) => column.clientId,
-                                member: () => ({
-                                    fields: () => ({
-                                        name: [requiredCondition],
-                                        clientId: [requiredCondition],
-                                        type: [requiredCondition],
-                                        completeness: [],
-                                    }),
-                                }),
-                            },
+                            type: [requiredCondition],
+                            completeness: [],
                         }),
                     }),
                 },
             }),
         },
         csv: [],
-        geojson: [],
+        xlsx: [],
     }),
 };
 
+const variableKeySelector = (column: FinalVariableType) => column.clientId;
+
 const MAX_ITEMS_PER_PAGE = 10;
 const defaultValue: PartialFormType = {};
-
-const sheetKeySelector = (sheet: SheetType) => sheet.clientId;
 
 interface Props {
     className?: string;
 }
 
-function DatasetsConfigureButton(props: Props) {
+function GeoDataUploadButton(props: Props) {
     const {
         className,
     } = props;
@@ -279,7 +229,6 @@ function DatasetsConfigureButton(props: Props) {
 
     const [activePage, setActivePage] = useState(1);
     const [uploadedFileId, setUploadedFileId] = useState<string>();
-    const [workBook, setWorkBook] = useState<WorkBook>();
 
     const [
         datasetToConfigure,
@@ -301,10 +250,7 @@ function DatasetsConfigureButton(props: Props) {
         pristine,
     } = useForm(schema, defaultValue);
 
-    const setXlsxFieldValue = useFormObject<'xlsx', XlsxFormType>('xlsx', setFieldValue, {});
-    const {
-        setValue: setSheetValue,
-    } = useFormArray('sheets', setXlsxFieldValue);
+    const setGeoFieldValue = useFormObject<'geojson', GeoFormType>('geojson', setFieldValue, {});
 
     const variables = useMemo(() => ((projectId && reportId) ? ({
         projectId,
@@ -321,8 +267,8 @@ function DatasetsConfigureButton(props: Props) {
         data: datasetsList,
         loading: datasetsListLoading,
         refetch,
-    } = useQuery<XlsxCsvFilesListQuery, XlsxCsvFilesListQueryVariables>(
-        XLSX_CSV_FILES,
+    } = useQuery<GeoFilesListQuery, GeoFilesListQueryVariables>(
+        GEO_FILES,
         {
             skip: !variables,
             variables,
@@ -340,10 +286,10 @@ function DatasetsConfigureButton(props: Props) {
     ]);
 
     useQuery<
-        ReportXlsxCsvFileMetadataQuery,
-        ReportXlsxCsvFileMetadataQueryVariables
+        ReportGeoFileMetadataQuery,
+        ReportGeoFileMetadataQueryVariables
     >(
-        REPORT_XLSX_CSV_FILE_METADATA,
+        REPORT_GEO_FILE_METADATA,
         {
             skip: !reportFileVariables,
             variables: reportFileVariables,
@@ -355,8 +301,6 @@ function DatasetsConfigureButton(props: Props) {
                 ) {
                     return;
                 }
-                setWorkBook(undefined);
-                setUploadedFileId(undefined);
                 /* TODO: Handle this gracefully with proper error handling
                  * Not needed at this point because, we don't need to edit any further
                 const {
@@ -379,8 +323,8 @@ function DatasetsConfigureButton(props: Props) {
 
     const [
         uploadAttachment,
-    ] = useMutation<CreateReportFileMutation, CreateReportFileMutationVariables>(
-        CREATE_REPORT_FILE,
+    ] = useMutation<CreateReportGeoFileMutation, CreateReportGeoFileMutationVariables>(
+        CREATE_REPORT_GEO_FILE,
         {
             onCompleted: (response) => {
                 if (!response || !response.project?.analysisReportUploadCreate?.result) {
@@ -424,15 +368,15 @@ function DatasetsConfigureButton(props: Props) {
         const submit = createSubmitHandler(
             validate,
             setError,
-            (sheetData) => {
+            (variableData) => {
                 uploadAttachment({
                     variables: {
                         projectId,
                         data: {
                             file: uploadedFileId,
                             report: reportId,
-                            type: 'XLSX',
-                            metadata: sheetData as AnalysisReportUploadMetadataInputType,
+                            type: 'GEOJSON',
+                            metadata: variableData as AnalysisReportUploadMetadataInputType,
                         },
                     },
                 });
@@ -453,77 +397,62 @@ function DatasetsConfigureButton(props: Props) {
             if (!file) {
                 return;
             }
-
-            setDatasetToConfigure(undefined);
-            setUploadedFileId(newFileId);
-
             try {
                 const arrayB = await file.arrayBuffer();
-                const newWorkbook = read(arrayB, { type: 'binary' });
-                setWorkBook(newWorkbook);
-
-                const uploadedSheets: SheetType[] = Object.keys(newWorkbook.Sheets).map(
-                    (sheet) => {
-                        const workSheet = newWorkbook.Sheets[sheet];
-                        const rawColumns = getColumnsFromWorkSheet(workSheet, 1);
-                        const dataInObject = getRawDataForWorkSheet(
-                            workSheet,
-                            rawColumns,
-                            1,
-                        );
-
-                        const columns = rawColumns.map((rawItem) => {
-                            const categorizedData = categorizeData(dataInObject, rawItem);
-                            const dataType = getColumnType(categorizedData);
-                            return ({
-                                clientId: randomString(),
-                                name: rawItem,
-                                type: dataType,
-                                completeness: getCompleteness(categorizedData, dataType),
-                            });
-                        });
-
-                        return ({
-                            clientId: randomString(),
-                            name: sheet,
-                            headerRow: 1,
-                            variables: columns,
-                        });
-                    },
-                );
-                setXlsxFieldValue(uploadedSheets, 'sheets');
+                const parsedJson = JSON.parse(new TextDecoder().decode(arrayB));
+                const features: Properties[] = [];
+                let propObject: Record<string, unknown> = {};
+                featureEach(parsedJson, (feature) => {
+                    features.push(feature.properties);
+                    propObject = {
+                        ...propObject,
+                        ...(feature?.properties ?? {}),
+                    };
+                });
+                const columns = Object.keys(propObject).map((rawItem) => {
+                    const categorizedData = categorizeData(features.filter(isDefined), rawItem);
+                    const dataType = getColumnType(categorizedData);
+                    return ({
+                        clientId: randomString(),
+                        name: rawItem,
+                        type: dataType,
+                        completeness: getCompleteness(categorizedData, dataType),
+                    });
+                });
+                setGeoFieldValue(columns, 'variables');
             } catch {
                 alert.show(
-                    'There was an error parsing the excel sheet.',
+                    'There was an error parsing the geojson file.',
                     { variant: 'error' },
                 );
             }
+
+            setDatasetToConfigure(undefined);
+            setUploadedFileId(newFileId);
         },
         [
+            setGeoFieldValue,
             alert,
-            setXlsxFieldValue,
         ],
     );
 
-    const sheetItemRendererParams = useCallback(
+    const {
+        setValue: setVariableValue,
+    } = useFormArray('variables', setGeoFieldValue);
+
+    const variableRendererParams = useCallback(
         (
             _: string,
-            datum: SheetType,
-            index: number,
-        ) => {
-            const workSheet = datum.name ? workBook?.Sheets[datum.name] : undefined;
-            return ({
-                item: datum,
-                setSheetValue,
-                workSheet,
-                index,
-                disabled: isDefined(datasetToConfigure) && isNotDefined(workBook),
-                readOnly: isDefined(datasetToConfigure),
-            });
-        }, [
+            datum: FinalVariableType,
+            variableIndex: number,
+        ) => ({
+            column: datum,
+            setVariableValue,
+            index: variableIndex,
+            disabled: isDefined(datasetToConfigure),
+        }), [
             datasetToConfigure,
-            setSheetValue,
-            workBook,
+            setVariableValue,
         ],
     );
 
@@ -562,10 +491,10 @@ function DatasetsConfigureButton(props: Props) {
                         headingSize="extraSmall"
                         headerActions={(
                             <GalleryFileUpload
-                                title="Upload excel"
+                                title="Upload Geojson"
                                 onSuccess={handleFileInputChange}
                                 projectIds={projectId ? [projectId] : undefined}
-                                acceptFileType=".xlsx"
+                                acceptFileType=".geojson"
                                 buttonOnly
                             />
                         )}
@@ -595,14 +524,15 @@ function DatasetsConfigureButton(props: Props) {
                     </Container>
                     <div className={styles.rightContainer}>
                         <ListView
-                            data={value?.xlsx?.sheets}
-                            renderer={SheetItem}
-                            keySelector={sheetKeySelector}
-                            rendererParams={sheetItemRendererParams}
-                            className={styles.sheets}
-                            pending={false}
-                            errored={false}
+                            className={styles.variables}
+                            data={value?.geojson?.variables}
+                            keySelector={variableKeySelector}
+                            renderer={VariableItem}
+                            rendererParams={variableRendererParams}
                             filtered={false}
+                            errored={false}
+                            pending={false}
+                            borderBetweenItem
                         />
                         {isNotDefined(datasetToConfigure) && (
                             <div className={styles.footer}>
@@ -623,4 +553,4 @@ function DatasetsConfigureButton(props: Props) {
     );
 }
 
-export default DatasetsConfigureButton;
+export default GeoDataUploadButton;

@@ -35,7 +35,7 @@ const UPLOAD_FILE = gql`
 `;
 interface Props {
     onSuccess: (file: NonNullable<GalleryFileType>, uploadedFile: File | undefined) => void;
-    acceptFileType?: '.pdf' | 'image/*' | '.xlsx' | '.csv';
+    acceptFileType?: '.pdf' | 'image/*' | '.xlsx' | '.csv' | '.geojson';
     title?: string;
     disabled?: boolean;
     projectIds?: string[];

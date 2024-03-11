@@ -1,0 +1,4 @@
+.map-edit {
+    display: flex;
+    flex-direction: column;
+}

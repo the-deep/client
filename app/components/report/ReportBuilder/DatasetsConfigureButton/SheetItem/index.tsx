@@ -15,7 +15,6 @@ import {
 } from '@togglecorp/toggle-form';
 import { type WorkSheet } from 'xlsx';
 
-import VariableItem from './VariableItem';
 import { type SheetType, type VariableType } from '..';
 import {
     categorizeData,
@@ -24,6 +23,8 @@ import {
     getColumnsFromWorkSheet,
     getRawDataForWorkSheet,
 } from '../../../utils';
+import VariableItem from '../../VariableItem';
+
 import styles from './styles.css';
 
 const variableKeySelector = (column: VariableType) => column.clientId;
