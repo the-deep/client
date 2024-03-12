@@ -550,6 +550,7 @@ const heatMapLayerConfigSchema: HeatMapLayerConfigSchema = {
         blur: [],
         radius: [],
         weighted: [],
+        fillPalette: [],
         weightPropertyKey: [requiredCondition],
         scaleDataMax: [],
     }),
