@@ -62,6 +62,7 @@ import KpiEdit from './KpiEdit';
 import TextEdit from './TextEdit';
 import TimelineChartEdit from './TimelineChartEdit';
 import BarChartEdit, { defaultBarChartValue } from './BarChartEdit';
+import LineChartEdit, { defaultLineChartValue } from './LineChartEdit';
 import ImageEdit from './ImageEdit';
 import Content from './Content';
 import {
@@ -413,7 +414,7 @@ function ReportContainer(props: Props) {
         }, 'contentData');
     }, [onFieldChange]);
 
-    const handleBarChartFileUploadChange = useCallback((file: string | undefined) => {
+    const handleChartFileUploadChange = useCallback((file: string | undefined) => {
         if (!file) {
             onFieldChange(undefined, 'contentData');
         }
@@ -434,7 +435,7 @@ function ReportContainer(props: Props) {
         [onFieldChange],
     );
 
-    const handleBarCacheDataChange = useCallback((
+    const handleCacheDataChange = useCallback((
         newCache: Record<string, string | number | undefined>[] | undefined,
         clientId: string,
     ) => {
@@ -682,8 +683,24 @@ function ReportContainer(props: Props) {
                                 error={getErrorObject(error?.contentConfiguration)?.barChart}
                                 // NOTE: Barchart only supports one content data at a time
                                 contentData={contentData?.[0]}
-                                onFileUploadChange={handleBarChartFileUploadChange}
-                                onCacheChange={handleBarCacheDataChange}
+                                onFileUploadChange={handleChartFileUploadChange}
+                                onCacheChange={handleCacheDataChange}
+                                quantitativeReportUploads={quantitativeReportUploads}
+                                onQuantitativeReportUploadsChange={
+                                    onQuantitativeReportUploadsChange
+                                }
+                            />
+                        )}
+                        {contentType === 'LINE_CHART' && (
+                            <LineChartEdit
+                                name="lineChart"
+                                value={configuration?.lineChart}
+                                onChange={onConfigChange}
+                                error={getErrorObject(error?.contentConfiguration)?.lineChart}
+                                // NOTE: Barchart only supports one content data at a time
+                                contentData={contentData?.[0]}
+                                onFileUploadChange={handleChartFileUploadChange}
+                                onCacheChange={handleCacheDataChange}
                                 quantitativeReportUploads={quantitativeReportUploads}
                                 onQuantitativeReportUploadsChange={
                                     onQuantitativeReportUploadsChange

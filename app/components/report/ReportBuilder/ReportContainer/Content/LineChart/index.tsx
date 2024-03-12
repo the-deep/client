@@ -6,13 +6,11 @@ import {
 } from '@togglecorp/fujs';
 
 import {
-    CategoricalBarChart,
-    // NumericBarChart,
-    TemporalBarChart,
+    NumericLineChart,
 } from '@the-deep/reporting-module-components';
 
 import {
-    type BarChartConfigType,
+    type LineChartConfigType,
 } from '../../../../schema';
 import {
     resolveTextStyle,
@@ -24,11 +22,11 @@ import styles from './styles.css';
 type Datum = Record<string, string | number | undefined>;
 
 interface Props {
-    configuration?: BarChartConfigType;
+    configuration?: LineChartConfigType;
     cacheData: Datum[] | undefined;
 }
 
-function BarContent(props: Props) {
+function LineContent(props: Props) {
     const {
         configuration,
         cacheData,
@@ -75,7 +73,9 @@ function BarContent(props: Props) {
             yValueKeys: yKeys ?? [],
             chartOptions: {
                 keySelector: (item: Datum) => item.key ?? '',
-                xValueSelector: (item: Datum) => item.key,
+                xValueSelector: (item: Datum) => (
+                    Number.isNaN(Number(item.key)) ? undefined : Number(item.key)
+                ),
                 yValueSelector,
                 xAxisHeight: 64,
                 yDomain: (
@@ -131,10 +131,6 @@ function BarContent(props: Props) {
                     ),
                 } : undefined,
             },
-            barListOptions: {
-                //  barGroupGap
-                //  barGroupMargin
-            },
             children: undefined,
         };
     }, [
@@ -142,12 +138,10 @@ function BarContent(props: Props) {
         configuration,
     ]);
 
-    const chartType = configuration?.horizontalAxis?.type ?? 'CATEGORICAL';
-
     return (
         <div className={_cs(styles.barContent)}>
-            {config && chartType === 'CATEGORICAL' && (
-                <CategoricalBarChart
+            {config && (
+                <NumericLineChart
                     {...config}
                     // FIXME: Remove these dependencies from categorical bar chart
                     keySelector={config?.chartOptions.keySelector}
@@ -155,26 +149,8 @@ function BarContent(props: Props) {
                     yValueSelector={config?.chartOptions.yValueSelector ?? []}
                 />
             )}
-            {config && chartType === 'DATE' && (
-                <TemporalBarChart
-                    {...config}
-                    // FIXME: Remove these dependencies from categorical bar chart
-                    keySelector={config?.chartOptions.keySelector}
-                    xValueSelector={config?.chartOptions.xValueSelector}
-                    yValueSelector={config?.chartOptions.yValueSelector ?? []}
-                />
-            )}
-            {/* config && chartType === 'NUMERIC' && (
-                <NumericBarChart
-                    {...config}
-                    // FIXME: Remove these dependencies from categorical bar chart
-                    keySelector={config?.chartOptions.keySelector}
-                    xValueSelector={config?.chartOptions.xValueSelector}
-                    yValueSelector={config?.chartOptions.yValueSelector ?? []}
-                />
-            ) */}
         </div>
     );
 }
 
-export default BarContent;
+export default LineContent;
