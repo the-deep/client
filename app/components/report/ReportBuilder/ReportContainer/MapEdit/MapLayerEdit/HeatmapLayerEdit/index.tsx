@@ -27,41 +27,22 @@ import GeoDataSelectInput, {
 
 import {
     type ContentDataType,
-    type SymbolLayerConfigType,
-    type SymbolLayerStyleConfigType,
+    type HeatMapLayerConfigType,
 } from '../../../../../schema';
-import TextElementsStylesEdit from '../../../TextElementsStylesEdit';
 
 import styles from './styles.css';
-
-const symbolIcons = [
-    { key: 'airport', label: 'airport' },
-    { key: 'borderCrossing', label: 'borderCrossing' },
-    { key: 'borderCrossingActive', label: 'borderCrossingActive' },
-    { key: 'borderCrossingPotential', label: 'borderCrossingPotential' },
-    { key: 'capital', label: 'capital' },
-    { key: 'circle', label: 'circle' },
-    { key: 'city', label: 'city' },
-    { key: 'idpRefugeeCamp', label: 'idpRefugeeCamp' },
-    { key: 'marker', label: 'marker' },
-    { key: 'settlement', label: 'settlement' },
-    { key: 'triangle', label: 'triangle' },
-];
-
-const symbolKeySelector = (item: { key: string }) => item.key;
-const symbolLabelSelector = (item: { label: string }) => item.label;
 
 const columnKeySelector = (item: AnalysisReportVariableType) => item.clientId ?? '';
 const columnLabelSelector = (item: AnalysisReportVariableType) => item.name ?? '';
 
 interface Props<NAME extends string> {
     name: NAME;
-    value: SymbolLayerConfigType | undefined;
+    value: HeatMapLayerConfigType | undefined;
     onChange: (
-        value: SetValueArg<SymbolLayerConfigType>,
+        value: SetValueArg<HeatMapLayerConfigType>,
         name: NAME,
     ) => void;
-    error: Error<SymbolLayerConfigType> | undefined;
+    error: Error<HeatMapLayerConfigType> | undefined;
     geoDataUploads: ReportGeoUploadType[] | undefined | null;
     onGeoDataUploadsChange: React.Dispatch<React.SetStateAction<
         ReportGeoUploadType[] | undefined | null
@@ -72,7 +53,7 @@ interface Props<NAME extends string> {
     readOnly?: boolean;
 }
 
-function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
+function HeatMapLayerEdit<NAME extends string>(props: Props<NAME>) {
     const {
         value,
         onChange,
@@ -97,7 +78,7 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
     }>();
 
     const onFieldChange = useFormObject<
-        NAME, SymbolLayerConfigType
+        NAME, HeatMapLayerConfigType
     >(name, onChange, {});
 
     const handleFileUploadChange = useCallback((newFileUploadId: string | undefined) => {
@@ -163,10 +144,6 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
         fileId,
     ]);
 
-    const onStyleChange = useFormObject<
-        'style', SymbolLayerStyleConfigType
-    >('style', onFieldChange, {});
-
     return (
         <ContainerCard
             heading="Layer Properties"
@@ -191,60 +168,54 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
                 />
             )}
             <SelectInput
-                label="Column"
-                name="labelPropertyKey"
-                value={value?.labelPropertyKey}
+                label="Weight Property Key"
+                name="weightPropertyKey"
+                value={value?.weightPropertyKey}
                 onChange={onFieldChange}
                 keySelector={columnKeySelector}
                 labelSelector={columnLabelSelector}
-                error={error?.labelPropertyKey}
+                error={error?.weightPropertyKey}
                 options={propertyOptions}
                 disabled={disabled}
                 readOnly={readOnly}
             />
-            <SelectInput
-                label="Symbol"
-                name="symbol"
-                value={value?.symbol}
-                onChange={onFieldChange}
-                keySelector={symbolKeySelector}
-                labelSelector={symbolLabelSelector}
-                error={error?.symbol}
-                options={symbolIcons}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
             <Checkbox
-                label="Show labels"
-                name="showLabels"
-                value={value?.showLabels}
+                label="Weighted"
+                name="weighted"
+                value={value?.weighted}
                 onChange={onFieldChange}
                 disabled={disabled}
                 readOnly={readOnly}
             />
             <NumberInput
-                label="Scale"
-                name="scale"
-                value={value?.scale}
-                error={error?.scale}
+                label="Blur"
+                name="blur"
+                value={value?.blur}
+                error={error?.blur}
                 onChange={onFieldChange}
                 disabled={disabled}
                 readOnly={readOnly}
             />
-            <TextElementsStylesEdit
-                name="symbol"
-                label="Symbol Style"
-                value={value?.style?.symbol}
-                onChange={onStyleChange}
+            <NumberInput
+                label="Radius"
+                name="radius"
+                value={value?.radius}
+                error={error?.radius}
+                onChange={onFieldChange}
+                disabled={disabled}
+                readOnly={readOnly}
             />
-            <TextElementsStylesEdit
-                name="label"
-                label="Label Style"
-                value={value?.style?.label}
-                onChange={onStyleChange}
+            <NumberInput
+                label="Scale Data Max"
+                name="scaleDataMax"
+                value={value?.scaleDataMax}
+                error={error?.scaleDataMax}
+                onChange={onFieldChange}
+                disabled={disabled}
+                readOnly={readOnly}
             />
         </ContainerCard>
     );
 }
 
-export default SymbolLayerEdit;
+export default HeatMapLayerEdit;

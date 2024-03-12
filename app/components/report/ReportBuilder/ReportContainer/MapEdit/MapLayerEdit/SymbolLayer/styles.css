@@ -1,5 +1,10 @@
-.map-layer {
-    display: flex;
-    flex-direction: column;
-    gap: var(--dui-spacing-large);
+.map-layer-edit {
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    background-color: transparent;
+
+    .map-layer {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-large);
+    }
 }
