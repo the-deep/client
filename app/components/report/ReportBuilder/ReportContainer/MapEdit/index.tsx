@@ -11,6 +11,9 @@ import {
 import { useQuery, gql } from '@apollo/client';
 import {
     ExpandableContainer,
+    TextInput,
+    Checkbox,
+    NumberInput,
     Button,
 } from '@the-deep/deep-ui';
 import {
@@ -30,12 +33,14 @@ import {
 
 import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
+import TextElementsStylesEdit from '../TextElementsStylesEdit';
 import MapLayerEdit from './MapLayerEdit';
 import MapLayerItem from './MapLayerItem';
 import {
     type ContentDataType,
     type MapConfigType,
     type MapLayerType,
+    type MapStyleFormType,
 } from '../../../schema';
 
 import styles from './styles.css';
@@ -177,9 +182,109 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         onFieldChange(reorder(newOrder), 'layers');
     }, [onFieldChange]);
 
+    const onStyleChange = useFormObject<
+        'style', MapStyleFormType
+    >('style', onFieldChange, {});
+
     return (
         <div className={_cs(className, styles.mapEdit)}>
             <NonFieldError error={error} />
+            <ExpandableContainer
+                heading="General"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                <TextInput
+                    value={value?.title}
+                    name="title"
+                    label="Title"
+                    onChange={onFieldChange}
+                    error={error?.title}
+                    disabled={disabled}
+                />
+                <TextInput
+                    value={value?.subTitle}
+                    name="subTitle"
+                    label="Subtitle"
+                    onChange={onFieldChange}
+                    error={error?.subTitle}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    value={value?.mapHeight}
+                    name="mapHeight"
+                    label="Map height"
+                    onChange={onFieldChange}
+                    error={error?.mapHeight}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    value={value?.zoom}
+                    name="zoom"
+                    label="Zoom"
+                    onChange={onFieldChange}
+                    error={error?.zoom}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    value={value?.minZoom}
+                    name="minZoom"
+                    label="minZoom"
+                    onChange={onFieldChange}
+                    error={error?.minZoom}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    value={value?.maxZoom}
+                    name="maxZoom"
+                    label="maxZoom"
+                    onChange={onFieldChange}
+                    error={error?.maxZoom}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    value={value?.centerLatitude}
+                    name="centerLatitude"
+                    label="Center Latitude"
+                    onChange={onFieldChange}
+                    error={error?.centerLatitude}
+                    disabled={disabled}
+                />
+                <NumberInput
+                    value={value?.centerLongitude}
+                    name="centerLongitude"
+                    label="Center Longitude"
+                    onChange={onFieldChange}
+                    error={error?.centerLongitude}
+                    disabled={disabled}
+                />
+                <Checkbox
+                    value={value?.showScale}
+                    name="showScale"
+                    label="Show scale"
+                    onChange={onFieldChange}
+                    disabled={disabled}
+                />
+                {value?.showScale && (
+                    <Checkbox
+                        // TODO: Replace this with boolean segment input
+                        value={value?.scaleBar}
+                        name="scaleBar"
+                        label="Bar type scale"
+                        onChange={onFieldChange}
+                        disabled={disabled}
+                    />
+                )}
+                <Checkbox
+                    value={value?.enableZoomControls}
+                    name="enableZoomControls"
+                    label="Enable zoom controls"
+                    onChange={onFieldChange}
+                    disabled={disabled}
+                />
+            </ExpandableContainer>
             <ExpandableContainer
                 heading="Layers"
                 headingSize="small"
@@ -234,6 +339,28 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
                         />
                     )}
                 </div>
+            </ExpandableContainer>
+            <ExpandableContainer
+                heading="Styling"
+                headingSize="small"
+                spacing="compact"
+                contentClassName={styles.expandedBody}
+                withoutBorder
+            >
+                <TextElementsStylesEdit
+                    name="title"
+                    label="Title"
+                    value={value?.style?.title}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
+                <TextElementsStylesEdit
+                    name="subTitle"
+                    label="Subtitle"
+                    value={value?.style?.subTitle}
+                    onChange={onStyleChange}
+                    disabled={disabled}
+                />
             </ExpandableContainer>
         </div>
     );
