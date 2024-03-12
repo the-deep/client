@@ -412,6 +412,25 @@ const REPORT_DETAILS = gql`
                             title
                         }
                         map {
+                            title
+                            subTitle
+                            mapHeight
+                            maxZoom
+                            minZoom
+                            scaleBar
+                            showScale
+                            zoom
+                            enableZoomControls
+                            centerLatitude
+                            centerLongitude
+                            style {
+                                title {
+                                    ...TextStyle
+                                }
+                                subTitle {
+                                    ...TextStyle
+                                }
+                            }
                             layers {
                                 clientId
                                 name
