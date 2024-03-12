@@ -25,6 +25,7 @@ import GeoDataSelectInput, {
     ReportGeoUploadType,
 } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
+import ColorSchemeInput from '../ColorSchemeInput';
 import {
     type ContentDataType,
     type HeatMapLayerConfigType,
@@ -213,6 +214,11 @@ function HeatMapLayerEdit<NAME extends string>(props: Props<NAME>) {
                 onChange={onFieldChange}
                 disabled={disabled}
                 readOnly={readOnly}
+            />
+            <ColorSchemeInput
+                name="fillPalette"
+                value={value?.fillPalette}
+                onChange={onFieldChange}
             />
         </ContainerCard>
     );
