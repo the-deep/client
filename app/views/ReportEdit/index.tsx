@@ -426,9 +426,14 @@ const REPORT_DETAILS = gql`
                                     }
                                     lineLayer {
                                         contentReferenceId
-                                        labelColumn
-                                        showLabels
-                                        showInLegend
+                                        style {
+                                            line {
+                                                strokeType
+                                                dashSpacing
+                                                stroke
+                                                strokeWidth
+                                            }
+                                        }
                                     }
                                     polygonLayer {
                                         contentReferenceId
@@ -436,7 +441,27 @@ const REPORT_DETAILS = gql`
                                     }
                                     symbolLayer {
                                         contentReferenceId
-                                        labelColumn
+                                        labelPropertyKey
+                                        scaleType
+                                        showLabels
+                                        symbol
+                                        style {
+                                            symbol {
+                                                ...TextStyle
+                                            }
+                                            label {
+                                                ...TextStyle
+                                            }
+                                        }
+                                    }
+                                    heatmapLayer {
+                                        blur
+                                        contentReferenceId
+                                        fillPalette
+                                        radius
+                                        weighted
+                                        weightPropertyKey
+                                        scaleDataMax
                                     }
                                 }
                             }
