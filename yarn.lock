@@ -3222,10 +3222,10 @@
     react-zoom-pan-pinch "^2.1.3"
     resize-observer-polyfill "^1.5.1"
 
-"@the-deep/reporting-module-components@1.1.0-beta.7":
-  version "1.1.0-beta.7"
-  resolved "https://registry.yarnpkg.com/@the-deep/reporting-module-components/-/reporting-module-components-1.1.0-beta.7.tgz#9b57267f8f0d21405de8663c08b89a1fe2df8e83"
-  integrity sha512-9aFNhRk3uCTcOdn9vGmoD8pNQG2fcDQk8pFr6VvibX6A+I4JIAbW5FO+wZrQByJZxKg81GJq9UnAgot10FyXDw==
+"@the-deep/reporting-module-components@1.1.0-beta.8":
+  version "1.1.0-beta.8"
+  resolved "https://registry.yarnpkg.com/@the-deep/reporting-module-components/-/reporting-module-components-1.1.0-beta.8.tgz#8d881bcd4d53c5e7874580f0a836050a76eaf90e"
+  integrity sha512-RDLI+ah2GFMzDutuRsvvrzY9lBsajm/8rUveD5xdtHDEpisyEhve1Z5nbNNSa9NAACV2EKo4TX/cunVVHOqYfA==
   dependencies:
     "@babel/runtime-corejs3" "^7.22.6"
     "@knight-lab/timelinejs" "^3.9.3"

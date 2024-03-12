@@ -155,7 +155,6 @@ function MapContent(props: Props) {
                     />
                 </ErrorBoundary>
             )}
-            Map Content
         </div>
     );
 }
