@@ -1,9 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import {
     ContainerCard,
-    Checkbox,
-    NumberInput,
-    SelectInput,
 } from '@the-deep/deep-ui';
 import { useParams } from 'react-router-dom';
 import {
@@ -18,50 +15,27 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
-import {
-    AnalysisReportVariableType,
-} from '#generated/types';
 import GeoDataSelectInput, {
     ReportGeoUploadType,
 } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
     type ContentDataType,
-    type SymbolLayerConfigType,
-    type SymbolLayerStyleConfigType,
+    type LineLayerConfigType,
+    type LineLayerStyleConfigType,
 } from '../../../../../schema';
-import TextElementsStylesEdit from '../../../TextElementsStylesEdit';
+import LineLayerStylesEdit from '../../../LineLayerStylesEdit';
 
 import styles from './styles.css';
 
-const symbolIcons = [
-    { key: 'airport', label: 'airport' },
-    { key: 'borderCrossing', label: 'borderCrossing' },
-    { key: 'borderCrossingActive', label: 'borderCrossingActive' },
-    { key: 'borderCrossingPotential', label: 'borderCrossingPotential' },
-    { key: 'capital', label: 'capital' },
-    { key: 'circle', label: 'circle' },
-    { key: 'city', label: 'city' },
-    { key: 'idpRefugeeCamp', label: 'idpRefugeeCamp' },
-    { key: 'marker', label: 'marker' },
-    { key: 'settlement', label: 'settlement' },
-    { key: 'triangle', label: 'triangle' },
-];
-
-const symbolKeySelector = (item: { key: string }) => item.key;
-const symbolLabelSelector = (item: { label: string }) => item.label;
-
-const columnKeySelector = (item: AnalysisReportVariableType) => item.clientId ?? '';
-const columnLabelSelector = (item: AnalysisReportVariableType) => item.name ?? '';
-
 interface Props<NAME extends string> {
     name: NAME;
-    value: SymbolLayerConfigType | undefined;
+    value: LineLayerConfigType | undefined;
     onChange: (
-        value: SetValueArg<SymbolLayerConfigType>,
+        value: SetValueArg<LineLayerConfigType>,
         name: NAME,
     ) => void;
-    error: Error<SymbolLayerConfigType> | undefined;
+    error: Error<LineLayerConfigType> | undefined;
     geoDataUploads: ReportGeoUploadType[] | undefined | null;
     onGeoDataUploadsChange: React.Dispatch<React.SetStateAction<
         ReportGeoUploadType[] | undefined | null
@@ -72,7 +46,7 @@ interface Props<NAME extends string> {
     readOnly?: boolean;
 }
 
-function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
+function LineLayerEdit<NAME extends string>(props: Props<NAME>) {
     const {
         value,
         onChange,
@@ -97,7 +71,7 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
     }>();
 
     const onFieldChange = useFormObject<
-        NAME, SymbolLayerConfigType
+        NAME, LineLayerConfigType
     >(name, onChange, {});
 
     const handleFileUploadChange = useCallback((newFileUploadId: string | undefined) => {
@@ -156,15 +130,8 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
         value?.contentReferenceId,
     ]);
 
-    const propertyOptions = useMemo(() => (
-        geoDataUploads?.find((item) => item.id === fileId)?.metadata?.geojson?.variables
-    ), [
-        geoDataUploads,
-        fileId,
-    ]);
-
     const onStyleChange = useFormObject<
-        'style', SymbolLayerStyleConfigType
+        'style', LineLayerStyleConfigType
     >('style', onFieldChange, {});
 
     return (
@@ -190,61 +157,14 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
                     error={error?.contentReferenceId}
                 />
             )}
-            <SelectInput
-                label="Column"
-                name="labelPropertyKey"
-                value={value?.labelPropertyKey}
-                onChange={onFieldChange}
-                keySelector={columnKeySelector}
-                labelSelector={columnLabelSelector}
-                error={error?.labelPropertyKey}
-                options={propertyOptions}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
-            <SelectInput
-                label="Symbol"
-                name="symbol"
-                value={value?.symbol}
-                onChange={onFieldChange}
-                keySelector={symbolKeySelector}
-                labelSelector={symbolLabelSelector}
-                error={error?.symbol}
-                options={symbolIcons}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
-            <Checkbox
-                label="Show labels"
-                name="showLabels"
-                value={value?.showLabels}
-                onChange={onFieldChange}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
-            <NumberInput
-                label="Scale"
-                name="scale"
-                value={value?.scale}
-                error={error?.scale}
-                onChange={onFieldChange}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
-            <TextElementsStylesEdit
-                name="symbol"
-                label="Symbol Style"
-                value={value?.style?.symbol}
-                onChange={onStyleChange}
-            />
-            <TextElementsStylesEdit
-                name="label"
-                label="Label Style"
-                value={value?.style?.label}
+            <LineLayerStylesEdit
+                name="line"
+                label="Line Style"
+                value={value?.style?.line}
                 onChange={onStyleChange}
             />
         </ContainerCard>
     );
 }
 
-export default SymbolLayerEdit;
+export default LineLayerEdit;

@@ -20,6 +20,7 @@ import {
     AnalysisReportPaddingStyleType,
     AnalysisReportContainerStyleType,
     AnalysisReportTextStyleType,
+    AnalysisReportLineLayerStyleType,
     AnalysisReportGridLineStyleType,
     AnalysisReportTickStyleType,
     AnalysisReportBarStyleType,
@@ -160,6 +161,20 @@ const textStyleSchema: TextStyleFormSchema = {
         size: [defaultUndefinedType, lessThanOrEqualToCondition(108)],
         weight: [defaultUndefinedType],
         align: [defaultUndefinedType],
+    }),
+};
+
+// Line Layer Style
+export type LineLayerStyleFormType = PartialForm<PurgeNull<AnalysisReportLineLayerStyleType>>;
+type LineLayerStyleFormSchema = ObjectSchema<LineLayerStyleFormType, PartialFormType>;
+type LineLayerStyleFormSchemaFields = ReturnType<LineLayerStyleFormSchema['fields']>;
+
+const lineLayerStyleSchema: LineLayerStyleFormSchema = {
+    fields: (): LineLayerStyleFormSchemaFields => ({
+        strokeType: [],
+        dashSpacing: [],
+        stroke: [],
+        strokeWidth: [],
     }),
 };
 
@@ -415,12 +430,21 @@ export type LineLayerConfigType = NonNullable<MapLayerConfigType['lineLayer']>;
 type LineLayerConfigSchema = ObjectSchema<LineLayerConfigType, PartialFormType>;
 type LineLayerConfigSchemaFields = ReturnType<LineLayerConfigSchema['fields']>;
 
+// Line Layer
+export type LineLayerStyleConfigType = NonNullable<NonNullable<MapLayerConfigType['lineLayer']>['style']>;
+type LineLayerStyleConfigSchema = ObjectSchema<LineLayerStyleConfigType, PartialFormType>;
+type LineLayerStyleConfigSchemaFields = ReturnType<LineLayerStyleConfigSchema['fields']>;
+
+const lineLayerStyleConfigSchema: LineLayerStyleConfigSchema = {
+    fields: (): LineLayerStyleConfigSchemaFields => ({
+        line: lineLayerStyleSchema,
+    }),
+};
+
 const lineLayerConfigSchema: LineLayerConfigSchema = {
     fields: (): LineLayerConfigSchemaFields => ({
         contentReferenceId: [requiredCondition],
-        labelColumn: [],
-        showLabels: [],
-        showInLegend: [],
+        style: lineLayerStyleConfigSchema,
     }),
 };
 
@@ -441,10 +465,41 @@ export type SymbolLayerConfigType = NonNullable<MapLayerConfigType['symbolLayer'
 type SymbolLayerConfigSchema = ObjectSchema<SymbolLayerConfigType, PartialFormType>;
 type SymbolLayerConfigSchemaFields = ReturnType<SymbolLayerConfigSchema['fields']>;
 
+export type SymbolLayerStyleConfigType = NonNullable<NonNullable<MapLayerConfigType['symbolLayer']>['style']>;
+type SymbolLayerStyleConfigSchema = ObjectSchema<SymbolLayerStyleConfigType, PartialFormType>;
+type SymbolLayerStyleConfigSchemaFields = ReturnType<SymbolLayerStyleConfigSchema['fields']>;
+
+const symbolLayerStyleConfigSchema: SymbolLayerStyleConfigSchema = {
+    fields: (): SymbolLayerStyleConfigSchemaFields => ({
+        symbol: textStyleSchema,
+        label: textStyleSchema,
+    }),
+};
+
 const symbolLayerConfigSchema: SymbolLayerConfigSchema = {
     fields: (): SymbolLayerConfigSchemaFields => ({
         contentReferenceId: [requiredCondition],
-        labelColumn: [requiredCondition],
+        labelPropertyKey: [requiredCondition],
+        scaleType: [],
+        showLabels: [],
+        symbol: [requiredCondition],
+        style: symbolLayerStyleConfigSchema,
+    }),
+};
+
+// Heatmap Layer
+export type HeatMapLayerConfigType = NonNullable<MapLayerConfigType['heatmapLayer']>;
+type HeatMapLayerConfigSchema = ObjectSchema<HeatMapLayerConfigType, PartialFormType>;
+type HeatMapLayerConfigSchemaFields = ReturnType<HeatMapLayerConfigSchema['fields']>;
+
+const heatMapLayerConfigSchema: HeatMapLayerConfigSchema = {
+    fields: (): HeatMapLayerConfigSchemaFields => ({
+        contentReferenceId: [requiredCondition],
+        blur: [],
+        radius: [],
+        weighted: [],
+        weightPropertyKey: [requiredCondition],
+        scaleDataMax: [],
     }),
 };
 
@@ -476,6 +531,11 @@ const mapLayerMemberItem = (): MapLayerFormSchemaMember => ({
             layerConfigSchema = {
                 ...layerConfigSchema,
                 symbolLayer: symbolLayerConfigSchema,
+            };
+        } else if (layerValue?.type === 'HEAT_MAP_LAYER') {
+            layerConfigSchema = {
+                ...layerConfigSchema,
+                heatmapLayer: heatMapLayerConfigSchema,
             };
         }
 
