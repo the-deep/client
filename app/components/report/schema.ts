@@ -14,6 +14,7 @@ import {
     AnalysisReportImageContentStyleType,
     AnalysisReportTextContentStyleType,
     AnalysisReportBarChartStyleType,
+    AnalysisReportMapStyleConfigType,
     AnalysisReportHeadingContentStyleType,
     AnalysisReportBackgroundStyleType,
     AnalysisReportBorderStyleType,
@@ -304,6 +305,18 @@ const barChartStyleSchema: BarChartStyleFormSchema = {
         horizontalGridLine: gridLineStyleSchema,
         verticalTick: tickStyleSchema,
         horizontalTick: tickStyleSchema,
+    }),
+};
+
+// Map
+export type MapStyleFormType = PartialForm<PurgeNull<AnalysisReportMapStyleConfigType>>;
+type MapStyleFormSchema = ObjectSchema<MapStyleFormType, PartialFormType>;
+type MapStyleFormSchemaFields = ReturnType<MapStyleFormSchema['fields']>;
+
+const mapStyleSchema: MapStyleFormSchema = {
+    fields: (): MapStyleFormSchemaFields => ({
+        title: textStyleSchema,
+        subTitle: textStyleSchema,
     }),
 };
 
@@ -700,6 +713,18 @@ const schema: FormSchema = {
                                         ...configSchema,
                                         map: {
                                             fields: (): MapConfigSchemaFields => ({
+                                                title: [],
+                                                subTitle: [],
+                                                mapHeight: [],
+                                                maxZoom: [],
+                                                minZoom: [],
+                                                scaleBar: [],
+                                                showScale: [],
+                                                zoom: [],
+                                                enableZoomControls: [],
+                                                centerLatitude: [],
+                                                centerLongitude: [],
+                                                style: mapStyleSchema,
                                                 layers: {
                                                     keySelector: (item) => item.clientId,
                                                     member: mapLayerMemberItem,
