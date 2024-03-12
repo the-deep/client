@@ -191,7 +191,7 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
                 />
             )}
             <SelectInput
-                label="Column"
+                label="Label"
                 name="labelPropertyKey"
                 value={value?.labelPropertyKey}
                 onChange={onFieldChange}

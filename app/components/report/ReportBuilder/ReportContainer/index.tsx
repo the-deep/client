@@ -521,7 +521,7 @@ function ReportContainer(props: Props) {
                     imageReportUploads={imageReportUploads}
                     downloadsPending={downloadsPending}
                     downloadedGeoData={downloadedGeoData}
-                    // quantitativeReportUploads={quantitativeReportUploads}
+                    geoDataUploads={geoDataUploads}
                 />
             )}
             {!readOnly && (
