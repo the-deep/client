@@ -60,8 +60,8 @@ function MapLayerItem(props: Props) {
                     onClick={onVisibilityClick}
                 >
                     {visibility
-                        ? <IoEyeOffOutline />
-                        : <IoEyeOutline />}
+                        ? <IoEyeOutline />
+                        : <IoEyeOffOutline />}
                 </QuickActionButton>
             )}
             spacing="compact"

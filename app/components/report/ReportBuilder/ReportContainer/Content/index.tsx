@@ -18,6 +18,7 @@ import {
     AnalysisReportContainerContentTypeEnum,
 } from '#generated/types';
 import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
+import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
     type ContentDataType,
@@ -40,6 +41,7 @@ interface Props {
     configuration: ContentConfigType | undefined;
     generalConfiguration: ConfigType | undefined;
     imageReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    geoDataUploads: ReportGeoUploadType[] | undefined | null;
     downloadsPending: boolean;
     downloadedGeoData: Record<string, unknown>;
 }
@@ -53,6 +55,7 @@ function Content(props: Props) {
         downloadsPending,
         imageReportUploads,
         downloadedGeoData,
+        geoDataUploads,
     } = props;
 
     const configuration = removeNull(configurationFromProps);
@@ -288,6 +291,7 @@ function Content(props: Props) {
                 contentData={contentData}
                 downloadedGeoData={downloadedGeoData}
                 downloadsPending={downloadsPending}
+                geoDataUploads={geoDataUploads}
             />
         );
     }

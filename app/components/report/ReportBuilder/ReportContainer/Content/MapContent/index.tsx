@@ -7,7 +7,9 @@ import { PendingAnimation } from '@the-deep/deep-ui';
 import {
     Map,
 } from '@the-deep/reporting-module-components';
+
 import ErrorBoundary from '#base/components/ErrorBoundary';
+import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
     mapboxStyle,
@@ -18,12 +20,16 @@ import {
     type MapConfigType,
     type ContentDataType,
 } from '../../../../schema';
+import {
+    resolveTextStyle,
+} from '../../../../utils';
 
 interface Props {
     className?: string;
     configuration?: MapConfigType;
     contentData: ContentDataType[] | undefined;
     downloadedGeoData: Record<string, unknown>;
+    geoDataUploads: ReportGeoUploadType[] | undefined | null;
     downloadsPending: boolean;
 }
 
@@ -34,7 +40,16 @@ function MapContent(props: Props) {
         contentData,
         downloadedGeoData,
         downloadsPending,
+        geoDataUploads,
     } = props;
+
+    const metadataMap = useMemo(() => (
+        listToMap(
+            geoDataUploads ?? [],
+            (item) => item.id,
+            (item) => item.metadata,
+        )
+    ), [geoDataUploads]);
 
     const usedFiles = listToMap(
         contentData,
@@ -47,9 +62,9 @@ function MapContent(props: Props) {
             return undefined;
         }
         const layers = configuration?.layers?.map((item, index) => {
-            /*
             if (item.type === 'SYMBOL_LAYER') {
-                const referenceId = item?.layerConfig?.symbolLayer?.contentReferenceId;
+                const layerConfig = item?.layerConfig?.symbolLayer;
+                const referenceId = layerConfig?.contentReferenceId;
                 if (!referenceId) {
                     return undefined;
                 }
@@ -60,13 +75,84 @@ function MapContent(props: Props) {
                 if (!downloadedGeoData[uploadId]) {
                     return undefined;
                 }
+                const variables = metadataMap[uploadId]?.geojson?.variables;
+                const columnLabel = listToMap(
+                    variables,
+                    (variableItem) => variableItem.clientId ?? '',
+                    (variableItem) => variableItem.name,
+                );
                 return ({
-                    ...item,
+                    id: index + 1,
                     type: 'symbol',
-                    data: downloadedGeoData[uploadId],
+                    visible: item.visible,
+                    options: {
+                        opacity: item.opacity,
+                        zIndex: item.order,
+                        data: downloadedGeoData[uploadId],
+                        labelPropertyKey: layerConfig.labelPropertyKey
+                            ? columnLabel?.[layerConfig.labelPropertyKey]
+                            : undefined,
+                        showLabels: layerConfig?.showLabels,
+                        scale: layerConfig?.scale,
+                        scaleType: layerConfig?.scaleType ?? 'fixed',
+                        symbol: layerConfig?.symbol ?? 'circle',
+                        labelStyle: {
+                            fontSize: 12,
+                            showHalo: true,
+                            color: '#000000',
+                            fontFamily: 'Roboto Mono',
+                            ...resolveTextStyle(
+                                layerConfig?.style?.label,
+                                undefined,
+                            ),
+                        },
+                        // FIXME: Create symbol style
+                        symbolStyle: {
+                            strokeWidth: 1.4,
+                            stroke: '#000',
+                            fill: '#FFF',
+                        },
+                    },
                 });
             }
-            */
+            if (item.type === 'HEAT_MAP_LAYER') {
+                const layerConfig = item?.layerConfig?.heatmapLayer;
+                const referenceId = layerConfig?.contentReferenceId;
+                if (!referenceId) {
+                    return undefined;
+                }
+                const uploadId = usedFiles?.[referenceId];
+                if (!uploadId) {
+                    return undefined;
+                }
+                if (!downloadedGeoData[uploadId]) {
+                    return undefined;
+                }
+                const variables = metadataMap[uploadId]?.geojson?.variables;
+                const columnLabel = listToMap(
+                    variables,
+                    (variableItem) => variableItem.clientId ?? '',
+                    (variableItem) => variableItem.name,
+                );
+                return ({
+                    id: index + 1,
+                    type: 'heatmap',
+                    visible: item.visible,
+                    options: {
+                        opacity: item.opacity,
+                        zIndex: item.order,
+                        data: downloadedGeoData[uploadId],
+                        blur: layerConfig?.blur,
+                        scaleDataMax: layerConfig?.scaleDataMax,
+                        fillPalette: 'Oranges',
+                        radius: layerConfig?.radius,
+                        weighted: layerConfig?.weighted,
+                        weightPropertyKey: layerConfig.weightPropertyKey
+                            ? columnLabel?.[layerConfig.weightPropertyKey]
+                            : undefined,
+                    },
+                });
+            }
             if (item.type === 'OSM_LAYER') {
                 return ({
                     id: index + 1,
@@ -92,58 +178,49 @@ function MapContent(props: Props) {
                     },
                 });
             }
-            return item;
+            return undefined;
         });
         return ({
-            height: 512,
-            width: 654,
-            showHeader: true,
-            mainTitle: 'Default map',
-            subTitle: 'Country level',
-            dateText: '',
-            maxZoom: 7,
-            minZoom: 1,
-            showScale: true,
-            showLogos: [],
-            scaleUnits: 'metric',
-            scaleBar: false,
-            scaleBarPosition: 'bottomRight',
-            enableMouseWheelZoom: false,
-            enableDoubleClickZoom: false,
-            enableZoomControls: true,
-            zoomControlsPosition: 'topRight',
-            showLegend: true,
-            legendPosition: 'bottomLeft',
-            showFooter: true,
-            sources: 'My Source',
-            headerStyle: {
-                fontWeight: 'normal',
-                fontFamily: 'Roboto Slab',
-                color: {
-                    r: 0, g: 0, b: 0, a: 1,
-                },
+            title: {
+                children: configuration?.title,
+                style: resolveTextStyle(
+                    configuration?.style?.title,
+                    undefined,
+                ),
             },
-            fontStyle: {
-                fontWeight: 'normal',
-                fontFamily: 'Roboto Slab',
-                color: {
-                    r: 0, g: 0, b: 0, a: 1,
-                },
+            subTitle: {
+                children: configuration?.subTitle,
+                style: resolveTextStyle(
+                    configuration?.style?.subTitle,
+                    undefined,
+                ),
             },
-            center: {
-                lon: 30,
-                lat: 16.8,
-            },
-            zoom: 5.6,
+            mapHeight: configuration?.mapHeight ?? 320,
+            maxZoom: configuration?.maxZoom ?? 7,
+            minZoom: configuration?.minZoom ?? 1,
+            showScale: configuration?.showScale,
+            scaleBar: configuration?.scaleBar,
+            center: (configuration?.centerLatitude && configuration?.centerLongitude)
+                ? ([
+                    configuration?.centerLongitude,
+                    configuration?.centerLatitude,
+                ]) as [number, number] : ([
+                    30,
+                    16.8,
+                ]) as [number, number],
+            zoom: configuration?.zoom ?? 5.6,
+            enableZoomControls: configuration?.enableZoomControls,
+            enableMouseWheelZoom: true,
+            enableDoubleClickZoom: true,
             layers: layers?.filter(isDefined) ?? [],
         });
     }, [
+        metadataMap,
         downloadsPending,
         downloadedGeoData,
-        configuration?.layers,
+        configuration,
         usedFiles,
     ]);
-    console.log('here', finalConfig);
 
     return (
         <div className={className}>
