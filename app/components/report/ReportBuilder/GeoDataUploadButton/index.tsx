@@ -475,6 +475,7 @@ function GeoDataUploadButton(props: Props) {
                 name={undefined}
                 onClick={showModal}
                 variant="tertiary"
+                spacing="compact"
             >
                 Configure
             </Button>

@@ -37,6 +37,8 @@ import {
 } from '../../../../schema';
 
 import SymbolLayerEdit from './SymbolLayer';
+import LineLayerEdit from './LineLayerEdit';
+import HeatmapLayerEdit from './HeatmapLayerEdit';
 import MapboxLayerEdit from './MapboxLayerEdit';
 
 import styles from './styles.css';
@@ -154,6 +156,30 @@ function MapLayerEdit(props: Props) {
                     onGeoDataUploadsChange={onGeoDataUploadsChange}
                     onContentDataChange={onContentDataChange}
                     error={getErrorObject(error?.layerConfig)?.symbolLayer}
+                />
+            )}
+            {value?.type === 'LINE_LAYER' && (
+                <LineLayerEdit
+                    name="lineLayer"
+                    contentData={contentData}
+                    value={value?.layerConfig?.lineLayer}
+                    onChange={onLayerConfigChange}
+                    geoDataUploads={geoDataUploads}
+                    onGeoDataUploadsChange={onGeoDataUploadsChange}
+                    onContentDataChange={onContentDataChange}
+                    error={getErrorObject(error?.layerConfig)?.lineLayer}
+                />
+            )}
+            {value?.type === 'HEAT_MAP_LAYER' && (
+                <HeatmapLayerEdit
+                    name="heatmapLayer"
+                    contentData={contentData}
+                    value={value?.layerConfig?.heatmapLayer}
+                    onChange={onLayerConfigChange}
+                    geoDataUploads={geoDataUploads}
+                    onGeoDataUploadsChange={onGeoDataUploadsChange}
+                    onContentDataChange={onContentDataChange}
+                    error={getErrorObject(error?.layerConfig)?.heatmapLayer}
                 />
             )}
             {value?.type === 'MAPBOX_LAYER' && (

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Container,
+    ContainerCard,
     TextInput,
 } from '@the-deep/deep-ui';
 import {
@@ -45,9 +45,11 @@ function MapboxLayerEdit<NAME extends string>(props: Props<NAME>) {
     >(name, onChange, {});
 
     return (
-        <Container
+        <ContainerCard
             heading="Layer Properties"
+            headingSize="extraSmall"
             contentClassName={styles.mapLayer}
+            className={styles.mapLayerEdit}
         >
             <TextInput
                 label="Style"
@@ -67,7 +69,7 @@ function MapboxLayerEdit<NAME extends string>(props: Props<NAME>) {
                 disabled={disabled}
                 readOnly={readOnly}
             />
-        </Container>
+        </ContainerCard>
     );
 }
 
