@@ -144,7 +144,7 @@ function MapContent(props: Props) {
                         data: downloadedGeoData[uploadId],
                         blur: layerConfig?.blur,
                         scaleDataMax: layerConfig?.scaleDataMax,
-                        fillPalette: 'Oranges',
+                        fillPalette: layerConfig?.fillPalette ?? 'Oranges',
                         radius: layerConfig?.radius,
                         weighted: layerConfig?.weighted,
                         weightPropertyKey: layerConfig.weightPropertyKey
