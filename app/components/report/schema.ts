@@ -14,6 +14,7 @@ import {
     AnalysisReportImageContentStyleType,
     AnalysisReportTextContentStyleType,
     AnalysisReportBarChartStyleType,
+    AnalysisReportLineChartStyleType,
     AnalysisReportMapStyleConfigType,
     AnalysisReportHeadingContentStyleType,
     AnalysisReportBackgroundStyleType,
@@ -26,6 +27,7 @@ import {
     AnalysisReportTickStyleType,
     AnalysisReportBarStyleType,
     AnalysisReportHorizontalAxisType,
+    AnalysisReportLineHorizontalAxisType,
     AnalysisReportKpiItemStyleConfigurationType,
     AnalysisReportVerticalAxisType,
     AnalysisReportCategoricalLegendStyleType,
@@ -202,6 +204,18 @@ const horizontalAxisSchema: HorizontalAxisFormSchema = {
     }),
 };
 
+// Horizontal Axis
+export type LineHorizontalAxisFormType = PartialForm<PurgeNull<
+    AnalysisReportLineHorizontalAxisType
+>>;
+type LineHorizontalAxisFormSchema = ObjectSchema<LineHorizontalAxisFormType, PartialFormType>;
+type LineHorizontalAxisFormSchemaFields = ReturnType<LineHorizontalAxisFormSchema['fields']>;
+
+const lineHorizontalAxisSchema: LineHorizontalAxisFormSchema = {
+    fields: (): LineHorizontalAxisFormSchemaFields => ({
+        field: [requiredCondition],
+    }),
+};
 // GridLine
 type GridLineStyleFormType = PartialForm<PurgeNull<AnalysisReportGridLineStyleType>>;
 type GridLineStyleFormSchema = ObjectSchema<GridLineStyleFormType, PartialFormType>;
@@ -308,6 +322,27 @@ const barChartStyleSchema: BarChartStyleFormSchema = {
     }),
 };
 
+// LineChart Style
+export type LineChartStyleFormType = PartialForm<PurgeNull<AnalysisReportLineChartStyleType>>;
+type LineChartStyleFormSchema = ObjectSchema<LineChartStyleFormType, PartialFormType>;
+type LineChartStyleFormSchemaFields = ReturnType<LineChartStyleFormSchema['fields']>;
+
+const lineChartStyleSchema: LineChartStyleFormSchema = {
+    fields: (): LineChartStyleFormSchemaFields => ({
+        title: textStyleSchema,
+        subTitle: textStyleSchema,
+        legend: categoricalLegendStyleSchema,
+        horizontalAxisTitle: textStyleSchema,
+        verticalAxisTitle: textStyleSchema,
+        horizontalAxisTickLabel: textStyleSchema,
+        verticalAxisTickLabel: textStyleSchema,
+
+        verticalGridLine: gridLineStyleSchema,
+        horizontalGridLine: gridLineStyleSchema,
+        verticalTick: tickStyleSchema,
+        horizontalTick: tickStyleSchema,
+    }),
+};
 // Map
 export type MapStyleFormType = PartialForm<PurgeNull<AnalysisReportMapStyleConfigType>>;
 type MapStyleFormSchema = ObjectSchema<MapStyleFormType, PartialFormType>;
@@ -377,6 +412,10 @@ type TextConfigSchemaFields = ReturnType<TextConfigSchema['fields']>;
 export type BarChartConfigType = NonNullable<ContentConfigType['barChart']>;
 type BarChartConfigSchema = ObjectSchema<BarChartConfigType, PartialFormType>;
 type BarChartConfigSchemaFields = ReturnType<BarChartConfigSchema['fields']>;
+
+export type LineChartConfigType = NonNullable<ContentConfigType['lineChart']>;
+type LineChartConfigSchema = ObjectSchema<LineChartConfigType, PartialFormType>;
+type LineChartConfigSchemaFields = ReturnType<LineChartConfigSchema['fields']>;
 
 export type KpiConfigType = NonNullable<ContentConfigType['kpi']>;
 type KpiConfigSchema = ObjectSchema<KpiConfigType, PartialFormType>;
@@ -705,6 +744,51 @@ const schema: FormSchema = {
                                                 horizontalTickVisible: [],
 
                                                 style: barChartStyleSchema,
+                                            }),
+                                        },
+                                    };
+                                } else if (containerValue?.contentType === 'LINE_CHART') {
+                                    configSchema = {
+                                        ...configSchema,
+                                        lineChart: {
+                                            fields: (): LineChartConfigSchemaFields => ({
+                                                sheet: [],
+
+                                                horizontalAxis: lineHorizontalAxisSchema,
+                                                verticalAxis: {
+                                                    keySelector: (item) => item.clientId,
+                                                    member: (): VerticalAxisFormSchemaMember => ({
+                                                        fields: (): VerticalAxisSchemaFields => ({
+                                                            clientId: [requiredCondition],
+                                                            // TODO: Add duplicate check in list
+                                                            label: [requiredCondition],
+                                                            color: [],
+                                                            field: [requiredCondition],
+                                                            aggregationType: [defaultUndefinedType],
+                                                        }),
+                                                    }),
+                                                },
+
+                                                horizontalAxisTitle: [],
+                                                verticalAxisTitle: [],
+
+                                                title: [],
+                                                subTitle: [],
+
+                                                legendHeading: [],
+
+                                                // TODO: Add min max for rotation
+                                                horizontalTickLabelRotation: [],
+                                                horizontalAxisLineVisible: [],
+                                                verticalAxisLineVisible: [],
+                                                verticalAxisExtendMaximumValue: [],
+                                                verticalAxisExtendMinimumValue: [],
+                                                verticalGridLineVisible: [],
+                                                horizontalGridLineVisible: [],
+                                                verticalTickVisible: [],
+                                                horizontalTickVisible: [],
+
+                                                style: lineChartStyleSchema,
                                             }),
                                         },
                                     };

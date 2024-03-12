@@ -336,6 +336,10 @@ type ReportHorizontalAxisType {
   type: AnalysisReportHorizontalAxisTypeEnum!
 }
 
+type ReportLineHorizontalAxisType {
+  field: String!
+}
+
 type ReportVerticalAxisType {
   field: String!
   clientId: String
@@ -405,6 +409,27 @@ type BarChartConfigurationType {
   style: BarChartStyleType
 }
 
+type LineChartConfigurationType {
+  horizontalAxis: ReportLineHorizontalAxisType
+  horizontalAxisLineVisible: Boolean
+  horizontalAxisTitle: String
+  horizontalGridLineVisible: Boolean
+  horizontalTickVisible: Boolean
+  legendHeading: String
+  sheet: String
+  subTitle: String
+  title: String
+  verticalAxis: [ReportVerticalAxisType!]!
+  verticalAxisExtendMinimumValue: Int
+  verticalAxisExtendMaximumValue: Int
+  verticalAxisLineVisible: Boolean
+  verticalAxisTitle: String
+  verticalGridLineVisible: Boolean
+  verticalTickVisible: Boolean
+  horizontalTickLabelRotation: Int
+  style: BarChartStyleType
+}
+
 type TimelineChartConfigurationType {
   category: String
   date: String
@@ -417,6 +442,7 @@ type TimelineChartConfigurationType {
 
 type ContentConfigurationType {
   barChart: BarChartConfigurationType
+  lineChart: LineChartConfigurationType
   timelineChart: TimelineChartConfigurationType
   heading: HeadingConfigurationType
   image: ImageConfigurationType
