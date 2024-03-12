@@ -17,7 +17,7 @@ import {
 import { deepEnvironment } from '#base/configs/env';
 
 const CONTENT_TYPE_JSON = 'application/json';
-const CONTENT_TYPE_STREAM = 'application/octet-stream';
+// const CONTENT_TYPE_STREAM = 'application/octet-stream';
 
 function getCookie(name: string) {
     const value = `; ${document.cookie}`;
@@ -228,10 +228,8 @@ export const processDeepResponse: DeepContextInterface['transformResponse'] = as
             return undefined;
         }
 
-        if (res.headers.get('content-type') === CONTENT_TYPE_STREAM) {
-            const arrayBuffer = await res.arrayBuffer();
-            return arrayBuffer;
-        }
+        const arrayBuffer = await res.arrayBuffer();
+        return arrayBuffer;
     }
 
     return undefined;
