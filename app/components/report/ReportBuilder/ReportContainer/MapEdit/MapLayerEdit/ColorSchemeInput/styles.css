@@ -1,0 +1,9 @@
+.option {
+    display: flex;
+    gap: var(--dui-spacing-large);
+
+    .preview {
+        width: 2.5rem;
+        height: 1em;
+    }
+}
