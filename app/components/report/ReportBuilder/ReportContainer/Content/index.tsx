@@ -30,6 +30,7 @@ import {
 } from '../../../utils';
 import MapContent from './MapContent';
 import BarContent from './BarContent';
+import LineChart from './LineChart';
 
 import styles from './styles.css';
 
@@ -277,6 +278,21 @@ function Content(props: Props) {
                 configuration={configuration?.barChart}
                 cacheData={
                     barChartContentData?.data as (
+                        Record<string, string | number | undefined>[] | undefined
+                    )
+                }
+            />
+        );
+    }
+
+    if (contentType === 'LINE_CHART') {
+        const lineChartContentData = contentData?.[0];
+
+        return (
+            <LineChart
+                configuration={configuration?.lineChart}
+                cacheData={
+                    lineChartContentData?.data as (
                         Record<string, string | number | undefined>[] | undefined
                     )
                 }
