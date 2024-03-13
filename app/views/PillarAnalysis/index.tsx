@@ -250,6 +250,7 @@ const PILLAR_ANALYSIS = gql`
             reportText
             informationGaps
             includeInReport
+            title
             entries {
                 id
                 clientId
@@ -881,6 +882,7 @@ function PillarAnalysis() {
                     const analyticalStatements: PartialAnalyticalStatementType[] = pillarResponse
                         .result?.statements?.map((statement) => ({
                             ...statement,
+                            title: statement.title ?? undefined,
                             entries: statement.entries?.map((statementEntry) => ({
                                 ...statementEntry,
                                 entry: statementEntry.entry.id,

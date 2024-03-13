@@ -6,6 +6,7 @@ import {
     IoBarChartSharp,
     IoEyeOffOutline,
     IoEyeOutline,
+    IoInformationCircleOutline,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
 import { useParams } from 'react-router-dom';
@@ -26,6 +27,7 @@ import {
     QuickActionButton,
     QuickActionConfirmButton,
     useAlert,
+    Header,
 } from '@the-deep/deep-ui';
 import {
     useFormArray,
@@ -446,6 +448,21 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 headerDescriptionClassName={styles.headerDescription}
                 headerDescription={(
                     <>
+                        {isDefined(value.title) && (
+                            <Header
+                                heading={value.title}
+                                headingSize="extraSmall"
+                                spacing="none"
+                                headingClassName={styles.clusterHeading}
+                                headingSectionClassName={styles.clusterHeadingSection}
+                                icons={(
+                                    <IoInformationCircleOutline
+                                        className={styles.clusterInfoIcon}
+                                        title="This NLP model generated short topic generalizes the entries contained within this cluster."
+                                    />
+                                )}
+                            />
+                        )}
                         <NonFieldError error={error} />
                         {statementAndInfoGapsShown && (
                             <>

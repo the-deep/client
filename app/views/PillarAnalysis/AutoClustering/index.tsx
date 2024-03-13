@@ -38,7 +38,7 @@ import {
 
 import styles from './styles.css';
 
-const MIN_ENTRIES = 25;
+const MIN_ENTRIES = 5;
 
 const PILLAR_AUTO_CLUSTERING_RESULTS = gql`
     ${ENTRY_FRAGMENT}
@@ -53,6 +53,7 @@ const PILLAR_AUTO_CLUSTERING_RESULTS = gql`
                 status
                 clusters {
                     id
+                    title
                     entries {
                         ...EntryResponse
                         createdBy {
@@ -269,6 +270,7 @@ function AutoClustering(props: Props) {
                 reportText: '',
                 informationGaps: '',
                 clientId: randomString(),
+                title: cluster.title ?? undefined,
             }),
         ) ?? [];
         onStatementsFromClustersSet(newStatements);
