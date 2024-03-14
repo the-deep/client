@@ -34,6 +34,7 @@ import {
     AnalysisReportCategoricalLegendStyleType,
     AnalysisReportKpiItemConfigurationType,
 } from '#generated/types';
+import { positiveNumberCondition } from '#utils/form';
 
 // NOTE: New DeepReplace is not compatible with old that is present in other
 // parts of DEEP
@@ -104,7 +105,10 @@ type BackgroundStyleFormSchemaFields = ReturnType<BackgroundStyleFormSchema['fie
 const backgroundStyleSchema: BackgroundStyleFormSchema = {
     fields: (): BackgroundStyleFormSchemaFields => ({
         color: [defaultUndefinedType],
-        opacity: [defaultUndefinedType],
+        opacity: [
+            defaultUndefinedType,
+            positiveNumberCondition,
+        ],
     }),
 };
 
@@ -116,11 +120,15 @@ type BorderStyleFormSchemaFields = ReturnType<BorderStyleFormSchema['fields']>;
 const borderStyleSchema: BorderStyleFormSchema = {
     fields: (): BorderStyleFormSchemaFields => ({
         color: [defaultUndefinedType],
-        opacity: [defaultUndefinedType],
+        opacity: [
+            defaultUndefinedType,
+            positiveNumberCondition,
+        ],
         style: [defaultUndefinedType],
         width: [
             defaultUndefinedType,
             lessThanOrEqualToCondition(72),
+            positiveNumberCondition,
         ],
     }),
 };
@@ -132,10 +140,26 @@ type PaddingStyleFormSchemaFields = ReturnType<PaddingStyleFormSchema['fields']>
 
 const paddingStyleSchema: PaddingStyleFormSchema = {
     fields: (): PaddingStyleFormSchemaFields => ({
-        left: [defaultUndefinedType, lessThanOrEqualToCondition(72)],
-        right: [defaultUndefinedType, lessThanOrEqualToCondition(72)],
-        bottom: [defaultUndefinedType, lessThanOrEqualToCondition(72)],
-        top: [defaultUndefinedType, lessThanOrEqualToCondition(72)],
+        left: [
+            defaultUndefinedType,
+            lessThanOrEqualToCondition(72),
+            positiveNumberCondition,
+        ],
+        right: [
+            defaultUndefinedType,
+            lessThanOrEqualToCondition(72),
+            positiveNumberCondition,
+        ],
+        bottom: [
+            defaultUndefinedType,
+            lessThanOrEqualToCondition(72),
+            positiveNumberCondition,
+        ],
+        top: [
+            defaultUndefinedType,
+            lessThanOrEqualToCondition(72),
+            positiveNumberCondition,
+        ],
     }),
 };
 
@@ -162,8 +186,15 @@ const textStyleSchema: TextStyleFormSchema = {
     fields: (): TextStyleFormSchemaFields => ({
         color: [defaultUndefinedType],
         family: [defaultUndefinedType],
-        size: [defaultUndefinedType, lessThanOrEqualToCondition(108)],
-        weight: [defaultUndefinedType],
+        size: [
+            defaultUndefinedType,
+            lessThanOrEqualToCondition(108),
+            positiveNumberCondition,
+        ],
+        weight: [
+            defaultUndefinedType,
+            positiveNumberCondition,
+        ],
         align: [defaultUndefinedType],
     }),
 };
@@ -176,9 +207,9 @@ type LineLayerStyleFormSchemaFields = ReturnType<LineLayerStyleFormSchema['field
 const lineLayerStyleSchema: LineLayerStyleFormSchema = {
     fields: (): LineLayerStyleFormSchemaFields => ({
         strokeType: [],
-        dashSpacing: [],
+        dashSpacing: [positiveNumberCondition],
         stroke: [],
-        strokeWidth: [],
+        strokeWidth: [positiveNumberCondition],
     }),
 };
 
@@ -225,8 +256,14 @@ type GridLineStyleFormSchemaFields = ReturnType<GridLineStyleFormSchema['fields'
 const gridLineStyleSchema: GridLineStyleFormSchema = {
     fields: (): GridLineStyleFormSchemaFields => ({
         lineColor: [defaultUndefinedType],
-        lineWidth: [defaultUndefinedType],
-        lineOpacity: [defaultUndefinedType],
+        lineWidth: [
+            defaultUndefinedType,
+            positiveNumberCondition,
+        ],
+        lineOpacity: [
+            defaultUndefinedType,
+            positiveNumberCondition,
+        ],
     }),
 };
 
@@ -238,8 +275,14 @@ type TickStyleFormSchemaFields = ReturnType<TickStyleFormSchema['fields']>;
 const tickStyleSchema: TickStyleFormSchema = {
     fields: (): TickStyleFormSchemaFields => ({
         lineColor: [defaultUndefinedType],
-        lineWidth: [defaultUndefinedType],
-        lineOpacity: [defaultUndefinedType],
+        lineWidth: [
+            defaultUndefinedType,
+            positiveNumberCondition,
+        ],
+        lineOpacity: [
+            defaultUndefinedType,
+            positiveNumberCondition,
+        ],
     }),
 };
 
@@ -596,10 +639,13 @@ const mapLayerMemberItem = (): MapLayerFormSchemaMember => ({
         const baseLayerSchema: MapLayerSchemaFields = ({
             clientId: [requiredCondition],
             name: [requiredCondition],
-            order: [requiredCondition],
+            order: [
+                requiredCondition,
+                positiveNumberCondition,
+            ],
             type: [requiredCondition],
             visible: [requiredCondition],
-            opacity: [],
+            opacity: [positiveNumberCondition],
             layerConfig: {
                 fields: () => layerConfigSchema,
             },
@@ -644,8 +690,14 @@ const schema: FormSchema = {
                         clientId: [requiredCondition],
                         row: [requiredCondition],
                         column: [requiredCondition],
-                        width: [requiredCondition],
-                        height: [defaultUndefinedType],
+                        width: [
+                            requiredCondition,
+                            positiveNumberCondition,
+                        ],
+                        height: [
+                            defaultUndefinedType,
+                            positiveNumberCondition,
+                        ],
                         contentType: [requiredCondition],
                         style: containerStyleSchema,
                         contentData: {
@@ -735,11 +787,17 @@ const schema: FormSchema = {
                                                 legendHeading: [],
 
                                                 // TODO: Add min max for rotation
-                                                horizontalTickLabelRotation: [],
+                                                horizontalTickLabelRotation: [
+                                                    positiveNumberCondition,
+                                                ],
                                                 horizontalAxisLineVisible: [],
                                                 verticalAxisLineVisible: [],
-                                                verticalAxisExtendMaximumValue: [],
-                                                verticalAxisExtendMinimumValue: [],
+                                                verticalAxisExtendMaximumValue: [
+                                                    positiveNumberCondition,
+                                                ],
+                                                verticalAxisExtendMinimumValue: [
+                                                    positiveNumberCondition,
+                                                ],
                                                 verticalGridLineVisible: [],
                                                 horizontalGridLineVisible: [],
                                                 verticalTickVisible: [],
@@ -780,11 +838,17 @@ const schema: FormSchema = {
                                                 legendHeading: [],
 
                                                 // TODO: Add min max for rotation
-                                                horizontalTickLabelRotation: [],
+                                                horizontalTickLabelRotation: [
+                                                    positiveNumberCondition,
+                                                ],
                                                 horizontalAxisLineVisible: [],
                                                 verticalAxisLineVisible: [],
-                                                verticalAxisExtendMaximumValue: [],
-                                                verticalAxisExtendMinimumValue: [],
+                                                verticalAxisExtendMaximumValue: [
+                                                    positiveNumberCondition,
+                                                ],
+                                                verticalAxisExtendMinimumValue: [
+                                                    positiveNumberCondition,
+                                                ],
                                                 verticalGridLineVisible: [],
                                                 horizontalGridLineVisible: [],
                                                 verticalTickVisible: [],
@@ -801,12 +865,12 @@ const schema: FormSchema = {
                                             fields: (): MapConfigSchemaFields => ({
                                                 title: [],
                                                 subTitle: [],
-                                                mapHeight: [],
-                                                maxZoom: [],
-                                                minZoom: [],
+                                                mapHeight: [positiveNumberCondition],
+                                                maxZoom: [positiveNumberCondition],
+                                                minZoom: [positiveNumberCondition],
                                                 scaleBar: [],
                                                 showScale: [],
-                                                zoom: [],
+                                                zoom: [positiveNumberCondition],
                                                 enableZoomControls: [],
                                                 centerLatitude: [],
                                                 centerLongitude: [],
@@ -834,7 +898,7 @@ const schema: FormSchema = {
                                                             date: [],
                                                             subtitle: [],
                                                             source: [],
-                                                            sourceUrl: [],
+                                                            sourceUrl: [urlCondition],
                                                             style: kpiItemStyleSchema,
                                                         }),
                                                     }),
@@ -857,7 +921,7 @@ const schema: FormSchema = {
                                                 category: [],
                                                 sheet: [],
                                                 source: [],
-                                                sourceUrl: [],
+                                                sourceUrl: [urlCondition],
                                             }),
                                         },
                                     };
