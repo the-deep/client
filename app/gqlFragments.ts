@@ -373,6 +373,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         sectors
         affectedGroups
         protectionInfoMgmts
+        protectionRisks
         locations {
             id
             adminLevelTitle

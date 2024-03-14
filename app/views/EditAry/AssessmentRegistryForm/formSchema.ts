@@ -121,6 +121,7 @@ export const schema: FormSchema = {
             publicationDate: [],
             sectors: [defaultEmptyArrayType],
             protectionInfoMgmts: [defaultEmptyArrayType],
+            protectionRisks: [defaultEmptyArrayType],
             focuses: [defaultEmptyArrayType],
             affectedGroups: [defaultEmptyArrayType],
             locations: [defaultEmptyArrayType],
