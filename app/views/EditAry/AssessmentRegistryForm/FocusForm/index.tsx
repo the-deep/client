@@ -19,6 +19,7 @@ import {
     AssessmentRegistrySectorTypeEnum,
     AssessmentRegistryProtectionInfoTypeEnum,
     AssessmentRegistryAffectedGroupTypeEnum,
+    AssessmentRegistryProtectionRiskTypeEnum,
 } from '#generated/types';
 
 import { PartialFormType } from '../formSchema';
@@ -47,6 +48,12 @@ const GET_FOCUS_OPTIONS = gql`
             }
         }
         affectedGroupOptions: __type(name: "AssessmentRegistryAffectedGroupTypeEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        protectionRiskOptions: __type(name: "AssessmentRegistryProtectionRiskTypeEnum") {
             enumValues {
                 name
                 description
@@ -86,6 +93,7 @@ function FocusForm(props: Props) {
         sectorOptions,
         protectionOptions,
         affectedOptions,
+        protectionRiskOptions,
     ] = useMemo(() => ([
         data?.frameworkOptions?.enumValues as EnumOptions<AssessmentRegistryFocusTypeEnum>,
         data?.sectorOptions?.enumValues as EnumOptions<AssessmentRegistrySectorTypeEnum>,
@@ -94,6 +102,9 @@ function FocusForm(props: Props) {
         >,
         data?.affectedGroupOptions?.enumValues as EnumOptions<
             AssessmentRegistryAffectedGroupTypeEnum
+        >,
+        data?.protectionRiskOptions?.enumValues as EnumOptions<
+            AssessmentRegistryProtectionRiskTypeEnum
         >,
     ]), [data]);
 
@@ -152,6 +163,18 @@ function FocusForm(props: Props) {
                 onChange={setFieldValue}
                 disabled={!value.sectors?.some((sector) => sector === 'PROTECTION')}
                 error={getErrorString(error?.protectionInfoMgmts)}
+            />
+            <CheckListInput
+                listContainerClassName={styles.inputContainer}
+                label={(<Header title="Protection Risks" />)}
+                name="protectionRisks"
+                direction="vertical"
+                keySelector={enumKeySelector}
+                labelSelector={enumLabelSelector}
+                value={value.protectionRisks}
+                options={protectionRiskOptions ?? undefined}
+                onChange={setFieldValue}
+                error={getErrorString(error?.protectionRisks)}
             />
             <CheckListInput
                 listContainerClassName={styles.inputContainer}

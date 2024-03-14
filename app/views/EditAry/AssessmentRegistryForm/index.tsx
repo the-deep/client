@@ -56,6 +56,7 @@ const fieldsInFocus: { [key in keyof PartialFormType]?: true } = {
     focuses: true,
     sectors: true,
     protectionInfoMgmts: true,
+    protectionRisks: true,
     affectedGroups: true,
     locations: true,
 };
