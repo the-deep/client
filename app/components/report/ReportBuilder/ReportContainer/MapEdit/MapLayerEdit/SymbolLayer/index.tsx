@@ -167,6 +167,8 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
         'style', SymbolLayerStyleConfigType
     >('style', onFieldChange, {});
 
+    console.log('file id ', fileId);
+
     return (
         <ContainerCard
             heading="Layer Properties"

@@ -343,6 +343,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                 defaultVisibility
                 withoutBorder
             >
+                <NonFieldError error={error} />
                 <TextInput
                     value={value?.title}
                     name="title"

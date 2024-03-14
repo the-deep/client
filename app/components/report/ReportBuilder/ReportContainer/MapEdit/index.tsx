@@ -116,11 +116,19 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         [error?.layers],
     );
 
+    const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>();
+    const finalSelectedLayerId = selectedLayerId ?? value?.layers?.[0]?.clientId;
+
+    const handleLayerRemove = useCallback((index: number) => {
+        onMapLayerRemove(index);
+        setSelectedLayerId(undefined);
+    }, [onMapLayerRemove]);
+
     const handleAddMapLayer = useCallback(() => {
+        const newClientId = randomString();
         onFieldChange(
             (oldValue: MapConfigType['layers']) => {
                 const safeOldValue = oldValue ?? [];
-                const newClientId = randomString();
                 const newMapLayer: MapLayerType = {
                     clientId: newClientId,
                     visible: true,
@@ -130,9 +138,8 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
             },
             'layers',
         );
+        setSelectedLayerId(newClientId);
     }, [onFieldChange]);
-
-    const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>();
 
     const handleLayerClick = useCallback((newLayerId: string) => {
         setSelectedLayerId(newLayerId);
@@ -166,16 +173,16 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         index,
         onClick: handleLayerClick,
         visibility: !!datum.visible,
-        selected: layerKey === selectedLayerId,
+        selected: layerKey === finalSelectedLayerId,
         onVisibilityClick: () => handleLayerVisibilityClick(!!datum.visible, index),
     }), [
-        selectedLayerId,
+        finalSelectedLayerId,
         handleLayerClick,
         handleLayerVisibilityClick,
     ]);
 
     const selectedLayer = value?.layers?.find(
-        (layerItem) => layerItem.clientId === selectedLayerId,
+        (layerItem) => layerItem.clientId === finalSelectedLayerId,
     );
 
     const handleLayerOrderChange = useCallback((newOrder: MapLayerType[]) => {
@@ -322,18 +329,18 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
                             Add Layer
                         </Button>
                     </div>
-                    {isDefined(selectedLayerId) && isDefined(selectedLayer) && (
+                    {isDefined(finalSelectedLayerId) && isDefined(selectedLayer) && (
                         <MapLayerEdit
                             className={styles.mapLayerEdit}
                             contentData={contentData}
-                            error={mapLayersError?.[selectedLayerId]}
+                            error={mapLayersError?.[finalSelectedLayerId]}
                             geoDataUploads={geoDataUploads}
                             index={value?.layers?.indexOf(selectedLayer) ?? 0}
-                            key={selectedLayerId}
+                            key={finalSelectedLayerId}
                             onChange={onMapLayerChange}
                             onContentDataChange={onContentDataChange}
                             onGeoDataUploadsChange={onGeoDataUploadsChange}
-                            onRemove={onMapLayerRemove}
+                            onRemove={handleLayerRemove}
                             typeOptions={mapLayerTypeOptions}
                             value={selectedLayer}
                         />
