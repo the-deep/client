@@ -1,17 +1,12 @@
 import React from 'react';
 import {
     _cs,
-    isDefined,
 } from '@togglecorp/fujs';
 import { removeNull } from '@togglecorp/toggle-form';
 import {
     Message,
     Kraken,
 } from '@the-deep/deep-ui';
-import {
-    KPIs,
-    Timeline,
-} from '@the-deep/reporting-module-components';
 import ReactMarkdown from 'react-markdown';
 
 import {
@@ -29,6 +24,8 @@ import {
     resolveTextStyle,
 } from '../../../utils';
 import MapContent from './MapContent';
+import TimelineContent from './TimelineContent';
+import KpiContent from './KpiContent';
 import BarContent from './BarContent';
 import LineChart from './LineChart';
 
@@ -149,29 +146,9 @@ function Content(props: Props) {
     }
 
     if (contentType === 'KPI') {
-        const kpis = configuration?.kpi?.items;
-        const sourceStyle = configuration?.kpi?.sourceContentStyle ?? {};
-        const subtitleStyle = configuration?.kpi?.subtitleContentStyle ?? {};
-        const titleStyle = configuration?.kpi?.titleContentStyle ?? {};
-        const valueStyle = configuration?.kpi?.valueContentStyle ?? {};
-
-        const finalKpiData = kpis?.map((kpi) => ({
-            value: kpi.value,
-            title: kpi.title,
-            subtitle: kpi.subtitle,
-            source: kpi.source,
-            url: kpi.sourceUrl,
-            date: kpi.date,
-            backgroundColor: kpi.color ?? '#f0f0f0',
-            sourceStyle: resolveTextStyle(kpi.style?.sourceContentStyle, sourceStyle),
-            subtitleStyle: resolveTextStyle(kpi.style?.subtitleContentStyle, subtitleStyle),
-            titleStyle: resolveTextStyle(kpi.style?.titleContentStyle, titleStyle),
-            valueStyle: resolveTextStyle(kpi.style?.valueContentStyle, valueStyle),
-        }));
-
         return (
-            <KPIs
-                data={finalKpiData ?? []}
+            <KpiContent
+                configuration={configuration?.kpi}
             />
         );
     }
@@ -233,40 +210,12 @@ function Content(props: Props) {
     }
 
     if (contentType === 'TIMELINE_CHART') {
-        const timelineContentData = contentData?.[0]?.data as TimelineCacheData;
-
-        const transformedData = timelineContentData?.map(
-            (row) => {
-                const {
-                    title,
-                    details,
-                    date,
-                    category,
-                    source,
-                    sourceUrl,
-                } = row;
-
-                if (!date || !title) {
-                    return undefined;
-                }
-
-                return ({
-                    title: String(title),
-                    details: isDefined(details) ? String(details) : String(title),
-                    date: String(new Date(date)),
-                    category: isDefined(category) ? String(category) : undefined,
-                    source: isDefined(source) ? String(source) : undefined,
-                    link: isDefined(sourceUrl) ? String(sourceUrl) : undefined,
-                });
-            },
-        ).filter(isDefined);
+        const timelineContentData = contentData?.[0]?.data as TimelineCacheData | undefined;
 
         return (
-            <div className={styles.timeline}>
-                <Timeline
-                    data={transformedData ?? []}
-                />
-            </div>
+            <TimelineContent
+                contentData={timelineContentData}
+            />
         );
     }
 
