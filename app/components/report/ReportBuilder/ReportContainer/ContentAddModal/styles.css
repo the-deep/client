@@ -1,13 +1,24 @@
 .content-add-modal {
     .modal-body {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, 12rem);
-        grid-gap: var(--dui-spacing-small);
-
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, 12rem);
+            grid-gap: var(--dui-spacing-small);
+        }
         .button {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
             background-color: var(--dui-color-background-information);
+            gap: var(--dui-spacing-extra-small);
             height: 12rem;
             color: inherit;
+
+            .icon {
+                opacity: 0.7;
+                font-size: 3rem;
+            }
 
             &:not(&.disabled) {
                 &:hover {

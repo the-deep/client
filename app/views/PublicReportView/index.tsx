@@ -578,6 +578,7 @@ function PublicReportView(props: Props) {
                         reportId={undefined}
                         setFieldValue={handleUpdate}
                         disabled
+                        pending={pending}
                         readOnly
                         organizationOptions={organizationOptions}
                         onOrganizationOptionsChange={handleUpdate}

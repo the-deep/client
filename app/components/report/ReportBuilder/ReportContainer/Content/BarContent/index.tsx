@@ -90,6 +90,8 @@ function BarContent(props: Props) {
                 ),
             },
             yValueKeys: yKeys ?? [],
+            // groupingMode: configuration?.type === 'STACKED'
+            // ? 'stacked' as const : 'side-by-side' as const,
             chartOptions: {
                 keySelector: (item: Datum) => item.key ?? '',
                 xValueSelector: (item: Datum) => item.key,
