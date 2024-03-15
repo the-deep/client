@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
     _cs,
+    randomString,
     isDefined,
     listToMap,
     mapToMap,
@@ -84,6 +85,7 @@ interface Props {
     >>;
     leftContentRef: React.RefObject<HTMLDivElement> | undefined;
     onContentEditChange: (newVal: boolean) => void;
+    pending: boolean;
 }
 
 function ReportBuilder(props: Props) {
@@ -95,6 +97,7 @@ function ReportBuilder(props: Props) {
         setFieldValue,
         readOnly,
         disabled,
+        pending,
         organizationOptions,
         onOrganizationOptionsChange,
         onContentEditChange,
@@ -303,6 +306,24 @@ function ReportBuilder(props: Props) {
 
     const gap = value?.configuration?.bodyStyle?.gap;
 
+    const handleNewContentAdd = useCallback(() => {
+        const newItem = {
+            row: 1,
+            column: 1,
+            clientId: randomString(),
+            width: 12,
+        };
+        setFieldValue((oldVal: ReportContainerType[] | undefined = []) => {
+            const newItems = [
+                ...oldVal,
+                newItem,
+            ];
+            return newItems;
+        }, 'containers');
+    }, [
+        setFieldValue,
+    ]);
+
     return (
         <div
             className={_cs(
@@ -351,7 +372,10 @@ function ReportBuilder(props: Props) {
                 </div>
                 <NonFieldError error={getErrorObject(error)?.containers} />
                 <ListView
-                    className={styles.containers}
+                    className={_cs(
+                        styles.containers,
+                        (value?.containers?.length ?? 0) === 0 && styles.empty,
+                    )}
                     data={value?.containers}
                     style={isDefined(gap) ? { gridGap: gap } : undefined}
                     keySelector={reportContainerKeySelector}
@@ -359,7 +383,19 @@ function ReportBuilder(props: Props) {
                     rendererParams={reportContainerRendererParams}
                     errored={false}
                     filtered={false}
-                    pending={false}
+                    pending={pending}
+                    messageShown
+                    messageIconShown
+                    emptyMessage="Looks like there aren't any containers."
+                    messageActions={(
+                        <Button
+                            name="undefined"
+                            onClick={handleNewContentAdd}
+                            variant="tertiary"
+                        >
+                            Add a content
+                        </Button>
+                    )}
                 />
             </div>
             {containerToEdit === 'metadata' && leftContentRef?.current && (

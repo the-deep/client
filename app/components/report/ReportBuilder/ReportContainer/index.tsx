@@ -488,7 +488,7 @@ function ReportContainer(props: Props) {
             )}
             style={{
                 ...containerStyles,
-                height: `${height}px`,
+                height: height ? `${height}px` : undefined,
                 gridRow: row,
                 gridColumn: `span ${width}`,
             }}

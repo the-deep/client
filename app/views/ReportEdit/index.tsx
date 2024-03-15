@@ -1145,6 +1145,7 @@ function ReportEdit(props: Props) {
                         error={error}
                         setFieldValue={setFieldValue}
                         disabled={pending}
+                        pending={pending}
                         readOnly={false}
                         organizationOptions={organizationOptions}
                         onOrganizationOptionsChange={setOrganizationOptions}
