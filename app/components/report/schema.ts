@@ -7,6 +7,7 @@ import {
     defaultEmptyArrayType,
     defaultUndefinedType,
     lessThanOrEqualToCondition,
+    urlCondition,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -865,7 +866,7 @@ const schema: FormSchema = {
                                         ...configSchema,
                                         url: {
                                             fields: (): UrlConfigSchemaFields => ({
-                                                url: [],
+                                                url: [urlCondition],
                                             }),
                                         },
                                     };

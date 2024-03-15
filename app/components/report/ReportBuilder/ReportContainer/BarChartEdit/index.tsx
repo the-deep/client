@@ -380,6 +380,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     options={barChartDirectionOptions ?? []}
                     error={error?.direction}
                     spacing="compact"
+                    disabled
                 />
                 <ContainerCard
                     className={styles.container}

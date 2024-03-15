@@ -341,7 +341,13 @@ export function getColumnsFromWorkSheet(
     workSheet: WorkSheet,
     headerRow: number,
 ): string[] {
-    const rawData = utils.sheet_to_json(workSheet, { header: 1 });
+    const rawData = utils.sheet_to_json(
+        workSheet,
+        {
+            header: 1,
+            raw: false,
+        },
+    );
 
     const rawColumns = (rawData[headerRow - 1] as unknown[]);
     return (new Array(rawColumns.length).fill(undefined)).map(
@@ -357,7 +363,13 @@ export function getRawDataForWorkSheet(
     columns: string[],
     headerRow: number,
 ): Record<string, unknown>[] {
-    const rawData = utils.sheet_to_json(workSheet, { header: 1 });
+    const rawData = utils.sheet_to_json(
+        workSheet,
+        {
+            header: 1,
+            raw: false,
+        },
+    );
 
     rawData.splice(0, headerRow);
 
