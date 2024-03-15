@@ -16,27 +16,25 @@ import HeatMap from '#components/HeatMap';
 import styles from './styles.css';
 
 const NLP_MAP = gql`
-query NlpMap($projectId: ID!, $nlpMapId: ID!) {
-    project(id: $projectId) {
-        id
-        analysisGeoTask(id: $nlpMapId) {
+    query NlpMap($projectId: ID!, $nlpMapId: ID!) {
+        project(id: $projectId) {
             id
-            status
-            entryGeo {
-                data {
-                    geoids {
-                        countrycode
-                        featurecode
-                        geonameid
-                        latitude
-                        longitude
-                        match
+            analysisGeoTask(id: $nlpMapId) {
+                id
+                status
+                entryGeo {
+                    data {
+                        meta {
+                            latitude
+                            longitude
+                            offsetEnd
+                            offsetStart
+                        }
                     }
                 }
             }
         }
     }
-}
 `;
 
 interface Props {
@@ -91,7 +89,7 @@ function NlpMap(props: Props) {
     const points = useMemo(() => {
         const latLongs = data?.project?.analysisGeoTask?.entryGeo
             ?.flatMap((geoData) => geoData?.data)
-            .flatMap((mapData) => mapData?.geoids)
+            .flatMap((mapData) => mapData?.meta)
             .filter(isDefined)
             .map((latLong) => ((latLong.latitude && latLong.longitude) ? {
                 count: 1,
