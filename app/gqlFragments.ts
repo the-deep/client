@@ -497,6 +497,7 @@ export const PROJECT_DETAIL_FRAGMENT = gql`
         description
         startDate
         endDate
+        createdAt
         analysisFramework {
             id
             title

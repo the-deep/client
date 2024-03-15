@@ -50,6 +50,9 @@
                 font-size: var(--dui-font-size-large);
             }
         }
+        .pinned-project-header {
+            align-self: flex-start;
+        }
     }
 
     .right-content {
