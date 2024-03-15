@@ -3,6 +3,10 @@
     flex-direction: column;
     gap: var(--dui-spacing-large);
 
+    .errored-container {
+        border: var(--dui-width-separator-medium) solid var(--dui-color-danger);
+    }
+
     .expanded-body {
         display: flex;
         flex-direction: column;
@@ -11,6 +15,10 @@
         .container {
             border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
+            &.errored {
+                border-color: var(--dui-color-danger);
+            }
+
             .container-content {
                 display: flex;
                 flex-direction: column;
@@ -18,4 +26,5 @@
             }
         }
     }
+
 }

@@ -26,6 +26,7 @@ import {
     getErrorObject,
     useFormObject,
     useFormArray,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
@@ -158,6 +159,19 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
     }), [enumsData]);
 
     const error = getErrorObject(riskyError);
+
+    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+        'title',
+        'subTitle',
+        'horizontalTickLabelRotation',
+        'horizontalAxis',
+    ];
+
+    const generalHasError = generalFieldMap.some(
+        (key) => analyzeErrors(error?.[key]),
+    );
+
+    console.info('general error', generalHasError);
 
     const onFieldChange = useFormObject<
         NAME, BarChartConfigType
@@ -336,6 +350,7 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                 />
             )}
             <ExpandableContainer
+                className={generalHasError ? styles.erroredContainer : undefined}
                 heading="General"
                 headingSize="small"
                 spacing="compact"
@@ -384,7 +399,10 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     disabled
                 />
                 <ContainerCard
-                    className={styles.container}
+                    className={_cs(
+                        styles.container,
+                        analyzeErrors(error?.horizontalAxis) && styles.errored,
+                    )}
                     heading="Horizontal Axis"
                     headingSize="extraSmall"
                     contentClassName={styles.containerContent}
