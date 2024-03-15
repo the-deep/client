@@ -3,12 +3,16 @@ import {
     _cs,
     isDefined,
 } from '@togglecorp/fujs';
+import { MdOutlineSwapVerticalCircle } from 'react-icons/md';
 import { useQuery, gql } from '@apollo/client';
 import {
     Container,
+    Header,
     Heading,
     ListView,
     Kraken,
+    QuickActionButton,
+    useModalState,
 } from '@the-deep/deep-ui';
 
 import { useRequest } from '#base/utils/restRequest';
@@ -37,6 +41,7 @@ import Summary from './Summary';
 import Activity from './Activity';
 import Assignment from './Assignment';
 import RecentActivity from './RecentActivity';
+import ProjectReorderModal from './ProjectReorderModal';
 
 import styles from './styles.css';
 
@@ -62,6 +67,7 @@ const USER_PINNED_PROJECTS = gql`
 ${PROJECT_DETAIL_FRAGMENT}
 query userPinnedProjects {
     userPinnedProjects{
+        id
         clientId
         order
         project {
@@ -72,7 +78,7 @@ query userPinnedProjects {
 `;
 
 type ProjectDetail = NonNullable<FetchProjectQuery>['project'];
-type PinnedProjectDetailType = NonNullable<UserPinnedProjectsQuery>['userPinnedProjects'][number];
+export type PinnedProjectDetailType = NonNullable<UserPinnedProjectsQuery>['userPinnedProjects'][number];
 
 const recentProjectKeySelector = (d: ProjectDetail) => d?.id ?? '';
 const pinnedProjectKeySelector = (d: PinnedProjectDetailType) => d.project?.id ?? '';
@@ -87,6 +93,12 @@ function Home(props: ViewProps) {
     const {
         className,
     } = props;
+
+    const [
+        projectReorderModalShown,
+        showProjectReorderModal,
+        hideProjectReorderModal,
+    ] = useModalState(false);
 
     const [selectedProject, setSelectedProject] = useState<string | undefined>(undefined);
     const [projects, setProjects] = useState<
@@ -121,6 +133,11 @@ function Home(props: ViewProps) {
         },
     );
 
+    const [
+        pinnedProjects,
+        setPinnedProjects,
+    ] = useState<PinnedProjectDetailType[] | undefined>([]);
+
     const {
         data: pinnedProjectsResponse,
         loading: pinnedProjectsPending,
@@ -131,8 +148,19 @@ function Home(props: ViewProps) {
             onCompleted: (response) => {
                 const count = response?.userPinnedProjects.length;
                 setPinButtonDisabled(count >= MAX_PINNED_PROJECT_LIMIT);
+                const pinnedProjectList = response?.userPinnedProjects
+                && pinnedProjectsResponse?.userPinnedProjects?.filter(
+                    (item) => isDefined(item.project?.id),
+                );
+                setPinnedProjects(pinnedProjectList);
             },
         },
+    );
+
+    // NOTE: This is an order changed list outside of state maintained due to apollo caching
+    const pinnedProjectsList = pinnedProjectsResponse?.userPinnedProjects
+    && pinnedProjectsResponse?.userPinnedProjects?.filter(
+        (item) => isDefined(item.project?.id),
     );
 
     const {
@@ -188,11 +216,6 @@ function Home(props: ViewProps) {
             pinButtonDisabled,
         ],
     );
-
-    const pinnedProjects = pinnedProjectsResponse?.userPinnedProjects
-        && pinnedProjectsResponse?.userPinnedProjects?.filter(
-            (item) => isDefined(item.project?.id),
-        );
 
     const pinnedProjectsRendererParams = useCallback(
         (_: string, data: PinnedProjectDetailType): RecentProjectItemProps => ({
@@ -303,14 +326,25 @@ function Home(props: ViewProps) {
                         disablePinButton={pinButtonDisabled}
                     />
                 )}
-                {(pinnedProjects?.length ?? 0) >= 1 && (
+                {(pinnedProjectsList?.length ?? 0) >= 1 && (
                     <>
-                        <Heading size="medium">
-                            Pinned Projects
-                        </Heading>
+                        <Header
+                            className={styles.pinnedProjectHeader}
+                            headingSize="medium"
+                            heading="Pinned Projects"
+                            actions={(
+                                <QuickActionButton
+                                    name={undefined}
+                                    title="Reorder pinned projects"
+                                    onClick={showProjectReorderModal}
+                                >
+                                    <MdOutlineSwapVerticalCircle />
+                                </QuickActionButton>
+                            )}
+                        />
                         <ListView
                             className={styles.projectList}
-                            data={pinnedProjects}
+                            data={pinnedProjectsList}
                             rendererParams={pinnedProjectsRendererParams}
                             renderer={ProjectItem}
                             pending={pinnedProjectsPending}
@@ -349,6 +383,14 @@ function Home(props: ViewProps) {
                     messageIconShown
                     messageShown
                 />
+                {projectReorderModalShown && (
+                    <ProjectReorderModal
+                        onModalClose={hideProjectReorderModal}
+                        pinnedProjects={pinnedProjects ?? []}
+                        onSuccess={retriggerPinnedProjectsList}
+                        setPinnedProjects={setPinnedProjects}
+                    />
+                )}
             </Container>
         </PageContent>
     );
