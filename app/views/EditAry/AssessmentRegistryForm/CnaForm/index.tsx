@@ -17,7 +17,7 @@ import {
     useFormArray,
 } from '@togglecorp/toggle-form';
 import {
-    NumberOutput,
+    TextOutput,
     Heading,
 } from '@the-deep/deep-ui';
 import {
@@ -156,19 +156,18 @@ function CnaForm(props: Props) {
         <div className={styles.cnaForm}>
             <div className={styles.sectorStats}>
                 {questionPercentage?.map((question) => (
-                    <div
-                        key={question.sector}
+                    <TextOutput
                         className={styles.sectorStatsContent}
-                    >
-                        <NumberOutput
-                            value={question.percentage}
-                            precision={1}
-                            suffix="%"
-                        />
-                        <div>
-                            {question.sector}
-                        </div>
-                    </div>
+                        key={question.sector}
+                        label={question.sector}
+                        value={question.percentage}
+                        valueType="number"
+                        valueProps={{
+                            precision: 1,
+                            suffix: '%',
+                        }}
+                        hideLabelColon
+                    />
                 ))}
             </div>
             {cnaQuestions?.map((cna) => (

@@ -6,11 +6,13 @@
 
     .sector-stats {
         display: flex;
-        gap: var(--dui-spacing-medium);
+        flex-wrap: wrap;
+        gap: var(--dui-spacing-small);
 
         .sector-stats-content {
             display: flex;
             flex-direction: column;
+            flex-grow: 1;
             gap: var(--dui-spacing-small);
             background-color: var(--dui-color-background-information);
             padding: var(--dui-spacing-medium);

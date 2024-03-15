@@ -21,6 +21,7 @@ import {
     isNotDefined,
 } from '@togglecorp/fujs';
 import {
+    PendingMessage,
     Button,
     useAlert,
 } from '@the-deep/deep-ui';
@@ -669,6 +670,10 @@ function EditAry(props: Props) {
         ],
     );
 
+    const pending = createAssessmentRegistryPending
+        || assessmentRegistryDataLoading
+        || updateAssessmentRegistryPending;
+
     return (
         <div className={_cs(className, styles.editAssessment)}>
             <SubNavbar
@@ -684,10 +689,7 @@ function EditAry(props: Props) {
                             name="save"
                             type="submit"
                             onClick={handleSubmit}
-                            disabled={pristine
-                                || createAssessmentRegistryPending
-                                || assessmentRegistryDataLoading
-                                || updateAssessmentRegistryPending}
+                            disabled={pending || pristine}
                         >
                             Save
                         </Button>
@@ -706,6 +708,7 @@ function EditAry(props: Props) {
                             entryImagesMap={entryImagesMap}
                         />
                         <div className={styles.form}>
+                            {pending && <PendingMessage />}
                             <AssessmentRegistryForm
                                 projectId={projectId}
                                 className={styles.form}
