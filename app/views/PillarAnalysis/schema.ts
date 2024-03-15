@@ -54,6 +54,7 @@ const analyticalStatementSchema: AnalyticalStatementSchema = {
         reportText: [],
         includeInReport: [requiredCondition],
         entries: analyticalEntriesSchema,
+        title: [],
     }),
 };
 
