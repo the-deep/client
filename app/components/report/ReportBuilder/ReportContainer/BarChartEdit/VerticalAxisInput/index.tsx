@@ -24,6 +24,7 @@ import {
     AnalysisReportAggregationTypeEnum,
     AnalysisReportVariableType,
 } from '#generated/types';
+import NonFieldError from '#components/NonFieldError';
 import {
     type FinalVerticalAxisType,
 } from '../../../../schema';
@@ -92,6 +93,7 @@ function VerticalAxisInput(props: Props) {
             )}
             contentClassName={styles.verticalAxisItemContent}
         >
+            <NonFieldError error={error} />
             <TextInput
                 label="Label"
                 name="label"

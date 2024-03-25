@@ -25,6 +25,7 @@ interface Props {
     listeners?: Listeners;
     selected: boolean;
     index: number;
+    errored?: boolean;
 }
 
 function MapLayerItem(props: Props) {
@@ -38,11 +39,16 @@ function MapLayerItem(props: Props) {
         attributes,
         listeners,
         index,
+        errored,
     } = props;
 
     return (
         <Element
-            className={_cs(selected && styles.selected, styles.layer)}
+            className={_cs(
+                selected && styles.selected,
+                styles.layer,
+                errored && styles.errored,
+            )}
             icons={(
                 <QuickActionButton
                     name={index}

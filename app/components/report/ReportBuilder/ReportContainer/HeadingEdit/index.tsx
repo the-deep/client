@@ -11,6 +11,7 @@ import {
     type Error,
     getErrorObject,
     useFormObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import { useQuery, gql } from '@apollo/client';
 
@@ -77,6 +78,15 @@ function HeadingEdit<NAME extends string>(props: Props<NAME>) {
         REPORT_HEADING,
     );
 
+    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+        'content',
+        'variant',
+    ];
+
+    const generalHasError = generalFieldMap.some(
+        (key) => analyzeErrors(error?.[key]),
+    );
+
     const options = data?.headingVariants?.enumValues as EnumOptions<
         AnalysisReportHeadingConfigurationVariantEnum
     >;
@@ -90,9 +100,11 @@ function HeadingEdit<NAME extends string>(props: Props<NAME>) {
             {loading && <PendingMessage />}
             <NonFieldError error={error} />
             <ExpandableContainer
-                heading="General"
+                heading={generalHasError ? 'General *' : 'General'}
+                headingClassName={styles.heading}
                 headingSize="small"
                 spacing="compact"
+                errored={generalHasError}
                 contentClassName={styles.expandedBody}
                 defaultVisibility
                 withoutBorder
