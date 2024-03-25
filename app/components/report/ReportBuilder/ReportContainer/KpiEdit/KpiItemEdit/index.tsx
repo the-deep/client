@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { randomString } from '@togglecorp/fujs';
 import {
     ColorInput,
@@ -14,9 +14,11 @@ import {
     Error,
     useFormObject,
     getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import { IoTrash } from 'react-icons/io5';
 
+import NonFieldError from '#components/NonFieldError';
 import {
     type FinalKpiItemType,
 } from '../../../../schema';
@@ -61,9 +63,32 @@ function KpiItemEdit(props: Props) {
         defaultKpiItem,
     );
 
+    const kpiItemFieldMap: (keyof NonNullable<typeof error>)[] = [
+        'title',
+        'subtitle',
+        'value',
+        'abbreviateValue',
+        'source',
+        'sourceUrl',
+        'date',
+        'color',
+    ];
+
+    const kpiItemHasError = kpiItemFieldMap.some(
+        (key) => analyzeErrors(error?.[key]),
+    );
+
+    const containerHeading = useMemo(() => (
+        value.title ?? `Item: ${index + 1}`
+    ), [
+        index,
+        value.title,
+    ]);
+
     return (
         <ExpandableContainer
-            heading={value.title ?? `Item: ${index + 1}`}
+            className={styles.kpiItem}
+            errored={kpiItemHasError}
             headerActions={(
                 <QuickActionButton
                     title="Remove Attributes"
@@ -73,9 +98,14 @@ function KpiItemEdit(props: Props) {
                     <IoTrash />
                 </QuickActionButton>
             )}
-            contentClassName={styles.kpiItem}
+            heading={kpiItemHasError
+                ? `${containerHeading}*`
+                : containerHeading}
+            headingClassName={styles.heading}
+            contentClassName={styles.kpiItemContent}
             withoutBorder
         >
+            <NonFieldError error={error} />
             <TextInput
                 label="Title"
                 name="title"

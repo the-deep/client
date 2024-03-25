@@ -163,15 +163,21 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
     const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
         'title',
         'subTitle',
-        'horizontalTickLabelRotation',
+        'type',
+        'direction',
         'horizontalAxis',
+        'verticalAxis',
+        'horizontalAxisTitle',
+        'verticalAxisTitle',
+        'legendHeading',
+        'horizontalTickLabelRotation',
+        'verticalAxisExtendMaximumValue',
+        'verticalAxisExtendMinimumValue',
     ];
 
     const generalHasError = generalFieldMap.some(
         (key) => analyzeErrors(error?.[key]),
     );
-
-    console.info('general error', generalHasError);
 
     const onFieldChange = useFormObject<
         NAME, BarChartConfigType
@@ -350,10 +356,10 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                 />
             )}
             <ExpandableContainer
-                className={generalHasError ? styles.erroredContainer : undefined}
-                heading="General"
+                heading={generalHasError ? 'General *' : 'General'}
                 headingSize="small"
                 spacing="compact"
+                errored={generalHasError}
                 contentClassName={styles.expandedBody}
                 defaultVisibility
                 withoutBorder
@@ -430,7 +436,10 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     />
                 </ContainerCard>
                 <ContainerCard
-                    className={styles.container}
+                    className={_cs(
+                        styles.container,
+                        analyzeErrors(error?.verticalAxis) && styles.errored,
+                    )}
                     heading="Vertical Axis"
                     headingSize="extraSmall"
                     contentClassName={styles.containerContent}

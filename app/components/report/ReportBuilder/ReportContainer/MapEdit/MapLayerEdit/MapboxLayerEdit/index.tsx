@@ -8,7 +8,10 @@ import {
     Error,
     useFormObject,
     getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
+
+import NonFieldError from '#components/NonFieldError';
 
 import {
     type MapboxLayerConfigType,
@@ -48,9 +51,11 @@ function MapboxLayerEdit<NAME extends string>(props: Props<NAME>) {
         <ContainerCard
             heading="Layer Properties"
             headingSize="extraSmall"
+            errored={analyzeErrors(error)}
             contentClassName={styles.mapLayer}
             className={styles.mapLayerEdit}
         >
+            <NonFieldError error={error} />
             <TextInput
                 label="Style"
                 name="mapboxStyle"

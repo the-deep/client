@@ -5,6 +5,7 @@ import {
     type Error,
     getErrorObject,
     useFormObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import { ExpandableContainer } from '@the-deep/deep-ui';
 
@@ -55,6 +56,7 @@ function TextEdit<NAME extends string>(props: Props<NAME>) {
                 heading="General"
                 headingSize="small"
                 spacing="compact"
+                errored={analyzeErrors(error?.content)}
                 contentClassName={styles.expandedBody}
                 defaultVisibility
                 withoutBorder
