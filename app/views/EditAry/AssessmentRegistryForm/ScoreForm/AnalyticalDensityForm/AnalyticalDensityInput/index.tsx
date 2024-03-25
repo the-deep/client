@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     CheckListInput,
     ContainerCard,
@@ -62,13 +62,27 @@ function AnalyticalDensityInput(props: Props) {
         () => value?.analysisLevelCovered?.length ?? 0,
         [value?.analysisLevelCovered],
     );
-    const sectorWiseDensityValue = useMemo(
-        () => (figureProvidedValue * analysisLevelValue) / 10,
-        [
-            figureProvidedValue,
-            analysisLevelValue,
-        ],
-    );
+
+    const handleFigureProvidedChange = useCallback((
+        newVal: AssessmentRegistryAnalysisFigureTypeEnum[] | undefined,
+    ) => {
+        onScoreAnalyticalDensityChange(newVal, 'figureProvided');
+        const newScore = ((newVal?.length ?? 0) * analysisLevelValue) / 10;
+        onScoreAnalyticalDensityChange(newScore, 'score');
+    }, [
+        analysisLevelValue,
+        onScoreAnalyticalDensityChange,
+    ]);
+    const handleAnalysisLevelCoveredChange = useCallback((
+        newVal: AssessmentRegistryAnalysisLevelTypeEnum[] | undefined,
+    ) => {
+        onScoreAnalyticalDensityChange(newVal, 'analysisLevelCovered');
+        const newScore = ((newVal?.length ?? 0) * figureProvidedValue) / 10;
+        onScoreAnalyticalDensityChange(newScore, 'score');
+    }, [
+        figureProvidedValue,
+        onScoreAnalyticalDensityChange,
+    ]);
 
     const error = getErrorObject(riskyError);
 
@@ -90,7 +104,7 @@ function AnalyticalDensityInput(props: Props) {
                         {description}
                     </div>
                     <div>
-                        {sectorWiseDensityValue}
+                        {value?.score}
                     </div>
                 </>
             )}
@@ -114,7 +128,7 @@ function AnalyticalDensityInput(props: Props) {
             >
                 <CheckListInput
                     value={value?.analysisLevelCovered}
-                    onChange={onScoreAnalyticalDensityChange}
+                    onChange={handleAnalysisLevelCoveredChange}
                     name="analysisLevelCovered"
                     direction="vertical"
                     options={(analysisLevelCoveredOptions?.enumValues as EnumOptions<
@@ -144,7 +158,7 @@ function AnalyticalDensityInput(props: Props) {
             >
                 <CheckListInput
                     value={value?.figureProvided}
-                    onChange={onScoreAnalyticalDensityChange}
+                    onChange={handleFigureProvidedChange}
                     name="figureProvided"
                     direction="vertical"
                     options={(figureProvidedOptions?.enumValues as EnumOptions<

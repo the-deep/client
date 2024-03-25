@@ -200,6 +200,7 @@ export const schema: FormSchema = {
                         clientId: [requiredCondition],
                         analysisLevelCovered: [defaultEmptyArrayType],
                         figureProvided: [defaultEmptyArrayType],
+                        score: [],
                         sector: [],
                     }),
                 }),

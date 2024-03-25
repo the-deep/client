@@ -120,11 +120,7 @@ function ScoreForm(props: Props) {
     const scoreStatsValue = useMemo(() => {
         // NOTE: Analytical Density Value
         const sectorWiseDensityValue = value.scoreAnalyticalDensity?.map(
-            (density) => {
-                const figureProvideValue = density.figureProvided?.length ?? 0;
-                const analysisLevelValue = density.analysisLevelCovered?.length ?? 0;
-                return (figureProvideValue * analysisLevelValue) / 10;
-            },
+            (density) => density.score,
         ).filter(isDefined);
 
         const analyticalDensityValue = {

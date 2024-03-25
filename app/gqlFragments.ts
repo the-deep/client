@@ -429,6 +429,7 @@ export const ASSESSMENT_REGISTRY_FRAGMENT = gql`
         scoreAnalyticalDensity {
             id
             analysisLevelCovered
+            score
             clientId
             figureProvided
             sector
