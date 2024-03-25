@@ -89,9 +89,12 @@ function BarContent(props: Props) {
                     undefined,
                 ),
             },
+            keySelector: (item: Datum) => item.key ?? '',
+            xValueSelector: (item: Datum) => item.key,
+            yValueSelector,
             yValueKeys: yKeys ?? [],
-            // groupingMode: configuration?.type === 'STACKED'
-            // ? 'stacked' as const : 'side-by-side' as const,
+            groupingMode: configuration?.type === 'STACKED'
+                ? 'stacked' as const : 'side-by-side' as const,
             chartOptions: {
                 keySelector: (item: Datum) => item.key ?? '',
                 xValueSelector: (item: Datum) => item.key,
@@ -154,7 +157,6 @@ function BarContent(props: Props) {
                 //  barGroupGap
                 //  barGroupMargin
             },
-            children: undefined,
         };
     }, [
         cacheData,
@@ -168,28 +170,16 @@ function BarContent(props: Props) {
             {config && chartType === 'CATEGORICAL' && (
                 <CategoricalBarChart
                     {...config}
-                    // FIXME: Remove these dependencies from categorical bar chart
-                    keySelector={config?.chartOptions.keySelector}
-                    xValueSelector={config?.chartOptions.xValueSelector}
-                    yValueSelector={config?.chartOptions.yValueSelector ?? []}
                 />
             )}
             {config && chartType === 'DATE' && (
                 <TemporalBarChart
                     {...config}
-                    // FIXME: Remove these dependencies from categorical bar chart
-                    keySelector={config?.chartOptions.keySelector}
-                    xValueSelector={config?.chartOptions.xValueSelector}
-                    yValueSelector={config?.chartOptions.yValueSelector ?? []}
                 />
             )}
             {/* config && chartType === 'NUMERIC' && (
                 <NumericBarChart
                     {...config}
-                    // FIXME: Remove these dependencies from categorical bar chart
-                    keySelector={config?.chartOptions.keySelector}
-                    xValueSelector={config?.chartOptions.xValueSelector}
-                    yValueSelector={config?.chartOptions.yValueSelector ?? []}
                 />
             ) */}
         </div>

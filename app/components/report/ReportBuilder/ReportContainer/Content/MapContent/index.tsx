@@ -6,7 +6,15 @@ import {
 import { PendingAnimation } from '@the-deep/deep-ui';
 import {
     Map,
+    type MapProps,
+    type Symbols,
 } from '@the-deep/reporting-module-components';
+import {
+    type Point,
+    type Geometry,
+    type FeatureCollection,
+    type GeoJsonProperties,
+} from 'geojson';
 
 import ErrorBoundary from '#base/components/ErrorBoundary';
 import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
@@ -20,9 +28,18 @@ import {
     type MapConfigType,
     type ContentDataType,
 } from '../../../../schema';
+import { type D3InterpolationSchemes } from '../../MapEdit/MapLayerEdit/ColorSchemeInput';
 import {
     resolveTextStyle,
 } from '../../../../utils';
+
+type GeoJson = FeatureCollection<Geometry, GeoJsonProperties>;
+type PointGeoJson = FeatureCollection<Point, GeoJsonProperties>;
+
+const scaleTypeMap = {
+    FIXED: 'fixed' as const,
+    PROPORTIONAL: 'proportional' as const,
+};
 
 interface Props {
     className?: string;
@@ -57,11 +74,11 @@ function MapContent(props: Props) {
         (item) => item.upload,
     );
 
-    const finalConfig = useMemo(() => {
+    const finalConfig = useMemo((): MapProps | undefined => {
         if (downloadsPending) {
             return undefined;
         }
-        const layers = configuration?.layers?.map((item, index) => {
+        const layers = configuration?.layers?.map((item, index): MapProps['layers'][number] | undefined => {
             if (item.type === 'SYMBOL_LAYER') {
                 const layerConfig = item?.layerConfig?.symbolLayer;
                 const referenceId = layerConfig?.contentReferenceId;
@@ -81,30 +98,39 @@ function MapContent(props: Props) {
                     (variableItem) => variableItem.clientId ?? '',
                     (variableItem) => variableItem.name,
                 );
+
+                const resolvedLabelStyle = resolveTextStyle(
+                    layerConfig?.style?.label,
+                    {
+                        size: 12,
+                        color: '#000000',
+                        family: 'Roboto Mono',
+                    },
+                );
                 return ({
-                    id: index + 1,
+                    id: String(index + 1),
                     type: 'symbol',
-                    visible: item.visible,
+                    visible: !!item.visible,
                     options: {
                         opacity: item.opacity,
-                        zIndex: item.order,
-                        data: downloadedGeoData[uploadId],
+                        zIndex: item.order ?? index + 1,
+                        data: downloadedGeoData[uploadId] as GeoJson,
                         labelPropertyKey: layerConfig.labelPropertyKey
-                            ? columnLabel?.[layerConfig.labelPropertyKey]
+                            ? (columnLabel?.[layerConfig.labelPropertyKey] ?? undefined)
                             : undefined,
-                        showLabels: layerConfig?.showLabels,
+                        showLabels: !!layerConfig?.showLabels,
                         scale: layerConfig?.scale,
-                        scaleType: layerConfig?.scaleType ?? 'fixed',
-                        symbol: layerConfig?.symbol ?? 'circle',
+                        // TODO: Implement this
+                        scaleDataMax: undefined,
+                        scaleType: layerConfig?.scaleType
+                            ? scaleTypeMap[layerConfig.scaleType] : undefined,
+                        symbol: (layerConfig?.symbol ?? 'circle') as Symbols,
                         labelStyle: {
-                            fontSize: 12,
                             showHalo: true,
-                            color: '#000000',
-                            fontFamily: 'Roboto Mono',
-                            ...resolveTextStyle(
-                                layerConfig?.style?.label,
-                                undefined,
-                            ),
+                            color: resolvedLabelStyle?.color ?? '#000000',
+                            fontSize: resolvedLabelStyle?.fontSize ?? 14,
+                            fontFamily: resolvedLabelStyle?.fontFamily,
+                            // textAlign: resolvedLabelStyle?.textAlign,
                         },
                         // FIXME: Create symbol style
                         symbolStyle: {
@@ -135,45 +161,50 @@ function MapContent(props: Props) {
                     (variableItem) => variableItem.name,
                 );
                 return ({
-                    id: index + 1,
+                    id: String(index + 1),
                     type: 'heatmap',
-                    visible: item.visible,
+                    visible: !!item.visible,
                     options: {
                         opacity: item.opacity,
-                        zIndex: item.order,
-                        data: downloadedGeoData[uploadId],
+                        zIndex: item.order ?? index + 1,
+                        data: downloadedGeoData[uploadId] as PointGeoJson,
                         blur: layerConfig?.blur,
                         scaleDataMax: layerConfig?.scaleDataMax,
-                        fillPalette: layerConfig?.fillPalette ?? 'Oranges',
+                        fillPalette: (layerConfig?.fillPalette ?? 'Oranges') as D3InterpolationSchemes,
                         radius: layerConfig?.radius,
-                        weighted: layerConfig?.weighted,
+                        weighted: !!layerConfig?.weighted,
                         weightPropertyKey: layerConfig.weightPropertyKey
-                            ? columnLabel?.[layerConfig.weightPropertyKey]
+                            ? (columnLabel?.[layerConfig.weightPropertyKey] ?? undefined)
                             : undefined,
                     },
                 });
             }
             if (item.type === 'OSM_LAYER') {
                 return ({
-                    id: index + 1,
+                    id: String(index + 1),
                     type: 'osm',
-                    visible: item.visible,
+                    visible: !!item.visible,
                     options: {
                         opacity: item.opacity,
-                        zIndex: item.order,
+                        zIndex: item.order ?? (index + 1),
                     },
                 });
             }
             if (item.type === 'MAPBOX_LAYER') {
                 const layerConfig = item?.layerConfig?.mapboxLayer;
+                const finalMapboxStyle = layerConfig?.mapboxStyle ?? mapboxStyle;
+                if (!finalMapboxStyle) {
+                    return undefined;
+                }
+
                 return ({
-                    id: index + 1,
+                    id: String(index + 1),
                     type: 'mapbox',
-                    visible: item.visible,
+                    visible: !!item.visible,
                     options: {
                         opacity: item.opacity,
-                        zIndex: item.order,
-                        styleUrl: layerConfig?.mapboxStyle ?? mapboxStyle,
+                        zIndex: item.order ?? (index + 1),
+                        styleUrl: finalMapboxStyle,
                         accessToken: layerConfig?.accessToken ?? mapboxToken,
                     },
                 });
