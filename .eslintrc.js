@@ -63,6 +63,12 @@ const config = {
 
         'import/extensions': ['off', 'never'],
         'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+        'import/no-unresolved': [
+            'error',
+            {
+                ignore: ['^geojson+'],
+            },
+        ],
 
         'jsx-a11y/anchor-is-valid': ['error', {
             components: ['Link'],

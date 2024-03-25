@@ -105,7 +105,7 @@ export function resolveContainerStyle(
 export function resolveTextStyle(
     textStyle: PurgeNull<AnalysisReportTextStyleType> | undefined,
     generalTextStyle: PurgeNull<AnalysisReportTextStyleType> | undefined,
-): React.CSSProperties {
+) {
     if (!textStyle && !generalTextStyle) {
         return {};
     }

@@ -4,7 +4,7 @@ import * as d3ColorScale from 'd3-scale-chromatic';
 
 import styles from './styles.css';
 
-type D3InterpolationSchemes = 'Blues' | 'Greens' | 'Greys' | 'Oranges' | 'Purples' | 'Reds' | 'Turbo' | 'Viridis' | 'Inferno' | 'Magma' | 'Plasma' | 'Cividis' | 'Warm' | 'Cool' | 'CubehelixDefault' | 'BuGn' | 'BuPu' | 'GnBu' | 'OrRd' | 'PuBuGn' | 'PuBu' | 'PuRd' | 'RdPu' | 'YlGnBu' | 'YlGn' | 'YlOrBr' | 'YlOrRd'
+export type D3InterpolationSchemes = 'Blues' | 'Greens' | 'Greys' | 'Oranges' | 'Purples' | 'Reds' | 'Turbo' | 'Viridis' | 'Inferno' | 'Magma' | 'Plasma' | 'Cividis' | 'Warm' | 'Cool' | 'CubehelixDefault' | 'BuGn' | 'BuPu' | 'GnBu' | 'OrRd' | 'PuBuGn' | 'PuBu' | 'PuRd' | 'RdPu' | 'YlGnBu' | 'YlGn' | 'YlOrBr' | 'YlOrRd'
 | 'Rainbow' | 'Sinebow'
 | 'BrBG' | 'PRGn' | 'PiYG' | 'PuOr' | 'RdBu' | 'RdGy' | 'RdYlBu' | 'RdYlGn' | 'Spectral';
 
