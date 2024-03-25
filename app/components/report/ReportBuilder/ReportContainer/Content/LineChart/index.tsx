@@ -159,10 +159,6 @@ function LineContent(props: Props) {
             {config && (
                 <NumericLineChart
                     {...config}
-                    // FIXME: Remove these dependencies from categorical bar chart
-                    keySelector={config?.chartOptions.keySelector}
-                    xValueSelector={config?.chartOptions.xValueSelector}
-                    yValueSelector={config?.chartOptions.yValueSelector ?? []}
                 />
             )}
         </div>

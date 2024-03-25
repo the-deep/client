@@ -34,7 +34,8 @@ function KpiContent(props: Props) {
         const titleStyle = configuration?.titleContentStyle ?? {};
         const valueStyle = configuration?.valueContentStyle ?? {};
 
-        const finalKpiData = kpis?.map((kpi) => ({
+        const finalKpiData = kpis?.map((kpi, index) => ({
+            key: `${kpi.title}-${index}`,
             value: kpi.value,
             title: kpi.title,
             subtitle: kpi.subtitle,
