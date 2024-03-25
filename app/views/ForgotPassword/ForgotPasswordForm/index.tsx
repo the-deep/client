@@ -8,6 +8,7 @@ import {
     Container,
     TextInput,
     PendingMessage,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     generatePath,
@@ -21,36 +22,46 @@ import {
     internal,
     getErrorObject,
     createSubmitHandler,
+    removeNull,
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
+import { gql, useMutation } from '@apollo/client';
 
 import NonFieldError from '#components/NonFieldError';
-import { useLazyRequest } from '#base/utils/restRequest';
 import { hCaptchaKey } from '#base/configs/hCaptcha';
 import HCaptcha from '#components/HCaptcha';
 import routes from '#base/configs/routes';
-
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
+import {
+    ResetPasswordInputType,
+    ResetPasswordMutation,
+    ResetPasswordMutationVariables,
+} from '#generated/types';
 import _ts from '#ts';
 
 import styles from './styles.css';
+
+const RESET_PASSWORD = gql`
+    mutation ResetPassword($data: ResetPasswordInputType!) {
+        resetPassword(data: $data) {
+            ok
+            errors
+        }
+    }
+`;
 
 interface Props {
     className?: string;
 }
 
-interface ForgotPasswordFields {
-    email: string;
-    hcaptchaResponse: string;
-}
-
-type FormType = Partial<ForgotPasswordFields>;
+type FormType = Partial<ResetPasswordMutationVariables['data']>;
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         email: [emailCondition, requiredStringCondition],
-        hcaptchaResponse: [requiredStringCondition],
+        captcha: [requiredStringCondition],
     }),
 };
 
@@ -63,8 +74,9 @@ function ForgotPasswordModal(props: Props) {
     const {
         state,
     } = useLocation();
-    const emailFromState = (state as { email?: string } | undefined)?.email;
+    const alert = useAlert();
 
+    const emailFromState = (state as { email?: string } | undefined)?.email;
     const elementRef = useRef<Captcha>(null);
     const [success, setSuccess] = useState(false);
 
@@ -84,54 +96,61 @@ function ForgotPasswordModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const {
-        pending: resetPending,
-        trigger: triggerReset,
-        context,
-    } = useLazyRequest<unknown, ForgotPasswordFields>({
-        url: 'server://password/reset/',
-        method: 'POST',
-        body: (ctx) => ctx,
-        onSuccess: () => {
-            setSuccess(true);
-        },
-        onFailure: ({ errorCode, value: errorValue }) => {
-            const {
-                $internal,
-                ...otherErrors
-            } = errorValue.faramErrors;
-            if (errorCode === 4004) {
+    const [
+        resetPassword,
+        { loading },
+    ] = useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(
+        RESET_PASSWORD,
+        {
+            onCompleted: (response) => {
+                const { resetPassword: resetPasswordResponse } = response;
+
+                if (resetPasswordResponse?.ok) {
+                    setSuccess(true);
+                } else {
+                    alert.show(
+                        'Failed to reset password.',
+                        { variant: 'error' },
+                    );
+                }
+
+                if (resetPasswordResponse?.errors) {
+                    const formError = transformToFormError(
+                        removeNull(resetPasswordResponse.errors) as ObjectError[],
+                    );
+                    setError(formError);
+                }
+            },
+            onError: (errors) => {
                 setError({
-                    ...otherErrors,
-                    [internal]: _ts('explore.forgotPasswordModal', 'retryRecaptcha'),
+                    [internal]: errors.message,
                 });
-            } else {
-                setError({
-                    ...otherErrors,
-                    [internal]: $internal,
-                });
-            }
+                alert.show(
+                    'Failed to reset password.',
+                    { variant: 'error' },
+                );
+            },
         },
-    });
+    );
 
     const handleSubmit = useCallback(
-        () => {
-            const submit = createSubmitHandler(
-                validate,
-                setError,
-                (val) => {
-                    elementRef.current?.resetCaptcha();
-                    triggerReset(val as ForgotPasswordFields);
+        (val: FormType) => {
+            elementRef.current?.resetCaptcha();
+            resetPassword({
+                variables: {
+                    data: val as ResetPasswordInputType,
                 },
-            );
-            submit();
+            });
         },
-        [setError, validate, triggerReset],
+        [resetPassword],
     );
 
     return (
-        <div className={_cs(styles.passwordResetForm, className)}>
-            {resetPending && <PendingMessage />}
+        <form
+            className={_cs(styles.passwordResetForm, className)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
+        >
+            {loading && <PendingMessage />}
             <Container
                 className={styles.passwordResetContainer}
                 heading="Forgot Password"
@@ -152,7 +171,7 @@ function ForgotPasswordModal(props: Props) {
             >
                 {success ? (
                     <div className={styles.passwordResetSuccess}>
-                        {_ts('explore.passwordReset', 'checkYourEmailText', { email: context?.email })}
+                        {_ts('explore.passwordReset', 'checkYourEmailText', { email: value?.email })}
                     </div>
                 ) : (
                     <>
@@ -164,30 +183,29 @@ function ForgotPasswordModal(props: Props) {
                             error={error?.email}
                             label={_ts('explore.passwordReset', 'emailLabel')}
                             placeholder={_ts('explore.passwordReset', 'emailPlaceholder')}
-                            disabled={resetPending}
+                            disabled={loading}
                             autoFocus
                         />
                         <HCaptcha
-                            name="hcaptchaResponse"
+                            name="captcha"
                             elementRef={elementRef}
                             siteKey={hCaptchaKey}
                             onChange={setFieldValue}
-                            error={error?.hcaptchaResponse}
-                            disabled={resetPending}
+                            error={error?.captcha}
+                            disabled={loading}
                         />
                         <Button
-                            disabled={pristine || resetPending}
+                            disabled={pristine || loading}
                             type="submit"
                             variant="primary"
-                            onClick={handleSubmit}
-                            name="login"
+                            name="resetPassword"
                         >
                             {_ts('explore.passwordReset', 'resetPasswordButtonLabel')}
                         </Button>
                     </>
                 )}
             </Container>
-        </div>
+        </form>
     );
 }
 
