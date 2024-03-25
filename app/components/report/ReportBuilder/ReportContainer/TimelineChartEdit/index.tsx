@@ -6,6 +6,7 @@ import {
     type Error,
     getErrorObject,
     useFormObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import {
     ExpandableContainer,
@@ -79,6 +80,19 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
     } = contentData ?? {};
 
     const error = getErrorObject(riskyError);
+
+    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+        'title',
+        'date',
+        'detail',
+        'category',
+        'source',
+        'sourceUrl',
+    ];
+
+    const configurationHasError = generalFieldMap.some(
+        (key) => analyzeErrors(error?.[key]),
+    );
 
     const {
         reportId,
@@ -187,8 +201,9 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
                 />
             )}
             <ExpandableContainer
-                heading="Configure"
+                heading={configurationHasError ? 'Configure*' : 'Configure'}
                 headingSize="small"
+                errored={configurationHasError}
                 spacing="compact"
                 contentClassName={styles.expandedBody}
                 withoutBorder
