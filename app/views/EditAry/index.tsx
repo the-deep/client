@@ -448,6 +448,7 @@ function EditAry(props: Props) {
                             id: density.id,
                             analysisLevelCovered: density.analysisLevelCovered,
                             figureProvided: density.figureProvided,
+                            score: density.score,
                             sector: density.sector,
                         })),
                         summarySubPillarIssue: result.summarySubPillarIssue?.map(
