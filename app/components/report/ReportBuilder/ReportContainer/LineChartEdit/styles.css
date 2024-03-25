@@ -11,6 +11,10 @@
         .container {
             border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
+            &.errored {
+                border-color: var(--dui-color-danger);
+            }
+
             .container-content {
                 display: flex;
                 flex-direction: column;

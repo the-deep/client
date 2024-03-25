@@ -13,6 +13,7 @@ import {
     Error,
     useFormObject,
     getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 
 import GeoDataSelectInput, {
@@ -135,12 +136,11 @@ function LineLayerEdit<NAME extends string>(props: Props<NAME>) {
         'style', LineLayerStyleConfigType
     >('style', onFieldChange, {});
 
-    console.log('error', error);
-
     return (
         <ContainerCard
             heading="Layer Properties"
             headingSize="extraSmall"
+            errored={analyzeErrors(error)}
             contentClassName={styles.mapLayer}
             className={styles.mapLayerEdit}
         >

@@ -3,6 +3,15 @@
     flex-direction: column;
     gap: var(--dui-spacing-large);
 
+    .errored-heading {
+        background-color: var(--dui-color-surface-negative);
+
+        .heading {
+            --color: var(--dui-color-danger);
+            color: var(--color);
+        }
+    }
+
     .expanded-body {
         display: flex;
         flex-direction: column;

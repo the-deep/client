@@ -5,6 +5,10 @@
     background-color: var(--dui-color-white);
     padding: var(--dui-spacing-extra-small);
 
+    &.errored {
+        border-color: var(--dui-color-danger);
+    }
+
     .button {
         border-radius: 0;
         width: 100%;

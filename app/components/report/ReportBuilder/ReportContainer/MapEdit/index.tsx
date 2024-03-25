@@ -22,6 +22,7 @@ import {
     type Error,
     useFormObject,
     getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
@@ -99,6 +100,25 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
 
     const error = getErrorObject(riskyError);
 
+    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+        'title',
+        'subTitle',
+        'mapHeight',
+        'zoom',
+        'minZoom',
+        'centerLatitude',
+        'centerLongitude',
+        'showScale',
+        'scaleBar',
+        'enableZoomControls',
+    ];
+
+    const layerConfigHasError = isDefined(error?.layers);
+
+    const generalHasError = generalFieldMap.some(
+        (key) => analyzeErrors(error?.[key]),
+    );
+
     const onFieldChange = useFormObject<
         NAME, MapConfigType
     >(name, onChange, {});
@@ -163,6 +183,10 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         );
     }, [onFieldChange]);
 
+    const selectedLayer = value?.layers?.find(
+        (layerItem) => layerItem.clientId === finalSelectedLayerId,
+    );
+
     const layerRendererParams = useCallback((
         layerKey: string,
         datum: LayerType,
@@ -175,15 +199,13 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         visibility: !!datum.visible,
         selected: layerKey === finalSelectedLayerId,
         onVisibilityClick: () => handleLayerVisibilityClick(!!datum.visible, index),
+        errored: analyzeErrors(getErrorObject(error?.layers)?.[layerKey]),
     }), [
+        error?.layers,
         finalSelectedLayerId,
         handleLayerClick,
         handleLayerVisibilityClick,
     ]);
-
-    const selectedLayer = value?.layers?.find(
-        (layerItem) => layerItem.clientId === finalSelectedLayerId,
-    );
 
     const handleLayerOrderChange = useCallback((newOrder: MapLayerType[]) => {
         onFieldChange(reorder(newOrder), 'layers');
@@ -197,9 +219,10 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         <div className={_cs(className, styles.mapEdit)}>
             <NonFieldError error={error} />
             <ExpandableContainer
-                heading="General"
+                heading={generalHasError ? 'General *' : 'General'}
                 headingSize="small"
                 spacing="compact"
+                errored={generalHasError}
                 contentClassName={styles.expandedBody}
                 withoutBorder
             >
@@ -293,8 +316,9 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
                 />
             </ExpandableContainer>
             <ExpandableContainer
-                heading="Layers"
+                heading={layerConfigHasError ? 'Layers*' : 'Layers'}
                 headingSize="small"
+                errored={layerConfigHasError}
                 spacing="compact"
                 contentClassName={styles.expandedBody}
                 withoutBorder
