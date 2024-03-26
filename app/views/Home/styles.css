@@ -33,6 +33,12 @@
             flex-basis: 100%;
             padding: 0;
 
+            .content {
+                display: flex;
+                flex-direction: column;
+                gap: var(--dui-spacing-medium);
+            }
+
             .project-list {
                 display: flex;
                 flex-direction: column;
@@ -43,6 +49,9 @@
             .empty-text {
                 font-size: var(--dui-font-size-large);
             }
+        }
+        .pinned-project-header {
+            align-self: flex-start;
         }
     }
 
