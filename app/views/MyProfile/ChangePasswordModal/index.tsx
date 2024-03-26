@@ -10,6 +10,7 @@ import {
     getErrorObject,
     internal,
     createSubmitHandler,
+    removeNull,
 } from '@togglecorp/toggle-form';
 import {
     Button,
@@ -17,13 +18,30 @@ import {
     PasswordInput,
     useAlert,
 } from '@the-deep/deep-ui';
+import { gql, useMutation } from '@apollo/client';
 
 import NonFieldError from '#components/NonFieldError';
-import { useLazyRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
-import { User } from '#types';
+import {
+    ChangePasswordMutation,
+    ChangePasswordMutationVariables,
+    PasswordChangeInputType,
+} from '#generated/types';
+import {
+    ObjectError,
+    transformToFormError,
+} from '#base/utils/errorTransform';
 
 import styles from './styles.css';
+
+const CHANGE_PASSWORD = gql`
+    mutation ChangePassword($data: PasswordChangeInputType!) {
+        changePassword(data: $data) {
+            ok
+            errors
+        }
+    }
+`;
 
 type FormType = {
     oldPassword?: string;
@@ -33,7 +51,7 @@ type FormType = {
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
-type FormSchemaFieldDepenencies = ReturnType<NonNullable<FormSchema['fieldDependencies']>>;
+type FormSchemaFieldDependencies = ReturnType<NonNullable<FormSchema['fieldDependencies']>>;
 
 function sameWithPasswordCondition(
     password: string | undefined,
@@ -69,7 +87,7 @@ const changePasswordSchema: FormSchema = {
             lengthSmallerThanCondition(129),
         ],
     }),
-    fieldDependencies: (): FormSchemaFieldDepenencies => ({
+    fieldDependencies: (): FormSchemaFieldDependencies => ({
         confirmPassword: ['newPassword'],
     }),
 };
@@ -97,46 +115,66 @@ function ChangePasswordModal(props: Props) {
     const alert = useAlert();
     const error = getErrorObject(riskyError);
 
-    const {
-        pending,
-        trigger: changePassword,
-    } = useLazyRequest<User, Pick<FormType, 'oldPassword' | 'newPassword'>>({
-        url: 'server://users/me/change-password/',
-        method: 'POST',
-        body: (ctx) => ctx,
-        onSuccess: () => {
-            onModalClose();
-            alert.show(
-                'Successfully changed password.',
-                { variant: 'success' },
-            );
-        },
-        onFailure: ({ value: errorValue }) => {
-            const {
-                $internal,
-                ...otherErrors
-            } = errorValue.faramErrors;
-            setError({
-                ...otherErrors,
-                [internal]: $internal,
-            });
-            alert.show(
-                'Failed to change password.',
-                { variant: 'error' },
-            );
-        },
-    });
+    const [
+        changePassword,
+        { loading },
+    ] = useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(
+        CHANGE_PASSWORD,
+        {
+            onCompleted: (response) => {
+                const { changePassword: changePasswordResponse } = response;
 
-    const handleSubmitButtonClick = useCallback(() => {
-        const submit = createSubmitHandler(
-            validate,
-            setError,
-            (val) => {
-                changePassword({ oldPassword: val.oldPassword, newPassword: val.newPassword });
+                if (changePasswordResponse?.ok) {
+                    onModalClose();
+                    alert.show(
+                        'Successfully changed password.',
+                        { variant: 'success' },
+                    );
+                } else {
+                    alert.show(
+                        'Failed to change password.',
+                        { variant: 'error' },
+                    );
+                }
+
+                if (changePasswordResponse?.errors) {
+                    const formError = transformToFormError(
+                        removeNull(changePasswordResponse.errors) as ObjectError[],
+                    );
+                    setError(formError);
+                }
             },
-        );
-        submit();
-    }, [setError, validate, changePassword]);
+            onError: (errors) => {
+                setError({
+                    [internal]: errors.message,
+                });
+                alert.show(
+                    'Failed to change password.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const handleSubmit = useCallback(
+        () => {
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => {
+                    changePassword({
+                        variables: {
+                            data: {
+                                oldPassword: val.oldPassword,
+                                newPassword: val.newPassword,
+                            } as PasswordChangeInputType,
+                        },
+                    });
+                },
+            );
+            submit();
+        }, [validate, setError, changePassword],
+    );
 
     return (
         <Modal
@@ -147,7 +185,7 @@ function ChangePasswordModal(props: Props) {
                     <Button
                         name={undefined}
                         variant="secondary"
-                        disabled={pristine || pending}
+                        disabled={pristine || loading}
                         onClick={onModalClose}
                     >
                         {_ts('changePassword', 'cancel')}
@@ -156,8 +194,8 @@ function ChangePasswordModal(props: Props) {
                         name={undefined}
                         variant="primary"
                         type="submit"
-                        disabled={pristine || pending}
-                        onClick={handleSubmitButtonClick}
+                        onClick={handleSubmit}
+                        disabled={pristine || loading}
                     >
                         {_ts('changePassword', 'change')}
                     </Button>
@@ -173,7 +211,7 @@ function ChangePasswordModal(props: Props) {
                 placeholder={_ts('changePassword', 'currentPassword')}
                 value={value.oldPassword}
                 error={error?.oldPassword}
-                disabled={pending}
+                disabled={loading}
                 onChange={setFieldValue}
             />
             <PasswordInput
@@ -183,7 +221,7 @@ function ChangePasswordModal(props: Props) {
                 placeholder={_ts('changePassword', 'newPassword')}
                 value={value.newPassword}
                 error={error?.newPassword}
-                disabled={pending}
+                disabled={loading}
                 onChange={setFieldValue}
             />
             <PasswordInput
@@ -193,7 +231,7 @@ function ChangePasswordModal(props: Props) {
                 placeholder={_ts('changePassword', 'retypePassword')}
                 value={value.confirmPassword}
                 error={error?.confirmPassword}
-                disabled={pending}
+                disabled={loading}
                 onChange={setFieldValue}
             />
         </Modal>
