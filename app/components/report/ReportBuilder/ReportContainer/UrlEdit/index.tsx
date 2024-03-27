@@ -9,6 +9,7 @@ import {
     type Error,
     useFormObject,
     getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
@@ -50,6 +51,7 @@ function UrlEdit<NAME extends string>(props: Props<NAME>) {
                 heading="General"
                 headingSize="small"
                 spacing="compact"
+                errored={analyzeErrors(error?.url)}
                 contentClassName={styles.expandedBody}
                 withoutBorder
             >

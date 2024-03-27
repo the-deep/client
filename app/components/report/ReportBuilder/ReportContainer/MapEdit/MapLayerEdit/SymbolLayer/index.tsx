@@ -16,6 +16,7 @@ import {
     Error,
     useFormObject,
     getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -24,6 +25,7 @@ import {
 import GeoDataSelectInput, {
     ReportGeoUploadType,
 } from '#components/report/ReportBuilder/GeoDataSelectInput';
+import NonFieldError from '#components/NonFieldError';
 
 import {
     type ContentDataType,
@@ -171,9 +173,11 @@ function SymbolLayerEdit<NAME extends string>(props: Props<NAME>) {
         <ContainerCard
             heading="Layer Properties"
             headingSize="extraSmall"
+            errored={analyzeErrors(error)}
             contentClassName={styles.mapLayer}
             className={styles.mapLayerEdit}
         >
+            <NonFieldError error={error} />
             {projectId && reportId && (
                 <GeoDataSelectInput
                     name="contentReferenceId"

@@ -5,6 +5,7 @@ import React, {
 import {
     _cs,
     randomString,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     type SetValueArg,
@@ -12,6 +13,7 @@ import {
     useFormObject,
     useFormArray,
     getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import {
     Button,
@@ -83,6 +85,8 @@ function KpiEdit<NAME extends string>(props: Props<NAME>) {
         );
     }, [onFieldChange]);
 
+    const configHasError = isDefined(error?.items);
+
     return (
         <div className={_cs(className, styles.kpiEdit)}>
             <NonFieldError error={error} />
@@ -90,6 +94,7 @@ function KpiEdit<NAME extends string>(props: Props<NAME>) {
                 heading="Configuration"
                 headingSize="small"
                 spacing="compact"
+                errored={configHasError}
                 contentClassName={styles.expandedBody}
                 withoutBorder
             >

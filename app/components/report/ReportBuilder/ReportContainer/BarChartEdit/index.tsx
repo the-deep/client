@@ -26,6 +26,7 @@ import {
     getErrorObject,
     useFormObject,
     useFormArray,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
@@ -158,6 +159,25 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
     }), [enumsData]);
 
     const error = getErrorObject(riskyError);
+
+    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+        'title',
+        'subTitle',
+        'type',
+        'direction',
+        'horizontalAxis',
+        'verticalAxis',
+        'horizontalAxisTitle',
+        'verticalAxisTitle',
+        'legendHeading',
+        'horizontalTickLabelRotation',
+        'verticalAxisExtendMaximumValue',
+        'verticalAxisExtendMinimumValue',
+    ];
+
+    const generalHasError = generalFieldMap.some(
+        (key) => analyzeErrors(error?.[key]),
+    );
 
     const onFieldChange = useFormObject<
         NAME, BarChartConfigType
@@ -336,13 +356,15 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                 />
             )}
             <ExpandableContainer
-                heading="General"
+                heading={generalHasError ? 'General *' : 'General'}
                 headingSize="small"
                 spacing="compact"
+                errored={generalHasError}
                 contentClassName={styles.expandedBody}
                 defaultVisibility
                 withoutBorder
             >
+                <NonFieldError error={error} />
                 <TextInput
                     value={value?.title}
                     name="title"
@@ -383,7 +405,10 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     disabled
                 />
                 <ContainerCard
-                    className={styles.container}
+                    className={_cs(
+                        styles.container,
+                        analyzeErrors(error?.horizontalAxis) && styles.errored,
+                    )}
                     heading="Horizontal Axis"
                     headingSize="extraSmall"
                     contentClassName={styles.containerContent}
@@ -411,7 +436,10 @@ function BarChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     />
                 </ContainerCard>
                 <ContainerCard
-                    className={styles.container}
+                    className={_cs(
+                        styles.container,
+                        analyzeErrors(error?.verticalAxis) && styles.errored,
+                    )}
                     heading="Vertical Axis"
                     headingSize="extraSmall"
                     contentClassName={styles.containerContent}

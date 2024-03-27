@@ -22,6 +22,7 @@ import {
     type Error,
     useFormObject,
     getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
@@ -99,6 +100,25 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
 
     const error = getErrorObject(riskyError);
 
+    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+        'title',
+        'subTitle',
+        'mapHeight',
+        'zoom',
+        'minZoom',
+        'centerLatitude',
+        'centerLongitude',
+        'showScale',
+        'scaleBar',
+        'enableZoomControls',
+    ];
+
+    const layerConfigHasError = isDefined(error?.layers);
+
+    const generalHasError = generalFieldMap.some(
+        (key) => analyzeErrors(error?.[key]),
+    );
+
     const onFieldChange = useFormObject<
         NAME, MapConfigType
     >(name, onChange, {});
@@ -116,11 +136,19 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         [error?.layers],
     );
 
+    const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>();
+    const finalSelectedLayerId = selectedLayerId ?? value?.layers?.[0]?.clientId;
+
+    const handleLayerRemove = useCallback((index: number) => {
+        onMapLayerRemove(index);
+        setSelectedLayerId(undefined);
+    }, [onMapLayerRemove]);
+
     const handleAddMapLayer = useCallback(() => {
+        const newClientId = randomString();
         onFieldChange(
             (oldValue: MapConfigType['layers']) => {
                 const safeOldValue = oldValue ?? [];
-                const newClientId = randomString();
                 const newMapLayer: MapLayerType = {
                     clientId: newClientId,
                     visible: true,
@@ -130,9 +158,8 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
             },
             'layers',
         );
+        setSelectedLayerId(newClientId);
     }, [onFieldChange]);
-
-    const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>();
 
     const handleLayerClick = useCallback((newLayerId: string) => {
         setSelectedLayerId(newLayerId);
@@ -156,6 +183,10 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         );
     }, [onFieldChange]);
 
+    const selectedLayer = value?.layers?.find(
+        (layerItem) => layerItem.clientId === finalSelectedLayerId,
+    );
+
     const layerRendererParams = useCallback((
         layerKey: string,
         datum: LayerType,
@@ -166,17 +197,15 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         index,
         onClick: handleLayerClick,
         visibility: !!datum.visible,
-        selected: layerKey === selectedLayerId,
+        selected: layerKey === finalSelectedLayerId,
         onVisibilityClick: () => handleLayerVisibilityClick(!!datum.visible, index),
+        errored: analyzeErrors(getErrorObject(error?.layers)?.[layerKey]),
     }), [
-        selectedLayerId,
+        error?.layers,
+        finalSelectedLayerId,
         handleLayerClick,
         handleLayerVisibilityClick,
     ]);
-
-    const selectedLayer = value?.layers?.find(
-        (layerItem) => layerItem.clientId === selectedLayerId,
-    );
 
     const handleLayerOrderChange = useCallback((newOrder: MapLayerType[]) => {
         onFieldChange(reorder(newOrder), 'layers');
@@ -190,9 +219,10 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
         <div className={_cs(className, styles.mapEdit)}>
             <NonFieldError error={error} />
             <ExpandableContainer
-                heading="General"
+                heading={generalHasError ? 'General *' : 'General'}
                 headingSize="small"
                 spacing="compact"
+                errored={generalHasError}
                 contentClassName={styles.expandedBody}
                 withoutBorder
             >
@@ -286,8 +316,9 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
                 />
             </ExpandableContainer>
             <ExpandableContainer
-                heading="Layers"
+                heading={layerConfigHasError ? 'Layers*' : 'Layers'}
                 headingSize="small"
+                errored={layerConfigHasError}
                 spacing="compact"
                 contentClassName={styles.expandedBody}
                 withoutBorder
@@ -322,18 +353,18 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
                             Add Layer
                         </Button>
                     </div>
-                    {isDefined(selectedLayerId) && isDefined(selectedLayer) && (
+                    {isDefined(finalSelectedLayerId) && isDefined(selectedLayer) && (
                         <MapLayerEdit
                             className={styles.mapLayerEdit}
                             contentData={contentData}
-                            error={mapLayersError?.[selectedLayerId]}
+                            error={mapLayersError?.[finalSelectedLayerId]}
                             geoDataUploads={geoDataUploads}
                             index={value?.layers?.indexOf(selectedLayer) ?? 0}
-                            key={selectedLayerId}
+                            key={finalSelectedLayerId}
                             onChange={onMapLayerChange}
                             onContentDataChange={onContentDataChange}
                             onGeoDataUploadsChange={onGeoDataUploadsChange}
-                            onRemove={onMapLayerRemove}
+                            onRemove={handleLayerRemove}
                             typeOptions={mapLayerTypeOptions}
                             value={selectedLayer}
                         />
