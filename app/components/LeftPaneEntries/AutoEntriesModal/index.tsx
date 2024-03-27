@@ -8,7 +8,6 @@ import {
     isNotDefined,
     isDefined,
     randomString,
-    noOp,
     listToMap,
 } from '@togglecorp/fujs';
 import {
@@ -117,6 +116,14 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
                             prediction
                             threshold
                             value
+                        }
+                        relatedGeoareas {
+                            adminLevelLevel
+                            adminLevelTitle
+                            id
+                            regionTitle
+                            title
+                            parentTitles
                         }
                     }
                 }
@@ -444,7 +451,12 @@ function AutoEntriesModal(props: Props) {
     const [
         geoAreaOptions,
         setGeoAreaOptions,
-    ] = useState<Record<string, GeoArea[] | undefined> | undefined>(undefined);
+    ] = useState<GeoArea[] | undefined | null>(undefined);
+
+    const [
+        geoAreaOptionsByEntryId,
+        setGeoAreaOptionsByEntryId,
+    ] = useState<Record<string, GeoArea[] | undefined | null> | undefined>(undefined);
 
     const autoEntryStatusVariables = useMemo(() => {
         if (isNotDefined(projectId)) {
@@ -609,7 +621,7 @@ function AutoEntriesModal(props: Props) {
                     const entryAttributeData: EntryAttributes = {
                         predictions: {
                             tags: categoricalTags,
-                            locations: [],
+                            locations: entry.relatedGeoareas?.filter(isDefined) ?? [],
                         },
                         mappings,
                         filteredWidgets,
@@ -681,7 +693,8 @@ function AutoEntriesModal(props: Props) {
                 setAllRecommendations(entryRecommendations);
                 setRelevantEntries(tempRelevantEntries);
                 setAllHints(entryHints);
-                setGeoAreaOptions(entryGeoAreas);
+                setGeoAreaOptionsByEntryId(entryGeoAreas);
+                setGeoAreaOptions(Object.values(entryGeoAreas).flat().filter(isDefined));
             },
         },
     );
@@ -727,7 +740,7 @@ function AutoEntriesModal(props: Props) {
                     ...selectedEntry,
                     attributes: newAttributes,
                 },
-                geoAreaOptions?.[entryId] ?? undefined,
+                geoAreaOptionsByEntryId?.[entryId] ?? undefined,
             );
 
             alert.show(
@@ -748,7 +761,7 @@ function AutoEntriesModal(props: Props) {
         alert,
         value?.entries,
         allWidgets,
-        geoAreaOptions,
+        geoAreaOptionsByEntryId,
         allRecommendations,
         onAssistedEntryAdd,
         createdEntries,
@@ -874,8 +887,8 @@ function AutoEntriesModal(props: Props) {
             leadId,
             hints: allHints?.[entryId],
             recommendations: allRecommendations?.[entryId],
-            geoAreaOptions: geoAreaOptions?.[entryId],
-            onGeoAreaOptionsChange: noOp,
+            geoAreaOptions,
+            onGeoAreaOptionsChange: setGeoAreaOptions,
             predictionsLoading: false,
             predictionsErrored: false,
             messageText: undefined,
@@ -887,6 +900,7 @@ function AutoEntriesModal(props: Props) {
             relevant: relevantEntries?.[entryId],
         });
     }, [
+        geoAreaOptions,
         relevantEntries,
         value?.entries,
         handleEntryCreateButtonClick,
@@ -895,7 +909,6 @@ function AutoEntriesModal(props: Props) {
         allRecommendations,
         frameworkDetails,
         leadId,
-        geoAreaOptions,
         handleUpdateDraftEntryClick,
         handleUndiscardEntryClick,
         selectedTab,
