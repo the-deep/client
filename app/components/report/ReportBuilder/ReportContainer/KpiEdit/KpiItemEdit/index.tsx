@@ -63,20 +63,21 @@ function KpiItemEdit(props: Props) {
         defaultKpiItem,
     );
 
-    const kpiItemFieldMap: (keyof NonNullable<typeof error>)[] = [
-        'title',
-        'subtitle',
-        'value',
-        'abbreviateValue',
-        'source',
-        'sourceUrl',
-        'date',
-        'color',
-    ];
-
-    const kpiItemHasError = kpiItemFieldMap.some(
-        (key) => analyzeErrors(error?.[key]),
-    );
+    const kpiItemHasError = useMemo(() => {
+        const kpiItemFieldMap: (keyof NonNullable<typeof error>)[] = [
+            'title',
+            'subtitle',
+            'value',
+            'abbreviateValue',
+            'source',
+            'sourceUrl',
+            'date',
+            'color',
+        ];
+        return (kpiItemFieldMap.some(
+            (key) => analyzeErrors(error?.[key]),
+        ));
+    }, [error]);
 
     const containerHeading = useMemo(() => (
         value.title ?? `Item: ${index + 1}`

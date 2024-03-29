@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     SegmentInput,
@@ -78,14 +78,18 @@ function HeadingEdit<NAME extends string>(props: Props<NAME>) {
         REPORT_HEADING,
     );
 
-    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
-        'content',
-        'variant',
-    ];
+    const generalHasError = useMemo(() => {
+        const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+            'content',
+            'variant',
+        ];
 
-    const generalHasError = generalFieldMap.some(
-        (key) => analyzeErrors(error?.[key]),
-    );
+        return (generalFieldMap.some(
+            (key) => analyzeErrors(error?.[key]),
+        ));
+    }, [
+        error,
+    ]);
 
     const options = data?.headingVariants?.enumValues as EnumOptions<
         AnalysisReportHeadingConfigurationVariantEnum

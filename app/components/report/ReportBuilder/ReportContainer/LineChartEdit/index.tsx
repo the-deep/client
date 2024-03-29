@@ -128,22 +128,25 @@ function LineChartChartEdit<NAME extends string>(props: Props<NAME>) {
 
     const error = getErrorObject(riskyError);
 
-    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
-        'title',
-        'subTitle',
-        'horizontalAxis',
-        'verticalAxis',
-        'horizontalAxisTitle',
-        'verticalAxisTitle',
-        'legendHeading',
-        'horizontalTickLabelRotation',
-        'verticalAxisExtendMaximumValue',
-        'verticalAxisExtendMinimumValue',
-    ];
-
-    const generalHasError = generalFieldMap.some(
-        (key) => analyzeErrors(error?.[key]),
-    );
+    const generalHasError = useMemo(() => {
+        const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+            'title',
+            'subTitle',
+            'horizontalAxis',
+            'verticalAxis',
+            'horizontalAxisTitle',
+            'verticalAxisTitle',
+            'legendHeading',
+            'horizontalTickLabelRotation',
+            'verticalAxisExtendMaximumValue',
+            'verticalAxisExtendMinimumValue',
+        ];
+        return (generalFieldMap.some(
+            (key) => analyzeErrors(error?.[key]),
+        ));
+    }, [
+        error,
+    ]);
 
     const onFieldChange = useFormObject<
         NAME, LineChartConfigType

@@ -100,24 +100,25 @@ function MapEdit<NAME extends string>(props: Props<NAME>) {
 
     const error = getErrorObject(riskyError);
 
-    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
-        'title',
-        'subTitle',
-        'mapHeight',
-        'zoom',
-        'minZoom',
-        'centerLatitude',
-        'centerLongitude',
-        'showScale',
-        'scaleBar',
-        'enableZoomControls',
-    ];
-
     const layerConfigHasError = isDefined(error?.layers);
 
-    const generalHasError = generalFieldMap.some(
-        (key) => analyzeErrors(error?.[key]),
-    );
+    const generalHasError = useMemo(() => {
+        const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+            'title',
+            'subTitle',
+            'mapHeight',
+            'zoom',
+            'minZoom',
+            'centerLatitude',
+            'centerLongitude',
+            'showScale',
+            'scaleBar',
+            'enableZoomControls',
+        ];
+        return (generalFieldMap.some(
+            (key) => analyzeErrors(error?.[key]),
+        ));
+    }, [error]);
 
     const onFieldChange = useFormObject<
         NAME, MapConfigType
