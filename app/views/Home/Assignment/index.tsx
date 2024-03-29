@@ -6,48 +6,86 @@ import {
     ListView,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkDone } from 'react-icons/io5';
+import { gql, useQuery } from '@apollo/client';
+import { removeNull } from '@togglecorp/toggle-form';
 
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
-
+import { useLazyRequest } from '#base/utils/restRequest';
+import { MultiResponse } from '#types';
 import {
-    Assignment,
-    MultiResponse,
-} from '#types';
-
+    GetAssignmentsQuery,
+    GetAssignmentsQueryVariables,
+} from '#generated/types';
 import _ts from '#ts';
 
 import AssignmentItem from './AssignmentItem';
 import styles from './styles.css';
 
-interface BulkResponse {
+const GET_ASSIGNMENTS = gql`
+    query GetAssignments(
+        $isDone: Boolean,
+        $page: Int,
+        $pageSize: Int,
+    ) {
+        assignment(
+        isDone: $isDone,
+        page: $page,
+        pageSize: $pageSize,
+        ) {
+            results {
+                id
+                createdAt
+                isDone
+                createdBy {
+                    displayName
+                    id
+                    emailDisplay
+                }
+                project {
+                    id
+                    title
+                    isPrivate
+                }
+                contentType
+                leadType {
+                    title
+                    id
+                }
+                entryType {
+                    id
+                }
+            }
+            totalCount
+        }
+    }
+`;
+
+    interface BulkResponse {
     assignmentUpdated: number;
 }
 
 const maxItemsPerPage = 5;
-const keySelector = (info: Assignment) => info.id;
+type Assignment = NonNullable<NonNullable<GetAssignmentsQuery['assignment']>['results']>[number];
+const keySelector = (info: Assignment) => Number(info.id);
 
 function Assignments() {
-    const [activePage, setActivePage] = useState<number>(1);
+    const [page, setPage] = useState<number>(1);
 
-    const assignmentsQuery = useMemo(
+    const variables = useMemo(
         () => ({
-            is_done: 3, // 1: Unknown | 2: True | 3: False
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
-        }),
-        [activePage],
+            is_done: false, // 1: Unknown | 2: True | 3: False
+            page,
+            pageSize: maxItemsPerPage,
+        }), [page],
     );
 
     const {
-        pending,
-        response: assignmentsResponse,
-        retrigger: getAssignments,
-    } = useRequest<MultiResponse<Assignment>>(
+        loading,
+        data,
+        refetch: getAssignments,
+    } = useQuery<GetAssignmentsQuery, GetAssignmentsQueryVariables>(
+        GET_ASSIGNMENTS,
         {
-            url: 'server://assignments/',
-            method: 'GET',
-            query: assignmentsQuery,
-            preserveResponse: true,
+            variables,
         },
     );
 
@@ -88,17 +126,26 @@ function Assignments() {
         [triggerBulkAsDone],
     );
 
-    const rendererParams = useCallback((_: number, info: Assignment) => ({
-        ...info,
-        handleClick: triggerMarkAsDone,
-        markAsDonePending,
-    }), [triggerMarkAsDone, markAsDonePending]);
+    const rendererParams = useCallback(
+        (
+            _: number,
+            info: Assignment,
+        ) => ({
+            ...info,
+            handleClick: triggerMarkAsDone,
+            markAsDonePending,
+        }),
+        [triggerMarkAsDone, markAsDonePending],
+    );
+
+    const assignmentsResponse = removeNull(data?.assignment);
+    const assignmentCount = assignmentsResponse?.totalCount ?? 0;
 
     return (
         <Container
             heading={_ts('assignment', 'myAssignments')}
             headerActions={(
-                assignmentsResponse && assignmentsResponse.count > 0 && (
+                assignmentsResponse && assignmentCount > 0 && (
                     <ConfirmButton
                         name={undefined}
                         onConfirm={handleBulkActionClick}
@@ -112,12 +159,12 @@ function Assignments() {
                 )
             )}
             className={styles.assignments}
-            footerActions={((assignmentsResponse?.count ?? 0) > maxItemsPerPage) && (
+            footerActions={(assignmentCount > maxItemsPerPage) && (
                 <Pager
-                    activePage={activePage}
-                    itemsCount={assignmentsResponse?.count ?? 0}
+                    activePage={page}
+                    itemsCount={assignmentCount}
                     maxItemsPerPage={maxItemsPerPage}
-                    onActivePageChange={setActivePage}
+                    onActivePageChange={setPage}
                     itemsPerPageControlHidden
                     infoVisibility="hidden"
                     pagesControlLabelHidden
@@ -133,7 +180,7 @@ function Assignments() {
                 renderer={AssignmentItem}
                 rendererParams={rendererParams}
                 emptyMessage="You do not have any assignments."
-                pending={pending}
+                pending={loading}
                 errored={false}
                 // NOTE: Nothing to filter here
                 filtered={false}
