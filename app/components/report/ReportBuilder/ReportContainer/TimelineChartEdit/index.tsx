@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import { useParams } from 'react-router-dom';
 import {
@@ -81,18 +81,19 @@ function TimelineChartEdit<NAME extends string>(props: Props<NAME>) {
 
     const error = getErrorObject(riskyError);
 
-    const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
-        'title',
-        'date',
-        'detail',
-        'category',
-        'source',
-        'sourceUrl',
-    ];
-
-    const configurationHasError = generalFieldMap.some(
-        (key) => analyzeErrors(error?.[key]),
-    );
+    const configurationHasError = useMemo(() => {
+        const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+            'title',
+            'date',
+            'detail',
+            'category',
+            'source',
+            'sourceUrl',
+        ];
+        return (generalFieldMap.some(
+            (key) => analyzeErrors(error?.[key]),
+        ));
+    }, [error]);
 
     const {
         reportId,
