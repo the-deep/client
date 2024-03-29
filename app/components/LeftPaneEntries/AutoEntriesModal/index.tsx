@@ -81,6 +81,7 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
     query AutoEntriesForLead(
         $projectId: ID!,
         $leadId: ID!,
+        $ignoreIds: [ID!],
         $isDiscarded: Boolean,
         $page: Int,
         $pageSize: Int,
@@ -92,6 +93,7 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
                     draftEntryTypes: AUTO,
                     lead: $leadId,
                     isDiscarded: $isDiscarded,
+                    ignoreIds: $ignoreIds,
                     page: $page,
                     pageSize: $pageSize,
                 ) {
@@ -583,9 +585,11 @@ function AutoEntriesModal(props: Props) {
         projectId,
         leadId,
         isDiscarded: selectedTab === 'discarded',
+        ignoreIds: createdEntries?.map((item) => item.draftEntry).filter(isDefined),
         page: activePage,
         pageSize: MAX_ITEMS_PER_PAGE,
     }), [
+        createdEntries,
         projectId,
         leadId,
         selectedTab,
