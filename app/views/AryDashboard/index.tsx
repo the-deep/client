@@ -304,7 +304,7 @@ function AryDashboard(props: Props) {
     const handleStartDateChange = useCallback((newDate: number | undefined) => {
         if (isDefined(newDate)) {
             // FIXME: Add a fallback later
-            setStartDate(newDate);
+            setStartDate(Math.min(newDate, todaysDateTime));
         } else {
             setStartDate(undefined);
         }
