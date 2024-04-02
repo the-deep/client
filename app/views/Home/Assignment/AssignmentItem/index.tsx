@@ -10,13 +10,12 @@ import {
 
 import generateString from '#utils/string';
 import routes from '#base/configs/routes';
-import { GetAssignmentsQuery } from '#generated/types';
 
+import { Assignment } from '..';
 import styles from './styles.css';
 
-type Assignment = NonNullable<NonNullable<GetAssignmentsQuery['assignment']>['results']>[number];
 interface AssignmentItemProps extends Assignment {
-    handleClick: (id: number) => void;
+    handleClick: (id: string) => void;
     markAsDonePending: boolean;
 }
 
@@ -34,7 +33,7 @@ function AssignmentItem(props: AssignmentItemProps) {
     } = props;
 
     const handleClick = useCallback(() => {
-        handleClickFromProps(Number(id));
+        handleClickFromProps(id);
     }, [id, handleClickFromProps]);
 
     const contentLink = useMemo(() => {
@@ -70,7 +69,6 @@ function AssignmentItem(props: AssignmentItemProps) {
                     leadId: leadType?.id,
                 })),
                 state: {
-                    // NOTE: Replace this later to clientId
                     entryServerId: entryType?.id,
                     activePage: 'primary',
                 },
