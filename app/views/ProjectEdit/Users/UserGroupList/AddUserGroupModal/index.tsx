@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-    isNotDefined,
     isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation, gql, useQuery } from '@apollo/client';
 import {
     ObjectSchema,
     PartialForm,
@@ -15,25 +15,23 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     Modal,
-    SelectInput,
     Button,
     PendingMessage,
     useAlert,
+    SelectInput,
 } from '@the-deep/deep-ui';
 
-import { useRequest } from '#base/utils/restRequest';
-import {
-    MultiResponse,
-} from '#types';
-import { ProjectRole } from '#types/project';
 import _ts from '#ts';
 import NonFieldError from '#components/NonFieldError';
 import {
+    ProjectRolesOptionsQuery,
+    ProjectRolesOptionsQueryVariables,
     ProjectRoleTypeEnum,
     ProjectUsergroupMembershipBulkMutation,
     ProjectUsergroupMembershipBulkMutationVariables,
 } from '#generated/types';
 import NewUsergroupSelectInput, { Usergroup } from '#components/selections/UserGroupSelectInput';
+import { EnumFix } from '#utils/types';
 
 import { ProjectUsergroup } from '../index';
 import styles from './styles.css';
@@ -64,27 +62,33 @@ const PROJECT_USERGROUP_MEMBERSHIP_BULK = gql`
     }
 `;
 
-const roleKeySelector = (d: ProjectRole) => d.id.toString();
-const roleLabelSelector = (d: ProjectRole) => d.title;
+const PROJECT_ROLES_OPTIONS = gql`
+    query ProjectRolesOptions {
+        projectRoles {
+            id
+            level
+            title
+            type
+        }
+    }
+`;
 
-type FormType = {
-    id?: string;
-    usergroup?: string;
-    role: string;
-};
+type FormType = NonNullable<EnumFix<ProjectUsergroupMembershipBulkMutationVariables['items'], 'badges'>>[number];
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
+type ProjectRoleType = NonNullable<NonNullable<ProjectRolesOptionsQuery>['projectRoles']>[number];
+
+const roleKeySelector = (d: ProjectRoleType) => d.id;
+const roleLabelSelector = (d: ProjectRoleType) => d.title;
+
 const schema: FormSchema = {
-    fields: (): FormSchemaFields => {
-        const base = ({
-            id: [defaultUndefinedType],
-            role: [requiredCondition],
-            usergroup: [requiredCondition],
-        });
-        return base;
-    },
+    fields: (): FormSchemaFields => ({
+        id: [defaultUndefinedType],
+        role: [requiredCondition],
+        usergroup: [requiredCondition],
+    }),
 };
 
 const defaultFormValue: PartialForm<FormType> = {};
@@ -174,14 +178,6 @@ function AddUserGroupModal(props: Props) {
         },
     );
 
-    const {
-        pending: pendingRoles,
-        response: projectRolesResponse,
-    } = useRequest<MultiResponse<ProjectRole>>({
-        url: 'server://project-roles/',
-        method: 'GET',
-    });
-
     const handleSubmit = useCallback(
         () => {
             const submit = createSubmitHandler(
@@ -204,6 +200,33 @@ function AddUserGroupModal(props: Props) {
         ],
     );
 
+    const {
+        loading: projectRolesOptionsPending,
+        data: projectRolesOptionsResponse,
+    } = useQuery<ProjectRolesOptionsQuery, ProjectRolesOptionsQueryVariables>(
+        PROJECT_ROLES_OPTIONS,
+    );
+
+    const roles = useMemo(() => {
+        if (isNotDefined(activeUserRole)) {
+            return undefined;
+        }
+        const currentUserRoleLevel = projectRolesOptionsResponse?.projectRoles?.find(
+            (role) => (
+                role.type === activeUserRole
+            ),
+        )?.level;
+        if (!currentUserRoleLevel) {
+            return undefined;
+        }
+        return projectRolesOptionsResponse?.projectRoles?.filter(
+            (role) => role.level >= currentUserRoleLevel,
+        );
+    }, [
+        activeUserRole,
+        projectRolesOptionsResponse,
+    ]);
+
     const [
         usergroupOptions,
         setUsergroupOptions,
@@ -215,27 +238,6 @@ function AddUserGroupModal(props: Props) {
             }]
             : undefined
     ));
-
-    const roles = useMemo(() => {
-        if (isNotDefined(activeUserRole)) {
-            return undefined;
-        }
-        const currentUserRoleLevel = projectRolesResponse?.results?.find(
-            (role) => (
-                // FIXME: Update this after complete on server side
-                role.type.toUpperCase() === activeUserRole
-            ),
-        )?.level;
-        if (!currentUserRoleLevel) {
-            return undefined;
-        }
-        return projectRolesResponse?.results.filter(
-            (role) => role.level >= currentUserRoleLevel,
-        );
-    }, [
-        activeUserRole,
-        projectRolesResponse,
-    ]);
 
     return (
         <Modal
@@ -254,7 +256,7 @@ function AddUserGroupModal(props: Props) {
                     name="submit"
                     variant="primary"
                     type="submit"
-                    disabled={pristine || pendingRoles || bulkEditProjectUsergroupPending}
+                    disabled={pristine || bulkEditProjectUsergroupPending}
                     onClick={handleSubmit}
                 >
                     {_ts('projectEdit', 'submitLabel')}
@@ -278,14 +280,15 @@ function AddUserGroupModal(props: Props) {
                 />
                 <SelectInput
                     name="role"
-                    options={roles}
-                    keySelector={roleKeySelector}
-                    labelSelector={roleLabelSelector}
-                    onChange={setFieldValue}
                     value={value.role}
                     error={error?.role}
+                    options={roles}
+                    onChange={setFieldValue}
+                    keySelector={roleKeySelector}
+                    labelSelector={roleLabelSelector}
                     label={_ts('projectEdit', 'roleLabel')}
                     placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
+                    disabled={projectRolesOptionsPending}
                 />
             </div>
         </Modal>
