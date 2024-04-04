@@ -121,6 +121,7 @@ export interface RecentProjectItemProps {
     allowedPermissions: ProjectPermission[] | null | undefined;
     recentActiveUsers: UserEntityDateType[] | null | undefined;
     isPinned?: boolean;
+    pinnedId: string | undefined;
     onProjectPinChange: () => void;
     disablePinButton: boolean;
 }
@@ -144,6 +145,7 @@ function ProjectItem(props: RecentProjectItemProps) {
         topTaggers,
         topSourcers,
         entriesActivity,
+        pinnedId,
         allowedPermissions,
         recentActiveUsers,
         isPinned,
@@ -248,13 +250,21 @@ function ProjectItem(props: RecentProjectItemProps) {
 
     const canEditProject = allowedPermissions?.includes('UPDATE_PROJECT');
 
-    const handleUnpinProject = useCallback((id: string) => {
+    const handleUnpinProject = useCallback((id: string | undefined) => {
+        if (!id) {
+            alert.show(
+                'Failed to unpin the project.',
+                { variant: 'error' },
+            );
+            return;
+        }
         unpinProject({
             variables: {
                 projectId: id,
             },
         });
     }, [
+        alert,
         unpinProject,
     ]);
 
@@ -287,24 +297,6 @@ function ProjectItem(props: RecentProjectItemProps) {
             )}
             headerActions={(
                 <>
-                    {isPinned ? (
-                        <QuickActionButton
-                            name={projectId}
-                            onClick={handleUnpinProject}
-                            title="Unpin this project"
-                        >
-                            <RiUnpinFill />
-                        </QuickActionButton>
-                    ) : (
-                        <QuickActionButton
-                            name={projectId}
-                            onClick={handlePinProject}
-                            title={disablePinButton ? 'You can only pin 5 projects.' : 'Pin this project'}
-                            disabled={disablePinButton}
-                        >
-                            <RiPushpinFill />
-                        </QuickActionButton>
-                    )}
                     <Element
                         className={styles.privacyBadge}
                         actions={isPrivate && (
@@ -317,6 +309,26 @@ function ProjectItem(props: RecentProjectItemProps) {
                             _ts('home.recentProjects', 'publicProjectLabel')
                         )}
                     </Element>
+                    {isPinned ? (
+                        <QuickActionButton
+                            name={pinnedId}
+                            onClick={handleUnpinProject}
+                            title="Unpin this project"
+                            variant="tertiary"
+                        >
+                            <RiUnpinFill />
+                        </QuickActionButton>
+                    ) : (
+                        <QuickActionButton
+                            name={projectId}
+                            onClick={handlePinProject}
+                            title={disablePinButton ? 'You can only pin 5 projects.' : 'Pin this project'}
+                            disabled={disablePinButton}
+                            variant="tertiary"
+                        >
+                            <RiPushpinFill />
+                        </QuickActionButton>
+                    )}
                     {canEditProject && (
                         <SmartQuickActionLink
                             variant="tertiary"

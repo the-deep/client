@@ -3,7 +3,7 @@ import {
     _cs,
     isDefined,
 } from '@togglecorp/fujs';
-import { MdOutlineSwapVerticalCircle } from 'react-icons/md';
+import { BiSort } from 'react-icons/bi';
 import { useQuery, gql } from '@apollo/client';
 import {
     Container,
@@ -140,11 +140,11 @@ function Home(props: ViewProps) {
 
     const {
         data: pinnedProjectsResponse,
-        loading: pinnedProjectsPending,
         refetch: retriggerPinnedProjectsList,
     } = useQuery<UserPinnedProjectsQuery, UserPinnedProjectsQueryVariables>(
         USER_PINNED_PROJECTS,
         {
+            notifyOnNetworkStatusChange: true,
             onCompleted: (response) => {
                 const count = response?.userPinnedProjects.length;
                 setPinButtonDisabled(count >= MAX_PINNED_PROJECT_LIMIT);
@@ -158,10 +158,12 @@ function Home(props: ViewProps) {
     );
 
     // NOTE: This is an order changed list outside of state maintained due to apollo caching
-    const pinnedProjectsList = pinnedProjectsResponse?.userPinnedProjects
-    && pinnedProjectsResponse?.userPinnedProjects?.filter(
-        (item) => isDefined(item.project?.id),
-    );
+    const pinnedProjectsList = useMemo(() => (
+        pinnedProjectsResponse?.userPinnedProjects
+        && pinnedProjectsResponse?.userPinnedProjects?.filter(
+            (item) => isDefined(item.project?.id),
+        )
+    ), [pinnedProjectsResponse]);
 
     const {
         response: summaryResponse,
@@ -207,11 +209,13 @@ function Home(props: ViewProps) {
             topTaggers: data?.topTaggers,
             topSourcers: data?.topSourcers,
             allowedPermissions: data?.allowedPermissions,
+            pinnedId: pinnedProjectsList?.find((item) => item.project.id === data?.id)?.id,
             isPinned: data?.isProjectPinned,
             onProjectPinChange: retriggerPinnedProjectsList,
             disablePinButton: pinButtonDisabled,
         }),
         [
+            pinnedProjectsList,
             retriggerPinnedProjectsList,
             pinButtonDisabled,
         ],
@@ -237,6 +241,7 @@ function Home(props: ViewProps) {
             topTaggers: data.project?.topTaggers,
             topSourcers: data.project?.topSourcers,
             allowedPermissions: data.project?.allowedPermissions,
+            pinnedId: data.id,
             isPinned: true,
             onProjectPinChange: retriggerPinnedProjectsList,
             disablePinButton: pinButtonDisabled,
@@ -319,6 +324,9 @@ function Home(props: ViewProps) {
                         topTaggers={selectedProjectDetail?.topTaggers}
                         topSourcers={selectedProjectDetail?.topSourcers}
                         entriesActivity={selectedProjectDetail?.stats?.entriesActivity}
+                        pinnedId={pinnedProjectsList?.find(
+                            (item) => item.project.id === selectedProject,
+                        )?.id}
                         allowedPermissions={selectedProjectDetail?.allowedPermissions}
                         recentActiveUsers={selectedProjectDetail?.recentActiveUsers}
                         isPinned={selectedProjectDetail?.isProjectPinned}
@@ -337,8 +345,9 @@ function Home(props: ViewProps) {
                                     name={undefined}
                                     title="Reorder pinned projects"
                                     onClick={showProjectReorderModal}
+                                    big
                                 >
-                                    <MdOutlineSwapVerticalCircle />
+                                    <BiSort />
                                 </QuickActionButton>
                             )}
                         />
@@ -347,7 +356,7 @@ function Home(props: ViewProps) {
                             data={pinnedProjectsList}
                             rendererParams={pinnedProjectsRendererParams}
                             renderer={ProjectItem}
-                            pending={pinnedProjectsPending}
+                            pending={false}
                             keySelector={pinnedProjectKeySelector}
                             filtered={false}
                             errored={false}

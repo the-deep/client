@@ -138,6 +138,7 @@ function ProjectReorderModal(props: Props) {
     return (
         <Modal
             size="small"
+            headingSize="small"
             onCloseButtonClick={onModalClose}
             heading="Re-order pinned projects"
         >
