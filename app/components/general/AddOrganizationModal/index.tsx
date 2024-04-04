@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useQuery, gql } from '@apollo/client';
 import {
     useForm,
     requiredCondition,
@@ -19,13 +20,15 @@ import {
 
 import _ts from '#ts';
 import {
-    useRequest,
     useLazyRequest,
 } from '#base/utils/restRequest';
 import {
-    MultiResponse,
+    OrganizationTypesQuery,
+    OrganizationTypesQueryVariables,
+    OrganizationTypeType,
+} from '#generated/types';
+import {
     Organization,
-    OrganizationType,
 } from '#types';
 import { OrganizationItemType } from '#components/general/AddStakeholderModal/SearchStakeholder/Stakeholder';
 
@@ -44,8 +47,8 @@ const organizationSchema: FormSchema = {
     }),
 };
 
-const organizationTypeKeySelector = (d: OrganizationType): number => d.id;
-const organizationTypeLabelSelector = (d: OrganizationType): string => d.title;
+const organizationTypeKeySelector = (d: OrganizationTypeType): number => Number(d.id);
+const organizationTypeLabelSelector = (d: OrganizationTypeType): string => d.title;
 
 const defaultFormValue: FormType = {};
 
@@ -53,6 +56,19 @@ export interface Props {
     onModalClose: () => void;
     onOrganizationAdd?: (organization: OrganizationItemType) => void;
 }
+
+const ORGANIZATION_TYPES = gql`
+    query OrganizationTypes {
+        organizationTypes {
+            results {
+                description
+                id
+                shortName
+                title
+            }
+        }
+    }
+`;
 
 function AddOrganizationModal(props: Props) {
     const {
@@ -63,12 +79,11 @@ function AddOrganizationModal(props: Props) {
     const alert = useAlert();
 
     const {
-        pending: organizationTypesPending,
-        response: organizationTypesResponse,
-    } = useRequest<MultiResponse<OrganizationType>>({
-        url: 'server://organization-types/',
-        method: 'GET',
-    });
+        data: organizationTypesResponse,
+        loading: organizationTypesPending,
+    } = useQuery<OrganizationTypesQuery, OrganizationTypesQueryVariables>(
+        ORGANIZATION_TYPES,
+    );
 
     const {
         pending: organizationPostPending,
@@ -170,7 +185,7 @@ function AddOrganizationModal(props: Props) {
             <SelectInput
                 name="organizationType"
                 onChange={setFieldValue}
-                options={organizationTypesResponse?.results}
+                options={organizationTypesResponse?.organizationTypes?.results}
                 value={value?.organizationType}
                 error={error?.organizationType}
                 keySelector={organizationTypeKeySelector}
