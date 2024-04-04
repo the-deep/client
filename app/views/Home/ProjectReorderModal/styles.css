@@ -1,0 +1,11 @@
+.projects {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-medium);
+
+    .item {
+        border-radius: var(--dui-radius-border-small);
+        background-color: var(--dui-color-background-information);
+        padding: var(--dui-spacing-small);
+    }
+}

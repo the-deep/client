@@ -3,11 +3,16 @@ import { FiEdit2 } from 'react-icons/fi';
 import {
     _cs,
     compareDate,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     IoBookmarkOutline,
     IoLockOpenOutline,
 } from 'react-icons/io5';
+import {
+    RiPushpinFill,
+    RiUnpinFill,
+} from 'react-icons/ri';
 import {
     AreaChart,
     XAxis,
@@ -29,7 +34,10 @@ import {
     DateRangeOutput,
     Message,
     Kraken,
+    QuickActionButton,
+    useAlert,
 } from '@the-deep/deep-ui';
+import { useMutation, gql } from '@apollo/client';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import SmartQuickActionLink from '#base/components/SmartQuickActionLink';
@@ -42,11 +50,39 @@ import {
     UserEntityCountType,
     UserEntityDateType,
     ProjectPermission,
+    PinProjectMutation,
+    PinProjectMutationVariables,
+    UnpinProjectMutation,
+    UnpinProjectMutationVariables,
 } from '#generated/types';
 
 import _ts from '#ts';
 
 import styles from './styles.css';
+
+const PIN_PROJECT = gql`
+mutation PinProject ($projectId: ID!) {
+    createUserPinnedProject(
+        data: {
+            project: $projectId
+        }
+    ) {
+        errors
+        ok
+    }
+}
+`;
+
+const UNPIN_PROJECT = gql`
+mutation UnpinProject ($projectId: ID!) {
+    deleteUserPinnedProject (
+        id: $projectId
+    ) {
+        errors
+        ok
+    }
+}
+`;
 
 const tickFormatter = (value: number | string) => {
     const date = new Date(value);
@@ -66,7 +102,7 @@ const activeUserKeySelector = (d: UserEntityDateType) => d?.userId;
 
 export interface RecentProjectItemProps {
     className?: string;
-    projectId?: string;
+    projectId: string | undefined;
     title?: string;
     isPrivate?: boolean;
     startDate: string | null | undefined;
@@ -84,6 +120,10 @@ export interface RecentProjectItemProps {
     topSourcers: UserEntityCountType[] | null | undefined;
     allowedPermissions: ProjectPermission[] | null | undefined;
     recentActiveUsers: UserEntityDateType[] | null | undefined;
+    isPinned?: boolean;
+    pinnedId: string | undefined;
+    onProjectPinChange: () => void;
+    disablePinButton: boolean;
 }
 
 function ProjectItem(props: RecentProjectItemProps) {
@@ -105,9 +145,73 @@ function ProjectItem(props: RecentProjectItemProps) {
         topTaggers,
         topSourcers,
         entriesActivity,
+        pinnedId,
         allowedPermissions,
         recentActiveUsers,
+        isPinned,
+        onProjectPinChange,
+        disablePinButton,
     } = props;
+
+    const alert = useAlert();
+
+    const [
+        pinProject,
+    ] = useMutation<PinProjectMutation, PinProjectMutationVariables>(
+        PIN_PROJECT,
+        {
+            onCompleted: (response) => {
+                const pinProjectResponse = response?.createUserPinnedProject;
+                if (pinProjectResponse?.ok) {
+                    onProjectPinChange();
+                    alert.show(
+                        'Project successfully pinned.',
+                        { variant: 'success' },
+                    );
+                } else {
+                    alert.show(
+                        'An error occured while pinning a project.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'An error occured while pinning a project.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const [
+        unpinProject,
+    ] = useMutation<UnpinProjectMutation, UnpinProjectMutationVariables>(
+        UNPIN_PROJECT,
+        {
+            onCompleted: (response) => {
+                const unpinProjectResponse = response?.deleteUserPinnedProject;
+                if (unpinProjectResponse?.ok) {
+                    onProjectPinChange();
+                    alert.show(
+                        'Project successfully unpinned.',
+                        { variant: 'success' },
+                    );
+                } else {
+                    alert.show(
+                        'An error occured while unpinning a project.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'An error occured while pinning a project.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const activeUserRendererParams = useCallback((_: unknown, data: UserEntityDateType) => ({
         className: styles.recentlyActiveItem,
@@ -146,6 +250,38 @@ function ProjectItem(props: RecentProjectItemProps) {
 
     const canEditProject = allowedPermissions?.includes('UPDATE_PROJECT');
 
+    const handleUnpinProject = useCallback((id: string | undefined) => {
+        if (!id) {
+            alert.show(
+                'Failed to unpin the project.',
+                { variant: 'error' },
+            );
+            return;
+        }
+        unpinProject({
+            variables: {
+                projectId: id,
+            },
+        });
+    }, [
+        alert,
+        unpinProject,
+    ]);
+
+    const handlePinProject = useCallback((id: string) => {
+        pinProject({
+            variables: {
+                projectId: id,
+            },
+        });
+    }, [
+        pinProject,
+    ]);
+
+    if (isNotDefined(projectId)) {
+        return null;
+    }
+
     return (
         <ContainerCard
             spacing="loose"
@@ -173,6 +309,26 @@ function ProjectItem(props: RecentProjectItemProps) {
                             _ts('home.recentProjects', 'publicProjectLabel')
                         )}
                     </Element>
+                    {isPinned ? (
+                        <QuickActionButton
+                            name={pinnedId}
+                            onClick={handleUnpinProject}
+                            title="Unpin this project"
+                            variant="tertiary"
+                        >
+                            <RiUnpinFill />
+                        </QuickActionButton>
+                    ) : (
+                        <QuickActionButton
+                            name={projectId}
+                            onClick={handlePinProject}
+                            title={disablePinButton ? 'You can only pin 5 projects.' : 'Pin this project'}
+                            disabled={disablePinButton}
+                            variant="tertiary"
+                        >
+                            <RiPushpinFill />
+                        </QuickActionButton>
+                    )}
                     {canEditProject && (
                         <SmartQuickActionLink
                             variant="tertiary"

@@ -1,10 +1,18 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
+import { BiSort } from 'react-icons/bi';
 import { useQuery, gql } from '@apollo/client';
 import {
     Container,
+    Header,
+    Heading,
     ListView,
     Kraken,
+    QuickActionButton,
+    useModalState,
 } from '@the-deep/deep-ui';
 
 import { useRequest } from '#base/utils/restRequest';
@@ -20,9 +28,12 @@ import {
     RecentProjectsQueryVariables,
     FetchProjectQuery,
     FetchProjectQueryVariables,
+    UserPinnedProjectsQuery,
+    UserPinnedProjectsQueryVariables,
 } from '#generated/types';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
+import { PROJECT_DETAIL_FRAGMENT } from '#gqlFragments';
 import { ProjectsSummary } from '#types';
 
 import ProjectItem, { RecentProjectItemProps } from './ProjectItem';
@@ -30,120 +41,49 @@ import Summary from './Summary';
 import Activity from './Activity';
 import Assignment from './Assignment';
 import RecentActivity from './RecentActivity';
+import ProjectReorderModal from './ProjectReorderModal';
 
 import styles from './styles.css';
 
 const RECENT_PROJECTS = gql`
+${PROJECT_DETAIL_FRAGMENT}
 query RecentProjects{
     recentProjects {
-        id
-        title
-        isPrivate
-        description
-        startDate
-        endDate
-        analysisFramework {
-            id
-            title
-        }
-        createdBy {
-            displayName
-        }
-        leads {
-            totalCount
-        }
-        topTaggers {
-            userId
-            count
-            name
-        }
-        topSourcers {
-            userId
-            count
-            name
-        }
-        recentActiveUsers {
-            userId
-            name
-            date
-        }
-        stats {
-            entriesActivity {
-                count
-                date
-            }
-            leadsActivity {
-                count
-                date
-            }
-            numberOfEntries
-            numberOfLeads
-            numberOfLeadsTagged
-            numberOfLeadsInProgress
-            numberOfUsers
-        }
-        allowedPermissions
+        ...ProjectDetail
     }
 }
 `;
 
 const FETCH_PROJECT = gql`
+${PROJECT_DETAIL_FRAGMENT}
 query FetchProject($projectId: ID!) {
     project(id: $projectId) {
+        ...ProjectDetail
+    }
+}
+`;
+
+const USER_PINNED_PROJECTS = gql`
+${PROJECT_DETAIL_FRAGMENT}
+query userPinnedProjects {
+    userPinnedProjects{
         id
-        title
-        isPrivate
-        description
-        startDate
-        endDate
-        analysisFramework {
-            id
-            title
+        clientId
+        order
+        project {
+            ...ProjectDetail
         }
-        createdBy {
-            displayName
-        }
-        leads {
-            totalCount
-        }
-        topTaggers {
-            userId
-            count
-            name
-        }
-        topSourcers {
-            userId
-            count
-            name
-        }
-        recentActiveUsers {
-            userId
-            name
-            date
-        }
-        stats {
-            entriesActivity {
-                count
-                date
-            }
-            leadsActivity {
-                count
-                date
-            }
-            numberOfEntries
-            numberOfLeads
-            numberOfLeadsTagged
-            numberOfLeadsInProgress
-            numberOfUsers
-        }
-        allowedPermissions
     }
 }
 `;
 
 type ProjectDetail = NonNullable<FetchProjectQuery>['project'];
+export type PinnedProjectDetailType = NonNullable<UserPinnedProjectsQuery>['userPinnedProjects'][number];
 
 const recentProjectKeySelector = (d: ProjectDetail) => d?.id ?? '';
+const pinnedProjectKeySelector = (d: PinnedProjectDetailType) => d.project?.id ?? '';
+
+const MAX_PINNED_PROJECT_LIMIT = 5;
 
 interface ViewProps {
     className?: string;
@@ -154,10 +94,20 @@ function Home(props: ViewProps) {
         className,
     } = props;
 
+    const [
+        projectReorderModalShown,
+        showProjectReorderModal,
+        hideProjectReorderModal,
+    ] = useModalState(false);
+
     const [selectedProject, setSelectedProject] = useState<string | undefined>(undefined);
     const [projects, setProjects] = useState<
         Pick<Project, 'id' | 'title' | 'isPrivate'>[] | undefined | null
     >(undefined);
+    const [
+        pinButtonDisabled,
+        setPinButtonDisabled,
+    ] = useState<boolean>(false);
 
     const {
         data: recentProjectsResponse,
@@ -183,12 +133,61 @@ function Home(props: ViewProps) {
         },
     );
 
+    const [
+        pinnedProjects,
+        setPinnedProjects,
+    ] = useState<PinnedProjectDetailType[] | undefined>([]);
+
+    const {
+        data: pinnedProjectsResponse,
+        refetch: retriggerPinnedProjectsList,
+    } = useQuery<UserPinnedProjectsQuery, UserPinnedProjectsQueryVariables>(
+        USER_PINNED_PROJECTS,
+        {
+            notifyOnNetworkStatusChange: true,
+            onCompleted: (response) => {
+                const count = response?.userPinnedProjects.length;
+                setPinButtonDisabled(count >= MAX_PINNED_PROJECT_LIMIT);
+                const pinnedProjectList = response?.userPinnedProjects
+                && pinnedProjectsResponse?.userPinnedProjects?.filter(
+                    (item) => isDefined(item.project?.id),
+                );
+                setPinnedProjects(pinnedProjectList);
+            },
+        },
+    );
+
+    // NOTE: This is an order changed list outside of state maintained due to apollo caching
+    const pinnedProjectsList = useMemo(() => (
+        pinnedProjectsResponse?.userPinnedProjects
+        && pinnedProjectsResponse?.userPinnedProjects?.filter(
+            (item) => isDefined(item.project?.id),
+        )
+    ), [pinnedProjectsResponse]);
+
     const {
         response: summaryResponse,
     } = useRequest<ProjectsSummary>({
         url: 'server://projects-stat/summary/',
         method: 'GET',
     });
+
+    const recentProjects: ProjectDetail[] | undefined = useMemo(() => {
+        if (recentProjectsResponse?.recentProjects) {
+            return recentProjectsResponse.recentProjects;
+        }
+        return [];
+    }, [recentProjectsResponse]);
+
+    const selectedProjectDetail: ProjectDetail | undefined = useMemo(() => {
+        if (selectedProject && selectedProjectResponse?.project) {
+            return selectedProjectResponse.project;
+        }
+        return undefined;
+    }, [
+        selectedProject,
+        selectedProjectResponse,
+    ]);
 
     const recentProjectsRendererParams = useCallback(
         (_: string, data: ProjectDetail): RecentProjectItemProps => ({
@@ -210,19 +209,48 @@ function Home(props: ViewProps) {
             topTaggers: data?.topTaggers,
             topSourcers: data?.topSourcers,
             allowedPermissions: data?.allowedPermissions,
+            pinnedId: pinnedProjectsList?.find((item) => item.project.id === data?.id)?.id,
+            isPinned: data?.isProjectPinned,
+            onProjectPinChange: retriggerPinnedProjectsList,
+            disablePinButton: pinButtonDisabled,
         }),
-        [],
+        [
+            pinnedProjectsList,
+            retriggerPinnedProjectsList,
+            pinButtonDisabled,
+        ],
     );
 
-    const recentProjects: ProjectDetail[] | undefined = useMemo(() => {
-        if (selectedProject && selectedProjectResponse?.project) {
-            return [selectedProjectResponse.project];
-        }
-        if (recentProjectsResponse?.recentProjects) {
-            return recentProjectsResponse.recentProjects;
-        }
-        return undefined;
-    }, [selectedProject, selectedProjectResponse, recentProjectsResponse]);
+    const pinnedProjectsRendererParams = useCallback(
+        (_: string, data: PinnedProjectDetailType): RecentProjectItemProps => ({
+            projectId: data.project?.id,
+            title: data.project?.title,
+            isPrivate: data.project?.isPrivate,
+            startDate: data.project?.startDate,
+            endDate: data.project?.endDate,
+            description: data.project?.description,
+            projectOwnerName: data.project?.createdBy?.displayName,
+            analysisFrameworkTitle: data.project?.analysisFramework?.title,
+            analysisFramework: data.project?.analysisFramework?.id,
+            totalUsers: data.project?.stats?.numberOfUsers,
+            totalSources: data.project?.stats?.numberOfLeads,
+            totalSourcesInProgress: data.project?.stats?.numberOfLeadsInProgress,
+            totalSourcesTagged: data.project?.stats?.numberOfLeadsTagged,
+            entriesActivity: data.project?.stats?.entriesActivity,
+            recentActiveUsers: data.project?.recentActiveUsers,
+            topTaggers: data.project?.topTaggers,
+            topSourcers: data.project?.topSourcers,
+            allowedPermissions: data.project?.allowedPermissions,
+            pinnedId: data.id,
+            isPinned: true,
+            onProjectPinChange: retriggerPinnedProjectsList,
+            disablePinButton: pinButtonDisabled,
+        }),
+        [
+            retriggerPinnedProjectsList,
+            pinButtonDisabled,
+        ],
+    );
 
     return (
         <PageContent
@@ -254,7 +282,6 @@ function Home(props: ViewProps) {
             <Container
                 spacing="loose"
                 className={styles.recentProjects}
-                heading={_ts('home', 'recentProjectsHeading')}
                 headerActions={(
                     <>
                         <ProjectSelectInput
@@ -275,7 +302,70 @@ function Home(props: ViewProps) {
                         </SmartButtonLikeLink>
                     </>
                 )}
+                contentClassName={styles.content}
             >
+                {isDefined(selectedProject) && (
+                    <ProjectItem
+                        projectId={selectedProject}
+                        className={styles.selectedProject}
+                        title={selectedProjectDetail?.title}
+                        startDate={selectedProjectDetail?.startDate}
+                        endDate={selectedProjectDetail?.endDate}
+                        isPrivate={selectedProjectDetail?.isPrivate}
+                        description={selectedProjectDetail?.description}
+                        projectOwnerName={selectedProjectDetail?.createdBy?.displayName}
+                        analysisFrameworkTitle={selectedProjectDetail?.analysisFramework?.title}
+                        analysisFramework={selectedProjectDetail?.analysisFramework?.id}
+                        totalUsers={selectedProjectDetail?.stats?.numberOfUsers}
+                        totalSources={selectedProjectDetail?.stats?.numberOfLeads}
+                        totalSourcesTagged={selectedProjectDetail?.stats?.numberOfLeadsTagged}
+                        totalSourcesInProgress={selectedProjectDetail
+                            ?.stats?.numberOfLeadsInProgress}
+                        topTaggers={selectedProjectDetail?.topTaggers}
+                        topSourcers={selectedProjectDetail?.topSourcers}
+                        entriesActivity={selectedProjectDetail?.stats?.entriesActivity}
+                        pinnedId={pinnedProjectsList?.find(
+                            (item) => item.project.id === selectedProject,
+                        )?.id}
+                        allowedPermissions={selectedProjectDetail?.allowedPermissions}
+                        recentActiveUsers={selectedProjectDetail?.recentActiveUsers}
+                        isPinned={selectedProjectDetail?.isProjectPinned}
+                        onProjectPinChange={retriggerPinnedProjectsList}
+                        disablePinButton={pinButtonDisabled}
+                    />
+                )}
+                {(pinnedProjectsList?.length ?? 0) >= 1 && (
+                    <>
+                        <Header
+                            className={styles.pinnedProjectHeader}
+                            headingSize="medium"
+                            heading="Pinned Projects"
+                            actions={(
+                                <QuickActionButton
+                                    name={undefined}
+                                    title="Reorder pinned projects"
+                                    onClick={showProjectReorderModal}
+                                    big
+                                >
+                                    <BiSort />
+                                </QuickActionButton>
+                            )}
+                        />
+                        <ListView
+                            className={styles.projectList}
+                            data={pinnedProjectsList}
+                            rendererParams={pinnedProjectsRendererParams}
+                            renderer={ProjectItem}
+                            pending={false}
+                            keySelector={pinnedProjectKeySelector}
+                            filtered={false}
+                            errored={false}
+                        />
+                    </>
+                )}
+                <Heading size="medium">
+                    Recent Projects
+                </Heading>
                 <ListView
                     className={styles.projectList}
                     data={recentProjects}
@@ -302,6 +392,14 @@ function Home(props: ViewProps) {
                     messageIconShown
                     messageShown
                 />
+                {projectReorderModalShown && (
+                    <ProjectReorderModal
+                        onModalClose={hideProjectReorderModal}
+                        pinnedProjects={pinnedProjects ?? []}
+                        onSuccess={retriggerPinnedProjectsList}
+                        setPinnedProjects={setPinnedProjects}
+                    />
+                )}
             </Container>
         </PageContent>
     );
