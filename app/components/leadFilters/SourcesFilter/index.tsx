@@ -281,39 +281,37 @@ function SourcesFilter(props: Props) {
                         label="Date Created"
                     />
                     {!isEntriesOnlyFilter && (
-                        <>
-                            <BooleanInput
-                                variant="general"
-                                options={hasEntryOptions}
-                                name="hasEntries"
-                                value={value.hasEntries}
-                                onChange={setFieldValue}
-                                label="Has Entry"
-                                error={error?.hasEntries}
-                                disabled={disabled || optionsLoading}
-                            />
-                            <BooleanInput
-                                variant="general"
-                                options={hasAssessmentOptions}
-                                name="hasAssessment"
-                                value={value.hasAssessment}
-                                onChange={setFieldValue}
-                                label="Assessment Status"
-                                error={error?.hasAssessment}
-                                disabled={disabled || optionsLoading}
-                            />
-                            <BooleanInput
-                                variant="general"
-                                options={isAssessmentOptions}
-                                name="isAssessment"
-                                value={value.isAssessment}
-                                onChange={setFieldValue}
-                                label="Is Assessment"
-                                error={error?.isAssessment}
-                                disabled={disabled}
-                            />
-                        </>
+                        <BooleanInput
+                            variant="general"
+                            options={hasEntryOptions}
+                            name="hasEntries"
+                            value={value.hasEntries}
+                            onChange={setFieldValue}
+                            label="Has Entry"
+                            error={error?.hasEntries}
+                            disabled={disabled || optionsLoading}
+                        />
                     )}
+                    <BooleanInput
+                        variant="general"
+                        options={hasAssessmentOptions}
+                        name="hasAssessment"
+                        value={value.hasAssessment}
+                        onChange={setFieldValue}
+                        label="Assessment Status"
+                        error={error?.hasAssessment}
+                        disabled={disabled || optionsLoading}
+                    />
+                    <BooleanInput
+                        variant="general"
+                        options={isAssessmentOptions}
+                        name="isAssessment"
+                        value={value.isAssessment}
+                        onChange={setFieldValue}
+                        label="Is Assessment"
+                        error={error?.isAssessment}
+                        disabled={disabled}
+                    />
                     <ProjectMemberMultiSelectInput
                         variant="general"
                         name="createdBy"
