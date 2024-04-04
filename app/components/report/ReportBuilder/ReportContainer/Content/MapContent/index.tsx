@@ -7,6 +7,7 @@ import { PendingAnimation } from '@the-deep/deep-ui';
 import {
     Map,
     type MapProps,
+    type LineLayerProps,
     type Symbols,
 } from '@the-deep/reporting-module-components';
 import {
@@ -140,6 +141,44 @@ function MapContent(props: Props) {
                         },
                     },
                 });
+            }
+            if (item.type === 'LINE_LAYER') {
+                const layerConfig = item?.layerConfig?.lineLayer;
+                const referenceId = layerConfig?.contentReferenceId;
+                if (!referenceId) {
+                    return undefined;
+                }
+                const uploadId = usedFiles?.[referenceId];
+                if (!uploadId) {
+                    return undefined;
+                }
+                if (!downloadedGeoData[uploadId]) {
+                    return undefined;
+                }
+
+                const finalObject: {
+                    id: string,
+                    type: 'line',
+                    visible: boolean,
+                    options: LineLayerProps,
+                } = ({
+                    id: String(index + 1),
+                    type: 'line',
+                    visible: !!item.visible,
+                    options: {
+                        opacity: item.opacity ?? 1,
+                        zIndex: item.order ?? index + 1,
+                        source: downloadedGeoData[uploadId] as LineLayerProps['source'],
+                        style: {
+                            dashSpacing: 1,
+                            stroke: '#ffffff',
+                            strokeWidth: 1,
+                            ...(layerConfig?.style?.line ?? {}),
+                            strokeType: layerConfig?.style?.line?.strokeType === 'DASH' ? 'dash' : 'solid',
+                        },
+                    },
+                });
+                return finalObject;
             }
             if (item.type === 'HEAT_MAP_LAYER') {
                 const layerConfig = item?.layerConfig?.heatmapLayer;
