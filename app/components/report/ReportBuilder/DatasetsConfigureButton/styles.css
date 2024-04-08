@@ -8,6 +8,12 @@
         flex-shrink: 0;
         border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         width: 24rem;
+
+        .heading-section,
+        .heading-action {
+            display: flex;
+            flex-direction: column;
+        }
     }
 
     .right-container {

@@ -36,6 +36,7 @@ import {
     useBooleanState,
     ListView,
 } from '@the-deep/deep-ui';
+import Papa from 'papaparse';
 
 import GalleryFileUpload from '#components/GalleryFileUpload';
 import {
@@ -448,6 +449,37 @@ function DatasetsConfigureButton(props: Props) {
         validate,
     ]);
 
+    const handleCsvFileInputChange = useCallback(
+        async ({ id: newFileId }: { id: string }, file: File | undefined) => {
+            if (!file) {
+                return;
+            }
+
+            try {
+                const response = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const csvString = event.target?.result as string;
+                        resolve(Papa.parse(csvString, {
+                            complete: resolve,
+                        }));
+                    };
+                    reader.onerror = reject;
+                    reader.readAsText(file);
+                });
+
+                console.log('********', response);
+                // const parsedData: ParseResult<string[]> = response as ParseResult<string[]>;
+                // onParseSuccess(parsedData.data); // Call the callback with parsed data
+            } catch {
+                alert.show(
+                    'There was an error parsing the csv sheet.',
+                    { variant: 'error' },
+                );
+            }
+        }, [alert],
+    );
+
     const handleFileInputChange = useCallback(
         async ({ id: newFileId }: { id: string }, file: File | undefined) => {
             if (!file) {
@@ -558,18 +590,29 @@ function DatasetsConfigureButton(props: Props) {
                     bodyClassName={styles.modalBody}
                 >
                     <Container
+                        className={styles.leftContainer}
                         heading="Uploaded files"
                         headingSize="extraSmall"
+                        headingSectionClassName={styles.headingSection}
+                        headerActionsContainerClassName={styles.headingAction}
                         headerActions={(
-                            <GalleryFileUpload
-                                title="Upload excel"
-                                onSuccess={handleFileInputChange}
-                                projectIds={projectId ? [projectId] : undefined}
-                                acceptFileType=".xlsx"
-                                buttonOnly
-                            />
+                            <>
+                                <GalleryFileUpload
+                                    title="Upload excel"
+                                    onSuccess={handleFileInputChange}
+                                    projectIds={projectId ? [projectId] : undefined}
+                                    acceptFileType=".xlsx"
+                                    buttonOnly
+                                />
+                                <GalleryFileUpload
+                                    title="Upload csv"
+                                    onSuccess={handleCsvFileInputChange}
+                                    projectIds={projectId ? [projectId] : undefined}
+                                    acceptFileType=".csv"
+                                    buttonOnly
+                                />
+                            </>
                         )}
-                        className={styles.leftContainer}
                     >
                         <ListView
                             data={datasetsList?.project?.analysisReportUploads?.results}
