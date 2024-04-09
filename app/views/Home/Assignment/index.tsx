@@ -128,16 +128,14 @@ function Assignments() {
         UPDATE_ASSIGNMENT_STATUS,
         {
             onCompleted: (response) => {
-                const { ok, errors } = removeNull(response?.assignmentStatusUpdate);
+                const { ok } = removeNull(response?.assignmentStatusUpdate);
                 if (ok) {
                     alert.show(
                         'Successfully marked as read.',
                         { variant: 'success' },
                     );
                     getAssignments();
-                }
-
-                if (errors) {
+                } else {
                     alert.show(
                         'Failed to mark as read.',
                         { variant: 'error' },
@@ -163,16 +161,14 @@ function Assignments() {
         UPDATE_ASSIGNMENT_BULK_STATUS,
         {
             onCompleted: (response) => {
-                const { ok, errors } = removeNull(response?.assignmentBulkStatusUpdate);
+                const { ok } = removeNull(response?.assignmentBulkStatusUpdate);
                 if (ok) {
                     alert.show(
                         'Successfully marked all as read.',
                         { variant: 'success' },
                     );
                     getAssignments();
-                }
-
-                if (errors) {
+                } else {
                     alert.show(
                         'Failed to mark all as read.',
                         { variant: 'error' },
