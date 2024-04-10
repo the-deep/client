@@ -43,6 +43,8 @@ import {
 import {
     FrameworkDetailsForAnalysisQuery,
     FrameworkDetailsForAnalysisQueryVariables,
+    ProjectAssigneeQuery,
+    ProjectAssigneeQueryVariables,
 } from '#generated/types';
 
 import _ts from '#ts';
@@ -64,6 +66,29 @@ const FRAMEWORK_DETAILS_FOR_ANALYSIS = gql`
             analysisFramework {
                 # NOTE: Does not need predictionTagsMapping from FrameworkResponse
                 ...FrameworkResponse
+            }
+        }
+    }
+`;
+
+const PROJECT_ASSIGNEE = gql`
+    query ProjectAssignee($projectId: ID!) {
+        project(id: $projectId) {
+            userMembers {
+                results {
+                    id
+                    member {
+                        id
+                        displayName
+                        emailDisplay
+                    }
+                    role {
+                        id
+                        level
+                        title
+                        type
+                    }
+                }
             }
         }
     }
@@ -237,6 +262,25 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         method: 'GET',
     });
 
+    const projectAssigneeVariables = useMemo(
+        (): ProjectAssigneeQueryVariables => ({
+            projectId: String(projectId),
+        }),
+        [projectId],
+    );
+
+    const {
+        loading: pendingProjectAssignee,
+        data: projectAssigneeResponse,
+    } = useQuery<ProjectAssigneeQuery, ProjectAssigneeQueryVariables>(
+        PROJECT_ASSIGNEE,
+        {
+            variables: projectAssigneeVariables,
+        },
+    );
+    console.log(projectId, usersListResponse);
+    console.log('projectAssignee', projectAssigneeResponse);
+
     const {
         pending: pendingAnalysisEdit,
         trigger: triggerAnalysisEdit,
@@ -284,10 +328,10 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             onChange: onRowChange as PillarAnalysisProps['onChange'],
             onRemove: onRowRemove,
             pending,
-            usersList: usersListResponse?.results ?? [],
+            usersList: projectAssigneeResponse?.project?.userMembers?.results ?? [],
             value: data,
         }),
-        [usersListResponse, matrixPillars, arrayError, onRowChange, onRowRemove, pending],
+        [projectAssigneeResponse, matrixPillars, arrayError, onRowChange, onRowRemove, pending],
     );
 
     type AnalysisPillarList = typeof value.analysisPillar;
