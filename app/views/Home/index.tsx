@@ -15,8 +15,6 @@ import {
     useModalState,
 } from '@the-deep/deep-ui';
 
-import { useRequest } from '#base/utils/restRequest';
-
 import { Project } from '#base/types/project';
 import PageContent from '#components/PageContent';
 import ProjectSelectInput from '#components/selections/ProjectSelectInput';
@@ -30,11 +28,12 @@ import {
     FetchProjectQueryVariables,
     UserPinnedProjectsQuery,
     UserPinnedProjectsQueryVariables,
+    ProjectStatSummaryQuery,
+    ProjectStatSummaryQueryVariables,
 } from '#generated/types';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import { PROJECT_DETAIL_FRAGMENT } from '#gqlFragments';
-import { ProjectsSummary } from '#types';
 
 import ProjectItem, { RecentProjectItemProps } from './ProjectItem';
 import Summary from './Summary';
@@ -77,6 +76,27 @@ query userPinnedProjects {
 }
 `;
 
+const PROJECT_STAT_SUMMARY = gql`
+query ProjectStatSummary {
+    userProjectStatSummary {
+        projectsCount
+        recentEntriesActivities {
+            count
+            date
+            projectId
+        }
+        recentEntriesProjectDetails {
+            count
+            id
+            title
+        }
+        totalLeadsCount
+        totalLeadsTaggedAndControlledCount
+        totalLeadsTaggedCount
+    }
+}
+`;
+
 type ProjectDetail = NonNullable<FetchProjectQuery>['project'];
 export type PinnedProjectDetailType = NonNullable<UserPinnedProjectsQuery>['userPinnedProjects'][number];
 
@@ -104,6 +124,7 @@ function Home(props: ViewProps) {
     const [projects, setProjects] = useState<
         Pick<Project, 'id' | 'title' | 'isPrivate'>[] | undefined | null
     >(undefined);
+
     const [
         pinButtonDisabled,
         setPinButtonDisabled,
@@ -131,6 +152,12 @@ function Home(props: ViewProps) {
             skip: !variables,
             variables,
         },
+    );
+
+    const {
+        data: summaryResponse,
+    } = useQuery<ProjectStatSummaryQuery, ProjectStatSummaryQueryVariables>(
+        PROJECT_STAT_SUMMARY,
     );
 
     const [
@@ -164,13 +191,6 @@ function Home(props: ViewProps) {
             (item) => isDefined(item.project?.id),
         )
     ), [pinnedProjectsResponse]);
-
-    const {
-        response: summaryResponse,
-    } = useRequest<ProjectsSummary>({
-        url: 'server://projects-stat/summary/',
-        method: 'GET',
-    });
 
     const recentProjects: ProjectDetail[] | undefined = useMemo(() => {
         if (recentProjectsResponse?.recentProjects) {
@@ -266,7 +286,7 @@ function Home(props: ViewProps) {
         >
             <Summary
                 className={styles.summary}
-                summaryResponse={summaryResponse}
+                summaryResponse={summaryResponse?.userProjectStatSummary}
             />
             <Container
                 className={styles.projectTaggingActivity}
@@ -276,7 +296,9 @@ function Home(props: ViewProps) {
                 spacing="loose"
             >
                 <Activity
-                    data={summaryResponse?.recentEntriesActivity}
+                    data={summaryResponse?.userProjectStatSummary?.recentEntriesActivities}
+                    projectDetails={summaryResponse?.userProjectStatSummary
+                        ?.recentEntriesProjectDetails ?? []}
                 />
             </Container>
             <Container
