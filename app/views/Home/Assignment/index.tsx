@@ -10,15 +10,15 @@ import { IoCheckmarkDone } from 'react-icons/io5';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
 
+import _ts from '#ts';
 import {
-    AssignmentBulkStatusUpdateMutation,
-    AssignmentBulkStatusUpdateMutationVariables,
-    AssignmentStatusUpdateMutation,
-    AssignmentStatusUpdateMutationVariables,
+    AssignmentBulkStatusMarkAsDoneMutation,
+    AssignmentBulkStatusMarkAsDoneMutationVariables,
+    AssignmentUpdateMutation,
+    AssignmentUpdateMutationVariables,
     GetAssignmentsQuery,
     GetAssignmentsQueryVariables,
 } from '#generated/types';
-import _ts from '#ts';
 
 import AssignmentItem from './AssignmentItem';
 import styles from './styles.css';
@@ -29,7 +29,7 @@ const GET_ASSIGNMENTS = gql`
         $page: Int,
         $pageSize: Int,
     ) {
-        assignment(
+        assignments(
         isDone: $isDone,
         page: $page,
         pageSize: $pageSize,
@@ -37,7 +37,6 @@ const GET_ASSIGNMENTS = gql`
             results {
                 id
                 createdAt
-                isDone
                 createdBy {
                     displayName
                     id
@@ -46,15 +45,20 @@ const GET_ASSIGNMENTS = gql`
                 project {
                     id
                     title
-                    isPrivate
                 }
-                contentType
-                leadType {
-                    title
-                    id
-                }
-                entryType {
-                    id
+                isDone
+                objectId
+                contentData {
+                    contentType
+                    lead {
+                        id
+                        title
+                    }
+                    entryReviewComment {
+                        entryId
+                        leadId
+                        id
+                    }
                 }
             }
             totalCount
@@ -63,11 +67,11 @@ const GET_ASSIGNMENTS = gql`
 `;
 
 const UPDATE_ASSIGNMENT_STATUS = gql`
-    mutation AssignmentStatusUpdate(
-        $id: ID!,
-        $isDone: Boolean!,
+    mutation AssignmentUpdate(
+        $data: AssignmentInputType!,
+        $id: ID!
     ) {
-        assignmentStatusUpdate(id: $id, isDone: $isDone) {
+        assignmentUpdate(data: $data, id: $id) {
             ok
             errors
             result {
@@ -79,22 +83,16 @@ const UPDATE_ASSIGNMENT_STATUS = gql`
 `;
 
 const UPDATE_ASSIGNMENT_BULK_STATUS = gql`
-    mutation AssignmentBulkStatusUpdate(
-        $isDone: Boolean!,
-    ) {
-        assignmentBulkStatusUpdate(isDone: $isDone) {
+    mutation AssignmentBulkStatusMarkAsDone {
+        assignmentBulkStatusMarkAsDone {
             ok
             errors
-            result {
-                id
-                isDone
-            }
         }
     }
 `;
 
 const maxItemsPerPage = 5;
-export type Assignment = NonNullable<NonNullable<GetAssignmentsQuery['assignment']>['results']>[number];
+export type Assignment = NonNullable<NonNullable<GetAssignmentsQuery['assignments']>['results']>[number];
 const keySelector = (info: Assignment) => info.id;
 
 function Assignments() {
@@ -124,11 +122,11 @@ function Assignments() {
     const [
         triggerAssignmentStatusUpdate,
         { loading: assignmentStatusUpdatePending },
-    ] = useMutation<AssignmentStatusUpdateMutation, AssignmentStatusUpdateMutationVariables>(
+    ] = useMutation<AssignmentUpdateMutation, AssignmentUpdateMutationVariables>(
         UPDATE_ASSIGNMENT_STATUS,
         {
             onCompleted: (response) => {
-                const { ok } = removeNull(response?.assignmentStatusUpdate);
+                const { ok } = removeNull(response?.assignmentUpdate);
                 if (ok) {
                     alert.show(
                         'Successfully marked as read.',
@@ -155,13 +153,13 @@ function Assignments() {
         triggerBulkAction,
         { loading: bulkActionPending },
     ] = useMutation<
-        AssignmentBulkStatusUpdateMutation,
-        AssignmentBulkStatusUpdateMutationVariables
+        AssignmentBulkStatusMarkAsDoneMutation,
+        AssignmentBulkStatusMarkAsDoneMutationVariables
     >(
         UPDATE_ASSIGNMENT_BULK_STATUS,
         {
             onCompleted: (response) => {
-                const { ok } = removeNull(response?.assignmentBulkStatusUpdate);
+                const { ok } = removeNull(response?.assignmentBulkStatusMarkAsDone);
                 if (ok) {
                     alert.show(
                         'Successfully marked all as read.',
@@ -184,23 +182,14 @@ function Assignments() {
         },
     );
 
-    const handleBulkActionClick = useCallback(
-        () => {
-            triggerBulkAction({
-                variables: {
-                    isDone: true,
-                },
-            });
-        },
-        [triggerBulkAction],
-    );
-
     const handleAssignmentStatusUpdate = useCallback(
         (id: string) => {
             triggerAssignmentStatusUpdate({
                 variables: {
                     id,
-                    isDone: true,
+                    data: {
+                        isDone: true,
+                    },
                 },
             });
         },
@@ -219,7 +208,7 @@ function Assignments() {
         [handleAssignmentStatusUpdate, assignmentStatusUpdatePending],
     );
 
-    const assignmentsResponse = removeNull(data?.assignment);
+    const assignmentsResponse = removeNull(data?.assignments);
     const assignmentCount = assignmentsResponse?.totalCount ?? 0;
 
     return (
@@ -231,7 +220,7 @@ function Assignments() {
                 assignmentsResponse && assignmentCount > 0 && (
                     <ConfirmButton
                         name={undefined}
-                        onConfirm={handleBulkActionClick}
+                        onConfirm={triggerBulkAction}
                         message="Are you sure you want to clear all your assignments? This cannot be undone."
                         disabled={bulkActionPending}
                         variant="action"

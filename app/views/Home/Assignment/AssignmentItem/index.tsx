@@ -25,9 +25,7 @@ function AssignmentItem(props: AssignmentItemProps) {
         handleClick: handleClickFromProps,
         markAsDonePending,
         createdBy,
-        leadType,
-        entryType,
-        contentType,
+        contentData,
         project,
         createdAt,
     } = props;
@@ -37,26 +35,30 @@ function AssignmentItem(props: AssignmentItemProps) {
     }, [id, handleClickFromProps]);
 
     const contentLink = useMemo(() => {
-        if (contentType === 'lead') {
+        if (contentData?.contentType === 'LEAD') {
             return (generateString(
                 'source {link}',
                 {
-                    link: (leadType?.id && project?.id && (
+                    link: (contentData?.lead?.id && project?.id && (
                         <Link
                             to={generatePath(routes.entryEdit.path, {
                                 projectId: project?.id,
-                                leadId: leadType?.id,
+                                leadId: contentData?.lead?.id,
                             })}
                             className={styles.link}
                         >
-                            {leadType?.title}
+                            {contentData?.lead?.title}
                         </Link>
                     )),
                 },
             ));
         }
-        if (contentType === 'entryreviewcomment' || contentType === 'entrycomment') {
-            if (!leadType || !project?.id || !leadType?.id) {
+        if (contentData?.contentType === 'ENTRY_REVIEW_COMMENT') {
+            if (
+                !contentData?.entryReviewComment
+                || !project?.id
+                || !contentData?.entryReviewComment?.entryId
+            ) {
                 return (
                     <span>
                         an entry
@@ -66,10 +68,10 @@ function AssignmentItem(props: AssignmentItemProps) {
             const editEntryLink = {
                 pathname: (generatePath(routes.entryEdit.path, {
                     projectId: project.id,
-                    leadId: leadType?.id,
+                    leadId: contentData?.entryReviewComment?.leadId,
                 })),
                 state: {
-                    entryServerId: entryType?.id,
+                    entryServerId: contentData?.entryReviewComment?.entryId,
                     activePage: 'primary',
                 },
                 hash: '#/primary-tagging',
@@ -85,9 +87,7 @@ function AssignmentItem(props: AssignmentItemProps) {
         }
         return null;
     }, [
-        contentType,
-        leadType,
-        entryType,
+        contentData,
         project,
     ]);
 
