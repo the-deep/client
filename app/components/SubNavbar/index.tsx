@@ -9,6 +9,7 @@ import ReactDOM from 'react-dom';
 import { _cs } from '@togglecorp/fujs';
 import deepLogo from '#resources/img/logo.svg';
 import route from '#base/configs/routes';
+import TestTag from '#components/TestTag';
 
 import NavbarContext from './context';
 import styles from './styles.css';
@@ -85,6 +86,7 @@ interface SubNavbarProps {
 
     heading?: string;
     description?: string;
+    isTestShown?: boolean;
 
     homeLinkShown?: boolean;
 }
@@ -102,6 +104,7 @@ function SubNavbar(props: SubNavbarProps) {
         descriptionClassName,
         descriptionContainerClassName,
         description,
+        isTestShown = false,
         homeLinkShown,
     } = props;
 
@@ -175,6 +178,7 @@ function SubNavbar(props: SubNavbarProps) {
                         </div>
                     </div>
                 )}
+                {isTestShown && <TestTag />}
             </div>
             <div
                 ref={childrenRef}

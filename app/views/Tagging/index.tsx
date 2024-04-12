@@ -14,6 +14,7 @@ import { useQuery } from '@apollo/client';
 
 import { useModalState } from '#hooks/stateManagement';
 import ProjectSwitcher from '#components/general/ProjectSwitcher';
+import TestTag from '#components/TestTag';
 import { UserContext } from '#base/context/UserContext';
 import PreloadMessage from '#base/components/PreloadMessage';
 import SubNavbarContext from '#components/SubNavbar/context';
@@ -105,6 +106,7 @@ function Tagging(props: Props) {
         <>
             <SubNavbarIcons>
                 <ProjectSwitcher />
+                {project?.isTest && <TestTag />}
             </SubNavbarIcons>
             <SubNavbarActions>
                 <DropdownMenu

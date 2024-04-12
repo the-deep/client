@@ -294,6 +294,7 @@ export const LAST_ACTIVE_PROJECT_FRAGMENT = gql`
         isPrivate
         isProjectPinned
         title
+        isTest
         isVisualizationEnabled
         isVisualizationAvailable
         membershipPending
