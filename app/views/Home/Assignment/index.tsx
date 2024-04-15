@@ -4,236 +4,106 @@ import {
     ConfirmButton,
     Pager,
     ListView,
-    useAlert,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkDone } from 'react-icons/io5';
-import { gql, useMutation, useQuery } from '@apollo/client';
-import { removeNull } from '@togglecorp/toggle-form';
+
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 
 import {
-    AssignmentBulkStatusUpdateMutation,
-    AssignmentBulkStatusUpdateMutationVariables,
-    AssignmentStatusUpdateMutation,
-    AssignmentStatusUpdateMutationVariables,
-    GetAssignmentsQuery,
-    GetAssignmentsQueryVariables,
-} from '#generated/types';
+    Assignment,
+    MultiResponse,
+} from '#types';
+
 import _ts from '#ts';
 
 import AssignmentItem from './AssignmentItem';
 import styles from './styles.css';
 
-const GET_ASSIGNMENTS = gql`
-    query GetAssignments(
-        $isDone: Boolean,
-        $page: Int,
-        $pageSize: Int,
-    ) {
-        assignment(
-        isDone: $isDone,
-        page: $page,
-        pageSize: $pageSize,
-        ) {
-            results {
-                id
-                createdAt
-                isDone
-                createdBy {
-                    displayName
-                    id
-                    emailDisplay
-                }
-                project {
-                    id
-                    title
-                    isPrivate
-                }
-                contentType
-                leadType {
-                    title
-                    id
-                }
-                entryType {
-                    id
-                }
-            }
-            totalCount
-        }
-    }
-`;
-
-const UPDATE_ASSIGNMENT_STATUS = gql`
-    mutation AssignmentStatusUpdate(
-        $id: ID!,
-        $isDone: Boolean!,
-    ) {
-        assignmentStatusUpdate(id: $id, isDone: $isDone) {
-            ok
-            errors
-            result {
-                id
-                isDone
-            }
-        }
-    }
-`;
-
-const UPDATE_ASSIGNMENT_BULK_STATUS = gql`
-    mutation AssignmentBulkStatusUpdate(
-        $isDone: Boolean!,
-    ) {
-        assignmentBulkStatusUpdate(isDone: $isDone) {
-            ok
-            errors
-            result {
-                id
-                isDone
-            }
-        }
-    }
-`;
+interface BulkResponse {
+    assignmentUpdated: number;
+}
 
 const maxItemsPerPage = 5;
-export type Assignment = NonNullable<NonNullable<GetAssignmentsQuery['assignment']>['results']>[number];
 const keySelector = (info: Assignment) => info.id;
 
 function Assignments() {
-    const [page, setPage] = useState<number>(1);
-    const alert = useAlert();
+    const [activePage, setActivePage] = useState<number>(1);
 
-    const variables = useMemo(
+    const assignmentsQuery = useMemo(
         () => ({
-            isDone: false,
-            page,
-            pageSize: maxItemsPerPage,
+            is_done: 3, // 1: Unknown | 2: True | 3: False
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
         }),
-        [page],
+        [activePage],
     );
 
     const {
-        loading,
-        data,
-        refetch: getAssignments,
-    } = useQuery<GetAssignmentsQuery, GetAssignmentsQueryVariables>(
-        GET_ASSIGNMENTS,
+        pending,
+        response: assignmentsResponse,
+        retrigger: getAssignments,
+    } = useRequest<MultiResponse<Assignment>>(
         {
-            variables,
+            url: 'server://assignments/',
+            method: 'GET',
+            query: assignmentsQuery,
+            preserveResponse: true,
         },
     );
 
-    const [
-        triggerAssignmentStatusUpdate,
-        { loading: assignmentStatusUpdatePending },
-    ] = useMutation<AssignmentStatusUpdateMutation, AssignmentStatusUpdateMutationVariables>(
-        UPDATE_ASSIGNMENT_STATUS,
+    const {
+        pending: markAsDonePending,
+        trigger: triggerMarkAsDone,
+    } = useLazyRequest<MultiResponse<Assignment>, number>(
         {
-            onCompleted: (response) => {
-                const { ok } = removeNull(response?.assignmentStatusUpdate);
-                if (ok) {
-                    alert.show(
-                        'Successfully marked as read.',
-                        { variant: 'success' },
-                    );
-                    getAssignments();
-                } else {
-                    alert.show(
-                        'Failed to mark as read.',
-                        { variant: 'error' },
-                    );
-                }
+            url: (ctx) => `server://assignments/${ctx}/`,
+            method: 'PUT',
+            body: { is_done: true },
+            onSuccess: () => {
+                getAssignments();
             },
-            onError: () => {
-                alert.show(
-                    'Failed to mark as read.',
-                    { variant: 'error' },
-                );
-            },
+            failureMessage: _ts('assignment', 'markAsDoneFailed'),
         },
     );
 
-    const [
-        triggerBulkAction,
-        { loading: bulkActionPending },
-    ] = useMutation<
-        AssignmentBulkStatusUpdateMutation,
-        AssignmentBulkStatusUpdateMutationVariables
-    >(
-        UPDATE_ASSIGNMENT_BULK_STATUS,
+    const {
+        pending: bulkPending,
+        trigger: triggerBulkAsDone,
+    } = useLazyRequest<BulkResponse>(
         {
-            onCompleted: (response) => {
-                const { ok } = removeNull(response?.assignmentBulkStatusUpdate);
-                if (ok) {
-                    alert.show(
-                        'Successfully marked all as read.',
-                        { variant: 'success' },
-                    );
-                    getAssignments();
-                } else {
-                    alert.show(
-                        'Failed to mark all as read.',
-                        { variant: 'error' },
-                    );
-                }
+            url: 'server://assignments/bulk-mark-as-done/',
+            method: 'POST',
+            body: { is_done: true },
+            onSuccess: () => {
+                getAssignments();
             },
-            onError: () => {
-                alert.show(
-                    'Failed to mark all as read.',
-                    { variant: 'error' },
-                );
-            },
+            failureMessage: _ts('assignment', 'markBulkAsDoneFailed'),
         },
     );
 
     const handleBulkActionClick = useCallback(
         () => {
-            triggerBulkAction({
-                variables: {
-                    isDone: true,
-                },
-            });
+            triggerBulkAsDone(null);
         },
-        [triggerBulkAction],
+        [triggerBulkAsDone],
     );
 
-    const handleAssignmentStatusUpdate = useCallback(
-        (id: string) => {
-            triggerAssignmentStatusUpdate({
-                variables: {
-                    id,
-                    isDone: true,
-                },
-            });
-        },
-        [triggerAssignmentStatusUpdate],
-    );
-
-    const rendererParams = useCallback(
-        (
-            _: string,
-            info: Assignment,
-        ) => ({
-            ...info,
-            handleClick: handleAssignmentStatusUpdate,
-            markAsDonePending: assignmentStatusUpdatePending,
-        }),
-        [handleAssignmentStatusUpdate, assignmentStatusUpdatePending],
-    );
-
-    const assignmentsResponse = removeNull(data?.assignment);
-    const assignmentCount = assignmentsResponse?.totalCount ?? 0;
+    const rendererParams = useCallback((_: number, info: Assignment) => ({
+        ...info,
+        handleClick: triggerMarkAsDone,
+        markAsDonePending,
+    }), [triggerMarkAsDone, markAsDonePending]);
 
     return (
         <Container
-            className={styles.assignments}
-            contentClassName={styles.content}
             heading={_ts('assignment', 'myAssignments')}
             headerActions={(
-                assignmentsResponse && assignmentCount > 0 && (
+                assignmentsResponse && assignmentsResponse.count > 0 && (
                     <ConfirmButton
                         name={undefined}
                         onConfirm={handleBulkActionClick}
                         message="Are you sure you want to clear all your assignments? This cannot be undone."
-                        disabled={bulkActionPending}
+                        disabled={bulkPending}
                         variant="action"
                         title={_ts('assignment', 'markAllAsDone')}
                     >
@@ -241,18 +111,20 @@ function Assignments() {
                     </ConfirmButton>
                 )
             )}
-            footerActions={(assignmentCount > maxItemsPerPage) && (
+            className={styles.assignments}
+            footerActions={((assignmentsResponse?.count ?? 0) > maxItemsPerPage) && (
                 <Pager
-                    activePage={page}
-                    itemsCount={assignmentCount}
+                    activePage={activePage}
+                    itemsCount={assignmentsResponse?.count ?? 0}
                     maxItemsPerPage={maxItemsPerPage}
-                    onActivePageChange={setPage}
+                    onActivePageChange={setActivePage}
                     itemsPerPageControlHidden
                     infoVisibility="hidden"
                     pagesControlLabelHidden
                     pageNextPrevControlHidden
                 />
             )}
+            contentClassName={styles.content}
         >
             <ListView
                 className={styles.assignmentList}
@@ -261,7 +133,7 @@ function Assignments() {
                 renderer={AssignmentItem}
                 rendererParams={rendererParams}
                 emptyMessage="You do not have any assignments."
-                pending={loading}
+                pending={pending}
                 errored={false}
                 // NOTE: Nothing to filter here
                 filtered={false}
