@@ -6,6 +6,8 @@ import {
     IoOpenOutline,
     IoPencilOutline,
     IoRepeat,
+    IoArrowDownOutline,
+    IoArrowUpOutline,
 } from 'react-icons/io5';
 import {
     DropContainer,
@@ -20,7 +22,10 @@ import {
     Error,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
@@ -53,7 +58,15 @@ interface AnalyticalEntryInputProps {
         droppedValue: DroppedValue,
         dropOverEntryClientId: string | undefined,
     ) => void;
+    onAnalyticalEntryDown: (
+        dropOverEntryClientId: string,
+    ) => void;
+    onAnalyticalEntryUp: (
+        dropOverEntryClientId: string,
+    ) => void;
     dropDisabled?: boolean;
+    entryUpButtonDisable?: boolean;
+    entryDownButtonDisable?: boolean;
     framework: Framework;
     projectId: string;
     geoAreaOptions: GeoArea[] | undefined | null;
@@ -71,12 +84,16 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
         index,
         statementClientId,
         onAnalyticalEntryDrop,
+        onAnalyticalEntryDown,
+        onAnalyticalEntryUp,
         dropDisabled,
         framework,
         projectId,
         geoAreaOptions,
         setGeoAreaOptions,
         onEntryDataChange,
+        entryUpButtonDisable,
+        entryDownButtonDisable,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -195,6 +212,28 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 headerActionsContainerClassName={styles.headerActions}
                 headerActions={(
                     <>
+                        {isDefined(value?.clientId) && (
+                            <>
+                                <QuickActionButton
+                                    name={value.clientId}
+                                    title="Move entry up"
+                                    variant="transparent"
+                                    onClick={onAnalyticalEntryUp}
+                                    disabled={entryUpButtonDisable}
+                                >
+                                    <IoArrowUpOutline />
+                                </QuickActionButton>
+                                <QuickActionButton
+                                    name={value.clientId}
+                                    title="Move entry down"
+                                    variant="transparent"
+                                    onClick={onAnalyticalEntryDown}
+                                    disabled={entryDownButtonDisable}
+                                >
+                                    <IoArrowDownOutline />
+                                </QuickActionButton>
+                            </>
+                        )}
                         <QuickActionLink
                             title="Edit entry"
                             to={editEntryLink}

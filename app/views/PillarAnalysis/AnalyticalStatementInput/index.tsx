@@ -320,6 +320,54 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         ],
     );
 
+    const handleAnalyticalEntryUp = useCallback(
+        (dropOverEntryClientId?: string) => (
+            onFieldChange(
+                (oldEntries: AnalyticalEntry) => {
+                    const { entries } = value;
+                    const fromIndex = entries?.findIndex(
+                        (entry) => entry.clientId === dropOverEntryClientId,
+                    );
+                    if (isNotDefined(fromIndex)) {
+                        return oldEntries;
+                    }
+
+                    const modifyingEntries = [...(oldEntries ?? [])];
+                    const element = modifyingEntries[fromIndex];
+                    const toIndex = fromIndex - 1;
+                    modifyingEntries.splice(fromIndex, 1);
+                    modifyingEntries.splice(toIndex, 0, element);
+
+                    return modifyingEntries;
+                },
+                'entries' as const,
+            )), [value, onFieldChange],
+    );
+
+    const handleAnalyticalEntryDown = useCallback(
+        (dropOverEntryClientId?: string) => (
+            onFieldChange(
+                (oldEntries: AnalyticalEntry) => {
+                    const { entries } = value;
+                    const fromIndex = entries?.findIndex(
+                        (entry) => entry.clientId === dropOverEntryClientId,
+                    );
+                    if (isNotDefined(fromIndex)) {
+                        return oldEntries;
+                    }
+
+                    const modifyingEntries = [...(oldEntries ?? [])];
+                    const element = modifyingEntries[fromIndex];
+                    const toIndex = fromIndex + 1;
+                    modifyingEntries.splice(fromIndex, 1);
+                    modifyingEntries.splice(toIndex, 0, element);
+
+                    return reorder(modifyingEntries);
+                },
+                'entries' as const,
+            )), [value, onFieldChange],
+    );
+
     const handleAnalyticalEntryAdd = useCallback(
         (val: Record<string, unknown> | undefined) => {
             if (!val) {
@@ -540,6 +588,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                                     statementClientId={value.clientId}
                                     value={analyticalEntry}
                                     projectId={projectId}
+                                    entryUpButtonDisable={myIndex === 0}
+                                    entryDownButtonDisable={value.entries?.length === myIndex + 1}
                                     // onChange={onAnalyticalEntryChange}
                                     onRemove={onAnalyticalEntryRemove}
                                     error={(
@@ -547,6 +597,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                                             ? arrayError?.[analyticalEntry.clientId] : undefined
                                     )}
                                     onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
+                                    onAnalyticalEntryUp={handleAnalyticalEntryUp}
+                                    onAnalyticalEntryDown={handleAnalyticalEntryDown}
                                     framework={framework}
                                     geoAreaOptions={geoAreaOptions}
                                     setGeoAreaOptions={setGeoAreaOptions}
