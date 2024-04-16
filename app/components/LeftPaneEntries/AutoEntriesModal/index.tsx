@@ -75,8 +75,6 @@ import {
 
 import styles from './styles.css';
 
-const GEOLOCATION_DEEPL_MODEL_ID = 'geolocation';
-
 const AUTO_ENTRIES_FOR_LEAD = gql`
     query AutoEntriesForLead(
         $projectId: ID!,
@@ -105,7 +103,7 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
                         excerpt
                         predictionReceivedAt
                         predictionStatus
-                        predictions {
+                        predictionTags {
                             id
                             draftEntry
                             tag
@@ -113,13 +111,11 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
                             dataType
                             category
                             isSelected
-                            modelVersion
-                            modelVersionDeeplModelId
                             prediction
                             threshold
                             value
                         }
-                        relatedGeoareas {
+                        geoAreas {
                             adminLevelLevel
                             adminLevelTitle
                             id
@@ -612,12 +608,9 @@ function AutoEntriesModal(props: Props) {
             onCompleted: (response) => {
                 const entries = response.project?.assistedTagging?.draftEntries?.results;
                 const transformedEntries = (entries ?? [])?.map((entry) => {
-                    const validPredictions = entry.predictions?.filter(isDefined);
+                    const validPredictions = entry.predictionTags?.filter(isDefined);
                     const categoricalTags = validPredictions?.filter(
-                        (prediction) => (
-                            prediction.modelVersionDeeplModelId !== GEOLOCATION_DEEPL_MODEL_ID
-                            && prediction.isSelected
-                        ),
+                        (prediction) => prediction.isSelected,
                     ).map(
                         (prediction) => prediction.tag,
                     ).filter(isDefined) ?? [];
@@ -625,7 +618,7 @@ function AutoEntriesModal(props: Props) {
                     const entryAttributeData: EntryAttributes = {
                         predictions: {
                             tags: categoricalTags,
-                            locations: entry.relatedGeoareas?.filter(isDefined) ?? [],
+                            locations: entry.geoAreas?.filter(isDefined) ?? [],
                         },
                         mappings,
                         filteredWidgets,
