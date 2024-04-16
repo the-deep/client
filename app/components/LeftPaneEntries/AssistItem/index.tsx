@@ -66,8 +66,6 @@ import {
 
 import styles from './styles.css';
 
-const GEOLOCATION_DEEPL_MODEL_ID = 'geolocation';
-
 const CREATE_DRAFT_ENTRY = gql`
     mutation CreateProjectDraftEntry(
         $projectId: ID!,
@@ -83,21 +81,19 @@ const CREATE_DRAFT_ENTRY = gql`
                     result {
                         id
                         predictionStatus
-                        predictions {
+                        predictionTags {
                             category
                             dataType
                             dataTypeDisplay
                             draftEntry
                             id
                             isSelected
-                            modelVersion
-                            modelVersionDeeplModelId
                             prediction
                             tag
                             threshold
                             value
                         }
-                        relatedGeoareas {
+                        geoAreas {
                             adminLevelLevel
                             adminLevelTitle
                             id
@@ -123,21 +119,19 @@ const PROJECT_DRAFT_ENTRY = gql`
                 draftEntry(id: $draftEntryId) {
                     id
                     predictionStatus
-                    predictions {
+                    predictionTags {
                         category
                         dataType
                         dataTypeDisplay
                         draftEntry
                         id
                         isSelected
-                        modelVersion
-                        modelVersionDeeplModelId
                         prediction
                         tag
                         threshold
                         value
                     }
-                    relatedGeoareas {
+                    geoAreas {
                         adminLevelLevel
                         adminLevelTitle
                         id
@@ -525,30 +519,23 @@ function AssistItem(props: Props) {
                     return;
                 }
 
-                const validPredictions = result?.predictions?.filter(isDefined);
+                const validPredictions = result?.predictionTags?.filter(isDefined);
 
                 /*
-                const geoPredictions = validPredictions?.filter(
-                    (prediction) => (
-                        prediction.modelVersionDeeplModelId === GEOLOCATION_DEEPL_MODEL_ID
-                    ),
-                ).map(
+                const geoPredictions = validPredictions?.map(
                     (prediction) => prediction.value,
                 ) ?? [];
                 */
 
                 const categoricalTags = validPredictions?.filter(
-                    (prediction) => (
-                        prediction.modelVersionDeeplModelId !== GEOLOCATION_DEEPL_MODEL_ID
-                        && prediction.isSelected
-                    ),
+                    (prediction) => prediction.isSelected,
                 ).map(
                     (prediction) => prediction.tag,
                 ).filter(isDefined) ?? [];
 
                 handleMappingsFetch({
                     tags: categoricalTags,
-                    locations: result.relatedGeoareas?.filter(isDefined) ?? [],
+                    locations: result.geoAreas?.filter(isDefined) ?? [],
                 });
             },
             onError: () => {
