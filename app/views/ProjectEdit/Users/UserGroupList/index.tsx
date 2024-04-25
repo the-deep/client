@@ -32,11 +32,11 @@ import routes from '#base/configs/routes';
 import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import { useModalState } from '#hooks/stateManagement';
 import {
-    ProjectRoleTypeEnum,
     ProjectUsergroupsQuery,
     ProjectUsergroupsQueryVariables,
     ProjectUsergroupMembershipRemoveMutation,
     ProjectUsergroupMembershipRemoveMutationVariables,
+    ProjectRoleTypeEnum,
 } from '#generated/types';
 import { roleLevels } from '#types/project';
 import _ts from '#ts';
@@ -127,8 +127,8 @@ function UserGroupList(props: Props) {
         className,
         projectId,
         activeUserRoleLevel,
-        pending = false,
         activeUserRole,
+        pending = false,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);

@@ -27,9 +27,9 @@ import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/E
 import _ts from '#ts';
 
 import {
-    ProjectRoleTypeEnum,
     ProjectMembershipBulkRemoveMutation,
     ProjectMembershipBulkRemoveMutationVariables,
+    ProjectRoleTypeEnum,
     ProjectUsersQuery,
     ProjectUsersQueryVariables,
 } from '#generated/types';
@@ -154,8 +154,8 @@ function UserList(props: Props) {
         className,
         activeUserId,
         activeUserRoleLevel,
-        pending = false,
         activeUserRole,
+        pending = false,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);

@@ -20,8 +20,8 @@ import {
     Modal,
     MultiSelectInput,
     PendingMessage,
-    SelectInput,
     useAlert,
+    SelectInput,
 } from '@the-deep/deep-ui';
 import {
     useMutation,
@@ -34,33 +34,31 @@ import {
 } from '#utils/common';
 import NonFieldError from '#components/NonFieldError';
 import NewUserSelectInput, { User } from '#components/selections/NewUserSelectInput';
-import { useRequest } from '#base/utils/restRequest';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import {
-    MultiResponse,
-} from '#types';
-
-import {
-    ProjectRoleTypeEnum,
     ProjectMembershipBulkUpdateMutation,
     ProjectMembershipBulkUpdateMutationVariables,
+    ProjectRolesOptionsQuery,
+    ProjectRolesOptionsQueryVariables,
+    ProjectRoleTypeEnum,
     UserBadgeOptionsQuery,
     UserBadgeOptionsQueryVariables,
 } from '#generated/types';
-import { ProjectRole } from '#types/project';
 import { EnumFix } from '#utils/types';
 import _ts from '#ts';
 
 import { ProjectUser } from '../index';
 import styles from './styles.css';
 
-const roleKeySelector = (d: ProjectRole) => d.id.toString();
-const roleLabelSelector = (d: ProjectRole) => d.title;
-
 type FormType = NonNullable<EnumFix<ProjectMembershipBulkUpdateMutationVariables['items'], 'badges'>>[number];
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>
+
+type ProjectRoleType = NonNullable<NonNullable<ProjectRolesOptionsQuery>['projectRoles']>[number];
+
+const roleKeySelector = (d: ProjectRoleType) => d.id;
+const roleLabelSelector = (d: ProjectRoleType) => d.title;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
@@ -103,6 +101,17 @@ const PROJECT_MEMBERSHIP_BULK = gql`
     }
 `;
 
+const PROJECT_ROLES_OPTIONS = gql`
+    query ProjectRolesOptions {
+        projectRoles {
+            id
+            level
+            title
+            type
+        }
+    }
+`;
+
 const defaultFormValue: PartialForm<FormType> = {};
 
 interface Props {
@@ -110,8 +119,8 @@ interface Props {
     projectId: string;
     onProjectUserChange: () => void;
     projectUserToEdit?: ProjectUser;
-    activeUserRole?: ProjectRoleTypeEnum;
     activeUserId?: string;
+    activeUserRole?: ProjectRoleTypeEnum;
 }
 
 function AddUserModal(props: Props) {
@@ -120,8 +129,8 @@ function AddUserModal(props: Props) {
         projectId,
         onProjectUserChange,
         projectUserToEdit,
-        activeUserRole,
         activeUserId,
+        activeUserRole,
     } = props;
 
     const formValueFromProps: PartialForm<FormType> = projectUserToEdit ? {
@@ -149,19 +158,12 @@ function AddUserModal(props: Props) {
     ] = useState<User[] | undefined | null>();
 
     const {
-        pending: pendingRoles,
-        response: projectRolesResponse,
-    } = useRequest<MultiResponse<ProjectRole>>({
-        url: 'server://project-roles/',
-        method: 'GET',
-    });
-
-    const {
         loading: badgeOptionsPending,
         data: badgeOptionsResponse,
     } = useQuery<UserBadgeOptionsQuery, UserBadgeOptionsQueryVariables>(
         USER_BADGE_OPTIONS,
     );
+
     const [
         bulkEditProjectMembership,
         { loading: bulkEditProjectMembershipPending },
@@ -216,6 +218,33 @@ function AddUserModal(props: Props) {
         },
     );
 
+    const {
+        loading: projectRolesOptionsPending,
+        data: projectRolesOptionsResponse,
+    } = useQuery<ProjectRolesOptionsQuery, ProjectRolesOptionsQueryVariables>(
+        PROJECT_ROLES_OPTIONS,
+    );
+
+    const roles = useMemo(() => {
+        if (isNotDefined(activeUserRole)) {
+            return undefined;
+        }
+        const currentUserRoleLevel = projectRolesOptionsResponse?.projectRoles?.find(
+            (role) => (
+                role.type === activeUserRole
+            ),
+        )?.level;
+        if (!currentUserRoleLevel) {
+            return undefined;
+        }
+        return projectRolesOptionsResponse?.projectRoles?.filter(
+            (role) => role.level >= currentUserRoleLevel,
+        );
+    }, [
+        activeUserRole,
+        projectRolesOptionsResponse,
+    ]);
+
     const handleSubmit = useCallback(
         () => {
             const submit = createSubmitHandler(
@@ -241,27 +270,6 @@ function AddUserModal(props: Props) {
     const currentUser = useMemo(() => (
         projectUserToEdit?.member ? [projectUserToEdit?.member] : []
     ), [projectUserToEdit?.member]);
-
-    const roles = useMemo(() => {
-        if (isNotDefined(activeUserRole)) {
-            return undefined;
-        }
-        const currentUserRoleLevel = projectRolesResponse?.results?.find(
-            (role) => (
-                // FIXME: Update this after complete on server side
-                role.type.toUpperCase() === activeUserRole
-            ),
-        )?.level;
-        if (!currentUserRoleLevel) {
-            return undefined;
-        }
-        return projectRolesResponse?.results.filter(
-            (role) => role.level >= currentUserRoleLevel,
-        );
-    }, [
-        activeUserRole,
-        projectRolesResponse,
-    ]);
 
     return (
         <Modal
@@ -303,15 +311,15 @@ function AddUserModal(props: Props) {
                 />
                 <SelectInput
                     name="role"
-                    options={roles}
-                    keySelector={roleKeySelector}
-                    labelSelector={roleLabelSelector}
-                    onChange={setFieldValue}
                     value={value.role}
                     error={error?.role}
+                    options={roles}
+                    onChange={setFieldValue}
+                    keySelector={roleKeySelector}
+                    labelSelector={roleLabelSelector}
                     label={_ts('projectEdit', 'roleLabel')}
                     placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
-                    disabled={pendingRoles}
+                    disabled={projectRolesOptionsPending}
                     readOnly={(
                         isDefined(projectUserToEdit?.member?.id)
                         && projectUserToEdit?.member.id === activeUserId
