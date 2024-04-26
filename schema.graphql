@@ -110,6 +110,15 @@ enum BorderStyleEnum {
   SOLID
 }
 
+enum MapLayerTypeEnum {
+  HEAT_MAP_LAYER
+  LINE_LAYER
+  MAPBOX_LAYER
+  OSM_LAYER
+  POLYGON_LAYER
+  SYMBOL_LAYER
+}
+
 type BorderStyle {
   width: Int
   color: String
@@ -440,6 +449,112 @@ type TimelineChartConfigurationType {
   title: String
 }
 
+type MapStyleConfigurationType {
+  title: TextStyle
+  subTitle: TextStyle
+}
+
+type HeatMapLayerConfigType {
+  blur: Float
+  contentReferenceId: String!
+  fillPalette: String
+  radius: Float
+  scaleDataMax: Int
+  weightPropertyKey: String!
+  weighted: String
+}
+
+enum LineLayerStrokeTypeEnum {
+  DASH
+  SOLID
+}
+
+type LineStyleType {
+  dashSpacing: Int
+  stroke: String
+  strokeType: LineLayerStrokeTypeEnum
+  strokeWidth: Int
+}
+
+type LineLayerStyleType {
+  line: LineStyleType
+}
+
+type LineLayerConfigType {
+  contentReferenceId: String!
+  style: LineLayerStyleType
+}
+
+type MapboxLayerConfigType {
+  accessToken: String
+  mapboxStyle: String
+}
+
+type PolygonLayerConfigType {
+  contentReferenceId: String!
+  labelColumn: String!
+}
+
+enum ReportScaleTypeEnum {
+  FIXED
+  PROPORTIONAL
+}
+
+enum ReportScalingTechniqueEnum {
+  ABSOLUTE
+  FLANNERY
+}
+
+type SymbolLayerStyleType {
+  label: TextStyle
+  symbol: TextStyle
+}
+
+type SymbolLayerConfigType {
+  contentReferenceId: String!
+  labelPropertyKey: String!
+  scale: Int
+  scaleType: ReportScaleTypeEnum
+  scalingTechnique: ReportScalingTechniqueEnum
+  showLabels: Boolean
+  symbol: String!
+  style: SymbolLayerStyleType
+}
+
+type MapLayerConfigConfigurationType {
+  heatmapLayer: HeatMapLayerConfigType
+  lineLayer: LineLayerConfigType
+  mapboxLayer: MapboxLayerConfigType
+  polygonLayer: PolygonLayerConfigType
+  symbolLayer: SymbolLayerConfigType
+}
+
+type MapLayerConfigurationType {
+  clientId: String!
+  name: String
+  opacity: Int
+  order: Int
+  type: MapLayerTypeEnum!
+  visible: Boolean
+  layerConfig: MapLayerConfigConfigurationType
+}
+
+type MapConfigurationType {
+  title: String
+  subTitle: String
+  mapHeight: Int
+  maxZoom: Int
+  minZoom: Int
+  scaleBar: Boolean
+  showScale: Boolean
+  zoom: Int
+  enableZoomControls: Boolean
+  centerLatitude: Float
+  centerLongitude: Float
+  style: MapStyleConfigurationType
+  layers: [MapLayerConfigurationType!]
+}
+
 type ContentConfigurationType {
   barChart: BarChartConfigurationType
   lineChart: LineChartConfigurationType
@@ -449,6 +564,7 @@ type ContentConfigurationType {
   text: TextConfigurationType
   url: UrlConfigurationType
   kpi: KpiConfigurationType
+  map: MapConfigurationType
 }
 
 enum ReportContentEnum {

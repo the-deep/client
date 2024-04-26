@@ -359,6 +359,96 @@ const PUBLIC_REPORT_DETAILS = gql`
                         verticalGridLineVisible
                         verticalTickVisible
                         horizontalTickLabelRotation
+                        style {
+                            bar {
+                                border {
+                                    width
+                                    color
+                                    opacity
+                                    style
+                                }
+                            }
+                            horizontalAxisTickLabel {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            horizontalAxisTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            horizontalGridLine {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            horizontalTick {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            legend {
+                                heading {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                label {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                position
+                                shape
+                            }
+                            subTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            title {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalAxisTickLabel {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalAxisTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalGridLine {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            verticalTick {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                        }
                     }
                     timelineChart {
                         category
@@ -368,6 +458,205 @@ const PUBLIC_REPORT_DETAILS = gql`
                         source
                         sourceUrl
                         title
+                    }
+                    lineChart {
+                        horizontalAxis {
+                            field
+                        }
+                        horizontalAxisLineVisible
+                        horizontalAxisTitle
+                        horizontalGridLineVisible
+                        horizontalTickVisible
+                        legendHeading
+                        sheet
+                        subTitle
+                        title
+                        verticalAxis {
+                            label
+                            aggregationType
+                            clientId
+                            color
+                            field
+                        }
+                        verticalAxisExtendMinimumValue
+                        verticalAxisExtendMaximumValue
+                        verticalAxisLineVisible
+                        verticalAxisTitle
+                        verticalGridLineVisible
+                        verticalTickVisible
+                        horizontalTickLabelRotation
+                        style {
+                            horizontalAxisTickLabel {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            horizontalAxisTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            horizontalGridLine {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            horizontalTick {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            legend {
+                                heading {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                label {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                position
+                                shape
+                            }
+                            subTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            title {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalAxisTickLabel {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalAxisTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalGridLine {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            verticalTick {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                        }
+                    }
+                    map {
+                        title
+                        subTitle
+                        mapHeight
+                        maxZoom
+                        minZoom
+                        scaleBar
+                        showScale
+                        zoom
+                        enableZoomControls
+                        centerLatitude
+                        centerLongitude
+                        style {
+                            title {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            subTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                        }
+                        layers {
+                            clientId
+                            name
+                            visible
+                            opacity
+                            order
+                            type
+                            layerConfig {
+                                mapboxLayer {
+                                    mapboxStyle
+                                    accessToken
+                                }
+                                lineLayer {
+                                    contentReferenceId
+                                    style {
+                                        line {
+                                            strokeType
+                                            dashSpacing
+                                            stroke
+                                            strokeWidth
+                                        }
+                                    }
+                                }
+                                polygonLayer {
+                                    contentReferenceId
+                                    labelColumn
+                                }
+                                symbolLayer {
+                                    contentReferenceId
+                                    labelPropertyKey
+                                    scaleType
+                                    showLabels
+                                    symbol
+                                    style {
+                                        symbol {
+                                            align
+                                            color
+                                            family
+                                            size
+                                            weight
+                                        }
+                                        label {
+                                            align
+                                            color
+                                            family
+                                            size
+                                            weight
+                                        }
+                                    }
+                                }
+                                heatmapLayer {
+                                    blur
+                                    contentReferenceId
+                                    fillPalette
+                                    radius
+                                    weighted
+                                    weightPropertyKey
+                                    scaleDataMax
+                                }
+                            }
+                        }
                     }
                 }
             }
