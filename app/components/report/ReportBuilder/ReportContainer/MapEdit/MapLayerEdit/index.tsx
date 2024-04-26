@@ -5,6 +5,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     Container,
+    Message,
     SelectInput,
     TextInput,
     NumberInput,
@@ -188,6 +189,11 @@ function MapLayerEdit(props: Props) {
                     value={value?.layerConfig?.mapboxLayer}
                     onChange={onLayerConfigChange}
                     error={getErrorObject(error?.layerConfig)?.mapboxLayer}
+                />
+            )}
+            {value?.type === 'POLYGON_LAYER' && (
+                <Message
+                    message="Polygon layer is not yet available to use."
                 />
             )}
         </Container>
