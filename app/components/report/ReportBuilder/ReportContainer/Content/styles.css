@@ -48,3 +48,9 @@
         text-align: center;
     }
 }
+
+.kpi-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dui-spacing-small);
+}

@@ -1,0 +1,10 @@
+.header-description {
+    display: flex;
+    gap: var(--dui-spacing-small);
+}
+.variables {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: var(--dui-spacing-extra-small);
+}

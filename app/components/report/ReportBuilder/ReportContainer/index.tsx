@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     type EntriesAsList,
+    type SetValueArg,
     type Error,
     getErrorObject,
     useFormObject,
@@ -10,6 +11,7 @@ import {
 import {
     _cs,
     sum,
+    isNotDefined,
     isDefined,
     randomString,
     compareNumber,
@@ -39,6 +41,8 @@ import {
     AnalysisReportUploadType,
     AnalysisReportContainerContentTypeEnum,
 } from '#generated/types';
+import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
+import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
     type PartialFormType,
@@ -53,11 +57,15 @@ import ContentAddModal from './ContentAddModal';
 import HeadingEdit from './HeadingEdit';
 import ContainerStylesEdit from './ContainerStylesEdit';
 import UrlEdit from './UrlEdit';
+import MapEdit from './MapEdit';
+import KpiEdit from './KpiEdit';
 import TextEdit from './TextEdit';
+import TimelineChartEdit from './TimelineChartEdit';
+import BarChartEdit, { defaultBarChartValue } from './BarChartEdit';
+import LineChartEdit, { defaultLineChartValue } from './LineChartEdit';
 import ImageEdit from './ImageEdit';
 import Content from './Content';
 import {
-    type ContentDataFileMap,
     resolveContainerStyle,
 } from '../../utils';
 
@@ -88,14 +96,26 @@ export interface Props {
     configuration: ContentConfigType | undefined;
     generalConfiguration: ConfigType | undefined;
     setFieldValue: ((...entries: EntriesAsList<PartialFormType>) => void);
-    contentDataToFileMap: ContentDataFileMap | undefined;
     style: ContainerStyleFormType | undefined;
-    setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
+    quantitativeReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    onQuantitativeReportUploadsChange: React.Dispatch<React.SetStateAction<
+        BasicAnalysisReportUpload[] | undefined | null
+    >>;
+    imageReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    onImageReportUploadsChange: React.Dispatch<React.SetStateAction<
+        BasicAnalysisReportUpload[] | undefined | null
+    >>;
+    geoDataUploads: ReportGeoUploadType[] | undefined | null;
+    onGeoDataUploadsChange: React.Dispatch<React.SetStateAction<
+        ReportGeoUploadType[] | undefined | null
+    >>;
     readOnly?: boolean;
     disabled?: boolean;
     leftContentRef: React.RefObject<HTMLDivElement> | undefined;
     onContentEditChange: (newVal: string | undefined) => void;
     isBeingEdited: boolean;
+    downloadedGeoData: Record<string, unknown>;
+    downloadsPending: boolean;
 }
 
 function ReportContainer(props: Props) {
@@ -115,13 +135,19 @@ function ReportContainer(props: Props) {
         contentData,
         setFieldValue,
         readOnly,
-        contentDataToFileMap,
-        setContentDataToFileMap,
         disabled,
         generalConfiguration,
         isBeingEdited,
         onContentEditChange,
         leftContentRef,
+        imageReportUploads,
+        onImageReportUploadsChange,
+        quantitativeReportUploads,
+        onQuantitativeReportUploadsChange,
+        geoDataUploads,
+        onGeoDataUploadsChange,
+        downloadedGeoData,
+        downloadsPending,
     } = props;
 
     const index = useMemo(() => (
@@ -314,21 +340,28 @@ function ReportContainer(props: Props) {
         row,
     ]);
 
+    const onConfigChange = useFormObject<
+        'contentConfiguration', ContentConfigType
+    >('contentConfiguration', onFieldChange, {});
+
     const handleContentAddClick = useCallback((
         newContentType: AnalysisReportContainerContentTypeEnum,
     ) => {
         hideContentAddModal();
         handleContentEdit();
         onFieldChange(newContentType, 'contentType');
+        if (newContentType === 'BAR_CHART') {
+            onConfigChange(defaultBarChartValue, 'barChart');
+        }
+        if (newContentType === 'LINE_CHART') {
+            onConfigChange(defaultLineChartValue, 'lineChart');
+        }
     }, [
+        onConfigChange,
         onFieldChange,
         handleContentEdit,
         hideContentAddModal,
     ]);
-
-    const onConfigChange = useFormObject<
-        'contentConfiguration', ContentConfigType
-    >('contentConfiguration', onFieldChange, {});
 
     const handleImageFileUploadChange = useCallback((file: AnalysisReportUploadType) => {
         const newClientId = randomString();
@@ -336,19 +369,96 @@ function ReportContainer(props: Props) {
             {
                 upload: file.id,
                 clientId: newClientId,
+                clientReferenceId: newClientId,
             },
         ], 'contentData');
-        setContentDataToFileMap((oldVal) => ({
-            ...(oldVal ?? {}),
-            [newClientId]: {
-                url: file.file.file?.url ?? undefined,
-                name: file.file.file?.name ?? undefined,
-            },
-        }));
+        onImageReportUploadsChange((oldFiles) => ([
+            file,
+            ...(oldFiles ?? []),
+        ]));
     }, [
+        onImageReportUploadsChange,
         onFieldChange,
-        setContentDataToFileMap,
     ]);
+
+    const handleTimelineFileUploadChange = useCallback((file: string | undefined) => {
+        if (!file) {
+            onFieldChange(undefined, 'contentData');
+        }
+        const newClientId = randomString();
+        onFieldChange([
+            {
+                upload: file,
+                clientId: newClientId,
+                clientReferenceId: newClientId,
+            },
+        ], 'contentData');
+    }, [onFieldChange]);
+
+    const handleTimelineCacheDataChange = useCallback((
+        newCache: Record<string, string | number | undefined>[] | undefined,
+        clientId: string,
+    ) => {
+        onFieldChange((oldVal: ContentDataType[] | undefined) => {
+            if (!oldVal) {
+                return oldVal;
+            }
+            const selectedItemIndex = oldVal?.findIndex((item) => item.clientId === clientId);
+            if (isNotDefined(selectedItemIndex) || selectedItemIndex === -1) {
+                return oldVal;
+            }
+            const newVal = [...oldVal];
+            const newIndividualVal = {
+                ...oldVal[selectedItemIndex],
+                data: newCache,
+            };
+            newVal.splice(selectedItemIndex, 1, newIndividualVal);
+            return newVal;
+        }, 'contentData');
+    }, [onFieldChange]);
+
+    const handleChartFileUploadChange = useCallback((file: string | undefined) => {
+        if (!file) {
+            onFieldChange(undefined, 'contentData');
+        }
+        const newClientId = randomString();
+        onFieldChange([
+            {
+                upload: file,
+                clientId: newClientId,
+                clientReferenceId: newClientId,
+            },
+        ], 'contentData');
+    }, [onFieldChange]);
+
+    const handleContentDataChange = useCallback(
+        (newContentData: SetValueArg<ContentDataType[] | undefined>) => {
+            onFieldChange(newContentData, 'contentData');
+        },
+        [onFieldChange],
+    );
+
+    const handleCacheDataChange = useCallback((
+        newCache: Record<string, string | number | undefined>[] | undefined,
+        clientId: string,
+    ) => {
+        onFieldChange((oldVal: ContentDataType[] | undefined) => {
+            if (!oldVal) {
+                return oldVal;
+            }
+            const selectedItemIndex = oldVal?.findIndex((item) => item.clientId === clientId);
+            if (isNotDefined(selectedItemIndex) || selectedItemIndex === -1) {
+                return oldVal;
+            }
+            const newVal = [...oldVal];
+            const newIndividualVal = {
+                ...oldVal[selectedItemIndex],
+                data: newCache,
+            };
+            newVal.splice(selectedItemIndex, 1, newIndividualVal);
+            return newVal;
+        }, 'contentData');
+    }, [onFieldChange]);
 
     const isErrored = analyzeErrors(error);
 
@@ -378,12 +488,46 @@ function ReportContainer(props: Props) {
             )}
             style={{
                 ...containerStyles,
-                height,
+                height: height ? `${height}px` : undefined,
                 gridRow: row,
                 gridColumn: `span ${width}`,
             }}
         >
             <NonFieldError error={error} />
+            {!contentType && (
+                <Message
+                    className={styles.message}
+                    message="No content yet."
+                    icon={(
+                        <Kraken
+                            variant="sleep"
+                            size="extraSmall"
+                        />
+                    )}
+                    actions={!readOnly && (
+                        <Button
+                            name={undefined}
+                            onClick={showContentAddModal}
+                            variant="tertiary"
+                            spacing="compact"
+                        >
+                            Add content
+                        </Button>
+                    )}
+                />
+            )}
+            {contentType && (
+                <Content
+                    contentType={contentType}
+                    configuration={configuration}
+                    generalConfiguration={generalConfiguration}
+                    contentData={contentData}
+                    imageReportUploads={imageReportUploads}
+                    downloadsPending={downloadsPending}
+                    downloadedGeoData={downloadedGeoData}
+                    geoDataUploads={geoDataUploads}
+                />
+            )}
             {!readOnly && (
                 <>
                     <QuickActionButton
@@ -427,37 +571,6 @@ function ReportContainer(props: Props) {
                         <IoAdd />
                     </QuickActionButton>
                 </>
-            )}
-            {!contentType && (
-                <Message
-                    className={styles.message}
-                    message="No content yet."
-                    icon={(
-                        <Kraken
-                            variant="sleep"
-                            size="extraSmall"
-                        />
-                    )}
-                    actions={!readOnly && (
-                        <Button
-                            name={undefined}
-                            onClick={showContentAddModal}
-                            variant="tertiary"
-                            spacing="compact"
-                        >
-                            Add content
-                        </Button>
-                    )}
-                />
-            )}
-            {contentType && (
-                <Content
-                    contentType={contentType}
-                    configuration={configuration}
-                    generalConfiguration={generalConfiguration}
-                    contentData={contentData}
-                    contentDataToFileMap={contentDataToFileMap}
-                />
             )}
             {!readOnly && (
                 <Footer
@@ -550,12 +663,79 @@ function ReportContainer(props: Props) {
                                 onFileUpload={handleImageFileUploadChange}
                             />
                         )}
+                        {contentType === 'TIMELINE_CHART' && (
+                            <TimelineChartEdit
+                                name="timelineChart"
+                                onChange={onConfigChange}
+                                value={configuration?.timelineChart}
+                                error={getErrorObject(error?.contentConfiguration)?.timelineChart}
+                                onFileUploadChange={handleTimelineFileUploadChange}
+                                contentData={contentData?.[0]}
+                                quantitativeReportUploads={quantitativeReportUploads}
+                                onQuantitativeReportUploadsChange={
+                                    onQuantitativeReportUploadsChange
+                                }
+                                onCacheChange={handleTimelineCacheDataChange}
+                            />
+                        )}
+                        {contentType === 'BAR_CHART' && (
+                            <BarChartEdit
+                                name="barChart"
+                                value={configuration?.barChart}
+                                onChange={onConfigChange}
+                                error={getErrorObject(error?.contentConfiguration)?.barChart}
+                                // NOTE: Barchart only supports one content data at a time
+                                contentData={contentData?.[0]}
+                                onFileUploadChange={handleChartFileUploadChange}
+                                onCacheChange={handleCacheDataChange}
+                                quantitativeReportUploads={quantitativeReportUploads}
+                                onQuantitativeReportUploadsChange={
+                                    onQuantitativeReportUploadsChange
+                                }
+                            />
+                        )}
+                        {contentType === 'LINE_CHART' && (
+                            <LineChartEdit
+                                name="lineChart"
+                                value={configuration?.lineChart}
+                                onChange={onConfigChange}
+                                error={getErrorObject(error?.contentConfiguration)?.lineChart}
+                                // NOTE: Barchart only supports one content data at a time
+                                contentData={contentData?.[0]}
+                                onFileUploadChange={handleChartFileUploadChange}
+                                onCacheChange={handleCacheDataChange}
+                                quantitativeReportUploads={quantitativeReportUploads}
+                                onQuantitativeReportUploadsChange={
+                                    onQuantitativeReportUploadsChange
+                                }
+                            />
+                        )}
+                        {contentType === 'KPI' && (
+                            <KpiEdit
+                                name="kpi"
+                                onChange={onConfigChange}
+                                value={configuration?.kpi}
+                                error={getErrorObject(error?.contentConfiguration)?.kpi}
+                            />
+                        )}
                         {contentType === 'URL' && (
                             <UrlEdit
                                 name="url"
                                 onChange={onConfigChange}
                                 value={configuration?.url}
                                 error={getErrorObject(error?.contentConfiguration)?.url}
+                            />
+                        )}
+                        {contentType === 'MAP' && (
+                            <MapEdit
+                                name="map"
+                                onChange={onConfigChange}
+                                value={configuration?.map}
+                                contentData={contentData}
+                                error={getErrorObject(error?.contentConfiguration)?.map}
+                                geoDataUploads={geoDataUploads}
+                                onGeoDataUploadsChange={onGeoDataUploadsChange}
+                                onContentDataChange={handleContentDataChange}
                             />
                         )}
                         <ContainerStylesEdit

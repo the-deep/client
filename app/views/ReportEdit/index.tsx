@@ -10,7 +10,6 @@ import {
     randomString,
     isDefined,
     compareDate,
-    listToMap,
     compareNumber,
 } from '@togglecorp/fujs';
 import {
@@ -45,11 +44,15 @@ import SubNavbar from '#components/SubNavbar';
 import {
     BasicOrganization,
 } from '#components/selections/NewOrganizationMultiSelectInput';
+import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
+import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 import {
     ORGANIZATION_FRAGMENT,
     TEXT_STYLE_FRAGMENT,
     PADDING_STYLE_FRAGMENT,
     BORDER_STYLE_FRAGMENT,
+    TICK_STYLE_FRAGMENT,
+    GRID_LINE_STYLE_FRAGMENT,
 } from '#gqlFragments';
 
 import {
@@ -77,7 +80,7 @@ import schema, {
     type PartialFormType,
     type ReportContainerType,
 } from '#components/report/schema';
-import { ContentDataFileMap } from '#components/report/utils';
+
 import styles from './styles.css';
 
 const PILLARS_FOR_REPORT = gql`
@@ -112,15 +115,19 @@ const PILLARS_FOR_REPORT = gql`
     }
 `;
 
+// TODO: Write config and schema for map and line chart in public report view and server
 // NOTE: The same schema is being used to generate snapshot
 // So, if we need to change anything here, lets change it in
 // server/apps/common/schema_snapshots.py
 // SnapshotQuery::AnalysisReport
+// and PublicReportView component
 const REPORT_DETAILS = gql`
     ${ORGANIZATION_FRAGMENT}
     ${TEXT_STYLE_FRAGMENT}
     ${BORDER_STYLE_FRAGMENT}
     ${PADDING_STYLE_FRAGMENT}
+    ${TICK_STYLE_FRAGMENT}
+    ${GRID_LINE_STYLE_FRAGMENT}
     query ReportDetails(
         $projectId: ID!,
         $reportId: ID!,
@@ -201,15 +208,50 @@ const REPORT_DETAILS = gql`
                     }
                     contentData {
                         clientId
+                        clientReferenceId
                         data
                         id
                         upload {
                             id
+                            type
                             file {
                                 id
                                 file {
                                     name
                                     url
+                                }
+                                title
+                            }
+                            metadata {
+                                csv {
+                                    headerRow
+                                    variables {
+                                        clientId
+                                        completeness
+                                        name
+                                        type
+                                    }
+                                }
+                                xlsx {
+                                    sheets {
+                                        clientId
+                                        headerRow
+                                        name
+                                        variables {
+                                            clientId
+                                            completeness
+                                            name
+                                            type
+                                        }
+                                    }
+                                }
+                                geojson {
+                                    variables {
+                                        clientId
+                                        completeness
+                                        name
+                                        type
+                                    }
                                 }
                             }
                         }
@@ -234,6 +276,45 @@ const REPORT_DETAILS = gql`
                                 fit
                             }
                         }
+                        kpi {
+                            items {
+                                abbreviateValue
+                                clientId
+                                color
+                                date
+                                source
+                                sourceUrl
+                                subtitle
+                                title
+                                value
+                                style {
+                                    sourceContentStyle {
+                                        ...TextStyle
+                                    }
+                                    subtitleContentStyle {
+                                        ...TextStyle
+                                    }
+                                    titleContentStyle {
+                                        ...TextStyle
+                                    }
+                                    valueContentStyle {
+                                        ...TextStyle
+                                    }
+                                }
+                            }
+                            sourceContentStyle {
+                                ...TextStyle
+                            }
+                            subtitleContentStyle {
+                                ...TextStyle
+                            }
+                            titleContentStyle {
+                                ...TextStyle
+                            }
+                            valueContentStyle {
+                                ...TextStyle
+                            }
+                        }
                         text {
                             content
                             style {
@@ -244,6 +325,235 @@ const REPORT_DETAILS = gql`
                         }
                         url {
                             url
+                        }
+                        barChart {
+                            direction
+                            horizontalAxis {
+                                field
+                                type
+                            }
+                            horizontalAxisLineVisible
+                            horizontalAxisTitle
+                            horizontalGridLineVisible
+                            horizontalTickVisible
+                            legendHeading
+                            sheet
+                            subTitle
+                            title
+                            type
+                            verticalAxis {
+                                label
+                                aggregationType
+                                clientId
+                                color
+                                field
+                            }
+                            verticalAxisExtendMinimumValue
+                            verticalAxisExtendMaximumValue
+                            verticalAxisLineVisible
+                            verticalAxisTitle
+                            verticalGridLineVisible
+                            verticalTickVisible
+                            horizontalTickLabelRotation
+                            style {
+                                bar {
+                                    border {
+                                        ...BorderStyle
+                                    }
+                                }
+                                horizontalAxisTickLabel {
+                                    ...TextStyle
+                                }
+                                horizontalAxisTitle {
+                                    ...TextStyle
+                                }
+                                horizontalGridLine {
+                                    ...GridLineStyle
+                                }
+                                horizontalTick {
+                                    ...TickStyle
+                                }
+                                legend {
+                                    heading {
+                                        ...TextStyle
+                                    }
+                                    label {
+                                        ...TextStyle
+                                    }
+                                    position
+                                    shape
+                                }
+                                subTitle {
+                                    ...TextStyle
+                                }
+                                title {
+                                    ...TextStyle
+                                }
+                                verticalAxisTickLabel {
+                                    ...TextStyle
+                                }
+                                verticalAxisTitle {
+                                    ...TextStyle
+                                }
+                                verticalGridLine {
+                                    ...GridLineStyle
+                                }
+                                verticalTick {
+                                    ...TickStyle
+                                }
+                            }
+                        }
+                        lineChart {
+                            horizontalAxis {
+                                field
+                            }
+                            horizontalAxisLineVisible
+                            horizontalAxisTitle
+                            horizontalGridLineVisible
+                            horizontalTickVisible
+                            legendHeading
+                            sheet
+                            subTitle
+                            title
+                            verticalAxis {
+                                label
+                                aggregationType
+                                clientId
+                                color
+                                field
+                            }
+                            verticalAxisExtendMinimumValue
+                            verticalAxisExtendMaximumValue
+                            verticalAxisLineVisible
+                            verticalAxisTitle
+                            verticalGridLineVisible
+                            verticalTickVisible
+                            horizontalTickLabelRotation
+                            style {
+                                horizontalAxisTickLabel {
+                                    ...TextStyle
+                                }
+                                horizontalAxisTitle {
+                                    ...TextStyle
+                                }
+                                horizontalGridLine {
+                                    ...GridLineStyle
+                                }
+                                horizontalTick {
+                                    ...TickStyle
+                                }
+                                legend {
+                                    heading {
+                                        ...TextStyle
+                                    }
+                                    label {
+                                        ...TextStyle
+                                    }
+                                    position
+                                    shape
+                                }
+                                subTitle {
+                                    ...TextStyle
+                                }
+                                title {
+                                    ...TextStyle
+                                }
+                                verticalAxisTickLabel {
+                                    ...TextStyle
+                                }
+                                verticalAxisTitle {
+                                    ...TextStyle
+                                }
+                                verticalGridLine {
+                                    ...GridLineStyle
+                                }
+                                verticalTick {
+                                    ...TickStyle
+                                }
+                            }
+                        }
+                        timelineChart {
+                            category
+                            date
+                            detail
+                            sheet
+                            source
+                            sourceUrl
+                            title
+                        }
+                        map {
+                            title
+                            subTitle
+                            mapHeight
+                            maxZoom
+                            minZoom
+                            scaleBar
+                            showScale
+                            zoom
+                            enableZoomControls
+                            centerLatitude
+                            centerLongitude
+                            style {
+                                title {
+                                    ...TextStyle
+                                }
+                                subTitle {
+                                    ...TextStyle
+                                }
+                            }
+                            layers {
+                                clientId
+                                name
+                                visible
+                                opacity
+                                order
+                                type
+                                layerConfig {
+                                    mapboxLayer {
+                                        mapboxStyle
+                                        accessToken
+                                    }
+                                    lineLayer {
+                                        contentReferenceId
+                                        style {
+                                            line {
+                                                strokeType
+                                                dashSpacing
+                                                stroke
+                                                strokeWidth
+                                            }
+                                        }
+                                    }
+                                    polygonLayer {
+                                        contentReferenceId
+                                        labelColumn
+                                    }
+                                    symbolLayer {
+                                        contentReferenceId
+                                        labelPropertyKey
+                                        scaleType
+                                        showLabels
+                                        symbol
+                                        style {
+                                            symbol {
+                                                ...TextStyle
+                                            }
+                                            label {
+                                                ...TextStyle
+                                            }
+                                        }
+                                    }
+                                    heatmapLayer {
+                                        blur
+                                        contentReferenceId
+                                        fillPalette
+                                        radius
+                                        weighted
+                                        weightPropertyKey
+                                        scaleDataMax
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -350,9 +660,19 @@ function ReportEdit(props: Props) {
     ] = useState<BasicOrganization[] | null | undefined>();
 
     const [
-        contentDataToFileMap,
-        setContentDataToFileMap,
-    ] = useState<ContentDataFileMap>();
+        imageReportUploads,
+        setImageReportUploads,
+    ] = useState<BasicAnalysisReportUpload[] | null | undefined>();
+
+    const [
+        quantitativeReportUploads,
+        setQuantitativeReportUploads,
+    ] = useState<BasicAnalysisReportUpload[] | null | undefined>();
+
+    const [
+        geoDataUploads,
+        setGeoDataUploads,
+    ] = useState<ReportGeoUploadType[] | null | undefined>();
 
     const analysisId = new URL(window.location.href).searchParams.get('analysis');
 
@@ -502,14 +822,22 @@ function ReportEdit(props: Props) {
                     },
                 );
                 const uploadItems = valueToSet.containers?.flatMap((item) => item.contentData);
-                setContentDataToFileMap(listToMap(
-                    uploadItems,
-                    (item) => item.clientId,
-                    (item) => ({
-                        name: item.upload.file.file?.name,
-                        url: item.upload.file.file?.url,
-                    }),
-                ));
+                setImageReportUploads(
+                    uploadItems?.filter((item) => (
+                        item.upload.type === 'IMAGE'
+                    )).map((item) => (item.upload)),
+                );
+                setQuantitativeReportUploads(
+                    uploadItems?.filter((item) => (
+                        item.upload.type === 'CSV'
+                        || item.upload.type === 'XLSX'
+                    )).map((item) => (item.upload)),
+                );
+                setGeoDataUploads(
+                    uploadItems?.filter((item) => (
+                        item.upload.type === 'GEOJSON'
+                    )).map((item) => (item.upload)),
+                );
                 setOrganizationOptions(valueToSet.organizations);
             },
         },
@@ -817,11 +1145,16 @@ function ReportEdit(props: Props) {
                         error={error}
                         setFieldValue={setFieldValue}
                         disabled={pending}
+                        pending={pending}
                         readOnly={false}
                         organizationOptions={organizationOptions}
                         onOrganizationOptionsChange={setOrganizationOptions}
-                        contentDataToFileMap={contentDataToFileMap}
-                        setContentDataToFileMap={setContentDataToFileMap}
+                        imageReportUploads={imageReportUploads}
+                        onImageReportUploadsChange={setImageReportUploads}
+                        quantitativeReportUploads={quantitativeReportUploads}
+                        onQuantitativeReportUploadsChange={setQuantitativeReportUploads}
+                        geoDataUploads={geoDataUploads}
+                        onGeoDataUploadsChange={setGeoDataUploads}
                         leftContentRef={leftContentRef}
                         onContentEditChange={setContentEditPaneVisibility}
                     />

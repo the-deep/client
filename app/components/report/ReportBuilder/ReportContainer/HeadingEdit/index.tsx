@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     SegmentInput,
@@ -11,6 +11,7 @@ import {
     type Error,
     getErrorObject,
     useFormObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import { useQuery, gql } from '@apollo/client';
 
@@ -77,6 +78,19 @@ function HeadingEdit<NAME extends string>(props: Props<NAME>) {
         REPORT_HEADING,
     );
 
+    const generalHasError = useMemo(() => {
+        const generalFieldMap: (keyof NonNullable<typeof error>)[] = [
+            'content',
+            'variant',
+        ];
+
+        return (generalFieldMap.some(
+            (key) => analyzeErrors(error?.[key]),
+        ));
+    }, [
+        error,
+    ]);
+
     const options = data?.headingVariants?.enumValues as EnumOptions<
         AnalysisReportHeadingConfigurationVariantEnum
     >;
@@ -90,9 +104,11 @@ function HeadingEdit<NAME extends string>(props: Props<NAME>) {
             {loading && <PendingMessage />}
             <NonFieldError error={error} />
             <ExpandableContainer
-                heading="General"
+                heading={generalHasError ? 'General *' : 'General'}
+                headingClassName={styles.heading}
                 headingSize="small"
                 spacing="compact"
+                errored={generalHasError}
                 contentClassName={styles.expandedBody}
                 defaultVisibility
                 withoutBorder

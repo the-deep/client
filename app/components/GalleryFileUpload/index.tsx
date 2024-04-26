@@ -1,14 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FileInput, useAlert } from '@the-deep/deep-ui';
 import { IoCloudUpload } from 'react-icons/io5';
 import { gql, useMutation } from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
+import { _cs } from '@togglecorp/fujs';
 
 import {
     FileUploadMutation,
     FileUploadMutationVariables,
     GalleryFileType,
 } from '#generated/types';
+
+import styles from './styles.css';
 
 const UPLOAD_FILE = gql`
     mutation FileUpload(
@@ -31,11 +34,12 @@ const UPLOAD_FILE = gql`
     }
 `;
 interface Props {
-    onSuccess: (file: NonNullable<GalleryFileType>) => void;
-    acceptFileType?: '.pdf' | 'image/*';
+    onSuccess: (file: NonNullable<GalleryFileType>, uploadedFile: File | undefined) => void;
+    acceptFileType?: '.pdf' | 'image/*' | '.xlsx' | '.csv' | '.geojson';
     title?: string;
     disabled?: boolean;
     projectIds?: string[];
+    buttonOnly?: boolean;
 }
 
 function FileUpload(props: Props) {
@@ -45,8 +49,11 @@ function FileUpload(props: Props) {
         acceptFileType,
         disabled,
         projectIds,
+        buttonOnly,
     } = props;
+
     const alert = useAlert();
+    const [uploadedFile, setUploadedFile] = useState<File>();
 
     const [
         uploadFile,
@@ -76,6 +83,7 @@ function FileUpload(props: Props) {
                     const resultRemoveNull = removeNull(result);
                     onSuccess(
                         resultRemoveNull,
+                        uploadedFile,
                     );
                 }
             },
@@ -93,6 +101,7 @@ function FileUpload(props: Props) {
             if (!value) {
                 return;
             }
+            setUploadedFile(value);
 
             uploadFile({
                 variables: {
@@ -115,17 +124,25 @@ function FileUpload(props: Props) {
 
     return (
         <FileInput
+            className={_cs(
+                styles.galleryFileUpload,
+                buttonOnly && styles.buttonOnly,
+            )}
             name={undefined}
             value={null}
             onChange={handleFileInputChange}
             status={undefined}
             overrideStatus
-            title={title}
+            title={buttonOnly ? undefined : title}
+            label={buttonOnly ? undefined : title}
             maxFileSize={100}
             accept={acceptFileType}
             disabled={loading || disabled}
         >
-            <IoCloudUpload />
+            <div className={styles.children}>
+                <IoCloudUpload />
+                {buttonOnly ? title : undefined}
+            </div>
         </FileInput>
     );
 }

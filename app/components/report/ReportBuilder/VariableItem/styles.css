@@ -1,0 +1,15 @@
+.variable-item {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--dui-spacing-extra-small);
+
+    .heading {
+        width: 10rem;
+    }
+    .completeness {
+        width: 10rem;
+    }
+    .type {
+        width: 20rem;
+    }
+}

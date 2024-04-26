@@ -1,5 +1,7 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+} from '@togglecorp/fujs';
 import { removeNull } from '@togglecorp/toggle-form';
 import {
     Message,
@@ -9,26 +11,37 @@ import ReactMarkdown from 'react-markdown';
 
 import {
     AnalysisReportContainerContentTypeEnum,
-    AnalysisReportContainerContentConfigurationType,
 } from '#generated/types';
+import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
+import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
     type ContentDataType,
     type ConfigType,
+    type ContentConfigType,
 } from '../../../schema';
 import {
     resolveTextStyle,
-    type ContentDataFileMap,
 } from '../../../utils';
+import MapContent from './MapContent';
+import TimelineContent from './TimelineContent';
+import KpiContent from './KpiContent';
+import BarContent from './BarContent';
+import LineChart from './LineChart';
 
 import styles from './styles.css';
+
+type TimelineCacheData = Record<string, string | number | undefined>[] | undefined;
 
 interface Props {
     contentType: AnalysisReportContainerContentTypeEnum;
     contentData: ContentDataType[] | undefined;
-    configuration: AnalysisReportContainerContentConfigurationType | undefined;
+    configuration: ContentConfigType | undefined;
     generalConfiguration: ConfigType | undefined;
-    contentDataToFileMap: ContentDataFileMap | undefined;
+    imageReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    geoDataUploads: ReportGeoUploadType[] | undefined | null;
+    downloadsPending: boolean;
+    downloadedGeoData: Record<string, unknown>;
 }
 
 function Content(props: Props) {
@@ -37,7 +50,10 @@ function Content(props: Props) {
         configuration: configurationFromProps,
         generalConfiguration,
         contentData,
-        contentDataToFileMap,
+        downloadsPending,
+        imageReportUploads,
+        downloadedGeoData,
+        geoDataUploads,
     } = props;
 
     const configuration = removeNull(configurationFromProps);
@@ -129,6 +145,14 @@ function Content(props: Props) {
         );
     }
 
+    if (contentType === 'KPI') {
+        return (
+            <KpiContent
+                configuration={configuration?.kpi}
+            />
+        );
+    }
+
     if (contentType === 'URL') {
         const url = configuration?.url?.url;
 
@@ -149,13 +173,16 @@ function Content(props: Props) {
         const style = configuration?.image?.style;
 
         const imageContentData = contentData?.[0];
+        const selectedImageData = imageReportUploads?.find(
+            (item) => item.id === imageContentData?.upload,
+        );
 
-        if (imageContentData && contentDataToFileMap) {
+        if (imageContentData && selectedImageData) {
             return (
                 <div className={styles.imageContainer}>
                     <img
                         className={styles.image}
-                        src={contentDataToFileMap[imageContentData.clientId]?.url ?? ''}
+                        src={selectedImageData?.file?.file?.url ?? ''}
                         alt={altText ?? ''}
                     />
                     {caption && (
@@ -179,6 +206,58 @@ function Content(props: Props) {
                     errored
                 />
             </div>
+        );
+    }
+
+    if (contentType === 'TIMELINE_CHART') {
+        const timelineContentData = contentData?.[0]?.data as TimelineCacheData | undefined;
+
+        return (
+            <TimelineContent
+                contentData={timelineContentData}
+            />
+        );
+    }
+
+    if (contentType === 'BAR_CHART') {
+        const barChartContentData = contentData?.[0];
+
+        return (
+            <BarContent
+                configuration={configuration?.barChart}
+                cacheData={
+                    barChartContentData?.data as (
+                        Record<string, string | number | undefined>[] | undefined
+                    )
+                }
+            />
+        );
+    }
+
+    if (contentType === 'LINE_CHART') {
+        const lineChartContentData = contentData?.[0];
+
+        return (
+            <LineChart
+                configuration={configuration?.lineChart}
+                cacheData={
+                    lineChartContentData?.data as (
+                        Record<string, string | number | undefined>[] | undefined
+                    )
+                }
+            />
+        );
+    }
+
+    if (contentType === 'MAP') {
+        return (
+            <MapContent
+                configuration={configuration?.map}
+                contentData={contentData}
+                downloadedGeoData={downloadedGeoData}
+                downloadsPending={downloadsPending}
+                geoDataUploads={geoDataUploads}
+            />
         );
     }
 

@@ -1,0 +1,11 @@
+.timeline-chart-edit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-medium);
+
+    .expanded-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+    }
+}

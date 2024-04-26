@@ -1,0 +1,37 @@
+.map-edit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-medium);
+
+    .expanded-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+
+        .content {
+            display: flex;
+            gap: var(--dui-spacing-small);
+
+            .list {
+                display: flex;
+                flex-direction: column;
+                gap: var(--dui-spacing-small);
+
+                .layers {
+                    --layer-list-width: 12.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    flex-shrink: 0;
+                    width: var(--layer-list-width);
+                    gap: var(--dui-spacing-extra-small);
+                }
+            }
+
+            .map-layer-edit {
+                flex-grow: 1;
+                border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            }
+        }
+    }
+
+}

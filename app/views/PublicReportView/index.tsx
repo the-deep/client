@@ -36,6 +36,7 @@ const PUBLIC_REPORT_SNAPSHOT = gql`
             id
             files {
                 id
+                title
                 file {
                     name
                     url
@@ -180,6 +181,39 @@ const PUBLIC_REPORT_DETAILS = gql`
                         file {
                             id
                         }
+                        type
+                        metadata {
+                            csv {
+                                headerRow
+                                variables {
+                                    clientId
+                                    completeness
+                                    name
+                                    type
+                                }
+                            }
+                            xlsx {
+                                sheets {
+                                    clientId
+                                    headerRow
+                                    name
+                                    variables {
+                                        clientId
+                                        completeness
+                                        name
+                                        type
+                                    }
+                                }
+                            }
+                            geojson {
+                                variables {
+                                    clientId
+                                    completeness
+                                    name
+                                    type
+                                }
+                            }
+                        }
                     }
                 }
                 contentConfiguration {
@@ -210,6 +244,77 @@ const PUBLIC_REPORT_DETAILS = gql`
                             fit
                         }
                     }
+                    kpi {
+                        items {
+                            abbreviateValue
+                            clientId
+                            color
+                            date
+                            source
+                            sourceUrl
+                            subtitle
+                            title
+                            value
+                            style {
+                                sourceContentStyle {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                subtitleContentStyle {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                titleContentStyle {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                valueContentStyle {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                            }
+                        }
+                        sourceContentStyle {
+                            align
+                            color
+                            family
+                            size
+                            weight
+                        }
+                        subtitleContentStyle {
+                            align
+                            color
+                            family
+                            size
+                            weight
+                        }
+                        titleContentStyle {
+                            align
+                            color
+                            family
+                            size
+                            weight
+                        }
+                        valueContentStyle {
+                            align
+                            color
+                            family
+                            size
+                            weight
+                        }
+                    }
                     text {
                         content
                         style {
@@ -224,6 +329,334 @@ const PUBLIC_REPORT_DETAILS = gql`
                     }
                     url {
                         url
+                    }
+                    barChart {
+                        direction
+                        horizontalAxis {
+                            field
+                            type
+                        }
+                        horizontalAxisLineVisible
+                        horizontalAxisTitle
+                        horizontalGridLineVisible
+                        horizontalTickVisible
+                        legendHeading
+                        sheet
+                        subTitle
+                        title
+                        type
+                        verticalAxis {
+                            label
+                            aggregationType
+                            clientId
+                            color
+                            field
+                        }
+                        verticalAxisExtendMinimumValue
+                        verticalAxisExtendMaximumValue
+                        verticalAxisLineVisible
+                        verticalAxisTitle
+                        verticalGridLineVisible
+                        verticalTickVisible
+                        horizontalTickLabelRotation
+                        style {
+                            bar {
+                                border {
+                                    width
+                                    color
+                                    opacity
+                                    style
+                                }
+                            }
+                            horizontalAxisTickLabel {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            horizontalAxisTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            horizontalGridLine {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            horizontalTick {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            legend {
+                                heading {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                label {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                position
+                                shape
+                            }
+                            subTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            title {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalAxisTickLabel {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalAxisTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalGridLine {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            verticalTick {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                        }
+                    }
+                    timelineChart {
+                        category
+                        date
+                        detail
+                        sheet
+                        source
+                        sourceUrl
+                        title
+                    }
+                    lineChart {
+                        horizontalAxis {
+                            field
+                        }
+                        horizontalAxisLineVisible
+                        horizontalAxisTitle
+                        horizontalGridLineVisible
+                        horizontalTickVisible
+                        legendHeading
+                        sheet
+                        subTitle
+                        title
+                        verticalAxis {
+                            label
+                            aggregationType
+                            clientId
+                            color
+                            field
+                        }
+                        verticalAxisExtendMinimumValue
+                        verticalAxisExtendMaximumValue
+                        verticalAxisLineVisible
+                        verticalAxisTitle
+                        verticalGridLineVisible
+                        verticalTickVisible
+                        horizontalTickLabelRotation
+                        style {
+                            horizontalAxisTickLabel {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            horizontalAxisTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            horizontalGridLine {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            horizontalTick {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            legend {
+                                heading {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                label {
+                                    align
+                                    color
+                                    family
+                                    size
+                                    weight
+                                }
+                                position
+                                shape
+                            }
+                            subTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            title {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalAxisTickLabel {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalAxisTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            verticalGridLine {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                            verticalTick {
+                                lineColor
+                                lineOpacity
+                                lineWidth
+                            }
+                        }
+                    }
+                    map {
+                        title
+                        subTitle
+                        mapHeight
+                        maxZoom
+                        minZoom
+                        scaleBar
+                        showScale
+                        zoom
+                        enableZoomControls
+                        centerLatitude
+                        centerLongitude
+                        style {
+                            title {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                            subTitle {
+                                align
+                                color
+                                family
+                                size
+                                weight
+                            }
+                        }
+                        layers {
+                            clientId
+                            name
+                            visible
+                            opacity
+                            order
+                            type
+                            layerConfig {
+                                mapboxLayer {
+                                    mapboxStyle
+                                    accessToken
+                                }
+                                lineLayer {
+                                    contentReferenceId
+                                    style {
+                                        line {
+                                            strokeType
+                                            dashSpacing
+                                            stroke
+                                            strokeWidth
+                                        }
+                                    }
+                                }
+                                polygonLayer {
+                                    contentReferenceId
+                                    labelColumn
+                                }
+                                symbolLayer {
+                                    contentReferenceId
+                                    labelPropertyKey
+                                    scaleType
+                                    showLabels
+                                    symbol
+                                    style {
+                                        symbol {
+                                            align
+                                            color
+                                            family
+                                            size
+                                            weight
+                                        }
+                                        label {
+                                            align
+                                            color
+                                            family
+                                            size
+                                            weight
+                                        }
+                                    }
+                                }
+                                heatmapLayer {
+                                    blur
+                                    contentReferenceId
+                                    fillPalette
+                                    radius
+                                    weighted
+                                    weightPropertyKey
+                                    scaleDataMax
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -283,19 +716,23 @@ function PublicReportView(props: Props) {
     const {
         finalData,
         organizationOptions,
-        contentDataToFileMap,
+        quantitativeReportUploads,
+        geoDataUploads,
+        imageReportUploads,
     } = useMemo(() => {
         if (!snapshotData?.publicReportDetails) {
             return {
                 finalData: undefined,
                 organizationOptions: undefined,
-                contentDataToFileMap: undefined,
+                quantitativeReportUploads: undefined,
+                geoDataUploads: undefined,
+                imageReportUploads: undefined,
             };
         }
         const fileToFileDetailsMap = listToMap(
             removeNull(completeData?.publicAnalysisReportSnapshot?.files),
             (item) => item.id,
-            (item) => item.file,
+            (item) => item,
         );
 
         const data = removeNull(snapshotData.publicReportDetails);
@@ -304,15 +741,74 @@ function PublicReportView(props: Props) {
             .flat()
             .filter(isDefined);
 
-        const contentDataToFile = listToMap(
-            uploadItems,
-            (item) => item.clientId,
-            (item) => ({
-                url: item.upload?.file?.id
-                    ? fileToFileDetailsMap?.[item.upload.file.id]?.url : undefined,
-                name: item.upload?.file?.id
-                    ? fileToFileDetailsMap?.[item.upload.file.id]?.name : undefined,
-            }),
+        const imageFiles = (
+            uploadItems
+                ?.filter((item) => (item.upload?.type === 'IMAGE'))
+                .map((item) => {
+                    const fileId = item.upload?.file?.id;
+                    if (!item.upload || !fileId) {
+                        return undefined;
+                    }
+
+                    return ({
+                        ...item.upload,
+                        file: {
+                            id: fileId,
+                            title: fileToFileDetailsMap[fileId].title,
+                            file: {
+                                name: fileToFileDetailsMap[fileId]?.file?.name,
+                                url: fileToFileDetailsMap[fileId]?.file?.url,
+                            },
+                        },
+                    });
+                })
+                .filter(isDefined)
+        );
+        const quantitativeFiles = (
+            uploadItems
+                ?.filter((item) => (item.upload?.type === 'CSV') || item.upload?.type === 'XLSX')
+                .map((item) => {
+                    const fileId = item.upload?.file?.id;
+                    if (!item.upload || !fileId) {
+                        return undefined;
+                    }
+
+                    return ({
+                        ...item.upload,
+                        file: {
+                            id: fileId,
+                            title: fileToFileDetailsMap[fileId].title,
+                            file: {
+                                name: fileToFileDetailsMap[fileId]?.file?.name,
+                                url: fileToFileDetailsMap[fileId]?.file?.url,
+                            },
+                        },
+                    });
+                })
+                .filter(isDefined)
+        );
+        const geoFiles = (
+            uploadItems
+                ?.filter((item) => (item.upload?.type === 'GEOJSON'))
+                .map((item) => {
+                    const fileId = item.upload?.file?.id;
+                    if (!item.upload || !fileId) {
+                        return undefined;
+                    }
+
+                    return ({
+                        ...item.upload,
+                        file: {
+                            id: fileId,
+                            title: fileToFileDetailsMap[fileId].title,
+                            file: {
+                                name: fileToFileDetailsMap[fileId]?.file?.name,
+                                url: fileToFileDetailsMap[fileId]?.file?.url,
+                            },
+                        },
+                    });
+                })
+                .filter(isDefined)
         );
 
         const newContainers = [...(data.containers ?? [])];
@@ -335,7 +831,9 @@ function PublicReportView(props: Props) {
         return {
             finalData: final,
             organizationOptions: data.organizations,
-            contentDataToFileMap: contentDataToFile,
+            quantitativeReportUploads: quantitativeFiles,
+            geoDataUploads: geoFiles,
+            imageReportUploads: imageFiles,
         };
     }, [
         snapshotData,
@@ -369,13 +867,18 @@ function PublicReportView(props: Props) {
                         reportId={undefined}
                         setFieldValue={handleUpdate}
                         disabled
+                        pending={pending}
                         readOnly
                         organizationOptions={organizationOptions}
                         onOrganizationOptionsChange={handleUpdate}
-                        contentDataToFileMap={contentDataToFileMap}
-                        setContentDataToFileMap={handleUpdate}
                         leftContentRef={undefined}
                         onContentEditChange={handleUpdate}
+                        quantitativeReportUploads={quantitativeReportUploads}
+                        imageReportUploads={imageReportUploads}
+                        onImageReportUploadsChange={handleUpdate}
+                        onQuantitativeReportUploadsChange={handleUpdate}
+                        geoDataUploads={geoDataUploads}
+                        onGeoDataUploadsChange={handleUpdate}
                     />
                 </>
             ) : (

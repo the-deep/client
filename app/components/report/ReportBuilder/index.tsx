@@ -1,10 +1,14 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
     _cs,
+    randomString,
     isDefined,
     listToMap,
+    mapToMap,
+    unique,
 } from '@togglecorp/fujs';
 import {
+    useAlert,
     ListView,
     Button,
     Header,
@@ -21,12 +25,16 @@ import { IoPencil } from 'react-icons/io5';
 
 import Avatar from '#components/Avatar';
 import Portal from '#components/Portal';
+import { useLazyRequest } from '#base/utils/restRequest';
+
 import {
     BasicOrganization,
     organizationTitleSelector,
     organizationLogoSelector,
 } from '#components/selections/NewOrganizationMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
+import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
+import { ReportGeoUploadType } from '#components/report/ReportBuilder/GeoDataSelectInput';
 
 import {
     type PartialFormType,
@@ -35,9 +43,12 @@ import {
 
 import ReportContainer, { Props as ReportContainerProps } from './ReportContainer';
 import MetadataEdit from './MetadataEdit';
-import { ContentDataFileMap } from '../utils';
 
 import styles from './styles.css';
+
+export declare type Properties = {
+    [name: string]: unknown;
+} | null;
 
 const metadataFields: (keyof PartialFormType)[] = [
     'slug',
@@ -60,10 +71,21 @@ interface Props {
     onOrganizationOptionsChange: React.Dispatch<React.SetStateAction<
         BasicOrganization[] | undefined | null
     >>;
-    contentDataToFileMap: ContentDataFileMap | undefined;
-    setContentDataToFileMap: React.Dispatch<React.SetStateAction<ContentDataFileMap | undefined>>;
+    imageReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    onImageReportUploadsChange: React.Dispatch<React.SetStateAction<
+        BasicAnalysisReportUpload[] | undefined | null
+    >>;
+    geoDataUploads: ReportGeoUploadType[] | undefined | null;
+    onGeoDataUploadsChange: React.Dispatch<React.SetStateAction<
+        ReportGeoUploadType[] | undefined | null
+    >>;
+    quantitativeReportUploads: BasicAnalysisReportUpload[] | undefined | null;
+    onQuantitativeReportUploadsChange: React.Dispatch<React.SetStateAction<
+        BasicAnalysisReportUpload[] | undefined | null
+    >>;
     leftContentRef: React.RefObject<HTMLDivElement> | undefined;
     onContentEditChange: (newVal: boolean) => void;
+    pending: boolean;
 }
 
 function ReportBuilder(props: Props) {
@@ -75,12 +97,17 @@ function ReportBuilder(props: Props) {
         setFieldValue,
         readOnly,
         disabled,
+        pending,
         organizationOptions,
         onOrganizationOptionsChange,
-        contentDataToFileMap,
-        setContentDataToFileMap,
         onContentEditChange,
         leftContentRef,
+        imageReportUploads,
+        onImageReportUploadsChange,
+        quantitativeReportUploads,
+        onQuantitativeReportUploadsChange,
+        geoDataUploads,
+        onGeoDataUploadsChange,
     } = props;
 
     const [containerToEdit, setContainerToEdit] = useState<string>();
@@ -112,6 +139,12 @@ function ReportBuilder(props: Props) {
         onContentEditChange(!!containerId);
     }, [onContentEditChange]);
 
+    const alert = useAlert();
+
+    const [geoFilesPending, setGeoFilesPending] = useState(false);
+    const [geoData, setGeoData] = useState<Record<string, unknown>>({});
+    const [downloadedIds, setDownloadedIds] = useState<Record<string, boolean>>({});
+
     const reportContainerRendererParams = useCallback(
         (
             containerKey: string,
@@ -133,6 +166,14 @@ function ReportBuilder(props: Props) {
                 configuration: item.contentConfiguration,
                 contentType: item.contentType,
                 generalConfiguration: value?.configuration,
+                imageReportUploads,
+                onImageReportUploadsChange,
+                quantitativeReportUploads,
+                onQuantitativeReportUploadsChange,
+                geoDataUploads,
+                onGeoDataUploadsChange,
+                downloadedGeoData: geoData,
+                downloadsPending: geoFilesPending,
                 leftContentRef,
                 style: item.style,
                 reportId,
@@ -140,15 +181,19 @@ function ReportBuilder(props: Props) {
                 setFieldValue,
                 readOnly,
                 disabled,
-                contentDataToFileMap,
-                setContentDataToFileMap,
             });
         },
         [
+            geoFilesPending,
+            geoData,
             reportId,
-            contentDataToFileMap,
             containerToEdit,
-            setContentDataToFileMap,
+            imageReportUploads,
+            onImageReportUploadsChange,
+            quantitativeReportUploads,
+            onQuantitativeReportUploadsChange,
+            geoDataUploads,
+            onGeoDataUploadsChange,
             handleContainerEdit,
             leftContentRef,
             error,
@@ -160,6 +205,99 @@ function ReportBuilder(props: Props) {
         ],
     );
 
+    const geoFilesToDownload = useMemo(() => {
+        const contentData = value?.containers
+            ?.filter((item) => item.contentType === 'MAP')
+            ?.map((item) => item.contentData).filter(isDefined).flat();
+        const validFiles = geoDataUploads?.map((item) => {
+            if (!item.file.file?.url) {
+                return undefined;
+            }
+            return {
+                url: item.file.file.url,
+                uploadId: item.id,
+            };
+        }).filter(isDefined);
+
+        const uploadIdToLinkMap = listToMap(
+            validFiles,
+            (item) => item.uploadId,
+            (item) => item.url,
+        );
+        const usedFiles = contentData?.filter(
+            (item) => (item.upload ? isDefined(uploadIdToLinkMap?.[item.upload]) : false),
+        ).map((item) => ((item.upload && uploadIdToLinkMap?.[item.upload]) ? {
+            upload: item.upload,
+            url: uploadIdToLinkMap?.[item.upload],
+        } : undefined)).filter(isDefined);
+        return unique(usedFiles ?? [], (item) => item.upload)
+            .filter((item) => !downloadedIds[item.upload]);
+    }, [
+        downloadedIds,
+        value?.containers,
+        geoDataUploads,
+    ]);
+
+    const {
+        trigger: fetchFile,
+    } = useLazyRequest<ArrayBuffer, { upload: string; url: string; }>({
+        url: (context) => context.url,
+        isFile: true,
+        method: 'GET',
+        onSuccess: (file, context) => {
+            try {
+                const parsedJson = JSON.parse(new TextDecoder().decode(file));
+
+                setGeoData((oldData) => ({
+                    ...oldData,
+                    [context.upload]: parsedJson,
+                }));
+            } catch {
+                alert.show(
+                    'There was an error parsing the geojson file.',
+                    { variant: 'error' },
+                );
+            }
+            const currReportIndex = geoFilesToDownload.findIndex(
+                (item) => item.upload === context.upload,
+            );
+            const nextFile = geoFilesToDownload[currReportIndex + 1];
+            if (nextFile) {
+                fetchFile(geoFilesToDownload[currReportIndex + 1]);
+            } else {
+                setDownloadedIds((oldIds) => ({
+                    ...oldIds,
+                    ...mapToMap(geoData, (item) => item, () => true),
+                    [context.upload]: true,
+                }));
+                setGeoFilesPending(false);
+            }
+        },
+        onFailure: (_, context) => {
+            const currReportIndex = geoFilesToDownload.findIndex(
+                (item) => item.upload === context.upload,
+            );
+            const nextFile = geoFilesToDownload[currReportIndex + 1];
+            if (nextFile) {
+                fetchFile(geoFilesToDownload[currReportIndex + 1]);
+            } else {
+                setGeoFilesPending(false);
+            }
+        },
+    });
+
+    useEffect(() => {
+        if (geoFilesToDownload.length > 0) {
+            setGeoFilesPending(true);
+            setTimeout(() => {
+                fetchFile(geoFilesToDownload[0]);
+            }, 500);
+        }
+    }, [
+        fetchFile,
+        geoFilesToDownload,
+    ]);
+
     const errorInMetadata = useMemo(() => (
         metadataFields.some((field) => analyzeErrors(
             getErrorObject(getErrorObject(error)?.[field]),
@@ -167,6 +305,24 @@ function ReportBuilder(props: Props) {
     ), [error]);
 
     const gap = value?.configuration?.bodyStyle?.gap;
+
+    const handleNewContentAdd = useCallback(() => {
+        const newItem = {
+            row: 1,
+            column: 1,
+            clientId: randomString(),
+            width: 12,
+        };
+        setFieldValue((oldVal: ReportContainerType[] | undefined = []) => {
+            const newItems = [
+                ...oldVal,
+                newItem,
+            ];
+            return newItems;
+        }, 'containers');
+    }, [
+        setFieldValue,
+    ]);
 
     return (
         <div
@@ -216,7 +372,10 @@ function ReportBuilder(props: Props) {
                 </div>
                 <NonFieldError error={getErrorObject(error)?.containers} />
                 <ListView
-                    className={styles.containers}
+                    className={_cs(
+                        styles.containers,
+                        (value?.containers?.length ?? 0) === 0 && styles.empty,
+                    )}
                     data={value?.containers}
                     style={isDefined(gap) ? { gridGap: gap } : undefined}
                     keySelector={reportContainerKeySelector}
@@ -224,7 +383,19 @@ function ReportBuilder(props: Props) {
                     rendererParams={reportContainerRendererParams}
                     errored={false}
                     filtered={false}
-                    pending={false}
+                    pending={pending}
+                    messageShown
+                    messageIconShown
+                    emptyMessage="Looks like there aren't any containers."
+                    messageActions={(
+                        <Button
+                            name="undefined"
+                            onClick={handleNewContentAdd}
+                            variant="tertiary"
+                        >
+                            Add a content
+                        </Button>
+                    )}
                 />
             </div>
             {containerToEdit === 'metadata' && leftContentRef?.current && (

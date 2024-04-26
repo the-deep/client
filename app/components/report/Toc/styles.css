@@ -2,7 +2,6 @@
     display: flex;
     position: relative;
     flex-direction: column;
-    z-index: 1;
     padding: 0 var(--dui-spacing-large);
 
     .header {
@@ -65,9 +64,12 @@
     }
 
     @media screen and (max-width: 720px) {
+        z-index: 1;
+
         .header {
             z-index: 1;
         }
+
         .menu {
             pointer-events: unset;
         }

@@ -1,0 +1,14 @@
+.map-layer-edit {
+    background-color: transparent;
+
+    .map-layer {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-small);
+
+        .slider {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
