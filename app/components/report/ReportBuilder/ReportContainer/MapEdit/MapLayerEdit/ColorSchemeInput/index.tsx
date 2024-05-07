@@ -259,6 +259,7 @@ interface Props<NAME extends string> {
     name: NAME;
     value: string | undefined;
     onChange: (newVal: string | undefined, name: NAME) => void;
+    error?: string;
 }
 
 function ColorSchemeInput<NAME extends string>(props: Props<NAME>) {
@@ -266,6 +267,7 @@ function ColorSchemeInput<NAME extends string>(props: Props<NAME>) {
         name,
         value,
         onChange,
+        error,
     } = props;
 
     const getGroupLabel = useCallback((groupKey: string) => (
@@ -285,6 +287,7 @@ function ColorSchemeInput<NAME extends string>(props: Props<NAME>) {
             grouped
             groupKeySelector={colorGroupKeySelector}
             groupLabelSelector={(item) => getGroupLabel(item.groupKey)}
+            error={error}
         />
     );
 }

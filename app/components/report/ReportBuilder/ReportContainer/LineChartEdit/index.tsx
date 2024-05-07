@@ -48,7 +48,7 @@ import {
     aggregate,
 } from '../../../utils';
 import TextElementsStylesEdit from '../TextElementsStylesEdit';
-import LegendElementsStylesEdit from '../LegendStylesEdit';
+// import LegendElementsStylesEdit from '../LegendStylesEdit';
 import GridLineStylesEdit from '../GridLineStylesEdit';
 import TickStylesEdit from '../TickStylesEdit';
 import VerticalAxisInput from './VerticalAxisInput';
@@ -419,6 +419,7 @@ function LineChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     error={error?.verticalAxisTitle}
                     disabled={disabled}
                 />
+                {/*
                 <TextInput
                     value={value?.legendHeading}
                     name="legendHeading"
@@ -435,6 +436,7 @@ function LineChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     error={error?.horizontalTickLabelRotation}
                     disabled={disabled}
                 />
+                */}
                 <NumberInput
                     value={value?.verticalAxisExtendMaximumValue}
                     name="verticalAxisExtendMaximumValue"
@@ -479,6 +481,7 @@ function LineChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     onChange={onFieldChange}
                     disabled={disabled}
                 />
+                {/*
                 <Checkbox
                     value={value?.horizontalTickVisible}
                     name="horizontalTickVisible"
@@ -493,6 +496,7 @@ function LineChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     onChange={onFieldChange}
                     disabled={disabled}
                 />
+                */}
             </ExpandableContainer>
             <ExpandableContainer
                 heading="Styling"
@@ -515,13 +519,15 @@ function LineChartChartEdit<NAME extends string>(props: Props<NAME>) {
                     onChange={onStyleChange}
                     disabled={disabled}
                 />
+                {/*
                 <LegendElementsStylesEdit
                     name="legend"
                     label="Legend"
                     value={value?.style?.legend}
                     onChange={onStyleChange}
                     disabled={disabled}
-                />
+                /
+                */}
                 <TextElementsStylesEdit
                     name="horizontalAxisTitle"
                     label="Horizontal Axis Title"
