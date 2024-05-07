@@ -61,6 +61,7 @@
 
             .organizations {
                 flex-wrap: wrap;
+                justify-content: flex-end;
             }
         }
 
