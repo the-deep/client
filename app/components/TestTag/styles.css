@@ -1,8 +1,9 @@
 .test-tag {
     align-self: center;
+    flex-shrink: 0;
     border-radius: var(--dui-border-radius-progress-bar);
     background: var(--dui-color-complement3);
-    padding: var(--dui-spacing-small);
+    padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
     font-size: var(--dui-font-size-medium);
     font-weight: var(--dui-font-weight-bold);
 }

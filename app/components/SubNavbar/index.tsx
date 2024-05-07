@@ -86,7 +86,7 @@ interface SubNavbarProps {
 
     heading?: string;
     description?: string;
-    isTestShown?: boolean;
+    isTestTagShown?: boolean;
 
     homeLinkShown?: boolean;
 }
@@ -104,7 +104,7 @@ function SubNavbar(props: SubNavbarProps) {
         descriptionClassName,
         descriptionContainerClassName,
         description,
-        isTestShown = false,
+        isTestTagShown,
         homeLinkShown,
     } = props;
 
@@ -178,7 +178,7 @@ function SubNavbar(props: SubNavbarProps) {
                         </div>
                     </div>
                 )}
-                {isTestShown && <TestTag />}
+                {isTestTagShown && <TestTag />}
             </div>
             <div
                 ref={childrenRef}

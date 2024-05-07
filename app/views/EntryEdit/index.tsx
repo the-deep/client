@@ -1462,7 +1462,7 @@ function EntryEdit(props: Props) {
                     heading="Source"
                     description={lead?.title}
                     homeLinkShown
-                    isTestShown={project?.isTest}
+                    isTestTagShown={project?.isTest}
                     defaultActions={(
                         <>
                             <BackLink defaultLink="/">
