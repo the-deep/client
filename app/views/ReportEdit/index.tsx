@@ -40,7 +40,9 @@ import { IoShareSocialOutline } from 'react-icons/io5';
 
 import BackLink from '#components/BackLink';
 import routes from '#base/configs/routes';
-import SubNavbar from '#components/SubNavbar';
+import SubNavbarContext from '#components/SubNavbar/context';
+import SubNavbar, { SubNavbarIcons } from '#components/SubNavbar';
+import TestTag from '#components/TestTag';
 import {
     BasicOrganization,
 } from '#components/selections/NewOrganizationMultiSelectInput';
@@ -641,6 +643,19 @@ function ReportEdit(props: Props) {
     const history = useHistory();
     const leftContentRef = useRef<HTMLDivElement>(null);
 
+    const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
+    const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
+
+    const navbarContextValue = useMemo(
+        () => ({
+            iconsNode,
+            actionsNode,
+            setIconsNode,
+            setActionsNode,
+        }),
+        [iconsNode, actionsNode],
+    );
+
     const [
         contentEditPaneVisible,
         setContentEditPaneVisibility,
@@ -1081,32 +1096,37 @@ function ReportEdit(props: Props) {
 
     return (
         <div className={_cs(className, styles.reportEdit)}>
-            <SubNavbar
-                className={styles.header}
-                heading="New Report"
-                homeLinkShown
-                defaultActions={(
-                    <>
-                        <BackLink
-                            defaultLink="/"
-                        >
-                            Back
-                        </BackLink>
-                        <Button
-                            name={undefined}
-                            onClick={createSubmitHandler(
-                                validate,
-                                handleError,
-                                handleSubmit,
-                            )}
-                            disabled={pristine}
-                            variant="primary"
-                        >
-                            Save
-                        </Button>
-                    </>
-                )}
-            />
+            <SubNavbarContext.Provider value={navbarContextValue}>
+                <SubNavbarIcons>
+                    {project?.isTest && <TestTag />}
+                </SubNavbarIcons>
+                <SubNavbar
+                    className={styles.header}
+                    heading="New Report"
+                    homeLinkShown
+                    defaultActions={(
+                        <>
+                            <BackLink
+                                defaultLink="/"
+                            >
+                                Back
+                            </BackLink>
+                            <Button
+                                name={undefined}
+                                onClick={createSubmitHandler(
+                                    validate,
+                                    handleError,
+                                    handleSubmit,
+                                )}
+                                disabled={pristine}
+                                variant="primary"
+                            >
+                                Save
+                            </Button>
+                        </>
+                    )}
+                />
+            </SubNavbarContext.Provider>
             <div className={styles.content}>
                 {pending && <PendingMessage />}
                 <div

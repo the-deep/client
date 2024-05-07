@@ -63,7 +63,6 @@ function Tagging(props: Props) {
     const defaultRoute = generatePath(routes.sources.path, { projectId: project?.id });
 
     const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
-    const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
 
     const [
         isSingleSourceModalShown,
@@ -86,11 +85,9 @@ function Tagging(props: Props) {
     const navbarContextValue = useMemo(
         () => ({
             iconsNode,
-            actionsNode,
             setIconsNode,
-            setActionsNode,
         }),
-        [iconsNode, actionsNode],
+        [iconsNode],
     );
 
     const handleSingleLeadSaveSuccess = useCallback(() => {

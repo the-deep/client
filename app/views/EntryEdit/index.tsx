@@ -47,7 +47,9 @@ import { GeoArea } from '#components/GeoMultiSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
 import UserContext from '#base/context/UserContext';
-import SubNavbar from '#components/SubNavbar';
+import SubNavbarContext from '#components/SubNavbar/context';
+import SubNavbar, { SubNavbarIcons } from '#components/SubNavbar';
+import TestTag from '#components/TestTag';
 import BackLink from '#components/BackLink';
 import ExcerptInput from '#components/entry/ExcerptInput';
 import EntryControl from '#components/entryReview/EntryControl';
@@ -164,6 +166,16 @@ function EntryEdit(props: Props) {
     }), [commentsCountMap]);
 
     const projectId = project ? project.id : undefined;
+
+    const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
+
+    const navbarContextValue = useMemo(
+        () => ({
+            iconsNode,
+            setIconsNode,
+        }),
+        [iconsNode],
+    );
 
     const [
         geoAreaOptions,
@@ -1457,68 +1469,72 @@ function EntryEdit(props: Props) {
                 useHash
                 defaultHash="source-details"
             >
-                <SubNavbar
-                    className={styles.header}
-                    heading="Source"
-                    description={lead?.title}
-                    homeLinkShown
-                    isTestTagShown={project?.isTest}
-                    defaultActions={(
-                        <>
-                            <BackLink defaultLink="/">
-                                Close
-                            </BackLink>
-                            <Button
-                                name={undefined}
-                                disabled={formPristine || !!selectedEntry || loading}
-                                onClick={handleSaveClick}
+                <SubNavbarContext.Provider value={navbarContextValue}>
+                    <SubNavbarIcons>
+                        {project?.isTest && <TestTag />}
+                    </SubNavbarIcons>
+                    <SubNavbar
+                        className={styles.header}
+                        heading="Source"
+                        description={lead?.title}
+                        homeLinkShown
+                        defaultActions={(
+                            <>
+                                <BackLink defaultLink="/">
+                                    Close
+                                </BackLink>
+                                <Button
+                                    name={undefined}
+                                    disabled={formPristine || !!selectedEntry || loading}
+                                    onClick={handleSaveClick}
+                                >
+                                    Save
+                                </Button>
+                                <ConfirmButton
+                                    name={undefined}
+                                    disabled={disableFinalizeButton}
+                                    variant="primary"
+                                    onConfirm={handleFinalizeClick}
+                                    message="Finalizing the source will mark it as tagged.
+                                    Are you sure you want to finalize the source and all its entries?"
+                                >
+                                    Finalize
+                                </ConfirmButton>
+                            </>
+                        )}
+                    >
+                        <TabList>
+                            <Tab
+                                name="source-details"
+                                transparentBorder
+                                disabled={isEntrySelectionActive}
                             >
-                                Save
-                            </Button>
-                            <ConfirmButton
-                                name={undefined}
-                                disabled={disableFinalizeButton}
-                                variant="primary"
-                                onConfirm={handleFinalizeClick}
-                                message="Finalizing the source will mark it as tagged.
-                                Are you sure you want to finalize the source and all its entries?"
+                                Source Details
+                            </Tab>
+                            <Tab
+                                name="primary-tagging"
+                                transparentBorder
+                                disabled={isEntrySelectionActive}
                             >
-                                Finalize
-                            </ConfirmButton>
-                        </>
-                    )}
-                >
-                    <TabList>
-                        <Tab
-                            name="source-details"
-                            transparentBorder
-                            disabled={isEntrySelectionActive}
-                        >
-                            Source Details
-                        </Tab>
-                        <Tab
-                            name="primary-tagging"
-                            transparentBorder
-                            disabled={isEntrySelectionActive}
-                        >
-                            Primary Tagging
-                        </Tab>
-                        <Tab
-                            name="secondary-tagging"
-                            transparentBorder
-                            disabled={isEntrySelectionActive}
-                        >
-                            Secondary Tagging
-                        </Tab>
-                        <Tab
-                            name="review"
-                            transparentBorder
-                            disabled={isEntrySelectionActive}
-                        >
-                            Review
-                        </Tab>
-                    </TabList>
-                </SubNavbar>
+                                Primary Tagging
+                            </Tab>
+                            <Tab
+                                name="secondary-tagging"
+                                transparentBorder
+                                disabled={isEntrySelectionActive}
+                            >
+                                Secondary Tagging
+                            </Tab>
+                            <Tab
+                                name="review"
+                                transparentBorder
+                                disabled={isEntrySelectionActive}
+                            >
+                                Review
+                            </Tab>
+                        </TabList>
+                    </SubNavbar>
+                </SubNavbarContext.Provider>
                 <CommentCountContext.Provider value={commentCountContext}>
                     <div className={styles.tabPanelContainer}>
                         {loading && <PendingMessage />}

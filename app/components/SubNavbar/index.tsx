@@ -9,7 +9,6 @@ import ReactDOM from 'react-dom';
 import { _cs } from '@togglecorp/fujs';
 import deepLogo from '#resources/img/logo.svg';
 import route from '#base/configs/routes';
-import TestTag from '#components/TestTag';
 
 import NavbarContext from './context';
 import styles from './styles.css';
@@ -21,12 +20,15 @@ export function SubNavbarChildren(props: SubNavbarChildrenProps) {
     const {
         children,
     } = props;
+
     const {
         childrenNode,
     } = useContext(NavbarContext);
+
     if (!childrenNode) {
         return null;
     }
+
     return ReactDOM.createPortal(
         children,
         childrenNode,
@@ -36,16 +38,20 @@ export function SubNavbarChildren(props: SubNavbarChildrenProps) {
 interface SubNavbarIconsProps {
     children: React.ReactNode;
 }
+
 export function SubNavbarIcons(props: SubNavbarIconsProps) {
     const {
         children,
     } = props;
+
     const {
         iconsNode,
     } = useContext(NavbarContext);
+
     if (!iconsNode) {
         return null;
     }
+
     return ReactDOM.createPortal(
         children,
         iconsNode,
@@ -55,16 +61,20 @@ export function SubNavbarIcons(props: SubNavbarIconsProps) {
 interface SubNavbarActionsProps {
     children: React.ReactNode;
 }
+
 export function SubNavbarActions(props: SubNavbarActionsProps) {
     const {
         children,
     } = props;
+
     const {
         actionsNode,
     } = useContext(NavbarContext);
+
     if (!actionsNode) {
         return null;
     }
+
     return ReactDOM.createPortal(
         children,
         actionsNode,
@@ -86,7 +96,6 @@ interface SubNavbarProps {
 
     heading?: string;
     description?: string;
-    isTestTagShown?: boolean;
 
     homeLinkShown?: boolean;
 }
@@ -104,7 +113,6 @@ function SubNavbar(props: SubNavbarProps) {
         descriptionClassName,
         descriptionContainerClassName,
         description,
-        isTestTagShown,
         homeLinkShown,
     } = props;
 
@@ -178,7 +186,6 @@ function SubNavbar(props: SubNavbarProps) {
                         </div>
                     </div>
                 )}
-                {isTestTagShown && <TestTag />}
             </div>
             <div
                 ref={childrenRef}
