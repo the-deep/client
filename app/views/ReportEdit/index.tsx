@@ -72,6 +72,7 @@ import {
     type ObjectError,
     transformToFormError,
 } from '#base/utils/errorTransform';
+import { reorderByKey } from '#utils/common';
 
 import ReportBuilder from '#components/report/ReportBuilder';
 import { ProjectContext } from '#base/context/ProjectContext';
@@ -106,6 +107,7 @@ const PILLARS_FOR_REPORT = gql`
                         id
                         clientId
                         informationGaps
+                        includeInReport
                         statement
                         reportText
                     }
@@ -747,17 +749,35 @@ function ReportEdit(props: Props) {
                         },
                     };
 
-                    const statementItems: ReportContainerType[] | undefined = item?.statements
-                        ?.map((statement, statementIndex) => ({
+                    const mainStatement: ReportContainerType = {
+                        clientId: randomString(),
+                        row: acc.length + 2,
+                        column: 1,
+                        width: 12,
+                        contentType: 'TEXT' as const,
+                        contentConfiguration: {
+                            text: {
+                                content: [
+                                    '### Main Statement',
+                                    item.mainStatement,
+                                    '### Information Gaps',
+                                    item.informationGap,
+                                ].filter(isDefined).join('\n'),
+                            },
+                        },
+                    };
+
+                    const statementItems: ReportContainerType[] | undefined = item.statements
+                        ?.map((statement, statementIndex) => (statement.includeInReport ? ({
                             clientId: randomString(),
-                            row: acc.length + 1 + statementIndex + 1,
+                            row: acc.length + 2 + statementIndex + 1,
                             column: 1,
                             width: 12,
                             contentType: 'TEXT' as const,
                             contentConfiguration: {
                                 text: {
                                     content: [
-                                        statement.statement ? '#### Main Statement' : undefined,
+                                        statement.statement ? '#### Analytical Statement' : undefined,
                                         statement.statement,
                                         statement.informationGaps ? '#### Information Gaps' : undefined,
                                         statement.informationGaps,
@@ -766,13 +786,14 @@ function ReportEdit(props: Props) {
                                     ].filter(isDefined).join('\n'),
                                 },
                             },
-                        }));
+                        }) : undefined)).filter(isDefined);
 
-                    return ([
+                    return reorderByKey([
                         ...acc,
                         header,
+                        mainStatement,
                         ...(statementItems ?? []),
-                    ]);
+                    ], 'row');
                 }, [mainPillarContainer]);
 
                 setFieldValue(containers, 'containers');

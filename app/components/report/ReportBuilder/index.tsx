@@ -9,6 +9,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     useAlert,
+    Tag,
     ListView,
     Button,
     Header,
@@ -23,7 +24,6 @@ import {
 } from '@togglecorp/toggle-form';
 import { IoPencil } from 'react-icons/io5';
 
-import Avatar from '#components/Avatar';
 import Portal from '#components/Portal';
 import { useLazyRequest } from '#base/utils/restRequest';
 
@@ -31,6 +31,7 @@ import {
     BasicOrganization,
     organizationTitleSelector,
     organizationLogoSelector,
+    organizationShortNameSelector,
 } from '#components/selections/NewOrganizationMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
 import { BasicAnalysisReportUpload } from '#components/report/ReportBuilder/DatasetSelectInput';
@@ -348,14 +349,22 @@ function ReportBuilder(props: Props) {
                         description={value?.subTitle}
                         actionsContainerClassName={styles.organizations}
                         actions={value?.organizations?.map((org) => (
-                            <Avatar
-                                className={styles.organizationLogo}
+                            <Tag
                                 key={org}
-                                src={orgMap?.[org]
-                                    ? organizationLogoSelector(orgMap[org]) : undefined}
-                                name={orgMap?.[org]
-                                    ? organizationTitleSelector(orgMap[org]) : undefined}
-                            />
+                                icons={orgMap?.[org] && organizationLogoSelector(orgMap[org]) && (
+                                    <img
+                                        className={styles.organizationLogo}
+                                        src={organizationLogoSelector(orgMap[org])}
+                                        alt={organizationShortNameSelector(orgMap[org])}
+                                    />
+                                )}
+                            >
+                                {orgMap?.[org]
+                                    ? (
+                                        organizationShortNameSelector(orgMap[org])
+                                        || organizationTitleSelector(orgMap[org])
+                                    ) : undefined}
+                            </Tag>
                         ))}
                     />
                     {!readOnly && (

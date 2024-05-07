@@ -223,6 +223,7 @@ function HeatMapLayerEdit<NAME extends string>(props: Props<NAME>) {
                 name="fillPalette"
                 value={value?.fillPalette}
                 onChange={onFieldChange}
+                error={error?.fillPalette}
             />
         </ContainerCard>
     );

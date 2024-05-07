@@ -13,6 +13,7 @@
         .organization-logo {
             width: 2rem;
             height: 2rem;
+            object-fit: contain;
             font-size: var(--dui-font-size-extra-large);
         }
 
@@ -60,6 +61,7 @@
 
             .organizations {
                 flex-wrap: wrap;
+                justify-content: flex-end;
             }
         }
 

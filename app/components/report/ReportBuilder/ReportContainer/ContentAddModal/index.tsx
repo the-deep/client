@@ -100,7 +100,7 @@ function ContentAddModal(props: Props) {
                     className={styles.button}
                 >
                     <IoKeyOutline className={styles.icon} />
-                    KPIs
+                    Key Metrics
                 </RawButton>
                 <RawButton
                     name="BAR_CHART"

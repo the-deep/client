@@ -5,6 +5,7 @@ import {
 import {
     sortByOrder,
     reorder,
+    reorderByKey,
     getMaximum,
     breadcrumb,
     mergeLists,
@@ -81,6 +82,48 @@ test('reorder', () => {
         { id: '2', order: 1 },
         { id: '3', order: 2 },
         { id: '1', order: 3 },
+    ]);
+});
+
+test('reorderByKey', () => {
+    expect(reorderByKey([
+        { id: '2', order: 2 },
+        { id: '3', order: 3 },
+        { id: '1', order: 1 },
+    ])).toStrictEqual([
+        { id: '2', order: 1 },
+        { id: '3', order: 2 },
+        { id: '1', order: 3 },
+    ]);
+
+    expect(reorderByKey([
+        { id: '2', order: undefined, row: 1 },
+        { id: '3', order: 3, row: 3 },
+        { id: '1', order: 1, row: 5 },
+    ], 'row')).toStrictEqual([
+        { id: '2', order: undefined, row: 1 },
+        { id: '3', order: 3, row: 2 },
+        { id: '1', order: 1, row: 3 },
+    ]);
+
+    expect(reorderByKey([
+        { id: '2', row: undefined },
+        { id: '3', row: undefined },
+        { id: '1', row: undefined },
+    ], 'row')).toStrictEqual([
+        { id: '2', row: 1 },
+        { id: '3', row: 2 },
+        { id: '1', row: 3 },
+    ]);
+
+    expect(reorderByKey([
+        { id: '2', order: undefined },
+        { id: '3', order: undefined },
+        { id: '1', order: undefined },
+    ], 'row')).toStrictEqual([
+        { id: '2', order: undefined, row: 1 },
+        { id: '3', order: undefined, row: 2 },
+        { id: '1', order: undefined, row: 3 },
     ]);
 });
 

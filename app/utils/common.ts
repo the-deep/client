@@ -29,6 +29,15 @@ export function reorder<T extends { order?: number }>(data: T[]) {
     return data.map((v, i) => ({ ...v, order: i + 1 }));
 }
 
+// FIXME: Optimize reorder function by not editing the object is new
+// order is equal to old order
+export function reorderByKey<T>(
+    data: T[],
+    orderKey = 'order',
+): T[] {
+    return data.map((v, i) => ({ ...v, [orderKey]: i + 1 }));
+}
+
 export function breadcrumb(args: (string | undefined)[], symbol = ' » ') {
     return args.filter((arg) => isDefined(arg)).join(symbol);
 }

@@ -7,7 +7,7 @@ import {
 
 import {
     CategoricalBarChart,
-    // NumericBarChart,
+    NumericBarChart,
     TemporalBarChart,
 } from '@the-deep/reporting-module-components';
 
@@ -89,9 +89,6 @@ function BarContent(props: Props) {
                     undefined,
                 ),
             },
-            keySelector: (item: Datum) => item.key ?? '',
-            xValueSelector: (item: Datum) => item.key,
-            yValueSelector,
             yValueKeys: yKeys ?? [],
             groupingMode: configuration?.type === 'STACKED'
                 ? 'stacked' as const : 'side-by-side' as const,
@@ -163,6 +160,18 @@ function BarContent(props: Props) {
         configuration,
     ]);
 
+    const configForNumericChart = useMemo(() => (config ? ({
+        ...config,
+        chartOptions: {
+            ...config.chartOptions,
+            xValueSelector: (item: Datum) => {
+                const safeNumber = Number(item.key);
+
+                return !Number.isNaN(safeNumber) ? safeNumber : undefined;
+            },
+        },
+    }) : undefined), [config]);
+
     const chartType = configuration?.horizontalAxis?.type ?? 'CATEGORICAL';
 
     return (
@@ -177,11 +186,11 @@ function BarContent(props: Props) {
                     {...config}
                 />
             )}
-            {/* config && chartType === 'NUMERIC' && (
+            {configForNumericChart && chartType === 'NUMERIC' && (
                 <NumericBarChart
-                    {...config}
+                    {...configForNumericChart}
                 />
-            ) */}
+            )}
         </div>
     );
 }

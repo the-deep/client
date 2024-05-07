@@ -153,16 +153,19 @@ export function resolveLineStyle(
     }
 
     const {
+        lineOpacity,
         lineWidth,
         lineColor,
     } = lineStyle ?? {};
 
     const {
+        lineOpacity: generalLineOpacity,
         lineWidth: generalLineWidth,
         lineColor: generalLineColor,
     } = generalLineStyle ?? {};
 
     return {
+        opacity: lineOpacity ?? generalLineOpacity ?? 1,
         stroke: lineColor ?? generalLineColor ?? 'lightgray',
         strokeWidth: lineWidth ?? generalLineWidth,
     };
