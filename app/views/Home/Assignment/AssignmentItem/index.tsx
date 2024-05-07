@@ -8,14 +8,14 @@ import {
     DateOutput,
 } from '@the-deep/deep-ui';
 
-import { Assignment } from '#types';
 import generateString from '#utils/string';
 import routes from '#base/configs/routes';
 
+import { Assignment } from '..';
 import styles from './styles.css';
 
 interface AssignmentItemProps extends Assignment {
-    handleClick: (id: number) => void;
+    handleClick: (id: string) => void;
     markAsDonePending: boolean;
 }
 
@@ -24,10 +24,9 @@ function AssignmentItem(props: AssignmentItemProps) {
         id,
         handleClick: handleClickFromProps,
         markAsDonePending,
-        createdByDetails,
-        contentObjectDetails,
-        contentObjectType,
-        projectDetails,
+        createdBy,
+        contentData,
+        project,
         createdAt,
     } = props;
 
@@ -36,26 +35,30 @@ function AssignmentItem(props: AssignmentItemProps) {
     }, [id, handleClickFromProps]);
 
     const contentLink = useMemo(() => {
-        if (contentObjectType === 'lead') {
+        if (contentData?.contentType === 'LEAD') {
             return (generateString(
                 'source {link}',
                 {
-                    link: (contentObjectDetails?.id && projectDetails?.id && (
+                    link: (contentData?.lead?.id && project?.id && (
                         <Link
                             to={generatePath(routes.entryEdit.path, {
-                                projectId: projectDetails.id,
-                                leadId: contentObjectDetails.id,
+                                projectId: project?.id,
+                                leadId: contentData?.lead?.id,
                             })}
                             className={styles.link}
                         >
-                            {contentObjectDetails.title}
+                            {contentData?.lead?.title}
                         </Link>
                     )),
                 },
             ));
         }
-        if (contentObjectType === 'entryreviewcomment' || contentObjectType === 'entrycomment') {
-            if (!contentObjectDetails || !projectDetails?.id || !contentObjectDetails?.lead) {
+        if (contentData?.contentType === 'ENTRY_REVIEW_COMMENT') {
+            if (
+                !contentData?.entryReviewComment
+                || !project?.id
+                || !contentData?.entryReviewComment?.entryId
+            ) {
                 return (
                     <span>
                         an entry
@@ -64,12 +67,11 @@ function AssignmentItem(props: AssignmentItemProps) {
             }
             const editEntryLink = {
                 pathname: (generatePath(routes.entryEdit.path, {
-                    projectId: projectDetails.id,
-                    leadId: contentObjectDetails.lead,
+                    projectId: project.id,
+                    leadId: contentData?.entryReviewComment?.leadId,
                 })),
                 state: {
-                    // NOTE: Replace this later to clientId
-                    entryServerId: contentObjectDetails.entry,
+                    entryServerId: contentData?.entryReviewComment?.entryId,
                     activePage: 'primary',
                 },
                 hash: '#/primary-tagging',
@@ -85,9 +87,8 @@ function AssignmentItem(props: AssignmentItemProps) {
         }
         return null;
     }, [
-        contentObjectType,
-        contentObjectDetails,
-        projectDetails,
+        contentData,
+        project,
     ]);
 
     return (
@@ -111,17 +112,17 @@ function AssignmentItem(props: AssignmentItemProps) {
                 {generateString(
                     '{createdByName} assigned you to {linkToItem} in {project}.',
                     {
-                        createdByName: createdByDetails.displayName,
+                        createdByName: createdBy?.displayName,
                         linkToItem: contentLink,
                         project: (
                             <Link
                                 to={generatePath(
                                     routes.tagging.path,
-                                    { projectId: projectDetails?.id },
+                                    { projectId: project?.id },
                                 )}
                                 className={styles.link}
                             >
-                                {projectDetails?.title}
+                                {project?.title}
                             </Link>
                         ),
                     },
