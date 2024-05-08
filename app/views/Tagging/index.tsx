@@ -14,6 +14,7 @@ import { useQuery } from '@apollo/client';
 
 import { useModalState } from '#hooks/stateManagement';
 import ProjectSwitcher from '#components/general/ProjectSwitcher';
+import TestTag from '#components/TestTag';
 import { UserContext } from '#base/context/UserContext';
 import PreloadMessage from '#base/components/PreloadMessage';
 import SubNavbarContext from '#components/SubNavbar/context';
@@ -62,7 +63,6 @@ function Tagging(props: Props) {
     const defaultRoute = generatePath(routes.sources.path, { projectId: project?.id });
 
     const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
-    const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
 
     const [
         isSingleSourceModalShown,
@@ -85,11 +85,9 @@ function Tagging(props: Props) {
     const navbarContextValue = useMemo(
         () => ({
             iconsNode,
-            actionsNode,
             setIconsNode,
-            setActionsNode,
         }),
-        [iconsNode, actionsNode],
+        [iconsNode],
     );
 
     const handleSingleLeadSaveSuccess = useCallback(() => {
@@ -105,6 +103,7 @@ function Tagging(props: Props) {
         <>
             <SubNavbarIcons>
                 <ProjectSwitcher />
+                {project?.isTest && <TestTag />}
             </SubNavbarIcons>
             <SubNavbarActions>
                 <DropdownMenu

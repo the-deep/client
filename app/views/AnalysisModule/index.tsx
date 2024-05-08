@@ -12,6 +12,7 @@ import { generatePath, Redirect, Route, Switch } from 'react-router-dom';
 import SubNavbarContext from '#components/SubNavbar/context';
 import SubNavbar, { SubNavbarIcons } from '#components/SubNavbar';
 import ProjectSwitcher from '#components/general/ProjectSwitcher';
+import TestTag from '#components/TestTag';
 import { ProjectContext } from '#base/context/ProjectContext';
 
 import routes from '#base/configs/routes';
@@ -51,6 +52,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
             <div className={_cs(styles.analysisModule, className)}>
                 <SubNavbarIcons>
                     <ProjectSwitcher />
+                    {project?.isTest && <TestTag />}
                 </SubNavbarIcons>
                 <SubNavbar
                     className={styles.subNavbar}

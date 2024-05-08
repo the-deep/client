@@ -20,12 +20,15 @@ export function SubNavbarChildren(props: SubNavbarChildrenProps) {
     const {
         children,
     } = props;
+
     const {
         childrenNode,
     } = useContext(NavbarContext);
+
     if (!childrenNode) {
         return null;
     }
+
     return ReactDOM.createPortal(
         children,
         childrenNode,
@@ -35,16 +38,20 @@ export function SubNavbarChildren(props: SubNavbarChildrenProps) {
 interface SubNavbarIconsProps {
     children: React.ReactNode;
 }
+
 export function SubNavbarIcons(props: SubNavbarIconsProps) {
     const {
         children,
     } = props;
+
     const {
         iconsNode,
     } = useContext(NavbarContext);
+
     if (!iconsNode) {
         return null;
     }
+
     return ReactDOM.createPortal(
         children,
         iconsNode,
@@ -54,16 +61,20 @@ export function SubNavbarIcons(props: SubNavbarIconsProps) {
 interface SubNavbarActionsProps {
     children: React.ReactNode;
 }
+
 export function SubNavbarActions(props: SubNavbarActionsProps) {
     const {
         children,
     } = props;
+
     const {
         actionsNode,
     } = useContext(NavbarContext);
+
     if (!actionsNode) {
         return null;
     }
+
     return ReactDOM.createPortal(
         children,
         actionsNode,
