@@ -32,7 +32,7 @@
 
             .authors {
                 display: inline-block;
-                max-width: 100px;
+                max-width: 80px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -47,9 +47,15 @@
                 }
             }
             .header-actions {
+                display: flex;
                 transition: all var(--dui-duration-transition-medium) ease-in-out;
                 opacity: 0;
                 color: var(--dui-color-accent);
+                gap: var(--dui-spacing-super-small);
+                > * {
+                    padding: var(--dui-spacing-extra-small);
+                    font-size: var(--dui-font-size-small);
+                }
             }
         }
 
