@@ -15,23 +15,22 @@ import {
     Button,
     PendingMessage,
 } from '@the-deep/deep-ui';
+import { gql, useQuery } from '@apollo/client';
 
+import { AnalysisFrameworkRolesQuery } from '#generated/types';
 import NonFieldError from '#components/NonFieldError';
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
-import { MultiResponse, Membership } from '#types';
+import { useLazyRequest } from '#base/utils/restRequest';
+import { Membership } from '#types';
 import NewUserSelectInput, { User } from '#components/selections/NewUserSelectInput';
 import _ts from '#ts';
 
 import styles from './styles.css';
 
 type Member = Pick<Membership, 'id' | 'member' | 'memberName' | 'role'>;
-interface Role {
-    id: number;
-    title: string;
-}
+type AnalysisFrameworkRolesType = NonNullable<NonNullable<AnalysisFrameworkRolesQuery>['analysisFrameworkRoles']>[number];
 
-const roleKeySelector = (d: Role) => d.id;
-const roleLabelSelector = (d: Role) => d.title;
+const roleKeySelector = (d: AnalysisFrameworkRolesType) => Number(d.id);
+const roleLabelSelector = (d: AnalysisFrameworkRolesType) => d.title;
 
 type FormType = {
     id?: number;
@@ -58,6 +57,18 @@ const schema: FormSchema = {
 };
 
 const defaultFormValue: PartialForm<FormType> = {};
+
+const ANALYSIS_FRAMEWORK_ROLES = gql`
+    query AnalysisFrameworkRoles {
+        analysisFrameworkRoles {
+            id
+            type
+            title
+            isPrivateRole
+            isDefaultRole
+        }
+    }
+`;
 
 interface ValueToSend {
     role: number;
@@ -109,21 +120,19 @@ function AddUserModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const queryForRoles = useMemo(
-        () => (isPrivateFramework ? ({ is_default_role: false }) : undefined),
-        [isPrivateFramework],
+    const {
+        data: analysisFrameworkRolesResponse,
+        loading: analysisFrameworkRolesLoading,
+    } = useQuery<AnalysisFrameworkRolesQuery>(
+        ANALYSIS_FRAMEWORK_ROLES,
     );
 
-    const {
-        pending: pendingRoles,
-        response: frameworkRolesResponse,
-    } = useRequest<MultiResponse<Role>>({
-        url: isPrivateFramework
-            ? 'server://private-framework-roles/'
-            : 'server://public-framework-roles/',
-        method: 'GET',
-        query: queryForRoles,
-    });
+    const analysisFrameworkRoles = useMemo(() => (
+        analysisFrameworkRolesResponse
+            ?.analysisFrameworkRoles?.filter(
+                (role) => role.isPrivateRole === isPrivateFramework,
+            )
+    ), [analysisFrameworkRolesResponse, isPrivateFramework]);
 
     const {
         pending: pendingAddAction,
@@ -182,7 +191,7 @@ function AddUserModal(props: Props) {
         ] : []
     ), [userValue]);
 
-    const pendingRequests = pendingRoles;
+    const pendingRequests = analysisFrameworkRolesLoading;
 
     return (
         <Modal
@@ -225,7 +234,7 @@ function AddUserModal(props: Props) {
             />
             <SelectInput
                 name="role"
-                options={frameworkRolesResponse?.results}
+                options={analysisFrameworkRoles}
                 keySelector={roleKeySelector}
                 labelSelector={roleLabelSelector}
                 onChange={setFieldValue}
