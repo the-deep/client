@@ -1,5 +1,10 @@
-import React, { memo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { memo, useMemo } from 'react';
+import { gql, useQuery } from '@apollo/client';
+import {
+    _cs,
+    isNotDefined,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     Button,
     ButtonProps,
@@ -10,22 +15,36 @@ import {
     Kraken,
 } from '@the-deep/deep-ui';
 
-import { useRequest } from '#base/utils/restRequest';
+import {
+    AnalysisFrameworkDetailsQuery,
+    AnalysisFrameworkDetailsQueryVariables,
+} from '#generated/types';
+
 import { useModalState } from '#hooks/stateManagement';
-import { AnalyticalFramework } from '#types';
 import _ts from '#ts';
 
 import styles from './styles.css';
 
-const query = {
-    fields: ['title', 'preview_image', 'id'],
-};
+const ANALYSIS_FRAMEWORK_DETAILS = gql`
+    query AnalysisFrameworkDetails(
+        $frameworkId: ID!,
+    ) {
+        analysisFramework(id: $frameworkId) {
+            title
+            id
+            previewImage {
+                name
+                url
+            }
+        }
+    }
+`;
 
 export type Props = {
     label?: string;
     className?: string;
     variant?: ButtonProps<string>['variant'];
-    frameworkId?: number | string;
+    frameworkId?: string;
     image?: string;
 }
 
@@ -44,15 +63,33 @@ function FrameworkImageButton(props: Props) {
         hideModal,
     ] = useModalState(false);
 
+    const analysisFrameworkVariables = useMemo(
+        (): AnalysisFrameworkDetailsQueryVariables | undefined => (
+            frameworkId ? { frameworkId } : undefined
+        ),
+        [frameworkId],
+    );
+
     const {
-        pending,
-        response: frameworkDetails,
-    } = useRequest<AnalyticalFramework>({
-        skip: !isModalVisible || !frameworkId,
-        url: `server://analysis-frameworks/${frameworkId}/`,
-        query,
-        method: 'GET',
-    });
+        data: analysisFrameworkData,
+        loading: analysisFrameworkLoading,
+    } = useQuery<AnalysisFrameworkDetailsQuery, AnalysisFrameworkDetailsQueryVariables>(
+        ANALYSIS_FRAMEWORK_DETAILS,
+        {
+            skip: isNotDefined(analysisFrameworkVariables),
+            variables: analysisFrameworkVariables,
+        },
+    );
+
+    const imageSource = useMemo(
+        () => {
+            if (isDefined(image)) {
+                return image;
+            }
+            return analysisFrameworkData?.analysisFramework?.previewImage?.url;
+        },
+        [analysisFrameworkData, image],
+    );
 
     return (
         <>
@@ -79,11 +116,11 @@ function FrameworkImageButton(props: Props) {
                     onCloseButtonClick={hideModal}
                     bodyClassName={styles.content}
                 >
-                    {pending && <PendingMessage />}
-                    {(frameworkDetails?.previewImage || image) ? (
+                    {analysisFrameworkLoading && <PendingMessage />}
+                    {imageSource ? (
                         <ImagePreview
-                            alt={frameworkDetails?.title ?? _ts('projectEdit', 'frameworkReferenceImageAlt')}
-                            src={image ?? frameworkDetails?.previewImage}
+                            alt={analysisFrameworkData?.analysisFramework?.title ?? _ts('projectEdit', 'frameworkReferenceImageAlt')}
+                            src={imageSource}
                         />
                     ) : (
                         <Message

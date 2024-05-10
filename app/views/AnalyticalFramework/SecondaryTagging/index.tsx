@@ -35,7 +35,7 @@ import styles from './styles.css';
 
 interface Props<K extends string> {
     className?: string;
-    frameworkId: number | undefined;
+    frameworkId: string | undefined;
 
     allWidgets: WidgetsType | undefined;
 

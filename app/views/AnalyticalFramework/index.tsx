@@ -157,10 +157,9 @@ function AnalyticalFramework(props: Props) {
 
     const location = useLocation();
 
-    const { frameworkId: frameworkIdFromParams } = useParams<{ frameworkId: string }>();
+    const { frameworkId } = useParams<{ frameworkId: string }>();
     const accessPrivateProject = !!user?.accessibleFeatures?.some((f) => f.key === 'PRIVATE_PROJECT');
-    const frameworkId = !frameworkIdFromParams ? undefined : +frameworkIdFromParams;
-    const createMode = !frameworkIdFromParams;
+    const createMode = !frameworkId;
 
     // NOTE: userId should be defined in this page
     const userId = user?.id ?? 'NULL';
@@ -252,9 +251,9 @@ function AnalyticalFramework(props: Props) {
 
     const frameworkQueryVariables = useMemo(
         (): CurrentFrameworkQueryVariables => ({
-            id: frameworkIdFromParams,
+            id: frameworkId,
         }),
-        [frameworkIdFromParams],
+        [frameworkId],
     );
     const {
         loading: frameworkQueryLoading,
