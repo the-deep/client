@@ -644,16 +644,13 @@ function ReportEdit(props: Props) {
     const leftContentRef = useRef<HTMLDivElement>(null);
 
     const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
-    const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
 
     const navbarContextValue = useMemo(
         () => ({
             iconsNode,
-            actionsNode,
             setIconsNode,
-            setActionsNode,
         }),
-        [iconsNode, actionsNode],
+        [iconsNode],
     );
 
     const [
