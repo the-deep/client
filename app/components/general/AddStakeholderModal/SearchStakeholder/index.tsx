@@ -13,13 +13,14 @@ import {
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import AddOrganizationButton from '#components/general/AddOrganizationButton';
+import { type OrganizationItemType } from '#components/general/AddOrganizationModal';
 import _ts from '#ts';
 import {
     OrganizationsListQuery,
     OrganizationsListQueryVariables,
 } from '#generated/types';
 
-import Stakeholder, { OrganizationItemType } from './Stakeholder';
+import Stakeholder from './Stakeholder';
 import styles from './styles.css';
 
 const ORGANIZATIONS_LIST = gql`

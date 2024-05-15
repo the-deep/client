@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useQuery, gql } from '@apollo/client';
+import { useMutation, useQuery, gql } from '@apollo/client';
 import {
     useForm,
     requiredCondition,
@@ -20,22 +20,18 @@ import {
 
 import _ts from '#ts';
 import {
-    useLazyRequest,
-} from '#base/utils/restRequest';
-import {
     OrganizationTypesQuery,
     OrganizationTypesQueryVariables,
     OrganizationTypeType,
+    CreateOrganizationMutation,
+    CreateOrganizationMutationVariables,
 } from '#generated/types';
-import {
-    Organization,
-} from '#types';
-import { OrganizationItemType } from '#components/general/AddStakeholderModal/SearchStakeholder/Stakeholder';
 
 import styles from './styles.css';
 
-type FormType = Partial<Pick<Organization, 'title' | 'shortName' | 'url' | 'organizationType' | 'logo'>>
-type FormSchema = ObjectSchema<FormType>;
+type FormType = NonNullable<CreateOrganizationMutationVariables['data']>;
+type PartialFormType = Partial<FormType>;
+type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const organizationSchema: FormSchema = {
     fields: (): FormSchemaFields => ({
@@ -47,10 +43,12 @@ const organizationSchema: FormSchema = {
     }),
 };
 
-const organizationTypeKeySelector = (d: OrganizationTypeType): number => Number(d.id);
+const organizationTypeKeySelector = (d: OrganizationTypeType): string => d.id;
 const organizationTypeLabelSelector = (d: OrganizationTypeType): string => d.title;
 
-const defaultFormValue: FormType = {};
+const defaultFormValue: PartialFormType = {};
+
+export type OrganizationItemType = NonNullable<NonNullable<CreateOrganizationMutation['organizationCreate']>['result']>;
 
 export interface Props {
     onModalClose: () => void;
@@ -65,6 +63,41 @@ const ORGANIZATION_TYPES = gql`
                 id
                 shortName
                 title
+            }
+        }
+    }
+`;
+
+const CREATE_ORGANIZATION = gql`
+    mutation CreateOrganization (
+        $data: OrganizationInputType!
+    ) {
+        organizationCreate (
+            data: $data
+        ) {
+            errors
+            ok
+            result {
+                id
+                longName
+                shortName
+                title
+                url
+                verified
+                organizationType {
+                    id
+                    title
+                    shortName
+                    description
+                }
+                logo {
+                    id
+                    title
+                    file {
+                        name
+                        url
+                    }
+                }
             }
         }
     }
@@ -85,30 +118,47 @@ function AddOrganizationModal(props: Props) {
         ORGANIZATION_TYPES,
     );
 
-    const {
-        pending: organizationPostPending,
-        trigger: createOrganization,
-    } = useLazyRequest<OrganizationItemType, FormType>({
-        url: 'server://organizations/',
-        method: 'POST',
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
-            if (onOrganizationAdd) {
-                onOrganizationAdd({
-                    ...response,
-                    id: response.id,
-                });
-            }
-            alert.show(
-                'Successfully created new organization.',
-                {
-                    variant: 'success',
-                },
-            );
-            onModalClose();
+    const [
+        createOrganization,
+        { loading: createOrganizationPending },
+    ] = useMutation<CreateOrganizationMutation, CreateOrganizationMutationVariables>(
+        CREATE_ORGANIZATION,
+        {
+            onCompleted: (response) => {
+                if (!response?.organizationCreate?.result) {
+                    return;
+                }
+
+                if (response?.organizationCreate?.ok) {
+                    alert.show(
+                        'Successfully created new organization.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                    onModalClose();
+                    if (onOrganizationAdd) {
+                        onOrganizationAdd(response?.organizationCreate?.result);
+                    }
+                } else {
+                    alert.show(
+                        'Failed to create organization.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to create organization.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
         },
-        failureMessage: 'Failed to create organization.',
-    });
+    );
 
     const {
         pristine,
@@ -126,13 +176,17 @@ function AddOrganizationModal(props: Props) {
             const submit = createSubmitHandler(
                 validate,
                 setError,
-                createOrganization,
+                (val) => createOrganization({
+                    variables: {
+                        data: val as FormType,
+                    },
+                }),
             );
             submit();
         },
         [setError, validate, createOrganization],
     );
-    const pending = organizationTypesPending || organizationPostPending;
+    const pending = organizationTypesPending || createOrganizationPending;
 
     return (
         <Modal
