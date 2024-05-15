@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import {
     _cs,
     compareDate,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     AreaChart,
@@ -20,13 +21,19 @@ import {
 } from '@the-deep/deep-ui';
 
 import RechartsLegend from '#components/RechartsLegend';
-import { ProjectRecentActivity } from '#types';
+import {
+    ProjectStatSummaryQuery,
+} from '#generated/types';
 
 import styles from './styles.css';
 
+type RecentEntriesActivitiesType = NonNullable<NonNullable<ProjectStatSummaryQuery>['userProjectStatSummary']>['recentEntriesActivities'];
+type ProjectDetailsType = NonNullable<
+    NonNullable<ProjectStatSummaryQuery['userProjectStatSummary']>['recentEntriesProjectDetails']>;
+
 function mergeItems<T>(
     list: T[],
-    keySelector: (a: T) => string | number,
+    keySelector: (a: T) => number,
     merge: (a: T, b: T) => T,
 ) {
     const items: { [key: string]: T } = {
@@ -68,26 +75,31 @@ const dateFormatter = (value: number | string) => {
 
 interface Props {
     className?: string;
-    data?: ProjectRecentActivity;
+    data?: RecentEntriesActivitiesType;
+    projectDetails?: ProjectDetailsType;
 }
 
 function Activity(props: Props) {
     const {
         className,
         data,
+        projectDetails,
     } = props;
 
     const areaData = useMemo(
         () => {
-            const activitiesByDate: {
+            if (isNotDefined(data)) {
+                return undefined;
+            }
+
+            const activitiesByDate: ({
                 date: number;
-                [key: number]: number;
-            }[] = data?.activities.map((item) => ({
-                [+item.project]: item.count,
+                [key: string]: number;
+            }[]) = data?.map((item) => ({
+                [item.projectId]: item.count,
                 date: new Date(item.date).getTime(),
             })) ?? [];
 
-            // NOTE: using projectId as key to read multiple projects' count
             return mergeItems(
                 activitiesByDate,
                 (item) => item.date,
@@ -97,13 +109,13 @@ function Activity(props: Props) {
                 }),
             ).sort((a, b) => compareDate(a.date, b.date));
         },
-        [data?.activities],
+        [data],
     );
 
     return (
         <Card className={_cs(className, styles.activity)}>
             <ResponsiveContainer className={styles.container}>
-                {(areaData.length > 0) ? (
+                {(areaData && areaData.length > 0) ? (
                     <AreaChart data={areaData}>
                         <defs>
                             {colorScheme.map((color) => (
@@ -149,7 +161,7 @@ function Activity(props: Props) {
                             align="left"
                             content={RechartsLegend}
                         />
-                        {data?.projects.map((p, index) => {
+                        {projectDetails?.map((p, index) => {
                             const color = colorScheme[index % colorScheme.length];
                             const fillColorScheme = `${color.substring(1)}-gradient`;
 
