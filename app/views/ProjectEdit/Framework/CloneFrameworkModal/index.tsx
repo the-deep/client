@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
     isDefined,
 } from '@togglecorp/fujs';
+import { useMutation, gql } from '@apollo/client';
 import {
     Modal,
     useAlert,
@@ -14,45 +15,58 @@ import {
 import {
     ObjectSchema,
     PartialForm,
+    removeNull,
     requiredStringCondition,
     useForm,
     getErrorObject,
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
-import { useLazyRequest } from '#base/utils/restRequest';
+import {
+    AnalysisFrameworkCloneMutation,
+    AnalysisFrameworkCloneMutationVariables,
+} from '#generated/types';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
+
 import _ts from '#ts';
 
 import styles from './styles.css';
 
-type FormType = {
-    title: string;
-    description?: string;
-};
+const CLONE_FRAMEWORK = gql`
+    mutation analysisFrameworkClone(
+        $data: AnalysisFrameworkCloneInputType!,
+    ) {
+        analysisFrameworkClone(
+            data: $data
+        ) {
+            errors
+            ok
+            result {
+                id
+                title
+            }
+        }
+    }
+`;
 
-interface Framework {
-    id: number;
-}
+type FormType = NonNullable<AnalysisFrameworkCloneMutationVariables['data']>;
+type PartialFormType = Partial<FormType>;
 
-type FormSchema = ObjectSchema<PartialForm<FormType>>;
+type FormSchema = ObjectSchema<PartialForm<PartialFormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
+        afId: [requiredStringCondition],
+        project: [requiredStringCondition],
         title: [requiredStringCondition],
-        description: [],
+        description: [requiredStringCondition],
     }),
 };
 
-const defaultFormValue: PartialForm<FormType> = {};
-
-interface ValueToSend {
-    title: string;
-    description?: string;
-}
-
 interface Props {
     className?: string;
+    projectId: string;
     frameworkToClone: string;
     frameworkTitle?: string;
     frameworkDescription?: string;
@@ -63,6 +77,7 @@ interface Props {
 function CloneFrameworkModal(props: Props) {
     const {
         className,
+        projectId,
         frameworkToClone,
         frameworkTitle,
         frameworkDescription,
@@ -70,10 +85,22 @@ function CloneFrameworkModal(props: Props) {
         onModalClose,
     } = props;
 
-    const formValueFromProps: PartialForm<FormType> = frameworkTitle ? {
-        title: `${frameworkTitle} (cloned)`,
-        description: frameworkDescription,
-    } : defaultFormValue;
+    const defaultFormValue: PartialFormType = useMemo(() => ({
+        afId: frameworkToClone,
+        project: projectId,
+    }), [frameworkToClone, projectId]);
+
+    const formValueFromProps: PartialFormType = useMemo(() => (
+        frameworkTitle ? {
+            ...defaultFormValue,
+            title: `${frameworkTitle} (cloned)`,
+            description: frameworkDescription,
+        } : defaultFormValue
+    ), [
+        frameworkDescription,
+        frameworkTitle,
+        defaultFormValue,
+    ]);
 
     const {
         pristine,
@@ -87,36 +114,61 @@ function CloneFrameworkModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const {
-        pending: pendingCloneAction,
-        trigger: triggerCreateFramework,
-    } = useLazyRequest<Framework, ValueToSend>({
-        url: `server://clone-analysis-framework/${frameworkToClone}/`,
-        method: 'POST',
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
-            onCloneSuccess(String(response.id));
-            alert.show(
-                _ts('projectEdit', 'cloneFrameworkSuccessMessage'),
-                { variant: 'success' },
-            );
+    const [
+        cloneFramework,
+        { loading: cloneFrameworkPending },
+    ] = useMutation<AnalysisFrameworkCloneMutation, AnalysisFrameworkCloneMutationVariables>(
+        CLONE_FRAMEWORK,
+        {
+            onCompleted: (response) => {
+                const cloneFrameworkResponse = response
+                    ?.analysisFrameworkClone;
+                if (cloneFrameworkResponse?.ok && cloneFrameworkResponse.result?.id) {
+                    alert.show(
+                        'Successfully cloned framework.',
+                        { variant: 'success' },
+                    );
+                    onCloneSuccess(cloneFrameworkResponse.result?.id);
+                } else if (cloneFrameworkResponse?.errors) {
+                    const formError = transformToFormError(
+                        removeNull(cloneFrameworkResponse.errors) as ObjectError[],
+                    );
+                    setError(formError);
+                    alert.show(
+                        'Failed to clone framework.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to clone framework',
+                    { variant: 'error' },
+                );
+            },
         },
-        failureMessage: _ts('projectEdit', 'projectMembershipPostFailed'),
-    });
-
+    );
     const handleSubmit = useCallback(
         () => {
             const submit = createSubmitHandler(
                 validate,
                 setError,
-                (val) => triggerCreateFramework(val as ValueToSend),
+                (val) => cloneFramework({
+                    variables: {
+                        data: val as FormType,
+                    },
+                }),
             );
             submit();
         },
-        [setError, validate, triggerCreateFramework],
+        [
+            setError,
+            validate,
+            cloneFramework,
+        ],
     );
 
-    const pendingRequests = pendingCloneAction;
+    const pendingRequests = cloneFrameworkPending;
 
     return (
         <Modal
@@ -135,7 +187,7 @@ function CloneFrameworkModal(props: Props) {
                     name="submit"
                     variant="primary"
                     type="submit"
-                    disabled={pristine || pendingCloneAction}
+                    disabled={pristine || cloneFrameworkPending}
                     onClick={handleSubmit}
                 >
                     {_ts('projectEdit', 'submitLabel')}
