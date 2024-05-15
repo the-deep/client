@@ -377,24 +377,26 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         getUserToken();
     }, [getUserToken]);
 
-    const handleOrganizationAdd = useCallback((val: { id: string; title: string }) => {
-        const transformedVal = {
-            id: String(val.id),
-            title: val.title,
-        };
-        if (organizationAddType === 'publisher') {
-            setFieldValue(transformedVal.id, 'source');
-            onSourceOrganizationOptionsChange((oldVal) => [...oldVal ?? [], transformedVal]);
-        } else if (organizationAddType === 'author') {
-            setFieldValue((oldVal: string[] | undefined | null) => [...oldVal ?? [], transformedVal.id], 'authors');
-            onAuthorOrganizationOptionsChange((oldVal) => [...oldVal ?? [], transformedVal]);
-        }
-    }, [
-        organizationAddType,
-        setFieldValue,
-        onSourceOrganizationOptionsChange,
-        onAuthorOrganizationOptionsChange,
-    ]);
+    const handleOrganizationAdd = useCallback(
+        (val: { id: string; title: string }) => {
+            const transformedVal = {
+                id: val.id,
+                title: val.title,
+            };
+            if (organizationAddType === 'publisher') {
+                setFieldValue(transformedVal.id, 'source');
+                onSourceOrganizationOptionsChange((oldVal) => [...oldVal ?? [], transformedVal]);
+            } else if (organizationAddType === 'author') {
+                setFieldValue((oldVal: string[] | undefined | null) => [...oldVal ?? [], transformedVal.id], 'authors');
+                onAuthorOrganizationOptionsChange((oldVal) => [...oldVal ?? [], transformedVal]);
+            }
+        }, [
+            organizationAddType,
+            setFieldValue,
+            onSourceOrganizationOptionsChange,
+            onAuthorOrganizationOptionsChange,
+        ],
+    );
 
     const pending = pendingFromProps || pendingUserToken || webInfoPending || rawWebInfoPending;
 
