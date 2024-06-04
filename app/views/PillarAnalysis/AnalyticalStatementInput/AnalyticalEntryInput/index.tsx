@@ -270,7 +270,6 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                         entryType={entry.entryType}
                         readOnly
                         imageRaw={undefined}
-                        leadImageUrl={undefined}
                     />
                 )}
                 {entry && entryCardFlipped && (

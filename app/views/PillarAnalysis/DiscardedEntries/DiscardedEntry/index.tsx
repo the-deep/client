@@ -153,7 +153,6 @@ function DiscardedEntry(props: Props) {
                 image={image}
                 value={excerpt}
                 imageRaw={undefined}
-                leadImageUrl={undefined}
                 readOnly
             />
         </Container>

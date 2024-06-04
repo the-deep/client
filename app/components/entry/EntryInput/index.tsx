@@ -254,8 +254,6 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                             image={entryImage}
                             imageRaw={value.imageRaw}
                             readOnly={readOnly}
-                            // FIXME: pass this after image drag/drop is implemented
-                            leadImageUrl={undefined}
                         />
                     </Container>
                 )}

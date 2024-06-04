@@ -1,6 +1,6 @@
 .create-excerpt-popup {
     width: 30rem;
-    max-width: unset!important;
+    max-width: unset !important;
 
     .create-excerpt-content {
         padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
@@ -79,6 +79,12 @@
         }
     }
 
+    .table-visuals-tab {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+    }
+
     .original-tab {
         display: flex;
         flex-direction: column;
@@ -108,7 +114,7 @@
         }
     }
 
-    .entry-list-tab {
+    /* .entry-list-tab {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
@@ -124,5 +130,5 @@
                 height: 200px;
             }
         }
-    }
+    } */
 }

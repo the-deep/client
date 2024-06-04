@@ -11,6 +11,7 @@ import {
     isNotDefined,
     isDefined,
     randomString,
+    listToMap,
 } from '@togglecorp/fujs';
 import { gql, useQuery } from '@apollo/client';
 import {
@@ -37,6 +38,9 @@ import {
     PendingMessage,
     Message,
     Tooltip,
+    Pager,
+    ListView,
+    Switch,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -58,6 +62,7 @@ import {
     LeadPreviewForTextQuery,
     LeadPreviewForTextQueryVariables,
     LeadEntriesQuery,
+    LeadPreviewAttachmentType,
 } from '#generated/types';
 
 import { PartialEntryType as EntryInput } from '#components/entry/schema';
@@ -69,19 +74,50 @@ import {
 import CanvasDrawModal from './CanvasDrawModal';
 import SimplifiedTextView from './SimplifiedTextView';
 import AutoEntriesModal from './AutoEntriesModal';
+import TablesAndVisualsItem from './TableAndVisualItem';
 import EntryItem, { ExcerptModal } from './EntryItem';
+
 import styles from './styles.css';
 
 type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
+export type EntryAttachmentsMap = { [key: string]: Entry['entryAttachment'] | undefined };
+
 type Lead = NonNullable<NonNullable<LeadEntriesQuery['project']>['lead']>;
 
 const LEAD_PREVIEW = gql`
     query LeadPreviewForText(
         $leadId: ID!,
         $projectId: ID!,
+        $page: Int,
+        $pageSize: Int,
+        $excludeAttachmentId: [ID!],
     ) {
         project(id: $projectId) {
             id
+            leadPreviewAttachments(
+                lead: $leadId,
+                page: $page,
+                pageSize: $pageSize,
+                excludeAttachmentIds: $excludeAttachmentId, 
+            ) {
+                results {
+                    id
+                    pageNumber
+                    type
+                    file {
+                        name
+                        url
+                    }
+                    filePreview {
+                        name
+                        url
+                    }
+                    order
+                }
+                totalCount
+                page
+                pageSize
+            }
             lead(id: $leadId) {
                 id
                 extractionStatus
@@ -98,7 +134,9 @@ const LEAD_PREVIEW = gql`
 
 const entryKeySelector = (e: EntryInput) => e.clientId;
 
-export type TabOptions = 'simplified' | 'original' | 'entries' | undefined;
+const leadAttachmentKeySelector = (e: LeadPreviewAttachmentType) => e.id;
+
+export type TabOptions = 'simplified' | 'original' | 'entries' | 'visuals' | undefined;
 
 interface Props {
     className?: string;
@@ -112,15 +150,18 @@ interface Props {
     onEntryRestore?: (entryClientId: string) => void;
     onApproveButtonClick?: (entryClientId: string) => void;
     onDiscardButtonClick?: (entryClientId: string) => void;
+    onAttachmentClick?: (entryClientId: string) => void;
     lead?: Lead | null;
     leadId: string;
     hideSimplifiedPreview?: boolean;
     hideOriginalPreview?: boolean;
     entryImagesMap: EntryImagesMap | undefined;
+    entryAttachmentsMap?: EntryAttachmentsMap | undefined;
     isEntrySelectionActive?: boolean;
     entriesError?: Partial<Record<string, boolean>> | undefined;
     projectId: string | undefined;
-    defaultTab?: 'entries' | 'simplified' | 'original';
+    leadAttachmentId?: string;
+    defaultTab?: 'entries' | 'simplified' | 'original' | 'visuals';
     frameworkDetails?: Framework;
     activeTabRef?: React.MutableRefObject<{
         setActiveTab: React.Dispatch<React.SetStateAction<TabOptions>>;
@@ -128,7 +169,13 @@ interface Props {
     listComponentRef?: React.MutableRefObject<{
         scrollTo: (item: string) => void;
     } | null>;
+    page?: number;
+    pageSize?: number;
+    setPage?: (page: number) => void;
+    setPageSize?: (pageSize: number) => void;
 }
+
+const defaultMaxItemsPerPage = 10;
 
 function LeftPane(props: Props) {
     const {
@@ -155,7 +202,15 @@ function LeftPane(props: Props) {
         activeTabRef,
         frameworkDetails,
         onAssistedEntryAdd,
+        leadAttachmentId,
+        entryAttachmentsMap,
     } = props;
+
+    const [showResults, setShowResults] = useState(false);
+
+    const handleToggle = () => {
+        setShowResults(!showResults);
+    };
 
     const alert = useAlert();
     const { user } = useContext(UserContext);
@@ -200,13 +255,22 @@ function LeftPane(props: Props) {
     const [fullScreenMode, setFullScreenMode] = useState(false);
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = useRef(null);
+    const [activePage, setActivePage] = useState<number>(1);
+    const [maxItemsPerPage, setMaxItemsPerPage] = useState(defaultMaxItemsPerPage);
 
     const variables = useMemo(
         () => ((leadId && projectId) ? ({
             leadId,
             projectId,
+            page: activePage,
+            pageSize: maxItemsPerPage,
         }) : undefined),
-        [leadId, projectId],
+        [
+            leadId,
+            projectId,
+            activePage,
+            maxItemsPerPage,
+        ],
     );
 
     const {
@@ -223,6 +287,8 @@ function LeftPane(props: Props) {
 
     const leadPreview = leadPreviewData?.project?.lead?.leadPreview;
     const extractionStatus = leadPreviewData?.project?.lead?.extractionStatus;
+    const leadPreviewAttachments = leadPreviewData?.project?.leadPreviewAttachments?.results;
+    const leadPreviewCount = leadPreviewData?.project?.leadPreviewAttachments?.totalCount;
 
     const handleScreenshotCaptureError = useCallback((message: React.ReactNode) => {
         alert.show(
@@ -254,6 +320,7 @@ function LeftPane(props: Props) {
                 entryType: 'IMAGE',
                 lead: leadId,
                 imageRaw: capturedImageUrl,
+                leadAttachment: leadAttachmentId,
             });
         }
         if (fullScreenMode && isDefined(document.exitFullscreen)) {
@@ -263,6 +330,7 @@ function LeftPane(props: Props) {
         fullScreenMode,
         capturedImageUrl,
         leadId,
+        leadAttachmentId,
         onEntryCreate,
         setShowCanvasDrawModalFalse,
         setShowScreenshotFalse,
@@ -302,6 +370,19 @@ function LeftPane(props: Props) {
         }
     }, [leadId, onEntryCreate]);
 
+    const handleAttachmentClick = useCallback((selectedAttachment: string) => {
+        if (onEntryCreate) {
+            onEntryCreate({
+                clientId: randomString(),
+                entryType: 'ATTACHMENT',
+                lead: leadId,
+                leadAttachment: selectedAttachment,
+                excerpt: '',
+                droppedExcerpt: '',
+            });
+        }
+    }, [leadId, onEntryCreate]);
+
     const handleExcerptAddFromOriginal = useCallback((selectedText: string | undefined) => {
         if (onEntryCreate) {
             onEntryCreate({
@@ -319,6 +400,23 @@ function LeftPane(props: Props) {
         }
     }, [leadId, onEntryCreate]);
 
+    const entriesWithLeadAttachments = useMemo(() => (listToMap(
+        entries?.filter((entry) => isDefined(entry.leadAttachment)),
+        (entry) => entry.leadAttachment ?? '',
+        (entry) => entry.clientId,
+    )), [entries]);
+
+    const allEntriesWithLeadAttachments = entries?.filter(
+        (entry) => isDefined(entry.entryAttachment?.leadAttachmentId),
+    );
+
+    const leadAttachmentIdsToExclude = useMemo(
+        () => ([
+            ...Object.keys(entriesWithLeadAttachments ?? {}),
+            ...(allEntriesWithLeadAttachments ?? []),
+        ]), [entriesWithLeadAttachments, allEntriesWithLeadAttachments],
+    );
+
     const entryItemRendererParams = useCallback((
         entryId: string,
         entry: EntryInput,
@@ -334,7 +432,12 @@ function LeftPane(props: Props) {
         onExcerptChange,
         onEntryDelete,
         onEntryRestore,
+        leadAttachmentImage: entry?.leadAttachment ? leadPreviewAttachments?.find(
+            (attachment) => attachment.id === entry.leadAttachment,
+        ) : undefined,
         entryImage: entry?.image ? entryImagesMap?.[entry.image] : undefined,
+        entryAttachment: entry?.entryAttachment
+            ? entryAttachmentsMap?.[entry.entryAttachment] : undefined,
         onApproveButtonClick,
         onDiscardButtonClick,
         disableClick: isEntrySelectionActive,
@@ -352,6 +455,37 @@ function LeftPane(props: Props) {
         onEntryRestore,
         entryImagesMap,
         isEntrySelectionActive,
+        leadPreviewAttachments,
+        entryAttachmentsMap,
+    ]);
+
+    const leadAttachmentItemRendererParams = useCallback((
+        attachmentId: string,
+        attachment: LeadPreviewAttachmentType,
+        index: number,
+    ) => ({
+        ...attachment,
+        attachmentId: attachment.id,
+        index,
+        entryServerId: attachment?.id,
+        isActive: isDefined(activeEntry)
+            && activeEntry === entriesWithLeadAttachments?.[attachment.id],
+        entryId: entriesWithLeadAttachments?.[attachmentId],
+        onClick: handleAttachmentClick,
+        onApproveButtonClick,
+        onDiscardButtonClick,
+        className: styles.entryItem,
+        disableClick: isEntrySelectionActive,
+        errored: entriesError?.[attachmentId],
+        data: attachment,
+    }), [
+        handleAttachmentClick,
+        onApproveButtonClick,
+        entriesError,
+        onDiscardButtonClick,
+        activeEntry,
+        isEntrySelectionActive,
+        entriesWithLeadAttachments,
     ]);
 
     const activeEntryDetails = useMemo(() => (
@@ -593,6 +727,12 @@ function LeftPane(props: Props) {
                             Simplified Text
                         </Tab>
                     )}
+                    <Tab
+                        name="visuals"
+                        disabled={isEntrySelectionActive}
+                    >
+                        Tables & Visuals
+                    </Tab>
                     {!hideOriginalPreview && (
                         <Tab
                             name="original"
@@ -672,6 +812,7 @@ function LeftPane(props: Props) {
                                     onAddButtonClick={onEntryCreate
                                         ? handleExcerptAddFromSimplified
                                         : undefined}
+                                    // attachmentData={leadPreviewAttachments}
                                     onAssistedEntryAdd={onAssistedEntryAdd}
                                     text={leadPreview?.textExtract}
                                     onExcerptChange={onExcerptChange}
@@ -698,7 +839,7 @@ function LeftPane(props: Props) {
                                     )}
                                     message={(
                                         (extractionStatus === 'PENDING'
-                                        || extractionStatus === 'STARTED')
+                                            || extractionStatus === 'STARTED')
                                             ? 'Simplified text is currently being extracted from this source. Please retry after few minutes.'
                                             : 'Oops! Either the source was empty or we couldn\'t extract its text.'
                                     )}
@@ -724,6 +865,53 @@ function LeftPane(props: Props) {
                         </>
                     </TabPanel>
                 )}
+                <TabPanel
+                    name="visuals"
+                    activeClassName={styles.entryListTab}
+                    retainMount="lazy"
+                >
+                    <Container
+                        contentClassName={styles.tableVisualsTab}
+                        headerIcons={(
+                            <Switch
+                                label="Hide Created entries"
+                                onChange={handleToggle}
+                                name=""
+                                value={showResults}
+                            />
+                        )}
+                        footerActions={(
+                            <Pager
+                                activePage={activePage}
+                                itemsCount={leadPreviewCount ?? 0}
+                                maxItemsPerPage={maxItemsPerPage}
+                                onActivePageChange={setActivePage}
+                                onItemsPerPageChange={setMaxItemsPerPage}
+                            />
+                        )}
+                    >
+                        <ListView
+                            spacing="comfortable"
+                            direction="vertical"
+                            data={leadPreviewAttachments}
+                            renderer={TablesAndVisualsItem}
+                            rendererParams={leadAttachmentItemRendererParams}
+                            className={styles.entryList}
+                            keySelector={leadAttachmentKeySelector}
+                            filtered={false}
+                            errored={false}
+                            pending={false}
+                            emptyIcon={(
+                                <Kraken
+                                    variant="search"
+                                />
+                            )}
+                            emptyMessage="No entries found"
+                            messageShown
+                            messageIconShown
+                        />
+                    </Container>
+                </TabPanel>
                 {!hideOriginalPreview && (
                     <TabPanel
                         name="original"

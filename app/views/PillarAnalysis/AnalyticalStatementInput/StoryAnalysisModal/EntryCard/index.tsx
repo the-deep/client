@@ -156,7 +156,6 @@ function EntryCard(props: Props) {
                     entryType={entry.entryType}
                     readOnly
                     imageRaw={undefined}
-                    leadImageUrl={undefined}
                 />
             )}
             {entry && entryCardFlipped && (

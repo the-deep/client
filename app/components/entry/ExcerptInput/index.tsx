@@ -1,8 +1,11 @@
 import React from 'react';
+import { BsDownload } from 'react-icons/bs';
 import { _cs } from '@togglecorp/fujs';
 import {
+    Container,
     ImagePreview,
     Message,
+    QuickActionLink,
 } from '@the-deep/deep-ui';
 import { genericMemo } from '#utils/common';
 
@@ -19,9 +22,10 @@ type Props<N extends string> = {
     entryType: EntryType['entryType'];
     value: string | undefined | null;
     // droppedExcerpt: EntryType['droppedExcerpt'] | undefined;
-    image: EntryType['image'] | undefined;
-    imageRaw: string | undefined;
-    leadImageUrl: string | undefined;
+
+    image: EntryType['image'] | undefined; // image from server (screenshot)
+    imageRaw: string | undefined; // temporary image
+    entryAttachment?: EntryType['entryAttachment'] | undefined; // copy of lead attachment that also has image from server
 } & ({
     name: N;
     onChange: (newVal: string | undefined, name: N) => void;
@@ -40,12 +44,12 @@ function ExcerptInput<N extends string>(props: Props<N>) {
         entryType,
         image,
         imageRaw,
-        leadImageUrl,
         value,
+        entryAttachment,
     } = props;
 
     if (entryType === 'IMAGE') {
-        const imageSrc = image?.file?.url ?? leadImageUrl ?? imageRaw;
+        const imageSrc = imageRaw ?? image?.file?.url;
         return (
             <div className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}>
                 {imageSrc ? (
@@ -81,6 +85,55 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                     </div>
                 )}
             </div>
+        );
+    }
+    if (entryType === 'ATTACHMENT') {
+        const attachmentSrc = imageRaw ?? entryAttachment?.filePreview?.url;
+        return (
+            <Container
+                className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}
+                headerActions={entryAttachment?.entryFileType === 'XLSX' ? (
+                    <QuickActionLink
+                        title="Open external"
+                        to={entryAttachment?.file?.url || ''}
+                    >
+                        <BsDownload />
+                    </QuickActionLink>
+                ) : undefined}
+            >
+                {attachmentSrc ? (
+                    <ImagePreview
+                        className={_cs(imageClassName, styles.image)}
+                        alt=""
+                        src={attachmentSrc}
+                    />
+                ) : (
+                    <Message
+                        className={_cs(excerptForImageClassName, styles.image)}
+                        message="Image data is not available."
+                    />
+                )}
+                {!props.readOnly && ( // eslint-disable-line react/destructuring-assignment
+                    <ExcerptTextArea
+                        label="Additional Context"
+                        className={_cs(
+                            excerptForImageClassName,
+                            styles.textAreaForImage,
+                        )}
+                        value={value}
+                        // eslint-disable-next-line react/destructuring-assignment
+                        name={props.name}
+                        // eslint-disable-next-line react/destructuring-assignment
+                        onChange={props.onChange}
+                        autoSize
+                    />
+                )}
+                {props.readOnly && value && ( // eslint-disable-line react/destructuring-assignment
+                    <div className={excerptForImageClassName}>
+                        {value}
+                    </div>
+                )}
+            </Container>
         );
     }
     if (entryType === 'EXCERPT') {

@@ -104,6 +104,7 @@ interface VirtualizedEntryListComponent {
 }
 
 export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
+export type EntryAttachmentsMap = { [key: string]: Entry['entryAttachment'] | undefined };
 
 const DELETE_LEN = 100;
 const UPDATE_LEN = 100;
@@ -117,6 +118,7 @@ function transformEntry(entry: Entry): EntryInputType {
         ...entry,
         lead: entry.lead.id,
         image: entry.image?.id,
+        entryAttachment: entry.entryAttachment?.id,
         attributes: entry.attributes?.map((attribute) => ({
             ...attribute,
             // NOTE: we don't need this on form
@@ -134,6 +136,8 @@ function EntryEdit(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const { user } = React.useContext(UserContext);
     const { leadId } = useParams<{ leadId: string }>();
+    const { leadAttachmentId } = useParams<{ leadAttachmentId: string }>();
+
     const [
         commentsCountMap,
         setCommentsCountMap,
@@ -357,6 +361,10 @@ function EntryEdit(props: Props) {
     } | undefined>();
 
     const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
+    const [
+        entryAttachmentsMap,
+        setEntryAttachmentMap,
+    ] = useState<EntryAttachmentsMap | undefined>();
 
     const [
         updateLead,
@@ -420,6 +428,7 @@ function EntryEdit(props: Props) {
             shouldFinalizeRef.current = undefined;
             return;
         }
+
         const submit = createSubmitHandler(
             leadFormValidate,
             (err) => {
@@ -452,6 +461,7 @@ function EntryEdit(props: Props) {
         leadId,
         projectId,
         updateLead,
+        // leadAttachmentId,
     ]);
 
     // NOTE: handling bulkUpdateEntriesPending because we are making another
@@ -621,6 +631,17 @@ function EntryEdit(props: Props) {
                 setEntryImagesMap((oldMap) => ({
                     ...oldMap,
                     ...newImagesMap,
+                }));
+
+                const newAttachmentMap = listToMap(
+                    saveResult?.map((attachment) => attachment?.entryAttachment)
+                        .filter(isDefined),
+                    (d) => d.id,
+                    (d) => d,
+                );
+                setEntryAttachmentMap((oldMap) => ({
+                    ...oldMap,
+                    ...newAttachmentMap,
                 }));
 
                 setFormValue((oldValue) => {
@@ -1135,6 +1156,16 @@ function EntryEdit(props: Props) {
                         (d) => d,
                     );
                     setEntryImagesMap(imagesMap);
+
+                    const attachmentMap = listToMap(
+                        leadFromResponse.entries
+                            ?.map((attachment) => attachment?.entryAttachment)
+                            .filter(isDefined),
+                        (d) => d.id,
+                        (d) => d,
+                    );
+                    setEntryAttachmentMap(attachmentMap);
+
                     const finalEntryIdFromLocation = entryIdFromLocation
                         ?? entries?.find(
                             (e) => e.id === String(entryServerIdFromLocation),
@@ -1351,8 +1382,6 @@ function EntryEdit(props: Props) {
                                 value={datum.excerpt}
                                 image={datum?.image ? entryImagesMap?.[datum.image] : undefined}
                                 imageRaw={undefined}
-                                // FIXME: pass this after image drag/drop is implemented
-                                leadImageUrl={undefined}
                                 entryType={datum.entryType}
                                 readOnly
                             />
@@ -1366,7 +1395,6 @@ function EntryEdit(props: Props) {
                     value={datum.excerpt}
                     image={datum?.image ? entryImagesMap?.[datum.image] : undefined}
                     imageRaw={undefined}
-                    leadImageUrl={undefined}
                     entryType={datum.entryType}
                     readOnly
                 />
@@ -1407,7 +1435,6 @@ function EntryEdit(props: Props) {
                     ? entryImagesMap?.[currentEntry.image]
                     : undefined}
                 imageRaw={undefined}
-                leadImageUrl={undefined}
                 entryType={currentEntry.entryType}
                 readOnly
             />
@@ -1586,6 +1613,7 @@ function EntryEdit(props: Props) {
                                     leadId={leadId}
                                     listComponentRef={primaryPageListComponentRef}
                                     entryImagesMap={entryImagesMap}
+                                    entryAttachmentsMap={entryAttachmentsMap}
                                     isEntrySelectionActive={isEntrySelectionActive}
                                     entriesError={entriesErrorStateMap}
                                     frameworkDetails={frameworkDetails ?? undefined}
@@ -1672,6 +1700,8 @@ function EntryEdit(props: Props) {
                                     onDiscardButtonClick={handleEntryChangeDiscard}
                                     lead={lead}
                                     leadId={leadId}
+                                    leadAttachmentId={leadAttachmentId}
+                                    entryAttachmentsMap={entryAttachmentsMap}
                                     hideSimplifiedPreview
                                     hideOriginalPreview
                                     listComponentRef={secondaryPageListComponentRef}

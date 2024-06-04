@@ -6,7 +6,7 @@ import {
     IoArrowUndoSharp,
     IoTrashBinOutline,
 } from 'react-icons/io5';
-import { BsFileDiff } from 'react-icons/bs';
+import { BsDownload, BsFileDiff } from 'react-icons/bs';
 import { requiredStringCondition } from '@togglecorp/toggle-form';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import {
@@ -20,6 +20,7 @@ import {
     Heading,
     useInputState,
     Button,
+    QuickActionLink,
 } from '@the-deep/deep-ui';
 
 import ExcerptInput from '#components/entry/ExcerptInput';
@@ -28,8 +29,11 @@ import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 
 import { PartialEntryType as EntryInput } from '#components/entry/schema';
 import { Entry } from '#components/entry/types';
+import { LeadPreviewAttachmentType } from '#generated/types';
 
 import styles from './styles.css';
+
+export type EntryAttachmentsMap = { [key: string]: Entry['entryAttachment'] | undefined };
 
 interface ExcerptModalProps {
     title: string;
@@ -99,6 +103,8 @@ interface EntryItemProps extends EntryInput {
     projectId: string | undefined;
     entryServerId: string | undefined;
     draftEntry?: string;
+    leadAttachmentImage?: LeadPreviewAttachmentType;
+    entryAttachment?: Entry['entryAttachment'] | undefined | null;
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -120,12 +126,13 @@ function EntryItem(props: EntryItemProps) {
         disableClick,
         onEntryDelete,
         onEntryRestore,
-        imageRaw,
         entryImage,
         entryType,
         deleted,
         errored,
         stale,
+        leadAttachmentImage,
+        entryAttachment,
     } = props;
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
@@ -177,9 +184,8 @@ function EntryItem(props: EntryItemProps) {
                         <ExcerptInput
                             value={excerpt}
                             image={entryImage}
-                            imageRaw={imageRaw}
-                            // FIXME: pass this after image drag/drop is implemented
-                            leadImageUrl={undefined}
+                            imageRaw={leadAttachmentImage?.filePreview?.url ?? ''}
+                            entryAttachment={entryAttachment}
                             entryType={entryType}
                             readOnly
                         />
@@ -310,16 +316,26 @@ function EntryItem(props: EntryItemProps) {
                 onClick={handleClick}
                 role="presentation"
             >
-                <ExcerptInput
-                    value={excerpt}
-                    // droppedExcerpt={droppedExcerpt}
-                    image={entryImage}
-                    imageRaw={imageRaw}
-                    // FIXME: pass this after image drag/drop is implemented
-                    leadImageUrl={undefined}
-                    entryType={entryType}
-                    readOnly
-                />
+                <Container
+                    headerActions={leadAttachmentImage?.file?.url && (
+                        <QuickActionLink
+                            title="Open external"
+                            to={leadAttachmentImage.file.url}
+                        >
+                            <BsDownload />
+                        </QuickActionLink>
+                    )}
+                >
+                    <ExcerptInput
+                        value={excerpt}
+                        // droppedExcerpt={droppedExcerpt}
+                        image={entryImage}
+                        imageRaw={leadAttachmentImage?.filePreview?.url ?? undefined}
+                        entryType={entryType}
+                        entryAttachment={entryAttachment}
+                        readOnly
+                    />
+                </Container>
             </div>
             <div className={styles.verticalBorder} />
         </Container>

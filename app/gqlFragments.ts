@@ -13,6 +13,19 @@ export const ENTRY_FRAGMENT = gql`
         verifiedBy {
             id
         }
+        entryAttachment {
+            entryFileType
+            id
+            leadAttachmentId
+            file {
+              name
+              url
+            }
+            filePreview {
+                name
+                url
+            }
+        }
         controlled
         attributes {
             clientId

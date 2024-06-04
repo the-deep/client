@@ -354,7 +354,6 @@ function EditableEntry(props: Props) {
                     value={value.excerpt}
                     image={entryImage}
                     imageRaw={undefined}
-                    leadImageUrl={undefined}
                     entryType={value.entryType}
                     readOnly
                 />
@@ -388,8 +387,6 @@ function EditableEntry(props: Props) {
                     value={value.excerpt}
                     image={entryImage}
                     imageRaw={undefined}
-                    // FIXME: pass this after image drag/drop is implemented
-                    leadImageUrl={undefined}
                     entryType={value.entryType}
                     readOnly
                 />
