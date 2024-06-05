@@ -104,17 +104,7 @@ import _ts from '#ts';
 import { AnalysisPillars } from '#types';
 import { WidgetAttribute as WidgetAttributeFromEntry } from '#types/newEntry';
 import { FrameworkFilterType, Widget } from '#types/newAnalyticalFramework';
-
-/*
-import {
-    projectIdFromRouteSelector,
-    analysisIdFromRouteSelector,
-    pillarAnalysisIdFromRouteSelector,
-    activeProjectFromStateSelector,
-    editPillarAnalysisPillarAnalysisSelector,
-    setPillarAnalysisDataAction,
-} from '#redux';
-*/
+import { type EntryDetailType } from './AnalyticalStatementInput';
 
 import DiscardedEntries from './DiscardedEntries';
 import SourceEntryItem, { Props as SourceEntryItemProps } from './SourceEntryItem';
@@ -458,30 +448,28 @@ const maxItemsPerPage = 25;
 
 const entryKeySelector = (d: Entry) => d.id;
 
-/*
-const mapStateToProps = (state: AppState, props: unknown) => ({
-    // FIXME: get this from url directly
-    pillarId: pillarAnalysisIdFromRouteSelector(state),
-    analysisId: analysisIdFromRouteSelector(state),
-    projectId: projectIdFromRouteSelector(state),
+type FormType = typeof defaultFormValues;
 
-    // FIXME: get this from request
-    activeProject: activeProjectFromStateSelector(state),
-
-    // FIXME: the inferred typing is wrong in this case
-    pillarAnalysis: editPillarAnalysisPillarAnalysisSelector(state, props),
-});
-
-interface PropsFromDispatch {
-    setPillarAnalysisData: typeof setPillarAnalysisDataAction;
+interface OrganigramDatum {
+    key: string;
+    label: string;
+    children?: OrganigramDatum[];
 }
 
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
-    setPillarAnalysisData: params => dispatch(setPillarAnalysisDataAction(params)),
-});
-*/
+function flatten(data: OrganigramDatum) {
+    let base = {
+        [data.key]: data.label,
+    };
 
-type FormType = typeof defaultFormValues;
+    data.children?.forEach((child) => {
+        base = {
+            ...base,
+            ...flatten(child),
+        };
+    });
+
+    return base;
+}
 
 const statementKeySelector = (d: PartialAnalyticalStatementType) => d.clientId ?? '';
 
@@ -801,6 +789,47 @@ function PillarAnalysis() {
 
     const [entryOrdering, setEntryOrdering] = useState<string>('-created_at');
 
+    /* Contextual data for NLP */
+    const widgetTagLabels = useMemo(() => {
+        const selectedFilters = listToMap(
+            sourcesFilterValue?.entriesFilterData?.filterableData,
+            (d) => d.filterKey,
+            (d) => d.valueList,
+        );
+
+        const selectedFilterKeys = Object.keys(selectedFilters ?? {});
+
+        const widgetTagMap = frameworkFilters
+            ?.map((widget) => {
+                if (
+                    widget.widgetType === 'SELECT'
+                    || widget.widgetType === 'MULTISELECT'
+                    || widget.widgetType === 'ORGANIGRAM'
+                    || widget.widgetType === 'MATRIX1D'
+                    || widget.widgetType === 'MATRIX2D'
+                ) {
+                    return widget;
+                }
+                return undefined;
+            }).filter(isDefined).filter(
+                (ff) => selectedFilterKeys.includes(ff.key),
+            )?.map((ff) => ({
+                key: ff.key,
+                options: ff.properties?.options,
+            }));
+
+        return widgetTagMap?.flatMap(
+            (option) => option?.options?.filter(
+                (widget) => selectedFilters?.[option.key]?.includes(widget.key),
+            )?.map(
+                (item: {key: string, label: string}) => item?.label,
+            ),
+        ).filter(isDefined);
+    }, [
+        frameworkFilters,
+        sourcesFilterValue?.entriesFilterData?.filterableData,
+    ]);
+
     const variables = useMemo(
         (): ProjectEntriesForAnalysisQueryVariables | undefined => (
             (projectId) ? {
@@ -835,36 +864,6 @@ function PillarAnalysis() {
             variables,
         },
     );
-
-    /*
-    const {
-        pending: pendingPillarAnalysisSave,
-        trigger: updateAnalysisPillars,
-    } = useLazyRequest<AnalysisPillars, unknown>({
-        url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
-        body: (ctx) => ctx,
-        method: 'PATCH',
-        onSuccess: (response) => {
-            setValue((): FormType => ({
-                mainStatement: response.mainStatement,
-                informationGap: response.informationGap,
-                statements: response.statements,
-            }));
-            alert.show(
-                _ts('pillarAnalysis', 'pillarAnalysisUpdateSuccess'),
-                {
-                    variant: 'success',
-                },
-            );
-        },
-        onFailure: (response, ctx) => {
-            if (response.value.errors) {
-                setError(transformErrorToToggleFormError(schema, ctx, response.value.errors));
-            }
-        },
-        failureMessage: 'Failed to update pillar analysis.',
-    });
-    */
 
     const [
         updateAnalysisPillars,
@@ -1151,15 +1150,144 @@ function PillarAnalysis() {
         }));
     }, [setSourcesFilterValue]);
 
+    const entriesForStatements = useMemo(() => listToMap(
+        analysisPillarDetails?.statements,
+        (statement) => statement.id,
+        (statement) => statement.entries?.filter(isDefined),
+    ), [
+        analysisPillarDetails?.statements,
+    ]);
+
+    const frameworkTagLabels: Record<string, string> = useMemo(() => {
+        const widgetTagsFromPrimaryTagging = frameworkDetails?.primaryTagging
+            ?.flatMap((section) => section.widgets)
+            ?.map((widget) => {
+                if (widget?.widgetId === 'MATRIX1D') {
+                    const rows = widget?.properties?.rows;
+                    const cells = rows
+                        ?.flatMap((row) => row.cells);
+                    const rowsWithCells = [
+                        ...(cells ?? []),
+                        ...(rows ?? []),
+                    ];
+
+                    const keyValueMap = rowsWithCells.reduce(
+                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
+                    );
+
+                    return keyValueMap;
+                }
+                if (widget?.widgetId === 'MATRIX2D') {
+                    const rows = widget?.properties?.rows;
+                    const subRows = rows?.flatMap((row) => row.subRows);
+                    const columns = widget?.properties?.columns;
+                    const subColumns = columns?.flatMap((col) => col.subColumns);
+                    const rowsWithColumns = [
+                        ...(rows ?? []),
+                        ...(subRows ?? []),
+                        ...(columns ?? []),
+                        ...(subColumns ?? []),
+                    ];
+                    const keyValueMap = rowsWithColumns.reduce(
+                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
+                    );
+                    return keyValueMap;
+                }
+                if (widget?.widgetId === 'MULTISELECT') {
+                    const options = widget?.properties?.options;
+                    const keyValueMap = options?.reduce(
+                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
+                    );
+                    return keyValueMap;
+                }
+                if (widget?.widgetId === 'SELECT') {
+                    const options = widget?.properties?.options;
+                    const keyValueMap = options?.reduce(
+                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
+                    );
+                    return keyValueMap;
+                }
+                // TODO: add organigram
+                return undefined;
+            }).filter(isDefined);
+        const widgetTagsFromSecondaryTagging = frameworkDetails?.secondaryTagging
+            ?.map((widget) => {
+                if (widget?.widgetId === 'MATRIX1D') {
+                    const rows = widget?.properties?.rows;
+                    const cells = rows
+                        ?.flatMap((row) => row.cells);
+                    const rowsWithCells = [
+                        ...(cells ?? []),
+                        ...(rows ?? []),
+                    ];
+
+                    const keyValueMap = rowsWithCells.reduce(
+                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
+                    );
+
+                    return keyValueMap;
+                }
+                if (widget?.widgetId === 'MATRIX2D') {
+                    const rows = widget?.properties?.rows;
+                    const subRows = rows?.flatMap((row) => row.subRows);
+                    const columns = widget?.properties?.columns;
+                    const subColumns = columns?.flatMap((col) => col.subColumns);
+                    const rowsWithColumns = [
+                        ...(rows ?? []),
+                        ...(subRows ?? []),
+                        ...(columns ?? []),
+                        ...(subColumns ?? []),
+                    ];
+                    const keyValueMap = rowsWithColumns.reduce(
+                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
+                    );
+                    return keyValueMap;
+                }
+                if (widget?.widgetId === 'MULTISELECT') {
+                    const options = widget?.properties?.options;
+                    const keyValueMap = options?.reduce(
+                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
+                    );
+                    return keyValueMap;
+                }
+                if (widget?.widgetId === 'SELECT') {
+                    const options = widget?.properties?.options;
+                    const keyValueMap = options?.reduce(
+                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
+                    );
+                    return keyValueMap;
+                }
+                if (widget?.widgetId === 'ORGANIGRAM') {
+                    const options = widget?.properties?.options;
+                    const keyValueMap = isDefined(options) ? flatten(options) : undefined;
+                    return keyValueMap;
+                }
+                // TODO: add organigram
+                return undefined;
+            }).filter(isDefined);
+
+        return Object.assign(
+            {},
+            ...(widgetTagsFromPrimaryTagging ?? []),
+            ...(widgetTagsFromSecondaryTagging ?? []),
+        );
+    }, [
+        frameworkDetails?.primaryTagging,
+        frameworkDetails?.secondaryTagging,
+    ]);
+
     const analyticalStatementRendererParams = useCallback((
-        _: string,
+        id: string,
         statement: PartialAnalyticalStatementType,
         index: number,
     ): AnalyticalStatementInputProps => ({
         className: styles.analyticalStatement,
         index,
         value: statement,
+        // TODO: Fix this issue
+        entriesDetail: entriesForStatements?.[id] as EntryDetailType[],
         framework: frameworkDetails,
+        frameworkTagLabels,
         onChange: onAnalyticalStatementChange,
         onRemove: onAnalyticalStatementRemove,
         geoAreaOptions,
@@ -1176,9 +1304,11 @@ function PillarAnalysis() {
         getAnalysisDetails,
         handleEntryMove,
         handleEntryDrop,
+        frameworkTagLabels,
         frameworkDetails,
         geoAreaOptions,
         arrayError,
+        entriesForStatements,
     ]);
 
     const onOrderChange = useCallback((
@@ -1397,6 +1527,7 @@ function PillarAnalysis() {
                                             onStatementsFromClustersSet={
                                                 handleStatementsFromClustersSet
                                             }
+                                            widgetTagLabels={widgetTagLabels}
                                         />
                                         {project?.isPrivate && (
                                             <div className={styles.info}>
