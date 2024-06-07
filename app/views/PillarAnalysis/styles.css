@@ -100,6 +100,15 @@
         .header-description {
             display: flex;
             gap: var(--dui-spacing-small);
+
+            .info {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                border-radius: 50%;
+                padding: var(--dui-spacing-small);
+            }
         }
 
         .filter-container {

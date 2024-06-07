@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useContext, useCallback, useMemo } from 'react';
 import {
     IoClose,
     IoCheckmarkCircleSharp,
@@ -38,9 +38,14 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import { gql, useMutation } from '@apollo/client';
+import ProjectContext from '#base/context/ProjectContext';
 import {
-    AutomaticStoryAnalysisMutation,
-    AutomaticStoryAnalysisMutationVariables,
+    AnalysisAutomaticSummaryMutation,
+    AnalysisAutomaticSummaryMutationVariables,
+    AnalysisGeoLocationMutation,
+    AnalysisGeoLocationMutationVariables,
+    AnalysisAutomaticNgramMutation,
+    AnalysisAutomaticNgramMutationVariables,
 } from '#generated/types';
 
 import MarkdownEditor from '#components/MarkdownEditor';
@@ -64,27 +69,9 @@ import styles from './styles.css';
 
 export const ENTRIES_LIMIT = 200;
 
-const AUTOMATIC_STORY_ANALYSIS = gql`
-    mutation AutomaticStoryAnalysis($projectId: ID!, $entriesId: [ID!]) {
+const ANALYSIS_AUTOMATIC_NGRAM = gql`
+    mutation AnalysisAutomaticNgram($projectId: ID!, $entriesId: [ID!]) {
         project(id: $projectId) {
-            triggerAnalysisGeoLocation(data: {entriesId: $entriesId}) {
-                errors
-                ok
-                result {
-                    id
-                    status
-                    entryGeo {
-                        data {
-                            meta {
-                                latitude
-                                longitude
-                                offsetEnd
-                                offsetStart
-                            }
-                        }
-                    }
-                }
-            }
             triggerAnalysisAutomaticNgram(data: {entriesId: $entriesId}) {
                 errors
                 ok
@@ -105,6 +92,38 @@ const AUTOMATIC_STORY_ANALYSIS = gql`
                     }
                 }
             }
+        }
+    }
+`;
+
+const ANALYSIS_GEO_LOCATION = gql`
+    mutation AnalysisGeoLocation($projectId: ID!, $entriesId: [ID!]) {
+        project(id: $projectId) {
+            triggerAnalysisGeoLocation(data: {entriesId: $entriesId}) {
+                errors
+                ok
+                result {
+                    id
+                    status
+                    entryGeo {
+                        data {
+                            meta {
+                                latitude
+                                longitude
+                                offsetEnd
+                                offsetStart
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
+const ANALYSIS_AUTOMATIC_SUMMARY = gql`
+    mutation AnalysisAutomaticSummary($projectId: ID!, $entriesId: [ID!]) {
+        project(id: $projectId) {
             triggerAnalysisAutomaticSummary(data: {entriesId: $entriesId}) {
                 errors
                 ok
@@ -170,6 +189,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onEntryDataChange,
     } = props;
 
+    const {
+        project,
+    } = useContext(ProjectContext);
+
     const [selectedField, setSelectedField] = useState<Field | undefined>('statement');
     const [selectedContent, setSelectedContent] = useState<Content | undefined>('entries');
 
@@ -190,19 +213,17 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     ] = useModalState(false);
 
     const [
-        createAutomaticStoryAnalysis,
+        createAnalysisAutomaticSummary,
         {
-            data: automaticStoryAnalysis,
+            data: analysisAutomaticSummary,
         },
-    ] = useMutation<AutomaticStoryAnalysisMutation, AutomaticStoryAnalysisMutationVariables>(
-        AUTOMATIC_STORY_ANALYSIS,
+    ] = useMutation<AnalysisAutomaticSummaryMutation, AnalysisAutomaticSummaryMutationVariables>(
+        ANALYSIS_AUTOMATIC_SUMMARY,
         {
             onCompleted: (response) => {
                 if (
                     !response
-                    || !response.project?.triggerAnalysisAutomaticNgram
                     || !response.project?.triggerAnalysisAutomaticSummary
-                    || !response.project?.triggerAnalysisGeoLocation
                 ) {
                     return;
                 }
@@ -213,15 +234,67 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         { variant: 'error' },
                     );
                 }
-                if (response.project.triggerAnalysisAutomaticNgram.errors) {
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to create automatic story analysis.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const [
+        createAnalysisGeoLocation,
+        {
+            data: analysisGeoLocation,
+        },
+    ] = useMutation<AnalysisGeoLocationMutation, AnalysisGeoLocationMutationVariables>(
+        ANALYSIS_GEO_LOCATION,
+        {
+            onCompleted: (response) => {
+                if (
+                    !response
+                    || !response.project?.triggerAnalysisGeoLocation
+                ) {
+                    return;
+                }
+
+                if (response.project.triggerAnalysisGeoLocation.errors) {
                     alert.show(
-                        'There were errors when creating automatic Ngram.',
+                        'There were errors when creating geo location.',
                         { variant: 'error' },
                     );
                 }
-                if (response.project.triggerAnalysisGeoLocation.errors) {
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to create automatic geo location.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const [
+        createAnalysisAutomaticNgram,
+        {
+            data: analysisAutomaticNgram,
+        },
+    ] = useMutation<AnalysisAutomaticNgramMutation, AnalysisAutomaticNgramMutationVariables>(
+        ANALYSIS_AUTOMATIC_NGRAM,
+        {
+            onCompleted: (response) => {
+                if (
+                    !response
+                    || !response.project?.triggerAnalysisAutomaticNgram
+                ) {
+                    return;
+                }
+
+                if (response.project.triggerAnalysisAutomaticNgram.errors) {
                     alert.show(
-                        'There were errors when extracting geo locations.',
+                        'There were errors when creating automatic Ngram.',
                         { variant: 'error' },
                     );
                 }
@@ -236,14 +309,37 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     );
 
     const handleStoryAnalysisModalOpen = useCallback(() => {
-        createAutomaticStoryAnalysis({
+        if (!project?.isPrivate) {
+            createAnalysisAutomaticSummary({
+                variables: {
+                    projectId,
+                    entriesId: value.entries?.map((ae) => ae.entry).filter(isDefined),
+                },
+            });
+        }
+        createAnalysisGeoLocation({
             variables: {
                 projectId,
                 entriesId: value.entries?.map((ae) => ae.entry).filter(isDefined),
             },
         });
+        createAnalysisAutomaticNgram({
+            variables: {
+                projectId,
+                entriesId: value.entries?.map((ae) => ae.entry).filter(isDefined),
+            },
+        });
+
         showStoryAnalysisModal();
-    }, [value.entries, showStoryAnalysisModal, projectId, createAutomaticStoryAnalysis]);
+    }, [
+        value.entries,
+        project,
+        showStoryAnalysisModal,
+        projectId,
+        createAnalysisAutomaticSummary,
+        createAnalysisGeoLocation,
+        createAnalysisAutomaticNgram,
+    ]);
 
     const {
         // setValue: onAnalyticalEntryChange,
@@ -626,11 +722,11 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         statementId={value.clientId}
                         analyticalEntries={value.entries}
                         projectId={projectId}
-                        automaticSummaryId={automaticStoryAnalysis
+                        automaticSummaryId={analysisAutomaticSummary
                             ?.project?.triggerAnalysisAutomaticSummary?.result?.id}
-                        automaticNgramsId={automaticStoryAnalysis
+                        automaticNgramsId={analysisAutomaticNgram
                             ?.project?.triggerAnalysisAutomaticNgram?.result?.id}
-                        automaticNlpMapId={automaticStoryAnalysis
+                        automaticNlpMapId={analysisGeoLocation
                             ?.project?.triggerAnalysisGeoLocation?.result?.id}
                         onRemove={onAnalyticalEntryRemove}
                         index={index}
