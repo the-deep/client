@@ -31,6 +31,7 @@ import MarkdownEditor from '#components/MarkdownEditor';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import SourcesFilterContext from '#components/leadFilters/SourcesFilterContext';
+import ProjectContext from '#base/context/ProjectContext';
 
 import EntryCard from './EntryCard';
 import EntryContext from '../../context';
@@ -132,6 +133,9 @@ function StoryAnalysisModal(props: Props) {
         informationGaps: informationGapsFromProps,
     } = props;
 
+    const {
+        project,
+    } = useContext(ProjectContext);
     const { entries } = useContext(EntryContext);
     const { organizationTypeOptions } = useContext(SourcesFilterContext);
 
@@ -377,6 +381,7 @@ function StoryAnalysisModal(props: Props) {
                                         className={styles.tab}
                                         name="summary"
                                         transparentBorder
+                                        disabled={project?.isPrivate}
                                     >
                                         Automatic Summary
                                     </Tab>
@@ -431,7 +436,10 @@ function StoryAnalysisModal(props: Props) {
                                     />
                                 </div>
                             </TabPanel>
-                            <TabPanel name="summary" className={styles.tabPanel}>
+                            <TabPanel
+                                name="summary"
+                                className={styles.tabPanel}
+                            >
                                 <Summary
                                     projectId={projectId}
                                     summaryId={automaticSummaryId}

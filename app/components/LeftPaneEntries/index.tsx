@@ -53,7 +53,6 @@ import {
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
-import ProjectContext from '#base/context/ProjectContext';
 import { UserContext } from '#base/context/UserContext';
 import {
     LeadPreviewForTextQuery,
@@ -159,7 +158,6 @@ function LeftPane(props: Props) {
     } = props;
 
     const alert = useAlert();
-    const { project } = useContext(ProjectContext);
     const { user } = useContext(UserContext);
 
     const isAssistedTaggingAccessible = !!user
@@ -556,22 +554,16 @@ function LeftPane(props: Props) {
         });
     }, []);
 
-    const assistedTaggingShown = !project?.isPrivate
-        && isAssistedTaggingAccessible
+    const assistedTaggingShown = isAssistedTaggingAccessible
         && frameworkDetails?.assistedTaggingEnabled
         && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
 
     const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId)
-        && leadPreviewData?.project?.lead?.confidentiality !== 'CONFIDENTIAL'
         && assistedTaggingShown;
 
     const errorMessageForAutoExtraction = useMemo(() => {
-        const isConfidential = lead?.confidentiality === 'CONFIDENTIAL';
         if (isAutoExtractionCompatible) {
             return undefined;
-        }
-        if (isConfidential) {
-            return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. Extraction through NLP is restricted for confidential sources to ensure the utmost data security and privacy.';
         }
         if (isDefined(leadPreviewData?.project?.lead?.connectorLead)) {
             return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The connector associated with the chosen source may be outdated or incompatible with the NLP extraction functionality.';
@@ -581,7 +573,6 @@ function LeftPane(props: Props) {
         }
         return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The selected source appears to be outdated, and the NLP extraction feature is not compatible with older content formats.';
     }, [
-        lead?.confidentiality,
         isAutoExtractionCompatible,
         leadPreviewData?.project?.lead,
     ]);

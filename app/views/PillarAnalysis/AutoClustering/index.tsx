@@ -122,6 +122,7 @@ interface Props {
     projectId: string;
     entriesCount: number | null | undefined;
     entriesFilter: EntriesFilterDataInputType;
+    isPrivateProject?: boolean;
     onEntriesMappingChange: React.Dispatch<React.SetStateAction<Obj<Entry>>>;
     onStatementsFromClustersSet: (newStatements: PartialAnalyticalStatementType[]) => void;
 }
@@ -132,6 +133,7 @@ function AutoClustering(props: Props) {
         projectId,
         entriesFilter,
         entriesCount,
+        isPrivateProject,
         onEntriesMappingChange,
         onStatementsFromClustersSet,
     } = props;
@@ -351,8 +353,10 @@ function AutoClustering(props: Props) {
             className={styles.clusterButton}
             name={undefined}
             onConfirm={handleAutoClusteringTriggerClick}
-            message="Are you sure you want to trigger auto clustering of entries into new stories? This will replace current analytical statements with suggested groupings using NLP."
-            disabled={pendingAutoClusterTrigger || ((entriesCount ?? 0) < MIN_ENTRIES)}
+            message="Are you sure you want to trigger auto clustering of entries into new stories? This will replace current analytical statements with suggested groupings using NLP. Entries from confidential sources are filtered out to maintain document privacy."
+            disabled={pendingAutoClusterTrigger
+            || ((entriesCount ?? 0) < MIN_ENTRIES)
+            || isPrivateProject}
             variant="tertiary"
             spacing="compact"
             title={buttonTitle}

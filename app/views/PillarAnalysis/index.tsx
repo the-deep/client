@@ -31,6 +31,7 @@ import {
     IoChevronUp,
     IoChevronDown,
     IoChevronBackOutline,
+    IoInformation,
 } from 'react-icons/io5';
 import {
     useBooleanState,
@@ -45,6 +46,7 @@ import {
     Tab,
     TabList,
     TabPanel,
+    Tooltip,
     ListView,
     Kraken,
     Pager,
@@ -487,6 +489,7 @@ function PillarAnalysis() {
     const {
         project,
     } = useContext(ProjectContext);
+
     const {
         projectId,
         pillarAnalysisId: pillarId,
@@ -1388,12 +1391,23 @@ function PillarAnalysis() {
                                             pillarId={pillarId}
                                             projectId={projectId}
                                             entriesFilter={entriesFilter}
+                                            isPrivateProject={project?.isPrivate}
                                             onEntriesMappingChange={setEntriesMapping}
                                             entriesCount={entriesResponse?.totalCount}
                                             onStatementsFromClustersSet={
                                                 handleStatementsFromClustersSet
                                             }
                                         />
+                                        {project?.isPrivate && (
+                                            <div className={styles.info}>
+                                                <IoInformation />
+                                                <Tooltip>
+                                                    Auto clustering is not available
+                                                    for private projects to
+                                                    maintain document privacy.
+                                                </Tooltip>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 heading={(
