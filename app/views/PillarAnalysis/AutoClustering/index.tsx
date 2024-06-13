@@ -16,7 +16,6 @@ import {
     Message,
     Button,
     useBooleanState,
-    ConfirmButton,
     useAlert,
 } from '@the-deep/deep-ui';
 
@@ -35,6 +34,7 @@ import {
 import {
     PartialAnalyticalStatementType,
 } from '../schema';
+import AutoClusteringTagsModal from './AutoClusteringTagsModal';
 
 import styles from './styles.css';
 
@@ -98,12 +98,14 @@ const PILLAR_AUTO_CLUSTERING = gql`
         $pillarId: ID!,
         $projectId: ID!,
         $filterData: EntriesFilterDataInputType,
+        $widgetTags: [String!],
     ) {
         project(id: $projectId) {
             triggerAnalysisTopicModel(
                 data: {
                     analysisPillar: $pillarId,
                     additionalFilters: $filterData,
+                    widgetTags: $widgetTags,
                 },
             ) {
                 ok
@@ -125,6 +127,7 @@ interface Props {
     isPrivateProject?: boolean;
     onEntriesMappingChange: React.Dispatch<React.SetStateAction<Obj<Entry>>>;
     onStatementsFromClustersSet: (newStatements: PartialAnalyticalStatementType[]) => void;
+    widgetTagLabels: string[] | undefined;
 }
 
 function AutoClustering(props: Props) {
@@ -136,11 +139,19 @@ function AutoClustering(props: Props) {
         isPrivateProject,
         onEntriesMappingChange,
         onStatementsFromClustersSet,
+        widgetTagLabels: widgetTagLabelsFromProps,
     } = props;
 
+    const [widgetTags, setWidgetTags] = useState<string[] | undefined>(widgetTagLabelsFromProps);
     const alert = useAlert();
 
     const [activeTopicModellingId, setActiveTopicModellingId] = useState<string | undefined>();
+
+    const [
+        widgetTagsModalShown,
+        showWidgetTagsModal,
+        hideWidgetTagsModal,
+    ] = useBooleanState(false);
 
     const [
         modalShown,
@@ -235,9 +246,11 @@ function AutoClustering(props: Props) {
                 projectId,
                 pillarId,
                 filterData: entriesFilter,
+                widgetTags,
             },
         });
     }, [
+        widgetTags,
         triggerAutoClustering,
         entriesFilter,
         pillarId,
@@ -296,6 +309,14 @@ function AutoClustering(props: Props) {
         buttonTitle = 'DEEP is processing entries';
     }
 
+    const handleAutoClusterButtonClick = useCallback(() => {
+        setWidgetTags(widgetTagLabelsFromProps);
+        showWidgetTagsModal();
+    }, [
+        showWidgetTagsModal,
+        widgetTagLabelsFromProps,
+    ]);
+
     if (activeTopicModellingId) {
         return (
             <>
@@ -349,20 +370,31 @@ function AutoClustering(props: Props) {
     }
 
     return (
-        <ConfirmButton
-            className={styles.clusterButton}
-            name={undefined}
-            onConfirm={handleAutoClusteringTriggerClick}
-            message="Are you sure you want to trigger auto clustering of entries into new stories? This will replace current analytical statements with suggested groupings using NLP. Entries from confidential sources are filtered out to maintain document privacy."
-            disabled={pendingAutoClusterTrigger
-            || ((entriesCount ?? 0) < MIN_ENTRIES)
-            || isPrivateProject}
-            variant="tertiary"
-            spacing="compact"
-            title={buttonTitle}
-        >
-            Auto Cluster
-        </ConfirmButton>
+        <>
+            <Button
+                className={styles.clusterButton}
+                name={undefined}
+                onClick={handleAutoClusterButtonClick}
+                disabled={
+                    pendingAutoClusterTrigger
+                    || ((entriesCount ?? 0) < MIN_ENTRIES)
+                    || isPrivateProject
+                }
+                variant="tertiary"
+                spacing="compact"
+                title={buttonTitle}
+            >
+                Auto Cluster
+            </Button>
+            {widgetTagsModalShown && (
+                <AutoClusteringTagsModal
+                    onClose={hideWidgetTagsModal}
+                    widgetTags={widgetTags ?? []}
+                    setWidgetTags={setWidgetTags}
+                    handleAutoClusteringTriggerClick={handleAutoClusteringTriggerClick}
+                />
+            )}
+        </>
     );
 }
 

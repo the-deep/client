@@ -1,0 +1,45 @@
+.tag-input {
+    .tag-button {
+        --padding: var(--dui-spacing-extra-small);
+        border: none;
+        border-radius: calc(1em + var(--padding) / 2);
+        background-color: transparent;
+        padding: var(--padding);
+        width: calc(1em + 2 * var(--padding));
+        height: calc(1em + 2 * var(--padding));
+        color: inherit;
+
+        .children {
+            padding: 0;
+        }
+
+        &.check-button {
+            color: var(--dui-color-success);
+        }
+
+        &.cancel-button {
+            color: var(--dui-color-danger);
+        }
+    }
+
+    .label {
+        padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+        color: var(--dui-color-text-label);
+        font-size: var(--dui-font-size-small);
+        font-weight: var(--dui-font-weight-bold);
+    }
+
+    .tags {
+        display: flex;
+        flex-wrap: wrap;
+
+        .tag {
+            margin: var(--dui-spacing-extra-small);
+        }
+
+        .tag-actions {
+            display: flex;
+            align-items: center;
+        }
+    }
+}

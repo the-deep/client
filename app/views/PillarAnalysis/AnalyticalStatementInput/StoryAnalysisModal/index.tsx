@@ -6,23 +6,31 @@ import React, {
 } from 'react';
 import {
     Button,
+    CollapsibleContainer,
     Container,
     ListView,
-    useConfirmation,
     Modal,
     QuickActionButton,
-    CollapsibleContainer,
     SegmentInput,
     Tab,
     TabList,
     TabPanel,
     Tabs,
     TextInput,
+    Tooltip,
+    useConfirmation,
 } from '@the-deep/deep-ui';
-import { isDefined, encodeDate, _cs, unique, listToGroupList } from '@togglecorp/fujs';
+import {
+    isDefined,
+    encodeDate,
+    _cs,
+    unique,
+    listToGroupList,
+} from '@togglecorp/fujs';
 import {
     IoChevronForward,
     IoChevronBackOutline,
+    IoInformation,
 } from 'react-icons/io5';
 import { VscServerProcess } from 'react-icons/vsc';
 
@@ -385,6 +393,16 @@ function StoryAnalysisModal(props: Props) {
                                     >
                                         Automatic Summary
                                     </Tab>
+                                    {project?.isPrivate && (
+                                        <div className={styles.info}>
+                                            <IoInformation />
+                                            <Tooltip>
+                                                Auto summary is not available
+                                                for private projects to
+                                                maintain document privacy.
+                                            </Tooltip>
+                                        </div>
+                                    )}
                                 </TabList>
                             )}
                             contentClassName={styles.tabPanelContainer}
