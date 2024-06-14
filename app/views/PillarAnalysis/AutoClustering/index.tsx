@@ -228,6 +228,7 @@ function AutoClustering(props: Props) {
                     );
                 }
                 showModal();
+                hideWidgetTagsModal();
             },
             onError: () => {
                 alert.show(

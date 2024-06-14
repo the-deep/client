@@ -289,8 +289,6 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         tags,
     ]);
 
-    console.log('all tags', allWidgetTagNames);
-
     const [selectedField, setSelectedField] = useState<Field | undefined>('statement');
     const [selectedContent, setSelectedContent] = useState<Content | undefined>('entries');
 
