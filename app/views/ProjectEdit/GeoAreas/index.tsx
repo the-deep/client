@@ -16,6 +16,7 @@ import {
 } from '#types';
 import { useModalState } from '#hooks/stateManagement';
 import {
+    CreateRegionMutation,
     RegionsForGeoAreasQuery,
     RegionsForGeoAreasQueryVariables,
 } from '#generated/types';
@@ -49,6 +50,7 @@ query RegionsForGeoAreas ($id: ID!) {
 }
 `;
 type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
+type NewRegionId = NonNullable<NonNullable<CreateRegionMutation['createRegion']>['result']>;
 
 const regionKeySelectorForRegionCard = (d: Region) => +d.id;
 
@@ -120,7 +122,7 @@ function GeoAreas(props: Props) {
     );
 
     const handleGeoAreaAddSuccess = useCallback(
-        (value: Region) => {
+        (value: NewRegionId) => {
             handleRegionSet(value.id);
             regionsRefetch();
         },
