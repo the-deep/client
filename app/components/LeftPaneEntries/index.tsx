@@ -74,14 +74,18 @@ import {
 import CanvasDrawModal from './CanvasDrawModal';
 import SimplifiedTextView from './SimplifiedTextView';
 import AutoEntriesModal from './AutoEntriesModal';
-import TablesAndVisualsItem from './TableAndVisualItem';
-import EntryItem, { ExcerptModal } from './EntryItem';
+import TablesAndVisualsItem, { Props as TablesAndVisualsItemProps } from './TableAndVisualItem';
+import EntryItem, { EntryItemProps, ExcerptModal } from './EntryItem';
 
 import styles from './styles.css';
 
 type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 export type EntryAttachmentsMap = { [key: string]: Entry['entryAttachment'] | undefined };
 
+type LeadAttachment = NonNullable<NonNullable<NonNullable<LeadPreviewForTextQuery['project']>['leadPreviewAttachments']>['results']>[number];
+export type LeadAttachmentsMap = { [key: string]: LeadAttachment | undefined };
+
+// FIXME: need to confirm if the typing is correct
 type Lead = NonNullable<NonNullable<LeadEntriesQuery['project']>['lead']>;
 
 const LEAD_PREVIEW = gql`
@@ -90,7 +94,7 @@ const LEAD_PREVIEW = gql`
         $projectId: ID!,
         $page: Int,
         $pageSize: Int,
-        $excludeAttachmentId: [ID!],
+        $excludeAttachmentIds: [ID!],
     ) {
         project(id: $projectId) {
             id
@@ -98,7 +102,7 @@ const LEAD_PREVIEW = gql`
                 lead: $leadId,
                 page: $page,
                 pageSize: $pageSize,
-                excludeAttachmentIds: $excludeAttachmentId, 
+                excludeAttachmentIds: $excludeAttachmentIds,
             ) {
                 results {
                     id
@@ -150,7 +154,6 @@ interface Props {
     onEntryRestore?: (entryClientId: string) => void;
     onApproveButtonClick?: (entryClientId: string) => void;
     onDiscardButtonClick?: (entryClientId: string) => void;
-    onAttachmentClick?: (entryClientId: string) => void;
     lead?: Lead | null;
     leadId: string;
     hideSimplifiedPreview?: boolean;
@@ -160,7 +163,6 @@ interface Props {
     isEntrySelectionActive?: boolean;
     entriesError?: Partial<Record<string, boolean>> | undefined;
     projectId: string | undefined;
-    leadAttachmentId?: string;
     defaultTab?: 'entries' | 'simplified' | 'original' | 'visuals';
     frameworkDetails?: Framework;
     activeTabRef?: React.MutableRefObject<{
@@ -169,10 +171,6 @@ interface Props {
     listComponentRef?: React.MutableRefObject<{
         scrollTo: (item: string) => void;
     } | null>;
-    page?: number;
-    pageSize?: number;
-    setPage?: (page: number) => void;
-    setPageSize?: (pageSize: number) => void;
 }
 
 const defaultMaxItemsPerPage = 10;
@@ -202,18 +200,27 @@ function LeftPane(props: Props) {
         activeTabRef,
         frameworkDetails,
         onAssistedEntryAdd,
-        leadAttachmentId,
         entryAttachmentsMap,
     } = props;
 
-    const [showResults, setShowResults] = useState(false);
-
-    const handleToggle = () => {
-        setShowResults(!showResults);
-    };
-
     const alert = useAlert();
     const { user } = useContext(UserContext);
+
+    // FIXME: memoize this
+    const entriesMappingByAttachment = listToMap(
+        entries?.map((entry) => {
+            if (isDefined(entry.leadAttachment)) {
+                // FIXME: this is a hack to assert leadAttachment value
+                return {
+                    ...entry,
+                    leadAttachment: entry.leadAttachment,
+                };
+            }
+            return undefined;
+        }).filter(isDefined) ?? [],
+        (item) => item.leadAttachment,
+        (item) => item,
+    );
 
     const isAssistedTaggingAccessible = !!user
         ?.accessibleFeatures?.some((feature) => feature.key === 'ASSISTED');
@@ -223,6 +230,8 @@ function LeftPane(props: Props) {
             ? 'entries'
             : defaultTab,
     );
+
+    const [leadAttachmentsMap, setLeadAttachmentsMap] = useState<LeadAttachmentsMap>({});
 
     const [
         autoEntriesModalShown,
@@ -255,8 +264,24 @@ function LeftPane(props: Props) {
     const [fullScreenMode, setFullScreenMode] = useState(false);
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = useRef(null);
+
+    // FIXME: rename the following variables to indicate that these are for
+    // lead attachments
     const [activePage, setActivePage] = useState<number>(1);
     const [maxItemsPerPage, setMaxItemsPerPage] = useState(defaultMaxItemsPerPage);
+
+    const [
+        attachmentsWithEntriesHidden,
+        setAttachmentsWithEntriesHidden,
+    ] = useState<boolean>(false);
+
+    const leadAttachmentIdsWithEntries = useMemo(() => (
+        Object.values(entryAttachmentsMap ?? {})
+            .map((entry) => entry?.leadAttachmentId)
+            .filter(isDefined)
+    ), [
+        entryAttachmentsMap,
+    ]);
 
     const variables = useMemo(
         () => ((leadId && projectId) ? ({
@@ -264,17 +289,23 @@ function LeftPane(props: Props) {
             projectId,
             page: activePage,
             pageSize: maxItemsPerPage,
+            excludeAttachmentIds: attachmentsWithEntriesHidden
+                ? leadAttachmentIdsWithEntries
+                : [],
         }) : undefined),
         [
             leadId,
             projectId,
             activePage,
             maxItemsPerPage,
+            attachmentsWithEntriesHidden,
+            leadAttachmentIdsWithEntries,
         ],
     );
 
     const {
-        data: leadPreviewData,
+        previousData,
+        data: leadPreviewData = previousData,
         loading: leadPreviewPending,
         refetch,
     } = useQuery<LeadPreviewForTextQuery, LeadPreviewForTextQueryVariables>(
@@ -320,7 +351,6 @@ function LeftPane(props: Props) {
                 entryType: 'IMAGE',
                 lead: leadId,
                 imageRaw: capturedImageUrl,
-                leadAttachment: leadAttachmentId,
             });
         }
         if (fullScreenMode && isDefined(document.exitFullscreen)) {
@@ -330,7 +360,6 @@ function LeftPane(props: Props) {
         fullScreenMode,
         capturedImageUrl,
         leadId,
-        leadAttachmentId,
         onEntryCreate,
         setShowCanvasDrawModalFalse,
         setShowScreenshotFalse,
@@ -370,16 +399,20 @@ function LeftPane(props: Props) {
         }
     }, [leadId, onEntryCreate]);
 
-    const handleAttachmentClick = useCallback((selectedAttachment: string) => {
+    const handleAttachmentClick = useCallback((attachment: LeadPreviewAttachmentType) => {
         if (onEntryCreate) {
             onEntryCreate({
                 clientId: randomString(),
                 entryType: 'ATTACHMENT',
                 lead: leadId,
-                leadAttachment: selectedAttachment,
+                leadAttachment: attachment.id,
                 excerpt: '',
                 droppedExcerpt: '',
             });
+            setLeadAttachmentsMap((oldValue) => ({
+                ...oldValue,
+                [attachment.id]: attachment,
+            }));
         }
     }, [leadId, onEntryCreate]);
 
@@ -400,31 +433,13 @@ function LeftPane(props: Props) {
         }
     }, [leadId, onEntryCreate]);
 
-    const entriesWithLeadAttachments = useMemo(() => (listToMap(
-        entries?.filter((entry) => isDefined(entry.leadAttachment)),
-        (entry) => entry.leadAttachment ?? '',
-        (entry) => entry.clientId,
-    )), [entries]);
-
-    const allEntriesWithLeadAttachments = entries?.filter(
-        (entry) => isDefined(entry.entryAttachment?.leadAttachmentId),
-    );
-
-    const leadAttachmentIdsToExclude = useMemo(
-        () => ([
-            ...Object.keys(entriesWithLeadAttachments ?? {}),
-            ...(allEntriesWithLeadAttachments ?? []),
-        ]), [entriesWithLeadAttachments, allEntriesWithLeadAttachments],
-    );
-
     const entryItemRendererParams = useCallback((
         entryId: string,
         entry: EntryInput,
-        index: number,
-    ) => ({
+    ): EntryItemProps => ({
         ...entry,
+        // FIXME: We can directly use entryId
         entryId: entry.clientId,
-        index,
         entryServerId: entry.id,
         isActive: activeEntry === entry.clientId,
         projectId,
@@ -432,12 +447,13 @@ function LeftPane(props: Props) {
         onExcerptChange,
         onEntryDelete,
         onEntryRestore,
-        leadAttachmentImage: entry?.leadAttachment ? leadPreviewAttachments?.find(
-            (attachment) => attachment.id === entry.leadAttachment,
-        ) : undefined,
-        entryImage: entry?.image ? entryImagesMap?.[entry.image] : undefined,
-        entryAttachment: entry?.entryAttachment
-            ? entryAttachmentsMap?.[entry.entryAttachment] : undefined,
+        entryImage: entry?.image
+            ? entryImagesMap?.[entry.image]
+            : undefined,
+        entryAttachment: entryAttachmentsMap?.[entry.clientId],
+        leadAttachment: entry.leadAttachment
+            ? leadAttachmentsMap?.[entry.leadAttachment]
+            : undefined,
         onApproveButtonClick,
         onDiscardButtonClick,
         disableClick: isEntrySelectionActive,
@@ -455,37 +471,65 @@ function LeftPane(props: Props) {
         onEntryRestore,
         entryImagesMap,
         isEntrySelectionActive,
-        leadPreviewAttachments,
         entryAttachmentsMap,
+        leadAttachmentsMap,
     ]);
 
     const leadAttachmentItemRendererParams = useCallback((
-        attachmentId: string,
+        _: string,
         attachment: LeadPreviewAttachmentType,
-        index: number,
-    ) => ({
-        ...attachment,
-        attachmentId: attachment.id,
-        index,
-        entryServerId: attachment?.id,
-        isActive: isDefined(activeEntry)
-            && activeEntry === entriesWithLeadAttachments?.[attachment.id],
-        entryId: entriesWithLeadAttachments?.[attachmentId],
-        onClick: handleAttachmentClick,
-        onApproveButtonClick,
-        onDiscardButtonClick,
-        className: styles.entryItem,
-        disableClick: isEntrySelectionActive,
-        errored: entriesError?.[attachmentId],
-        data: attachment,
-    }), [
+    ): TablesAndVisualsItemProps => {
+        const entry = entriesMappingByAttachment[attachment.id];
+        if (entry) {
+            const entryId = entry.clientId;
+            return {
+                type: 'entry-item' as const,
+                ...entry,
+                entryId: entry.clientId,
+                entryServerId: entry.id,
+                isActive: activeEntry === entry.clientId,
+                projectId,
+                onClick: onEntryClick,
+                onExcerptChange,
+                onEntryDelete,
+                onEntryRestore,
+                entryImage: entry?.image
+                    ? entryImagesMap?.[entry.image]
+                    : undefined,
+                entryAttachment: entryAttachmentsMap?.[entry.clientId],
+                leadAttachment: entry.leadAttachment
+                    ? leadAttachmentsMap?.[entry.leadAttachment]
+                    : undefined,
+                onApproveButtonClick,
+                onDiscardButtonClick,
+                disableClick: isEntrySelectionActive,
+                errored: entriesError?.[entryId],
+                className: styles.entryItem,
+            };
+        }
+
+        return ({
+            type: 'visual-item' as const,
+            onClick: handleAttachmentClick,
+            disableClick: isEntrySelectionActive,
+            attachment,
+        });
+    }, [
         handleAttachmentClick,
         onApproveButtonClick,
-        entriesError,
         onDiscardButtonClick,
-        activeEntry,
         isEntrySelectionActive,
-        entriesWithLeadAttachments,
+        entriesMappingByAttachment,
+        entriesError,
+        activeEntry,
+        entryAttachmentsMap,
+        leadAttachmentsMap,
+        entryImagesMap,
+        onEntryClick,
+        onEntryDelete,
+        onEntryRestore,
+        onExcerptChange,
+        projectId,
     ]);
 
     const activeEntryDetails = useMemo(() => (
@@ -621,6 +665,11 @@ function LeftPane(props: Props) {
             headerDescription={activeEntryDetails && activeEntry && (
                 <EntryItem
                     {...activeEntryDetails}
+                    leadAttachment={(
+                        activeEntryDetails.leadAttachment
+                            ? leadAttachmentsMap?.[activeEntryDetails.leadAttachment]
+                            : undefined
+                    )}
                     entryId={activeEntry}
                     entryServerId={activeEntryDetails?.id}
                     projectId={projectId}
@@ -812,7 +861,6 @@ function LeftPane(props: Props) {
                                     onAddButtonClick={onEntryCreate
                                         ? handleExcerptAddFromSimplified
                                         : undefined}
-                                    // attachmentData={leadPreviewAttachments}
                                     onAssistedEntryAdd={onAssistedEntryAdd}
                                     text={leadPreview?.textExtract}
                                     onExcerptChange={onExcerptChange}
@@ -867,50 +915,44 @@ function LeftPane(props: Props) {
                 )}
                 <TabPanel
                     name="visuals"
-                    activeClassName={styles.entryListTab}
+                    activeClassName={styles.visualsTab}
                     retainMount="lazy"
                 >
-                    <Container
-                        contentClassName={styles.tableVisualsTab}
-                        headerIcons={(
-                            <Switch
-                                label="Hide Created entries"
-                                onChange={handleToggle}
-                                name=""
-                                value={showResults}
+                    <Switch
+                        name="hide attachments"
+                        label="Hide Created entries"
+                        value={attachmentsWithEntriesHidden}
+                        onChange={setAttachmentsWithEntriesHidden}
+                    />
+                    <ListView
+                        spacing="comfortable"
+                        direction="vertical"
+                        data={leadPreviewAttachments}
+                        renderer={TablesAndVisualsItem}
+                        rendererParams={leadAttachmentItemRendererParams}
+                        className={styles.entryList}
+                        keySelector={leadAttachmentKeySelector}
+                        filtered={false}
+                        errored={false}
+                        pending={false}
+                        emptyIcon={(
+                            <Kraken
+                                variant="search"
                             />
                         )}
-                        footerActions={(
-                            <Pager
-                                activePage={activePage}
-                                itemsCount={leadPreviewCount ?? 0}
-                                maxItemsPerPage={maxItemsPerPage}
-                                onActivePageChange={setActivePage}
-                                onItemsPerPageChange={setMaxItemsPerPage}
-                            />
-                        )}
-                    >
-                        <ListView
-                            spacing="comfortable"
-                            direction="vertical"
-                            data={leadPreviewAttachments}
-                            renderer={TablesAndVisualsItem}
-                            rendererParams={leadAttachmentItemRendererParams}
-                            className={styles.entryList}
-                            keySelector={leadAttachmentKeySelector}
-                            filtered={false}
-                            errored={false}
-                            pending={false}
-                            emptyIcon={(
-                                <Kraken
-                                    variant="search"
-                                />
-                            )}
-                            emptyMessage="No entries found"
-                            messageShown
-                            messageIconShown
-                        />
-                    </Container>
+                        emptyMessage="No entries found"
+                        messageShown
+                        messageIconShown
+                    />
+                    <Pager
+                        className={styles.pager}
+                        activePage={activePage}
+                        itemsCount={leadPreviewCount ?? 0}
+                        maxItemsPerPage={maxItemsPerPage}
+                        onActivePageChange={setActivePage}
+                        onItemsPerPageChange={setMaxItemsPerPage}
+                        itemsPerPageControlHidden
+                    />
                 </TabPanel>
                 {!hideOriginalPreview && (
                     <TabPanel
@@ -928,7 +970,7 @@ function LeftPane(props: Props) {
                 )}
                 <TabPanel
                     name="entries"
-                    activeClassName={styles.entryListTab}
+                    activeClassName={styles.simplifiedTab}
                     retainMount="lazy"
                 >
                     <VirtualizedListView

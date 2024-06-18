@@ -16,6 +16,7 @@ import _ts from '#ts';
 import {
     UndiscardEntryMutation,
     UndiscardEntryMutationVariables,
+    EntryType,
 } from '#generated/types';
 
 import { Entry } from '../..';
@@ -46,6 +47,7 @@ export interface Props {
     excerpt: Entry['excerpt'];
     image?: Entry['image'];
     entryType: Entry['entryType'];
+    entryAttachment: EntryType['entryAttachment'] | undefined;
 }
 
 function DiscardedEntry(props: Props) {
@@ -58,6 +60,7 @@ function DiscardedEntry(props: Props) {
         entryType,
         excerpt,
         image,
+        entryAttachment,
     } = props;
 
     const alert = useAlert();
@@ -153,6 +156,7 @@ function DiscardedEntry(props: Props) {
                 image={image}
                 value={excerpt}
                 imageRaw={undefined}
+                entryAttachment={entryAttachment}
                 readOnly
             />
         </Container>

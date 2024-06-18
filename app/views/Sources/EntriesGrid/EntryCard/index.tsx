@@ -224,6 +224,7 @@ function EntryCard(props: Props) {
                     value={entry.excerpt}
                     image={entry.image}
                     imageRaw={undefined}
+                    entryAttachment={entry.entryAttachment}
                     // droppedExcerpt={entry.droppedExcerpt}
                     // tabularFieldData={entry.tabularFieldData}
                     readOnly
@@ -278,6 +279,7 @@ function EntryCard(props: Props) {
                         onEntryDataChange={onEntryDataChange}
                         geoAreaOptions={geoAreaOptions}
                         onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                        entryAttachment={entry.entryAttachment}
                     />
                 </>
             )}

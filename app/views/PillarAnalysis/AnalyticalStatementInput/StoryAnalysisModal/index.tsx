@@ -190,6 +190,7 @@ function StoryAnalysisModal(props: Props) {
         geoAreaOptions,
         setGeoAreaOptions,
         onEntryDataChange,
+        entryAttachment: data.entryAttachment,
     }), [
         projectId,
         index,

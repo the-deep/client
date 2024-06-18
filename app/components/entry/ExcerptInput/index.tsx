@@ -9,7 +9,7 @@ import {
 } from '@the-deep/deep-ui';
 import { genericMemo } from '#utils/common';
 
-import { EntryType } from '#generated/types';
+import { EntryType, LeadPreviewAttachmentType } from '#generated/types';
 import ExcerptTextArea from '#components/entry/ExcerptTextArea';
 import _ts from '#ts';
 
@@ -21,11 +21,15 @@ type Props<N extends string> = {
     excerptForImageClassName?: string;
     entryType: EntryType['entryType'];
     value: string | undefined | null;
-    // droppedExcerpt: EntryType['droppedExcerpt'] | undefined;
 
-    image: EntryType['image'] | undefined; // image from server (screenshot)
-    imageRaw: string | undefined; // temporary image
-    entryAttachment?: EntryType['entryAttachment'] | undefined; // copy of lead attachment that also has image from server
+    // temporary image (eg. image from unsaved screenshot or image from lead attachment)
+    imageRaw: string | undefined;
+
+    image: EntryType['image'] | undefined;
+    entryAttachment: EntryType['entryAttachment'] | undefined;
+
+    // For select few cases, we might need to override entryAttachment with leadAttachment
+    leadAttachment?: LeadPreviewAttachmentType;
 } & ({
     name: N;
     onChange: (newVal: string | undefined, name: N) => void;
@@ -37,8 +41,6 @@ type Props<N extends string> = {
 function ExcerptInput<N extends string>(props: Props<N>) {
     const {
         className,
-        // droppedValue,
-        // tabularFieldData,
         imageClassName,
         excerptForImageClassName,
         entryType,
@@ -46,12 +48,16 @@ function ExcerptInput<N extends string>(props: Props<N>) {
         imageRaw,
         value,
         entryAttachment,
+        leadAttachment,
     } = props;
 
+    // Manually added images (e.g. using screenshot)
     if (entryType === 'IMAGE') {
         const imageSrc = imageRaw ?? image?.file?.url;
         return (
-            <div className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}>
+            <Container
+                className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}
+            >
                 {imageSrc ? (
                     <ImagePreview
                         className={_cs(imageClassName, styles.image)}
@@ -84,18 +90,31 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                         {value}
                     </div>
                 )}
-            </div>
+            </Container>
         );
     }
+    // Manually added images (e.g. using screenshot)
     if (entryType === 'ATTACHMENT') {
-        const attachmentSrc = imageRaw ?? entryAttachment?.filePreview?.url;
+        const filePreview = leadAttachment
+            ? leadAttachment.filePreview
+            : entryAttachment?.filePreview;
+
+        const fileType = leadAttachment
+            ? leadAttachment.type
+            : entryAttachment?.entryFileType;
+
+        const file = leadAttachment
+            ? leadAttachment.file
+            : entryAttachment?.file;
+
+        const attachmentSrc = imageRaw ?? filePreview?.url;
         return (
             <Container
                 className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}
-                headerActions={entryAttachment?.entryFileType === 'XLSX' ? (
+                headerActions={fileType === 'XLSX' ? (
                     <QuickActionLink
                         title="Open external"
-                        to={entryAttachment?.file?.url || ''}
+                        to={file?.url || ''}
                     >
                         <BsDownload />
                     </QuickActionLink>

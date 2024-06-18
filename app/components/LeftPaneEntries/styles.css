@@ -79,10 +79,16 @@
         }
     }
 
-    .table-visuals-tab {
+    .visuals-tab {
         display: flex;
         flex-direction: column;
+        padding: var(--dui-spacing-large);
+        overflow: auto;
         gap: var(--dui-spacing-medium);
+
+        .pager {
+            justify-content: center;
+        }
     }
 
     .original-tab {
@@ -113,22 +119,8 @@
             }
         }
     }
+    .entry-list {
+        overflow: unset;
+    }
 
-    /* .entry-list-tab {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        background-color: var(--dui-color-background-information);
-        padding: var(--dui-spacing-large);
-        overflow: auto;
-
-        .entry-list {
-            flex-grow: 1;
-            overflow: auto;
-
-            .entry-item {
-                height: 200px;
-            }
-        }
-    } */
 }

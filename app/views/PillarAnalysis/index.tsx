@@ -1072,6 +1072,7 @@ function PillarAnalysis() {
             geoAreaOptions,
             setGeoAreaOptions,
             onEntryDataChange: getAnalysisDetails,
+            entryAttachment: entriesMapping[key]?.entryAttachment,
         }), [
             pillarId,
             projectId,
@@ -1105,6 +1106,7 @@ function PillarAnalysis() {
             geoAreaOptions,
             setGeoAreaOptions,
             onEntryDataChange: getAnalysisDetails,
+            entryAttachment: data.entryAttachment,
         }), [
             pillarId,
             projectId,

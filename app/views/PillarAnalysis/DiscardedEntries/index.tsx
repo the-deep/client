@@ -14,12 +14,14 @@ import {
     DiscardedEntriesQuery,
     DiscardedEntriesQueryVariables,
 } from '#generated/types';
+import { ENTRY_FRAGMENT } from '#gqlFragments';
 
 import DiscardedEntryItem, { Props as DiscardedEntryProps } from './DiscardedEntry';
 import { DiscardedTags } from '../index';
 import styles from './styles.css';
 
 const DISCARDED_ENTRIES = gql`
+    ${ENTRY_FRAGMENT}
     query DiscardedEntries (
         $projectId: ID!,
         $pillarId: ID!,
@@ -41,23 +43,7 @@ const DISCARDED_ENTRIES = gql`
                         tag
                         tagDisplay
                         entry {
-                            id
-                            excerpt
-                            droppedExcerpt
-                            entryType
-                            image {
-                                id
-                                title
-                                file {
-                                    name
-                                    url
-                                }
-                            }
-                            createdAt
-                            createdBy {
-                                id
-                                displayName
-                            }
+                            ...EntryResponse
                         }
                     }
                     totalCount
@@ -141,6 +127,7 @@ function DiscardedEntries(props: Props) {
             }) : undefined,
             entryType: data.entry.entryType,
             onEntryUndiscard: handleEntryUndiscard,
+            entryAttachment: data.entry.entryAttachment,
         }),
         [
             handleEntryUndiscard,

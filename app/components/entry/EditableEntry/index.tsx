@@ -38,6 +38,7 @@ import {
     AnalysisFrameworkDetailType,
     UpdateEntryMutation,
     UpdateEntryMutationVariables,
+    EntryType,
 } from '#generated/types';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import { getHiddenWidgetIds, Widget } from '#types/newAnalyticalFramework';
@@ -101,6 +102,7 @@ interface Props {
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     firstElementRef?: React.RefObject<HTMLDivElement>;
     noPaddingInWidgetContainer?: boolean;
+    entryAttachment: EntryType['entryAttachment'] | undefined;
 }
 
 function EditableEntry(props: Props) {
@@ -122,6 +124,7 @@ function EditableEntry(props: Props) {
         onGeoAreaOptionsChange,
         firstElementRef,
         noPaddingInWidgetContainer,
+        entryAttachment,
     } = props;
 
     const history = useHistory();
@@ -349,12 +352,14 @@ function EditableEntry(props: Props) {
             allWidgets={allWidgets}
             hideEntryId={hideEntryId}
             noPaddingInWidgetContainer={noPaddingInWidgetContainer}
+            entryAttachment={entryAttachment}
             rightComponent={(
                 <ExcerptInput
                     value={value.excerpt}
                     image={entryImage}
                     imageRaw={undefined}
                     entryType={value.entryType}
+                    entryAttachment={entryAttachment}
                     readOnly
                 />
             )}
@@ -388,6 +393,7 @@ function EditableEntry(props: Props) {
                     image={entryImage}
                     imageRaw={undefined}
                     entryType={value.entryType}
+                    entryAttachment={entryAttachment}
                     readOnly
                 />
             )}

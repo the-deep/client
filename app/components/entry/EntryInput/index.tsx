@@ -24,7 +24,9 @@ import NonFieldError from '#components/NonFieldError';
 import {
     WidgetType as WidgetRaw,
     AnalysisFrameworkDetailType,
+    EntryType,
 } from '#generated/types';
+
 // FIXME: move this component
 import {
     PartialAttributeType,
@@ -83,6 +85,8 @@ interface EntryInputProps<T extends string | number | undefined> {
     rightComponent?: React.ReactNode;
     noPaddingInWidgetContainer?: boolean;
 
+    entryAttachment: EntryType['entryAttachment'] | undefined;
+
     excerptShown?: boolean;
     displayHorizontally?: boolean;
     relevant?: boolean;
@@ -119,6 +123,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         excerptShown = false,
         displayHorizontally = false,
         relevant = true,
+        entryAttachment,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -254,6 +259,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                             image={entryImage}
                             imageRaw={value.imageRaw}
                             readOnly={readOnly}
+                            entryAttachment={entryAttachment}
                         />
                     </Container>
                 )}

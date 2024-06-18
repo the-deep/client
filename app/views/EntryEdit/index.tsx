@@ -118,7 +118,10 @@ function transformEntry(entry: Entry): EntryInputType {
         ...entry,
         lead: entry.lead.id,
         image: entry.image?.id,
-        entryAttachment: entry.entryAttachment?.id,
+        entryAttachment: undefined,
+        // NOTE: We need the leadAttachment value here to map with the preview
+        // on Tables and Visuals page
+        leadAttachment: entry.entryAttachment?.leadAttachmentId,
         attributes: entry.attributes?.map((attribute) => ({
             ...attribute,
             // NOTE: we don't need this on form
@@ -136,7 +139,6 @@ function EntryEdit(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const { user } = React.useContext(UserContext);
     const { leadId } = useParams<{ leadId: string }>();
-    const { leadAttachmentId } = useParams<{ leadAttachmentId: string }>();
 
     const [
         commentsCountMap,
@@ -461,7 +463,6 @@ function EntryEdit(props: Props) {
         leadId,
         projectId,
         updateLead,
-        // leadAttachmentId,
     ]);
 
     // NOTE: handling bulkUpdateEntriesPending because we are making another
@@ -634,10 +635,21 @@ function EntryEdit(props: Props) {
                 }));
 
                 const newAttachmentMap = listToMap(
-                    saveResult?.map((attachment) => attachment?.entryAttachment)
+                    saveResult
+                        ?.map((entry) => {
+                            if (entry && entry.entryAttachment) {
+                                return {
+                                    entryClientId: entry.clientId,
+                                    entryAttachment: entry.entryAttachment,
+                                };
+                            }
+                            return undefined;
+                        })
                         .filter(isDefined),
-                    (d) => d.id,
-                    (d) => d,
+                    // NOTE: We are using entry.clientId as the key because we
+                    // do not get entry.attachment.id on the entry
+                    (d) => d.entryClientId,
+                    (d) => d.entryAttachment,
                 );
                 setEntryAttachmentMap((oldMap) => ({
                     ...oldMap,
@@ -1159,10 +1171,20 @@ function EntryEdit(props: Props) {
 
                     const attachmentMap = listToMap(
                         leadFromResponse.entries
-                            ?.map((attachment) => attachment?.entryAttachment)
+                            ?.map((entry) => {
+                                if (entry && entry.entryAttachment) {
+                                    return {
+                                        entryClientId: entry.clientId,
+                                        entryAttachment: entry.entryAttachment,
+                                    };
+                                }
+                                return undefined;
+                            })
                             .filter(isDefined),
-                        (d) => d.id,
-                        (d) => d,
+                        // NOTE: We are using entry.clientId as the key because we
+                        // do not get entry.attachment.id on the entry
+                        (d) => d.entryClientId,
+                        (d) => d.entryAttachment,
                     );
                     setEntryAttachmentMap(attachmentMap);
 
@@ -1358,6 +1380,7 @@ function EntryEdit(props: Props) {
             secondaryTagging: frameworkDetails?.secondaryTagging,
             onAddButtonClick: handleAddButtonClick,
             primaryTagging: frameworkDetails?.primaryTagging,
+            entryAttachment: datum.id ? entryAttachmentsMap?.[datum.id] : undefined,
             excerptHeaderActions: datum.id && projectId && (
                 <>
                     <EntryVerification
@@ -1383,6 +1406,7 @@ function EntryEdit(props: Props) {
                                 image={datum?.image ? entryImagesMap?.[datum.image] : undefined}
                                 imageRaw={undefined}
                                 entryType={datum.entryType}
+                                entryAttachment={entryAttachmentsMap?.[datum.id]}
                                 readOnly
                             />
                         )}
@@ -1396,6 +1420,7 @@ function EntryEdit(props: Props) {
                     image={datum?.image ? entryImagesMap?.[datum.image] : undefined}
                     imageRaw={undefined}
                     entryType={datum.entryType}
+                    entryAttachment={datum.id ? entryAttachmentsMap?.[datum.id] : undefined}
                     readOnly
                 />
             ),
@@ -1408,6 +1433,7 @@ function EntryEdit(props: Props) {
             allWidgets,
         }),
         [
+            entryAttachmentsMap,
             controlledMap,
             onEntryControlledStatusChange,
             verifiedIdsMap,
@@ -1436,10 +1462,14 @@ function EntryEdit(props: Props) {
                     : undefined}
                 imageRaw={undefined}
                 entryType={currentEntry.entryType}
+                entryAttachment={currentEntry.clientId
+                    ? entryAttachmentsMap?.[currentEntry.clientId]
+                    : undefined}
                 readOnly
             />
         )),
         [
+            entryAttachmentsMap,
             currentEntry,
             entryImagesMap,
         ],
@@ -1700,7 +1730,6 @@ function EntryEdit(props: Props) {
                                     onDiscardButtonClick={handleEntryChangeDiscard}
                                     lead={lead}
                                     leadId={leadId}
-                                    leadAttachmentId={leadAttachmentId}
                                     entryAttachmentsMap={entryAttachmentsMap}
                                     hideSimplifiedPreview
                                     hideOriginalPreview

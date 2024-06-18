@@ -750,6 +750,8 @@ function AssistItem(props: Props) {
                             }
                             predictionsErrored={!!fetchErrors || !!createErrors || isErrored}
                             messageText={messageText}
+                            // NOTE: Setting this as undefined as this
+                            // component is only used for textual entries
                             footerActions={(
                                 <>
                                     <QuickActionButton

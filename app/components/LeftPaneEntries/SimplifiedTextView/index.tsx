@@ -241,10 +241,11 @@ function SimplifiedTextView(props: Props) {
                         {split.type === 'entry' ? (
                             <EntryItem
                                 className={styles.entry}
-                                clientId={split.clientId}
+                                // clientId={split.clientId}
                                 entryServerId={split.entryServerId}
                                 projectId={projectId}
-                                lead={split.lead}
+                                // lead={split.lead}
+                                // FIXME: Why do we nee two different props for the same entry id
                                 entryId={split.clientId}
                                 onClick={onExcerptClick}
                                 disableClick={disableExcerptClick}

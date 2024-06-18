@@ -6,7 +6,7 @@ import {
     IoArrowUndoSharp,
     IoTrashBinOutline,
 } from 'react-icons/io5';
-import { BsDownload, BsFileDiff } from 'react-icons/bs';
+import { BsFileDiff } from 'react-icons/bs';
 import { requiredStringCondition } from '@togglecorp/toggle-form';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import {
@@ -20,7 +20,6 @@ import {
     Heading,
     useInputState,
     Button,
-    QuickActionLink,
 } from '@the-deep/deep-ui';
 
 import ExcerptInput from '#components/entry/ExcerptInput';
@@ -85,7 +84,10 @@ export function ExcerptModal(props: ExcerptModalProps) {
     );
 }
 
-interface EntryItemProps extends EntryInput {
+export interface EntryItemProps extends Pick<
+    EntryInput,
+    'droppedExcerpt' | 'excerpt' | 'entryType' | 'deleted' | 'stale'
+> {
     entryId: string;
     isActive?: boolean;
     onClick?: (entryId: string) => void;
@@ -103,8 +105,8 @@ interface EntryItemProps extends EntryInput {
     projectId: string | undefined;
     entryServerId: string | undefined;
     draftEntry?: string;
-    leadAttachmentImage?: LeadPreviewAttachmentType;
-    entryAttachment?: Entry['entryAttachment'] | undefined | null;
+    leadAttachment?: LeadPreviewAttachmentType;
+    entryAttachment?: Entry['entryAttachment'];
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -131,7 +133,7 @@ function EntryItem(props: EntryItemProps) {
         deleted,
         errored,
         stale,
-        leadAttachmentImage,
+        leadAttachment,
         entryAttachment,
     } = props;
 
@@ -184,7 +186,7 @@ function EntryItem(props: EntryItemProps) {
                         <ExcerptInput
                             value={excerpt}
                             image={entryImage}
-                            imageRaw={leadAttachmentImage?.filePreview?.url ?? ''}
+                            imageRaw={leadAttachment?.filePreview?.url ?? ''}
                             entryAttachment={entryAttachment}
                             entryType={entryType}
                             readOnly
@@ -316,26 +318,16 @@ function EntryItem(props: EntryItemProps) {
                 onClick={handleClick}
                 role="presentation"
             >
-                <Container
-                    headerActions={leadAttachmentImage?.file?.url && (
-                        <QuickActionLink
-                            title="Open external"
-                            to={leadAttachmentImage.file.url}
-                        >
-                            <BsDownload />
-                        </QuickActionLink>
-                    )}
-                >
-                    <ExcerptInput
-                        value={excerpt}
-                        // droppedExcerpt={droppedExcerpt}
-                        image={entryImage}
-                        imageRaw={leadAttachmentImage?.filePreview?.url ?? undefined}
-                        entryType={entryType}
-                        entryAttachment={entryAttachment}
-                        readOnly
-                    />
-                </Container>
+                <ExcerptInput
+                    value={excerpt}
+                    // droppedExcerpt={droppedExcerpt}
+                    image={entryImage}
+                    imageRaw={leadAttachment?.filePreview?.url ?? undefined}
+                    entryType={entryType}
+                    entryAttachment={entryAttachment}
+                    leadAttachment={leadAttachment}
+                    readOnly
+                />
             </div>
             <div className={styles.verticalBorder} />
         </Container>
