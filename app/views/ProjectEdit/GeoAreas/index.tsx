@@ -11,11 +11,9 @@ import {
     IoAdd,
 } from 'react-icons/io5';
 
-import {
-    AdminLevelGeoArea,
-} from '#types';
 import { useModalState } from '#hooks/stateManagement';
 import {
+    AdminLevelType,
     CreateRegionMutation,
     RegionsForGeoAreasQuery,
     RegionsForGeoAreasQueryVariables,
@@ -42,6 +40,7 @@ query RegionsForGeoAreas ($id: ID!) {
                 codeProp
                 parentNameProp
                 parentCodeProp
+                parent
             }
             title
             public
@@ -54,7 +53,7 @@ type NewRegionId = NonNullable<NonNullable<CreateRegionMutation['createRegion']>
 
 const regionKeySelectorForRegionCard = (d: Region) => +d.id;
 
-type AdminLevel = AdminLevelGeoArea & { clientId: string };
+type AdminLevel = AdminLevelType & { clientId: string };
 type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetails'>;
 
 interface Props {
@@ -113,6 +112,8 @@ function GeoAreas(props: Props) {
         },
         [],
     );
+
+    console.log('active', activeRegion, 'admin', activeAdminLevel);
 
     const handleExpansion = useCallback(
         (expanded: boolean, name: string) => {

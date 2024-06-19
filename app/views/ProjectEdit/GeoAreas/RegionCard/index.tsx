@@ -9,6 +9,7 @@ import {
     IoInformationCircleOutline,
     IoAdd,
 } from 'react-icons/io5';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import {
     ListView,
     Message,
@@ -21,29 +22,66 @@ import {
     TabList,
     Tab,
     List,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
-    useRequest,
     useLazyRequest,
 } from '#base/utils/restRequest';
-
 import {
-    MultiResponse,
-    AdminLevelGeoArea,
-} from '#types';
-import { RegionsForGeoAreasQuery } from '#generated/types';
+    RegionsForGeoAreasQuery,
+    PublishRegionMutation,
+    PublishRegionMutationVariables,
+    AdminLevelType,
+    AdminLevelsQuery,
+    AdminLevelsQueryVariables,
+} from '#generated/types';
 
 import AddAdminLevelPane from './AddAdminLevelPane';
 
 import styles from './styles.css';
 
-type AdminLevel = AdminLevelGeoArea & { clientId: string };
-type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetails'>;
+type AdminLevel = AdminLevelType & { clientId: string };
+type PartialAdminLevel = PartialForm<AdminLevel, 'clientId'>;
 
 // NOTE: clientId is only used to show active tab
 const tabKeySelector = (d: AdminLevel) => d.clientId;
 
 type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
+
+const PUBLISH_REGION = gql`
+    mutation PublishRegion($regionId: ID!) {
+        publishRegion(id: $regionId) {
+            ok
+            errors
+        }
+    }
+`;
+
+const ADMIN_LEVELS = gql`
+    query AdminLevels($regionId: ID!) {
+        region(id: $regionId) {
+            adminLevels {
+                tolerance
+                title
+                staleGeoAreas
+                parentNameProp
+                parentCodeProp
+                codeProp
+                nameProp
+                geoShapeFile {
+                    file {
+                        url
+                    }
+                    id
+                    title
+                    mimeType
+                }
+                level
+                id
+            }
+        }
+    }
+`;
 
 interface Props {
     region: Region;
@@ -88,6 +126,7 @@ function RegionCard(props: Props) {
         adminLevels,
         setAdminLevels,
     ] = useState<AdminLevel[]>([]);
+    const alert = useAlert();
 
     const adminLevelsLength = adminLevels.length;
 
@@ -107,43 +146,38 @@ function RegionCard(props: Props) {
 
     const adminLevelQuery = useMemo(
         () => ({
-            region: region.id,
+            regionId: region.id,
         }),
         [region.id],
     );
 
     const {
-        pending: adminLevelsPending,
-        retrigger: getAdminLevels,
-    } = useRequest<MultiResponse<AdminLevelGeoArea>>({
-        url: 'server://admin-levels/',
-        skip: !isExpanded,
-        query: adminLevelQuery,
-        method: 'GET',
-        onSuccess: (response) => {
-            if (response.results.length < 0) {
-                return;
-            }
-            // NOTE: this will be fixed on graphql endpoint
-            const adminLevelsWithClientId = response.results.map((al) => ({
-                ...al,
-                clientId: al.id.toString(),
-            }));
-            setAdminLevels(adminLevelsWithClientId);
-
-            if (onActiveAdminLevelChange) {
-                const [first] = adminLevelsWithClientId;
-                if (first) {
-                    onActiveAdminLevelChange(first.id.toString());
+        loading: adminLevelsPending,
+        refetch: getAdminLevels,
+    } = useQuery<AdminLevelsQuery, AdminLevelsQueryVariables>(
+        ADMIN_LEVELS,
+        {
+            skip: !isExpanded,
+            variables: adminLevelQuery,
+            onCompleted: (response) => {
+                const adminLevelResponse = response.region;
+                if (!adminLevelResponse || !adminLevelResponse.adminLevels) {
+                    return;
                 }
-            }
+
+                const adminLevelsWithClientId = adminLevelResponse?.adminLevels.map((al) => ({
+                    ...al,
+                    clientId: al.id,
+                }));
+                setAdminLevels(adminLevelsWithClientId);
+            },
         },
-    });
+    );
 
     const {
         pending: deleteAdminLevelPending,
         trigger: deleteAdminLevel,
-    } = useLazyRequest<unknown, number>({
+    } = useLazyRequest<unknown, string>({
         url: (ctx) => `server://admin-levels/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
@@ -190,15 +224,14 @@ function RegionCard(props: Props) {
                 clientId,
                 title: `Admin Level ${adminLevelsLength}`,
                 level: adminLevelsLength,
-                region: +region.id,
             };
             onTempAdminLevelChange(newAdminLevel);
         },
-        [region.id, adminLevelsLength, onTempAdminLevelChange],
+        [adminLevelsLength, onTempAdminLevelChange],
     );
 
     const handleAdminLevelSave = useCallback(
-        (value: AdminLevelGeoArea) => {
+        (value: AdminLevelType) => {
             if (onTempAdminLevelChange) {
                 onTempAdminLevelChange(undefined);
             }
@@ -208,7 +241,7 @@ function RegionCard(props: Props) {
                 const index = newAdminLevels.findIndex((item) => item.id === value.id);
                 const valueWithClientId = {
                     ...value,
-                    clientId: value.id.toString(),
+                    clientId: value.id,
                 };
                 if (index === -1) {
                     newAdminLevels.push(valueWithClientId);
@@ -219,7 +252,7 @@ function RegionCard(props: Props) {
             });
 
             if (onActiveAdminLevelChange) {
-                onActiveAdminLevelChange(value.id.toString());
+                onActiveAdminLevelChange(value.id);
             }
 
             if (onAdminLevelUpdate) {
@@ -230,7 +263,7 @@ function RegionCard(props: Props) {
     );
 
     const handleAdminLevelDelete = useCallback(
-        (id: number | undefined) => {
+        (id: string | undefined) => {
             if (!id) {
                 if (onTempAdminLevelChange) {
                     onTempAdminLevelChange(undefined);
@@ -242,22 +275,55 @@ function RegionCard(props: Props) {
         [onTempAdminLevelChange, deleteAdminLevel],
     );
 
-    const {
-        pending: pendingPublishRegion,
-        trigger: publishRegion,
-    } = useLazyRequest<unknown>({
-        url: `server://regions/${region.id}/publish/`,
-        body: {},
-        method: 'POST',
-        onSuccess: () => {
-            onRegionPublishSuccess();
+    const [
+        publishRegion,
+        {
+            loading: pendingPublishRegion,
         },
-        failureMessage: 'Failed to publish selected region.',
-    });
+    ] = useMutation<PublishRegionMutation, PublishRegionMutationVariables>(
+        PUBLISH_REGION,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.publishRegion) {
+                    return;
+                }
+
+                const {
+                    ok,
+                    errors,
+                } = response.publishRegion;
+
+                if (errors) {
+                    alert.show(
+                        'Failed to publish selected region.',
+                        { variant: 'error' },
+                    );
+                }
+
+                if (ok) {
+                    alert.show(
+                        'Region is successfully published!',
+                        { variant: 'success' },
+                    );
+                    onRegionPublishSuccess();
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to publish selected region.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const handlePublishRegionClick = useCallback(() => {
-        publishRegion(null);
-    }, [publishRegion]);
+        publishRegion({
+            variables: {
+                regionId: region.id,
+            },
+        });
+    }, [publishRegion, region.id]);
 
     const tabListRendererParams = useCallback(
         (key: string, data: PartialAdminLevel) => ({
@@ -276,8 +342,10 @@ function RegionCard(props: Props) {
             onDelete: handleAdminLevelDelete,
             isPublished,
             adminLevelOptions: adminLevels,
+            regionId: region.id,
         }),
         [
+            region.id,
             isPublished,
             adminLevels,
             handleAdminLevelSave,

@@ -3,21 +3,21 @@ import {
     TabPanel,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
-
-import { AdminLevelGeoArea } from '#types';
+import { AdminLevelInputType, AdminLevelType } from '#generated/types';
 
 import AddAdminLevelForm from './AddAdminLevelForm';
 
-type AdminLevel = AdminLevelGeoArea & { clientId: string };
-type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetails'>;
+type AdminLevel = AdminLevelInputType & { clientId: string };
+type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFile'>;
 
 interface Props {
-    onSave: (adminLevel: AdminLevelGeoArea) => void;
-    onDelete: (id: number | undefined) => void;
+    onSave: (adminLevel: AdminLevelType) => void;
+    onDelete: (id: string | undefined) => void;
     value: PartialAdminLevel;
     isPublished?: boolean;
-    adminLevelOptions?: AdminLevelGeoArea[];
+    adminLevelOptions?: AdminLevelType[];
     name: string;
+    regionId: string;
 }
 
 function AddAdminLevelPane(props: Props) {
@@ -28,6 +28,7 @@ function AddAdminLevelPane(props: Props) {
         isPublished,
         adminLevelOptions,
         name,
+        regionId,
     } = props;
 
     return (
@@ -35,6 +36,7 @@ function AddAdminLevelPane(props: Props) {
             name={name}
         >
             <AddAdminLevelForm
+                regionId={regionId}
                 value={value}
                 onSave={onSave}
                 onDelete={onDelete}

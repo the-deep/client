@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from '@togglecorp/fujs';
 import {
@@ -27,17 +27,15 @@ import {
     UpdateAdminLevelMutationVariables,
     CreateAdminLevelMutationVariables,
     GalleryFileType,
+    AdminLevelType,
 } from '#generated/types';
 import NonFieldError from '#components/NonFieldError';
 import GalleryFileUpload from '#components/GalleryFileUpload';
-import {
-    AdminLevelGeoArea,
-} from '#types';
 
 import styles from './styles.css';
 
 type AdminLevel = AdminLevelInputType & { clientId: string, id: string};
-type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetails'>;
+type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFile'>;
 
 const CREATE_ADMIN_LEVEL = gql`
     mutation CreateAdminLevel(
@@ -49,6 +47,22 @@ const CREATE_ADMIN_LEVEL = gql`
                 ok
                 errors
                 result {
+                    tolerance
+                    title
+                    staleGeoAreas
+                    parentNameProp
+                    parentCodeProp
+                    codeProp
+                    nameProp
+                    geoShapeFile {
+                        file {
+                            url
+                        }
+                        id
+                        title
+                        mimeType
+                    }
+                    level
                     id
                 }
             }
@@ -67,6 +81,22 @@ const UPDATE_ADMIN_LEVEL = gql`
                 ok
                 errors
                 result {
+                    tolerance
+                    title
+                    staleGeoAreas
+                    parentNameProp
+                    parentCodeProp
+                    codeProp
+                    nameProp
+                    geoShapeFile {
+                        file {
+                            url
+                        }
+                        id
+                        title
+                        mimeType
+                    }
+                    level
                     id
                 }
             }
@@ -86,7 +116,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         clientId: [],
-        region: [requiredCondition],
+        region: [requiredStringCondition],
         title: [requiredStringCondition],
         level: [requiredCondition],
         geoShapeFile: [],
@@ -98,19 +128,21 @@ const schema: FormSchema = {
     }),
 };
 
-const adminLevelKeySelector = (d: AdminLevelGeoArea) => d.id;
-const adminLevelLabelSelector = (d: AdminLevelGeoArea) => d.title;
+const adminLevelKeySelector = (d: AdminLevelType) => d.id;
+const adminLevelLabelSelector = (d: AdminLevelType) => d.title;
 
 interface Props {
-    onSave: (adminLevel: AdminLevelGeoArea) => void;
-    onDelete: (id: number | undefined) => void;
+    regionId: string;
+    onSave: (adminLevel: AdminLevelType) => void;
+    onDelete: (id: string | undefined) => void;
     value: PartialAdminLevel;
     isPublished?: boolean;
-    adminLevelOptions?: AdminLevelGeoArea[];
+    adminLevelOptions?: AdminLevelType[];
 }
 
 function AddAdminLevelForm(props: Props) {
     const {
+        regionId,
         adminLevelOptions,
         onSave,
         value: valueFromProps,
@@ -132,7 +164,7 @@ function AddAdminLevelForm(props: Props) {
         setPristine,
         validate,
         setError,
-    } = useForm(schema, valueFromProps);
+    } = useForm(schema, { ...valueFromProps, region: regionId });
 
     const error = getErrorObject(riskyError);
     const alert = useAlert();
@@ -258,7 +290,7 @@ function AddAdminLevelForm(props: Props) {
                 if (isDefined(valueFromProps.id)) {
                     updateAdminLevel({
                         variables: {
-                            id: String(valueFromProps.id),
+                            id: valueFromProps.id,
                             data: val,
                         },
                     });
