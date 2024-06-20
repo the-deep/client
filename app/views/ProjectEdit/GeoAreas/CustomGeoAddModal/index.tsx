@@ -25,7 +25,7 @@ import {
 
 import styles from './styles.css';
 
-type NewRegionId = NonNullable<NonNullable<CreateRegionMutation['createRegion']>['result']>;
+type NewRegion = NonNullable<NonNullable<CreateRegionMutation['createRegion']>['result']>;
 
 const CREATE_REGION = gql`
 mutation CreateRegion($data: RegionInputType!) {
@@ -61,7 +61,7 @@ const schema: FormSchema = {
 
 interface Props {
     projectId: string;
-    onSuccess: (value: NewRegionId) => void;
+    onSuccess: (value: NewRegion) => void;
     onModalClose: () => void;
 }
 
@@ -90,20 +90,6 @@ function CustomGeoAddModal(props: Props) {
     } = useForm(schema, defaultFormValue);
 
     const error = getErrorObject(riskyError);
-
-    // const {
-    //     trigger: addRegionsTrigger,
-    //     pending: addRegionsPending,
-    // } = useLazyRequest<Region, Region>({
-    //     url: 'server://regions/',
-    //     method: 'POST',
-    //     body: (ctx) => ctx,
-    //     onSuccess: (response) => {
-    //         onSuccess(response);
-    //         onModalClose();
-    //     },
-    //     // TODO: add error handling
-    // });
 
     const [
         createRegion,
@@ -158,9 +144,7 @@ function CustomGeoAddModal(props: Props) {
                     if (isDefined(val.title) && isDefined(val.code) && isDefined(val.project)) {
                         createRegion({
                             variables: {
-                                project: val.project,
-                                code: val.code,
-                                title: val.title,
+                                data: val as RegionInputType,
                             },
                         });
                     }

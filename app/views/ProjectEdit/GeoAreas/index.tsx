@@ -1,16 +1,16 @@
 import React, { useCallback, useState } from 'react';
+import {
+    IoAdd,
+} from 'react-icons/io5';
 import { _cs } from '@togglecorp/fujs';
-import { PartialForm } from '@togglecorp/toggle-form';
 import { useQuery, gql } from '@apollo/client';
 import {
     Button,
     List,
     Container,
 } from '@the-deep/deep-ui';
-import {
-    IoAdd,
-} from 'react-icons/io5';
 
+import { PartialForm } from '@togglecorp/toggle-form';
 import { useModalState } from '#hooks/stateManagement';
 import {
     AdminLevelType,
@@ -25,6 +25,8 @@ import RegionCard from './RegionCard';
 import CustomGeoAddModal from './CustomGeoAddModal';
 
 import styles from './styles.css';
+
+type PartialAdminLevel = PartialForm<AdminLevelType>;
 
 const REGIONS_FOR_GEO_AREAS = gql`
 query RegionsForGeoAreas ($id: ID!) {
@@ -49,12 +51,9 @@ query RegionsForGeoAreas ($id: ID!) {
 }
 `;
 type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
-type NewRegionId = NonNullable<NonNullable<CreateRegionMutation['createRegion']>['result']>;
+type NewRegion = NonNullable<NonNullable<CreateRegionMutation['createRegion']>['result']>;
 
 const regionKeySelectorForRegionCard = (d: Region) => +d.id;
-
-type AdminLevel = AdminLevelType & { clientId: string };
-type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetails'>;
 
 interface Props {
     className?: string;
@@ -113,8 +112,6 @@ function GeoAreas(props: Props) {
         [],
     );
 
-    console.log('active', activeRegion, 'admin', activeAdminLevel);
-
     const handleExpansion = useCallback(
         (expanded: boolean, name: string) => {
             handleRegionSet(expanded ? name : undefined);
@@ -123,7 +120,7 @@ function GeoAreas(props: Props) {
     );
 
     const handleGeoAreaAddSuccess = useCallback(
-        (value: NewRegionId) => {
+        (value: NewRegion) => {
             handleRegionSet(value.id);
             regionsRefetch();
         },
@@ -153,14 +150,13 @@ function GeoAreas(props: Props) {
                 onAdminLevelUpdate: isExpanded ? updateMapTriggerId : undefined,
                 onRegionPublishSuccess: regionsRefetch,
                 onRegionRemoveSuccess: regionsRefetch,
-                regions: regions?.project?.regions ?? [],
                 navigationDisabled,
             };
         },
         [
             activeProject, activeRegion, activeAdminLevel,
             handleExpansion, tempAdminLevel, navigationDisabled,
-            updateMapTriggerId, regionsRefetch, regions?.project?.regions,
+            updateMapTriggerId, regionsRefetch,
         ],
     );
 

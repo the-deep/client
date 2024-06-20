@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from '@togglecorp/fujs';
 import {
@@ -34,8 +34,8 @@ import GalleryFileUpload from '#components/GalleryFileUpload';
 
 import styles from './styles.css';
 
-type AdminLevel = AdminLevelInputType & { clientId: string, id: string};
-type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFile'>;
+type AdminLevelInputTypeSafe = AdminLevelInputType & { id: string };
+type PartialAdminLevelInput = PartialForm<AdminLevelInputTypeSafe>;
 
 const CREATE_ADMIN_LEVEL = gql`
     mutation CreateAdminLevel(
@@ -103,19 +103,11 @@ const UPDATE_ADMIN_LEVEL = gql`
         }
 `;
 
-export interface FileUploadResponse {
-    id: number;
-    title: string;
-    file: string;
-    mimeType: string;
-}
-
-type FormSchema = ObjectSchema<PartialAdminLevel>;
+type FormSchema = ObjectSchema<PartialAdminLevelInput>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        clientId: [],
         region: [requiredStringCondition],
         title: [requiredStringCondition],
         level: [requiredCondition],
@@ -135,7 +127,7 @@ interface Props {
     regionId: string;
     onSave: (adminLevel: AdminLevelType) => void;
     onDelete: (id: string | undefined) => void;
-    value: PartialAdminLevel;
+    value: AdminLevelType;
     isPublished?: boolean;
     adminLevelOptions?: AdminLevelType[];
 }
@@ -157,6 +149,17 @@ function AddAdminLevelForm(props: Props) {
     }>();
 
     const {
+        geoShapeFile,
+        ...remainingValues
+    } = valueFromProps;
+
+    const initialFormValue: PartialAdminLevelInput = {
+        ...remainingValues,
+        geoShapeFile: geoShapeFile?.id,
+        region: regionId,
+    };
+
+    const {
         pristine,
         value,
         error: riskyError,
@@ -164,7 +167,9 @@ function AddAdminLevelForm(props: Props) {
         setPristine,
         validate,
         setError,
-    } = useForm(schema, { ...valueFromProps, region: regionId });
+    } = useForm(schema, initialFormValue);
+
+    const [option, setOption] = useState<GalleryFileType | undefined>(geoShapeFile ?? undefined);
 
     const error = getErrorObject(riskyError);
     const alert = useAlert();
@@ -257,31 +262,6 @@ function AddAdminLevelForm(props: Props) {
         },
     );
 
-    // const {
-    //     trigger: addAdminLevelTrigger,
-    // } = useLazyRequest<AdminLevelGeoArea, PartialAdminLevel>({
-    //     url: isDefined(valueFromProps.id)
-    //         ? `server://admin-levels/${valueFromProps.id}/`
-    //         : 'server://admin-levels/',
-    //     method: isDefined(valueFromProps.id)
-    //         ? 'PATCH'
-    //         : 'POST',
-    //     body: (ctx) => ctx,
-    //     onSuccess: (response) => {
-    //         onSave(response);
-    //         setPristine(true);
-    //         alert.show(
-    //             isDefined(valueFromProps.id)
-    //                 ? 'Successfully updated admin level.'
-    //                 : 'Successfully created admin level.',
-    //             { variant: 'success' },
-    //         );
-    //     },
-    //     failureMessage: isDefined(valueFromProps.id)
-    //         ? 'Failed to  update admin level'
-    //         : 'Failed to create admin level',
-    // });
-
     const handleSubmit = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
@@ -291,13 +271,13 @@ function AddAdminLevelForm(props: Props) {
                     updateAdminLevel({
                         variables: {
                             id: valueFromProps.id,
-                            data: val,
+                            data: val as AdminLevelInputType,
                         },
                     });
                 } else {
                     createAdminLevel({
                         variables: {
-                            data: val,
+                            data: val as AdminLevelInputType,
                         },
                     });
                 }
@@ -353,24 +333,12 @@ function AddAdminLevelForm(props: Props) {
                     onSuccess={handleFileInputChange}
                     projectIds={projectId ? [projectId] : undefined}
                     disabled={pending}
+                    status
+                    option={option}
+                    setOption={setOption}
                     acceptFileType=".geojson"
                     title="Upload a geojson file and select the corresponding field names from your geojson file"
                 />
-                // <DeepFileInput
-                //     name="geoShapeFile"
-                //     className={styles.input}
-                //     label="Upload a geojson file and select the corresponding field
-                //     names from your geojson file"
-                //     onChange={setFieldValue}
-                //     option={fileUploadOption}
-                //     setOption={setFileUploadOption}
-                //     value={value.geoShapeFile}
-                //     readOnly={isPublished}
-                //     disabled={pending}
-                //     maxFileSize={25}
-                // >
-                //     <MdFileUpload />
-                // </DeepFileInput>
             )}
             <div className={styles.row}>
                 <NumberInput

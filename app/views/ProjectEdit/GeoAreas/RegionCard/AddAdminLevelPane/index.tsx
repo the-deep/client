@@ -2,18 +2,14 @@ import React from 'react';
 import {
     TabPanel,
 } from '@the-deep/deep-ui';
-import { PartialForm } from '@togglecorp/toggle-form';
-import { AdminLevelInputType, AdminLevelType } from '#generated/types';
+import { AdminLevelType } from '#generated/types';
 
 import AddAdminLevelForm from './AddAdminLevelForm';
-
-type AdminLevel = AdminLevelInputType & { clientId: string };
-type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFile'>;
 
 interface Props {
     onSave: (adminLevel: AdminLevelType) => void;
     onDelete: (id: string | undefined) => void;
-    value: PartialAdminLevel;
+    value: AdminLevelType;
     isPublished?: boolean;
     adminLevelOptions?: AdminLevelType[];
     name: string;

@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
-    randomString,
 } from '@togglecorp/fujs';
 import { PartialForm } from '@togglecorp/toggle-form';
 import {
@@ -34,17 +33,17 @@ import {
     AdminLevelType,
     AdminLevelsQuery,
     AdminLevelsQueryVariables,
+    DeleteRegionMutation,
+    DeleteRegionMutationVariables,
 } from '#generated/types';
 
 import AddAdminLevelPane from './AddAdminLevelPane';
 
 import styles from './styles.css';
 
-type AdminLevel = AdminLevelType & { clientId: string };
-type PartialAdminLevel = PartialForm<AdminLevel, 'clientId'>;
+type PartialAdminLevel = PartialForm<AdminLevelType>;
 
-// NOTE: clientId is only used to show active tab
-const tabKeySelector = (d: AdminLevel) => d.clientId;
+const tabKeySelector = (d: AdminLevelType) => d.id;
 
 type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
 
@@ -53,6 +52,19 @@ const PUBLISH_REGION = gql`
         publishRegion(id: $regionId) {
             ok
             errors
+        }
+    }
+`;
+
+const DELETE_REGION = gql`
+    mutation DeleteRegion($projectId: ID!, $regionId: [ID!]) {
+        project(id: $projectId) {
+            projectRegionBulk(regionsToRemove: $regionId) {
+                errors
+                deletedResult {
+                    id
+                }
+            }
         }
     }
 `;
@@ -86,7 +98,6 @@ const ADMIN_LEVELS = gql`
 interface Props {
     region: Region;
     className?: string;
-    regions?: Region[];
     activeProject: string;
     isExpanded: boolean;
     handleExpansion: (_: boolean, name: string) => void;
@@ -103,7 +114,6 @@ interface Props {
 
 function RegionCard(props: Props) {
     const {
-        regions,
         handleExpansion,
         isExpanded,
         isPublished,
@@ -125,23 +135,37 @@ function RegionCard(props: Props) {
     const [
         adminLevels,
         setAdminLevels,
-    ] = useState<AdminLevel[]>([]);
+    ] = useState<AdminLevelType[]>([]);
     const alert = useAlert();
 
     const adminLevelsLength = adminLevels.length;
 
-    const adminLevelsWithTempAdminLevel = useMemo(
+    const adminLevelsWithTempAdminLevel: AdminLevelType[] = useMemo(
         () => {
             if (!tempAdminLevel) {
                 return adminLevels;
             }
-            return [...adminLevels, tempAdminLevel];
+
+            return adminLevels.map((admin) => {
+                const {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    title,
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    level,
+                    ...otherProperties
+                } = admin;
+                return {
+                    title: tempAdminLevel?.title ?? 'title',
+                    level: tempAdminLevel?.level ?? 0,
+                    ...otherProperties,
+                };
+            });
         },
         [adminLevels, tempAdminLevel],
     );
 
     const activeAdminLevelWithTempAdminLevel = tempAdminLevel
-        ? tempAdminLevel.clientId
+        ? tempAdminLevel.id
         : activeAdminLevel;
 
     const adminLevelQuery = useMemo(
@@ -165,11 +189,13 @@ function RegionCard(props: Props) {
                     return;
                 }
 
-                const adminLevelsWithClientId = adminLevelResponse?.adminLevels.map((al) => ({
-                    ...al,
-                    clientId: al.id,
-                }));
-                setAdminLevels(adminLevelsWithClientId);
+                setAdminLevels(adminLevelResponse.adminLevels);
+                if (onActiveAdminLevelChange) {
+                    const [first] = adminLevelResponse.adminLevels;
+                    if (first) {
+                        onActiveAdminLevelChange(first.id);
+                    }
+                }
             },
         },
     );
@@ -188,30 +214,62 @@ function RegionCard(props: Props) {
         },
     });
 
-    const {
-        trigger: removeRegion,
-    } = useLazyRequest<unknown, unknown>({
-        url: `server://projects/${activeProject}/`,
-        method: 'PATCH',
-        body: () => ({
-            regions: regions
-                ?.filter((r) => r.id !== region.id)
-                ?.map((r) => ({
-                    id: r.id,
-                })),
-        }),
-        onSuccess: () => {
-            onRegionRemoveSuccess();
+    const [
+        deleteRegion,
+        {
+            loading: pendingDeleteRegion,
         },
-    });
+    ] = useMutation<DeleteRegionMutation, DeleteRegionMutationVariables>(
+        DELETE_REGION,
+        {
+            onCompleted: (response) => {
+                if (!response.project?.projectRegionBulk) {
+                    return;
+                }
+
+                const {
+                    deletedResult,
+                    errors,
+                } = response.project.projectRegionBulk;
+
+                if (errors) {
+                    alert.show(
+                        'Failed to publish selected region.',
+                        { variant: 'error' },
+                    );
+                }
+
+                const ok = deletedResult?.some((result) => result.id === region.id);
+
+                if (ok) {
+                    alert.show(
+                        'Region is successfully deleted!',
+                        { variant: 'success' },
+                    );
+                    onRegionRemoveSuccess();
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to delete selected region.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const handleDeleteRegionClick = useCallback(
         () => {
-            if (regions) {
-                removeRegion(null);
+            if (region.id) {
+                deleteRegion({
+                    variables: {
+                        projectId: activeProject,
+                        regionId: [region.id],
+                    },
+                });
             }
         },
-        [removeRegion, regions],
+        [deleteRegion, region, activeProject],
     );
 
     const handleAdminLevelAdd = useCallback(
@@ -219,9 +277,7 @@ function RegionCard(props: Props) {
             if (!onTempAdminLevelChange) {
                 return;
             }
-            const clientId = randomString();
             const newAdminLevel: PartialAdminLevel = {
-                clientId,
                 title: `Admin Level ${adminLevelsLength}`,
                 level: adminLevelsLength,
             };
@@ -239,14 +295,10 @@ function RegionCard(props: Props) {
             setAdminLevels((oldAdminLevels) => {
                 const newAdminLevels = [...oldAdminLevels];
                 const index = newAdminLevels.findIndex((item) => item.id === value.id);
-                const valueWithClientId = {
-                    ...value,
-                    clientId: value.id,
-                };
                 if (index === -1) {
-                    newAdminLevels.push(valueWithClientId);
+                    newAdminLevels.push(value);
                 } else {
-                    newAdminLevels.splice(index, 1, valueWithClientId);
+                    newAdminLevels.splice(index, 1, value);
                 }
                 return newAdminLevels;
             });
@@ -335,7 +387,7 @@ function RegionCard(props: Props) {
     );
 
     const tabPanelRendererParams = useCallback(
-        (key: string, data: PartialAdminLevel) => ({
+        (key: string, data: AdminLevelType) => ({
             name: key,
             value: data,
             onSave: handleAdminLevelSave,
@@ -353,7 +405,10 @@ function RegionCard(props: Props) {
         ],
     );
 
-    const pending = adminLevelsPending || pendingPublishRegion || deleteAdminLevelPending;
+    const pending = adminLevelsPending
+        || pendingPublishRegion
+        || deleteAdminLevelPending
+        || pendingDeleteRegion;
 
     return (
         <ControlledExpandableContainer
