@@ -15,6 +15,7 @@ import {
     Kraken,
     Message,
     Button,
+    ConfirmButton,
     useBooleanState,
     useAlert,
 } from '@the-deep/deep-ui';
@@ -34,7 +35,6 @@ import {
 import {
     PartialAnalyticalStatementType,
 } from '../schema';
-import AutoClusteringTagsModal from './AutoClusteringTagsModal';
 
 import styles from './styles.css';
 
@@ -142,16 +142,9 @@ function AutoClustering(props: Props) {
         widgetTagLabels: widgetTagLabelsFromProps,
     } = props;
 
-    const [widgetTags, setWidgetTags] = useState<string[] | undefined>(widgetTagLabelsFromProps);
     const alert = useAlert();
 
     const [activeTopicModellingId, setActiveTopicModellingId] = useState<string | undefined>();
-
-    const [
-        widgetTagsModalShown,
-        showWidgetTagsModal,
-        hideWidgetTagsModal,
-    ] = useBooleanState(false);
 
     const [
         modalShown,
@@ -228,7 +221,6 @@ function AutoClustering(props: Props) {
                     );
                 }
                 showModal();
-                hideWidgetTagsModal();
             },
             onError: () => {
                 alert.show(
@@ -240,23 +232,6 @@ function AutoClustering(props: Props) {
             },
         },
     );
-
-    const handleAutoClusteringTriggerClick = useCallback(() => {
-        triggerAutoClustering({
-            variables: {
-                projectId,
-                pillarId,
-                filterData: entriesFilter,
-                widgetTags,
-            },
-        });
-    }, [
-        widgetTags,
-        triggerAutoClustering,
-        entriesFilter,
-        pillarId,
-        projectId,
-    ]);
 
     const status = autoClusteringResults?.project?.analysisTopicModel?.status;
     const clusters = autoClusteringResults?.project?.analysisTopicModel?.clusters;
@@ -310,12 +285,21 @@ function AutoClustering(props: Props) {
         buttonTitle = 'DEEP is processing entries';
     }
 
-    const handleAutoClusterButtonClick = useCallback(() => {
-        setWidgetTags(widgetTagLabelsFromProps);
-        showWidgetTagsModal();
+    const handleAutoClusteringTriggerClick = useCallback(() => {
+        triggerAutoClustering({
+            variables: {
+                projectId,
+                pillarId,
+                filterData: entriesFilter,
+                widgetTags: widgetTagLabelsFromProps,
+            },
+        });
     }, [
-        showWidgetTagsModal,
+        entriesFilter,
         widgetTagLabelsFromProps,
+        pillarId,
+        projectId,
+        triggerAutoClustering,
     ]);
 
     if (activeTopicModellingId) {
@@ -371,31 +355,34 @@ function AutoClustering(props: Props) {
     }
 
     return (
-        <>
-            <Button
-                className={styles.clusterButton}
-                name={undefined}
-                onClick={handleAutoClusterButtonClick}
-                disabled={
-                    pendingAutoClusterTrigger
-                    || ((entriesCount ?? 0) < MIN_ENTRIES)
-                    || isPrivateProject
-                }
-                variant="tertiary"
-                spacing="compact"
-                title={buttonTitle}
-            >
-                Auto Cluster
-            </Button>
-            {widgetTagsModalShown && (
-                <AutoClusteringTagsModal
-                    onClose={hideWidgetTagsModal}
-                    widgetTags={widgetTags ?? []}
-                    setWidgetTags={setWidgetTags}
-                    handleAutoClusteringTriggerClick={handleAutoClusteringTriggerClick}
-                />
+        <ConfirmButton
+            className={styles.clusterButton}
+            name={undefined}
+            onConfirm={handleAutoClusteringTriggerClick}
+            message={(
+                <>
+                    Are you sure you want to trigger auto clustering of entries into new
+                    stories? This will replace current analytical statements with suggested
+                    groupings using NLP. Entries from confidential sources are filtered out
+                    to maintain document privacy.
+                    <br />
+                    <br />
+                    <i>
+                        NOTE: Auto clustering entries may take time depending on your internet
+                        bandwidth, number of entries to be clustered and traffic in the auto
+                        clustering request.
+                    </i>
+                </>
             )}
-        </>
+            disabled={pendingAutoClusterTrigger
+                || ((entriesCount ?? 0) < MIN_ENTRIES)
+                || isPrivateProject}
+            variant="tertiary"
+            spacing="compact"
+            title={buttonTitle}
+        >
+            Auto Cluster
+        </ConfirmButton>
     );
 }
 

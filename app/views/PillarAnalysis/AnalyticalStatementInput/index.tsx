@@ -15,7 +15,6 @@ import {
     isDefined,
     isNotDefined,
     randomString,
-    unique,
     compareString,
 } from '@togglecorp/fujs';
 import {
@@ -69,7 +68,6 @@ import {
 
 import { Framework } from '..';
 import AnalyticalEntryInput from './AnalyticalEntryInput';
-import SummaryTagsModal from './StoryAnalysisModal/SummaryTagsModal';
 
 import StoryAnalysisModal from './StoryAnalysisModal';
 import styles from './styles.css';
@@ -174,7 +172,6 @@ export type EntryDetailType = NonNullable<NonNullable<NonNullable<NonNullable<No
 export interface AnalyticalStatementInputProps {
     className?: string;
     value: PartialAnalyticalStatementType;
-    entriesDetail: EntryDetailType[],
     error: Error<AnalyticalStatementType> | undefined;
     onChange: (value: SetValueArg<PartialAnalyticalStatementType>, index: number) => void;
     onRemove: (index: number) => void;
@@ -186,10 +183,10 @@ export interface AnalyticalStatementInputProps {
     listeners?: Listeners;
     onSelectedNgramChange: (item: string | undefined) => void;
     framework: Framework;
-    frameworkTagLabels: Record<string, string>;
     geoAreaOptions: GeoArea[] | undefined | null;
     setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     onEntryDataChange: () => void;
+    widgetTagLabels: string[] | undefined;
 }
 
 function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
@@ -208,86 +205,14 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         geoAreaOptions,
         setGeoAreaOptions,
         onEntryDataChange,
-        entriesDetail,
-        frameworkTagLabels,
+        widgetTagLabels: widgetTagsFromProps,
     } = props;
 
     const {
         project,
     } = useContext(ProjectContext);
+
     const [prevSummaryEntryIds, setPrevSummaryEntryIds] = useState<string[]>();
-
-    const [
-        automaticSummaryTagsModalShown,
-        showAutomaticSummaryTagsModal,
-        hideAutomaticSummaryTagsModal,
-    ] = useModalState(false);
-
-    const [widgetTags, setWidgetTags] = useState<string[] | undefined>();
-
-    const widgetsFromAttributes = useMemo(() => (
-        entriesDetail?.flatMap((entry) => entry?.entry?.attributes)
-            ?.filter(isDefined)
-    ), [entriesDetail]);
-
-    const tags = useMemo(() => (
-        unique(widgetsFromAttributes?.map(
-            (attribute) => {
-                if (!attribute) {
-                    return undefined;
-                }
-                if (attribute.widgetType === 'SELECT') {
-                    return attribute.data?.value;
-                }
-                if (attribute.widgetType === 'MULTISELECT') {
-                    return attribute.data?.value;
-                }
-                if (attribute.widgetType === 'ORGANIGRAM') {
-                    return attribute.data?.value;
-                }
-                if (attribute.widgetType === 'MATRIX1D') {
-                    const pillars = attribute.data?.value;
-                    const pillarKeys = Object.keys(pillars ?? [])
-                        ?.map((pillarKey) => Object.keys(pillars?.[pillarKey] ?? {}))
-                        ?.flat();
-
-                    return ([
-                        ...pillarKeys,
-                        ...(pillars ? Object.keys(pillars) : []),
-                    ]);
-                }
-                if (attribute.widgetType === 'MATRIX2D') {
-                    const dims = attribute.data?.value;
-
-                    const subPillarList = Object.values(dims ?? {})
-                        ?.flatMap((subPillar) => Object.values(subPillar ?? {}));
-
-                    const pillars = Object.keys(dims ?? {});
-                    const subPillars = pillars.map((key) => Object.keys(dims?.[key] ?? {})).flat();
-                    const sectors = unique(subPillarList
-                        .flatMap((sector) => Object.keys(sector ?? {})));
-                    const subSectors = unique(subPillarList
-                        .flatMap((sector) => Object.values(sector ?? {}))
-                        .flat());
-                    const widgetKeys = [
-                        ...pillars,
-                        ...subPillars,
-                        ...sectors,
-                        ...subSectors,
-                    ];
-                    return widgetKeys;
-                }
-                return undefined;
-            },
-        ).filter(isDefined).flat())
-    ), [widgetsFromAttributes]);
-
-    const allWidgetTagNames = useMemo(() => (
-        tags?.map((key) => key && frameworkTagLabels?.[key]).filter(isDefined)
-    ), [
-        frameworkTagLabels,
-        tags,
-    ]);
 
     const [selectedField, setSelectedField] = useState<Field | undefined>('statement');
     const [selectedContent, setSelectedContent] = useState<Content | undefined>('entries');
@@ -411,7 +336,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 variables: {
                     projectId,
                     entriesId: value.entries?.map((ae) => ae.entry).filter(isDefined),
-                    widgetTags: widgetTags ?? [],
+                    widgetTags: widgetTagsFromProps ?? [],
                 },
             });
         }
@@ -430,7 +355,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
 
         showStoryAnalysisModal();
     }, [
-        widgetTags,
+        widgetTagsFromProps,
         value.entries,
         project,
         showStoryAnalysisModal,
@@ -445,43 +370,24 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             showStoryAnalysisModal();
             return;
         }
+        showStoryAnalysisModal();
+
         const prevEntryIds = prevSummaryEntryIds?.sort((a, b) => compareString(a, b));
         const prevEntryIdsStringified = JSON.stringify(prevEntryIds);
         const currentEntryIds = value.entries
             ?.map((ae) => ae.entry).filter(isDefined).sort((a, b) => compareString(a, b));
         const currentEntryIdsStringified = JSON.stringify(currentEntryIds);
 
-        if (prevEntryIdsStringified === currentEntryIdsStringified) {
-            showStoryAnalysisModal();
-        } else {
-            setWidgetTags(allWidgetTagNames);
-            showAutomaticSummaryTagsModal();
+        if (prevEntryIdsStringified !== currentEntryIdsStringified) {
+            triggerAutomaticStoryAnalysis();
         }
-    }, [
-        project?.isPrivate,
-        value.entries,
-        showStoryAnalysisModal,
-        allWidgetTagNames,
-        prevSummaryEntryIds,
-        showAutomaticSummaryTagsModal,
-    ]);
-
-    const handleSubmitTagsButtonClick = useCallback(() => {
-        triggerAutomaticStoryAnalysis();
-        hideAutomaticSummaryTagsModal();
         showStoryAnalysisModal();
     }, [
-        hideAutomaticSummaryTagsModal,
+        project?.isPrivate,
         showStoryAnalysisModal,
+        value.entries,
+        prevSummaryEntryIds,
         triggerAutomaticStoryAnalysis,
-    ]);
-
-    const handleSummaryTagsModalClose = useCallback(() => {
-        hideAutomaticSummaryTagsModal();
-        // hideStoryAnalysisModal();
-    }, [
-        // hideStoryAnalysisModal,
-        hideAutomaticSummaryTagsModal,
     ]);
 
     const {
@@ -880,15 +786,6 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     />
                 )}
             </Container>
-            {automaticSummaryTagsModalShown && (
-                <SummaryTagsModal
-                    onCloseButtonClick={handleSummaryTagsModalClose}
-                    widgetTags={widgetTags ?? []}
-                    setWidgetTags={setWidgetTags}
-                    // TODO: Fix this after the mutation triggers have been separated
-                    handleSubmitButtonClick={handleSubmitTagsButtonClick}
-                />
-            )}
         </Tabs>
     );
 }

@@ -104,7 +104,6 @@ import _ts from '#ts';
 import { AnalysisPillars } from '#types';
 import { WidgetAttribute as WidgetAttributeFromEntry } from '#types/newEntry';
 import { FrameworkFilterType, Widget } from '#types/newAnalyticalFramework';
-import { type EntryDetailType } from './AnalyticalStatementInput';
 
 import DiscardedEntries from './DiscardedEntries';
 import SourceEntryItem, { Props as SourceEntryItemProps } from './SourceEntryItem';
@@ -450,27 +449,6 @@ const entryKeySelector = (d: Entry) => d.id;
 
 type FormType = typeof defaultFormValues;
 
-interface OrganigramDatum {
-    key: string;
-    label: string;
-    children?: OrganigramDatum[];
-}
-
-function flatten(data: OrganigramDatum) {
-    let base = {
-        [data.key]: data.label,
-    };
-
-    data.children?.forEach((child) => {
-        base = {
-            ...base,
-            ...flatten(child),
-        };
-    });
-
-    return base;
-}
-
 const statementKeySelector = (d: PartialAnalyticalStatementType) => d.clientId ?? '';
 
 function PillarAnalysis() {
@@ -792,12 +770,12 @@ function PillarAnalysis() {
     /* Contextual data for NLP */
     const widgetTagLabels = useMemo(() => {
         const selectedFilters = listToMap(
-            sourcesFilterValue?.entriesFilterData?.filterableData,
+            sourcesFilterValue?.entriesFilterData?.filterableData ?? [],
             (d) => d.filterKey,
             (d) => d.valueList,
         );
 
-        const selectedFilterKeys = Object.keys(selectedFilters ?? {});
+        const selectedFilterKeys = Object.keys(selectedFilters);
 
         const widgetTagMap = frameworkFilters
             ?.map((widget) => {
@@ -1150,144 +1128,15 @@ function PillarAnalysis() {
         }));
     }, [setSourcesFilterValue]);
 
-    const entriesForStatements = useMemo(() => listToMap(
-        analysisPillarDetails?.statements,
-        (statement) => statement.id,
-        (statement) => statement.entries?.filter(isDefined),
-    ), [
-        analysisPillarDetails?.statements,
-    ]);
-
-    const frameworkTagLabels: Record<string, string> = useMemo(() => {
-        const widgetTagsFromPrimaryTagging = frameworkDetails?.primaryTagging
-            ?.flatMap((section) => section.widgets)
-            ?.map((widget) => {
-                if (widget?.widgetId === 'MATRIX1D') {
-                    const rows = widget?.properties?.rows;
-                    const cells = rows
-                        ?.flatMap((row) => row.cells);
-                    const rowsWithCells = [
-                        ...(cells ?? []),
-                        ...(rows ?? []),
-                    ];
-
-                    const keyValueMap = rowsWithCells.reduce(
-                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
-                    );
-
-                    return keyValueMap;
-                }
-                if (widget?.widgetId === 'MATRIX2D') {
-                    const rows = widget?.properties?.rows;
-                    const subRows = rows?.flatMap((row) => row.subRows);
-                    const columns = widget?.properties?.columns;
-                    const subColumns = columns?.flatMap((col) => col.subColumns);
-                    const rowsWithColumns = [
-                        ...(rows ?? []),
-                        ...(subRows ?? []),
-                        ...(columns ?? []),
-                        ...(subColumns ?? []),
-                    ];
-                    const keyValueMap = rowsWithColumns.reduce(
-                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
-                    );
-                    return keyValueMap;
-                }
-                if (widget?.widgetId === 'MULTISELECT') {
-                    const options = widget?.properties?.options;
-                    const keyValueMap = options?.reduce(
-                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
-                    );
-                    return keyValueMap;
-                }
-                if (widget?.widgetId === 'SELECT') {
-                    const options = widget?.properties?.options;
-                    const keyValueMap = options?.reduce(
-                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
-                    );
-                    return keyValueMap;
-                }
-                // TODO: add organigram
-                return undefined;
-            }).filter(isDefined);
-        const widgetTagsFromSecondaryTagging = frameworkDetails?.secondaryTagging
-            ?.map((widget) => {
-                if (widget?.widgetId === 'MATRIX1D') {
-                    const rows = widget?.properties?.rows;
-                    const cells = rows
-                        ?.flatMap((row) => row.cells);
-                    const rowsWithCells = [
-                        ...(cells ?? []),
-                        ...(rows ?? []),
-                    ];
-
-                    const keyValueMap = rowsWithCells.reduce(
-                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
-                    );
-
-                    return keyValueMap;
-                }
-                if (widget?.widgetId === 'MATRIX2D') {
-                    const rows = widget?.properties?.rows;
-                    const subRows = rows?.flatMap((row) => row.subRows);
-                    const columns = widget?.properties?.columns;
-                    const subColumns = columns?.flatMap((col) => col.subColumns);
-                    const rowsWithColumns = [
-                        ...(rows ?? []),
-                        ...(subRows ?? []),
-                        ...(columns ?? []),
-                        ...(subColumns ?? []),
-                    ];
-                    const keyValueMap = rowsWithColumns.reduce(
-                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
-                    );
-                    return keyValueMap;
-                }
-                if (widget?.widgetId === 'MULTISELECT') {
-                    const options = widget?.properties?.options;
-                    const keyValueMap = options?.reduce(
-                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
-                    );
-                    return keyValueMap;
-                }
-                if (widget?.widgetId === 'SELECT') {
-                    const options = widget?.properties?.options;
-                    const keyValueMap = options?.reduce(
-                        (obj, item) => Object.assign(obj, { [item.key]: item.label }), {},
-                    );
-                    return keyValueMap;
-                }
-                if (widget?.widgetId === 'ORGANIGRAM') {
-                    const options = widget?.properties?.options;
-                    const keyValueMap = isDefined(options) ? flatten(options) : undefined;
-                    return keyValueMap;
-                }
-                // TODO: add organigram
-                return undefined;
-            }).filter(isDefined);
-
-        return Object.assign(
-            {},
-            ...(widgetTagsFromPrimaryTagging ?? []),
-            ...(widgetTagsFromSecondaryTagging ?? []),
-        );
-    }, [
-        frameworkDetails?.primaryTagging,
-        frameworkDetails?.secondaryTagging,
-    ]);
-
     const analyticalStatementRendererParams = useCallback((
-        id: string,
+        _: string,
         statement: PartialAnalyticalStatementType,
         index: number,
     ): AnalyticalStatementInputProps => ({
         className: styles.analyticalStatement,
         index,
         value: statement,
-        // TODO: Fix this issue
-        entriesDetail: entriesForStatements?.[id] as EntryDetailType[],
         framework: frameworkDetails,
-        frameworkTagLabels,
         onChange: onAnalyticalStatementChange,
         onRemove: onAnalyticalStatementRemove,
         geoAreaOptions,
@@ -1297,6 +1146,7 @@ function PillarAnalysis() {
         onSelectedNgramChange: handleNgramChange,
         error: statement?.clientId ? arrayError?.[statement?.clientId] : undefined,
         onEntryDataChange: getAnalysisDetails,
+        widgetTagLabels,
     }), [
         handleNgramChange,
         onAnalyticalStatementChange,
@@ -1304,11 +1154,10 @@ function PillarAnalysis() {
         getAnalysisDetails,
         handleEntryMove,
         handleEntryDrop,
-        frameworkTagLabels,
         frameworkDetails,
         geoAreaOptions,
         arrayError,
-        entriesForStatements,
+        widgetTagLabels,
     ]);
 
     const onOrderChange = useCallback((
