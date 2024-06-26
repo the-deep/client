@@ -1,6 +1,9 @@
 import React from 'react';
 import { BsDownload } from 'react-icons/bs';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     Container,
     ImagePreview,
@@ -111,14 +114,14 @@ function ExcerptInput<N extends string>(props: Props<N>) {
         return (
             <Container
                 className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}
-                headerActions={fileType === 'XLSX' ? (
+                headerActions={fileType === 'XLSX' && isDefined(file) && isDefined(file.url) && (
                     <QuickActionLink
                         title="Open external"
-                        to={file?.url || ''}
+                        to={file.url}
                     >
                         <BsDownload />
                     </QuickActionLink>
-                ) : undefined}
+                )}
             >
                 {attachmentSrc ? (
                     <ImagePreview

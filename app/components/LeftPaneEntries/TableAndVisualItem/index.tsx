@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { BsDownload } from 'react-icons/bs';
 import {
     IoAdd,
 } from 'react-icons/io5';
-
+import {
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     Container,
     QuickActionButton,
@@ -31,6 +33,20 @@ interface VisualProps {
 export type Props = EntryProps | VisualProps;
 
 function TableAndVisualItem(props: Props) {
+    const handleEntryAddFromAttachment = useCallback(() => {
+        // eslint-disable-next-line react/destructuring-assignment
+        if (props.type === 'entry-item') {
+            return;
+        }
+        // eslint-disable-next-line react/destructuring-assignment
+        if (props.onClick) {
+        // eslint-disable-next-line react/destructuring-assignment
+            props.onClick(props.attachment);
+        }
+    }, [
+        props,
+    ]);
+
     // eslint-disable-next-line react/destructuring-assignment
     if (props.type === 'entry-item') {
         return (
@@ -42,7 +58,6 @@ function TableAndVisualItem(props: Props) {
 
     const {
         attachment,
-        onClick,
         disableClick,
     } = props;
 
@@ -51,22 +66,17 @@ function TableAndVisualItem(props: Props) {
             headerActions={(
                 <>
                     <QuickActionButton
-                        // FIXME:
                         name={undefined}
                         title="Add Entry"
-                        onClick={() => {
-                            if (onClick) {
-                                onClick(attachment);
-                            }
-                        }}
+                        onClick={handleEntryAddFromAttachment}
                         disabled={disableClick}
                     >
                         <IoAdd />
                     </QuickActionButton>
-                    {attachment.type === 'XLSX' && (
+                    {attachment.type === 'XLSX' && isDefined(attachment.file.url) && (
                         <QuickActionLink
                             title="Open external"
-                            to={attachment.file?.url || ''}
+                            to={attachment.file.url}
                         >
                             <BsDownload />
                         </QuickActionLink>
@@ -77,7 +87,7 @@ function TableAndVisualItem(props: Props) {
         >
             <ImagePreview
                 alt="Preview Image"
-                src={attachment.filePreview?.url ?? ''}
+                src={attachment.filePreview?.url ?? undefined}
             />
         </Container>
     );

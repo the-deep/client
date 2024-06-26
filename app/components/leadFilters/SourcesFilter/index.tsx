@@ -166,6 +166,8 @@ interface Props {
 
     optionsLoading: boolean;
     optionsErrored: boolean;
+
+    hideEntryTypeFilter?: boolean;
 }
 
 function SourcesFilter(props: Props) {
@@ -182,6 +184,7 @@ function SourcesFilter(props: Props) {
         onChange: setFieldValue,
         optionsLoading,
         optionsErrored,
+        hideEntryTypeFilter,
     } = props;
 
     const error = getErrorObject(formError);
@@ -412,6 +415,7 @@ function SourcesFilter(props: Props) {
                             optionsDisabled={optionsLoading || optionsErrored}
                             allFiltersVisible
                             disabled={disabled}
+                            hideEntryTypeFilter={hideEntryTypeFilter}
                         />
                     </TabPanel>
                 )}

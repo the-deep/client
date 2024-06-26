@@ -381,7 +381,6 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $createdAtLte: DateTime,
             $createdBy: [ID!],
             $usedEntries: [ID!],
-            $entryTypes: [EntryTagTypeEnum!],
             $filterableData: [EntryFilterDataInputType!]
             $leadAssignees: [ID!],
             $leadCreatedBy: [ID!],
@@ -410,7 +409,9 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                     createdAtGte: $createdAtGte,
                     createdAtLte: $createdAtLte,
                     createdBy: $createdBy,
-                    entryTypes: $entryTypes,
+                    # NOTE: Filtering out all non-textual entries as they are not
+                    # need for Analysis Module
+                    entryTypes: EXCERPT,
                     filterableData: $filterableData,
                     leadAssignees: $leadAssignees,
                     leadConfidentialities: $leadConfidentialities,
@@ -1332,6 +1333,11 @@ function PillarAnalysis() {
                                 isEntriesOnlyFilter
                                 optionsLoading={false}
                                 optionsErrored={false}
+                                // NOTE: This is to prevent users from choosing
+                                // entry type (eg: EXCERPT, IMAGE, etc) from
+                                // filters as only EXCERPT entry types are
+                                // displayed here
+                                hideEntryTypeFilter
                             />
                         )}
                         <Tabs

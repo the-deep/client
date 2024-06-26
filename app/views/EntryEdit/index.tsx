@@ -1380,7 +1380,7 @@ function EntryEdit(props: Props) {
             secondaryTagging: frameworkDetails?.secondaryTagging,
             onAddButtonClick: handleAddButtonClick,
             primaryTagging: frameworkDetails?.primaryTagging,
-            entryAttachment: datum.id ? entryAttachmentsMap?.[datum.id] : undefined,
+            entryAttachment: isDefined(datum.id) ? entryAttachmentsMap?.[datum.id] : undefined,
             excerptHeaderActions: datum.id && projectId && (
                 <>
                     <EntryVerification

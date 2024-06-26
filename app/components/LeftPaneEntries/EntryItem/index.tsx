@@ -86,7 +86,7 @@ export function ExcerptModal(props: ExcerptModalProps) {
 
 export interface EntryItemProps extends Pick<
     EntryInput,
-    'droppedExcerpt' | 'excerpt' | 'entryType' | 'deleted' | 'stale'
+    'droppedExcerpt' | 'excerpt' | 'entryType' | 'deleted' | 'stale' | 'imageRaw'
 > {
     entryId: string;
     isActive?: boolean;
@@ -135,6 +135,7 @@ function EntryItem(props: EntryItemProps) {
         stale,
         leadAttachment,
         entryAttachment,
+        imageRaw,
     } = props;
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
@@ -186,7 +187,7 @@ function EntryItem(props: EntryItemProps) {
                         <ExcerptInput
                             value={excerpt}
                             image={entryImage}
-                            imageRaw={leadAttachment?.filePreview?.url ?? ''}
+                            imageRaw={imageRaw ?? leadAttachment?.filePreview?.url ?? undefined}
                             entryAttachment={entryAttachment}
                             entryType={entryType}
                             readOnly
@@ -322,7 +323,7 @@ function EntryItem(props: EntryItemProps) {
                     value={excerpt}
                     // droppedExcerpt={droppedExcerpt}
                     image={entryImage}
-                    imageRaw={leadAttachment?.filePreview?.url ?? undefined}
+                    imageRaw={imageRaw ?? leadAttachment?.filePreview?.url ?? undefined}
                     entryType={entryType}
                     entryAttachment={entryAttachment}
                     leadAttachment={leadAttachment}

@@ -173,7 +173,7 @@ interface Props {
     } | null>;
 }
 
-const defaultMaxItemsPerPage = 10;
+const MAX_ITEMS_PER_PAGE = 10;
 
 function LeftPane(props: Props) {
     const {
@@ -206,21 +206,22 @@ function LeftPane(props: Props) {
     const alert = useAlert();
     const { user } = useContext(UserContext);
 
-    // FIXME: memoize this
-    const entriesMappingByAttachment = listToMap(
-        entries?.map((entry) => {
-            if (isDefined(entry.leadAttachment)) {
-                // FIXME: this is a hack to assert leadAttachment value
-                return {
-                    ...entry,
-                    leadAttachment: entry.leadAttachment,
-                };
-            }
-            return undefined;
-        }).filter(isDefined) ?? [],
-        (item) => item.leadAttachment,
-        (item) => item,
-    );
+    const entriesMappingByAttachment = useMemo(() => (
+        listToMap(
+            entries?.map((entry) => {
+                if (isDefined(entry.leadAttachment)) {
+                    // FIXME: this is a hack to assert leadAttachment value
+                    return {
+                        ...entry,
+                        leadAttachment: entry.leadAttachment,
+                    };
+                }
+                return undefined;
+            }).filter(isDefined) ?? [],
+            (item) => item.leadAttachment,
+            (item) => item,
+        )
+    ), [entries]);
 
     const isAssistedTaggingAccessible = !!user
         ?.accessibleFeatures?.some((feature) => feature.key === 'ASSISTED');
@@ -265,10 +266,7 @@ function LeftPane(props: Props) {
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = useRef(null);
 
-    // FIXME: rename the following variables to indicate that these are for
-    // lead attachments
-    const [activePage, setActivePage] = useState<number>(1);
-    const [maxItemsPerPage, setMaxItemsPerPage] = useState(defaultMaxItemsPerPage);
+    const [activeLeadAttachmentPage, setActiveLeadAttachmentPage] = useState<number>(1);
 
     const [
         attachmentsWithEntriesHidden,
@@ -287,8 +285,8 @@ function LeftPane(props: Props) {
         () => ((leadId && projectId) ? ({
             leadId,
             projectId,
-            page: activePage,
-            pageSize: maxItemsPerPage,
+            page: activeLeadAttachmentPage,
+            pageSize: MAX_ITEMS_PER_PAGE,
             excludeAttachmentIds: attachmentsWithEntriesHidden
                 ? leadAttachmentIdsWithEntries
                 : [],
@@ -296,8 +294,7 @@ function LeftPane(props: Props) {
         [
             leadId,
             projectId,
-            activePage,
-            maxItemsPerPage,
+            activeLeadAttachmentPage,
             attachmentsWithEntriesHidden,
             leadAttachmentIdsWithEntries,
         ],
@@ -438,8 +435,7 @@ function LeftPane(props: Props) {
         entry: EntryInput,
     ): EntryItemProps => ({
         ...entry,
-        // FIXME: We can directly use entryId
-        entryId: entry.clientId,
+        entryId,
         entryServerId: entry.id,
         isActive: activeEntry === entry.clientId,
         projectId,
@@ -450,7 +446,7 @@ function LeftPane(props: Props) {
         entryImage: entry?.image
             ? entryImagesMap?.[entry.image]
             : undefined,
-        entryAttachment: entryAttachmentsMap?.[entry.clientId],
+        entryAttachment: entryAttachmentsMap?.[entryId],
         leadAttachment: entry.leadAttachment
             ? leadAttachmentsMap?.[entry.leadAttachment]
             : undefined,
@@ -483,8 +479,8 @@ function LeftPane(props: Props) {
         if (entry) {
             const entryId = entry.clientId;
             return {
-                type: 'entry-item' as const,
                 ...entry,
+                type: 'entry-item' as const,
                 entryId: entry.clientId,
                 entryServerId: entry.id,
                 isActive: activeEntry === entry.clientId,
@@ -918,12 +914,14 @@ function LeftPane(props: Props) {
                     activeClassName={styles.visualsTab}
                     retainMount="lazy"
                 >
-                    <Switch
-                        name="hide attachments"
-                        label="Hide Created entries"
-                        value={attachmentsWithEntriesHidden}
-                        onChange={setAttachmentsWithEntriesHidden}
-                    />
+                    {isDefined(leadPreviewCount) && (leadPreviewCount > 0) && (
+                        <Switch
+                            name="hide attachments"
+                            label="Hide Created entries"
+                            value={attachmentsWithEntriesHidden}
+                            onChange={setAttachmentsWithEntriesHidden}
+                        />
+                    )}
                     <ListView
                         spacing="comfortable"
                         direction="vertical"
@@ -940,19 +938,20 @@ function LeftPane(props: Props) {
                                 variant="search"
                             />
                         )}
-                        emptyMessage="No entries found"
+                        emptyMessage="No tables or visuals found"
                         messageShown
                         messageIconShown
                     />
-                    <Pager
-                        className={styles.pager}
-                        activePage={activePage}
-                        itemsCount={leadPreviewCount ?? 0}
-                        maxItemsPerPage={maxItemsPerPage}
-                        onActivePageChange={setActivePage}
-                        onItemsPerPageChange={setMaxItemsPerPage}
-                        itemsPerPageControlHidden
-                    />
+                    {isDefined(leadPreviewCount) && (leadPreviewCount > 0) && (
+                        <Pager
+                            className={styles.pager}
+                            activePage={activeLeadAttachmentPage}
+                            itemsCount={leadPreviewCount}
+                            maxItemsPerPage={MAX_ITEMS_PER_PAGE}
+                            onActivePageChange={setActiveLeadAttachmentPage}
+                            itemsPerPageControlHidden
+                        />
+                    )}
                 </TabPanel>
                 {!hideOriginalPreview && (
                     <TabPanel
