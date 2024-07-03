@@ -5,6 +5,7 @@ import {
     IoChevronUpOutline,
     IoChevronDownOutline,
     IoWarningOutline,
+    IoInformation,
 } from 'react-icons/io5';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import { MdModeEdit } from 'react-icons/md';
@@ -15,6 +16,7 @@ import {
     useConfirmation,
     Button,
     RowExpansionContext,
+    Tooltip,
     useModalState,
     useAlert,
 } from '@the-deep/deep-ui';
@@ -209,9 +211,22 @@ function Actions<T extends string>(props: Props<T>) {
         : entriesCount < 1;
     const noOfEntries = filteredEntriesCount ?? entriesCount;
 
+    const projectHasFramework = isDefined(project?.analysisFramework?.id);
+
     return (
         <div className={_cs(styles.actions, className)}>
             <div className={styles.row}>
+                {!projectHasFramework && (
+                    <div className={styles.info}>
+                        <IoInformation />
+                        <Tooltip>
+                            Looks like you have not chosen a framework for your project.
+                            Please edit your project or ask your admin to select a
+                            framework and start tagging.
+                        </Tooltip>
+                    </div>
+
+                )}
                 {canEditSource && (
                     <QuickActionButton
                         className={styles.button}

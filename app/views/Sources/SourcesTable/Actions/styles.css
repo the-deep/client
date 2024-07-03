@@ -12,6 +12,15 @@
         justify-content: flex-end;
         gap: var(--dui-spacing-small);
 
+        .info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            border-radius: 50%;
+            padding: var(--dui-spacing-extra-small);
+        }
+
         .button {
             flex-shrink: 0;
         }
