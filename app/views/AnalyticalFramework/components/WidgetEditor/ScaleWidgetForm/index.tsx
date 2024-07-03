@@ -443,6 +443,9 @@ function ScaleWidgetForm(props: ScaleWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(scale)"
+                headingContainerClassName={styles.headingDescription}
+                spacing="compact"
                 contentClassName={styles.editorContent}
                 headerActions={(
                     <>

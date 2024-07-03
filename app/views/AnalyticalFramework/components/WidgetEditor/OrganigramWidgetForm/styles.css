@@ -10,6 +10,11 @@
         background-color: var(--dui-color-foreground);
         overflow-y: auto;
         gap: var(--dui-spacing-medium);
+
+        .heading-description {
+            color: var(--dui-color-accent);
+            font-weight: var(--dui-font-weight-bold);
+        }
     }
 
     .list-container {
