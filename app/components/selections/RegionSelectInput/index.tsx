@@ -19,12 +19,14 @@ const REGION_LIST = gql`
         $search: String,
         $pageSize: Int,
         $page: Int,
+        $public: Boolean,
     ) {
         regions(
             excludeProject: $excludeProject,
             search: $search,
             pageSize: $pageSize,
             page: $page,
+            public: $public,
         ) {
             page
             results {
@@ -51,7 +53,7 @@ type RegionSelectInputProps<K extends string, GK extends string> = SearchSelectI
     Region,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
-> & { projectId: string};
+    > & { projectId: string, pending?: boolean};
 
 function RegionSelectInput<K extends string, GK extends string>(
     props: RegionSelectInputProps<K, GK>,
@@ -59,6 +61,7 @@ function RegionSelectInput<K extends string, GK extends string>(
     const {
         className,
         projectId,
+        pending,
         ...otherProps
     } = props;
 
@@ -69,6 +72,7 @@ function RegionSelectInput<K extends string, GK extends string>(
     const variables = useMemo(() => ({
         excludeProject: [projectId],
         search: debouncedSearchText,
+        public: true,
         page: 1,
         pageSize: 10,
     }), [
@@ -132,7 +136,7 @@ function RegionSelectInput<K extends string, GK extends string>(
             labelSelector={labelSelector}
             onSearchValueChange={setSearchText}
             searchOptions={data?.regions?.results}
-            optionsPending={loading}
+            optionsPending={loading || pending}
             totalOptionsCount={data?.regions?.totalCount ?? 0}
             onShowDropdownChange={setOpened}
             handleShowMoreClick={handleShowMoreClick}

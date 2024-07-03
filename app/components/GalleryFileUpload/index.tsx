@@ -53,7 +53,6 @@ function FileUpload(props: Props) {
         disabled,
         projectIds,
         buttonOnly,
-        // value: valueFromProps,
         option,
         setOption,
         status = false,
@@ -134,7 +133,7 @@ function FileUpload(props: Props) {
 
     const currentStatus = useMemo(() => {
         if (isNotDefined(status)) {
-            return '';
+            return undefined;
         }
         if (loading) {
             return 'Uploading file';
@@ -156,7 +155,7 @@ function FileUpload(props: Props) {
             name={undefined}
             value={undefined}
             onChange={handleFileInputChange}
-            status={status ? currentStatus : ''}
+            status={currentStatus}
             overrideStatus
             title={buttonOnly ? undefined : title}
             label={buttonOnly ? undefined : title}
