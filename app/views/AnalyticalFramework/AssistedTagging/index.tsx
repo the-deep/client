@@ -35,8 +35,8 @@ import {
 import {
     AssistedPredictionTagsQuery,
 } from '#generated/types';
-import generateString from '#utils/string';
 import ProgressLine from '#components/ProgressLine';
+import generateString from '#utils/string';
 
 import {
     getMatrix2dPossibleMappings,
@@ -304,26 +304,16 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                 heading={errored ? 'Assisted Tagging (errored)' : 'Assisted Tagging'}
                 headingSize="small"
                 description={generateString(
-                    'Through the infinite wisdom of the kraken, DEEP can provide you recommendations for your project’s tagging. Currently this is limited to common humanitarian frameworks, although in the future we envision this being available to all frameworks on the platform. Once you enable this feature and align your framework, you will see the option to use assisted tagging in the tagging page. To learn more about the feature, you can watch an {overview} and a {technicalExplanation}. The more you use this feature, and the more you use DEEP, the smarter we all become.',
+                    'The NLP feature in the DEEP Platform automatically extracts and categorizes information more accurately when paired with the standard DEEP NLP framework. With the matching feature, you can determine how closely your custom framework aligns with the standard one. This comparison is done using a string-matching method. At present, the best results are achieved with English content. If there are any incorrect matches or items that don\'t match, they can be manually adjusted to improve the classification accuracy, ensuring better utilization of the automatic extraction and classification features. See {descriptiveVideo} for further explanation',
                     {
-                        overview: (
+                        descriptiveVideo: (
                             <Link
                                 className={styles.link}
                                 // NOTE: Need to add a hide chevron button
                                 actionsContainerClassName={styles.linkActions}
                                 to="https://www.youtube.com/watch?v=cZFjq6L5Zl8"
                             >
-                                overview here
-                            </Link>
-                        ),
-                        technicalExplanation: (
-                            <Link
-                                className={styles.link}
-                                // NOTE: Need to add a hide chevron button
-                                actionsContainerClassName={styles.linkActions}
-                                to="https://www.youtube.com/watch?v=9-4NF0A5S08"
-                            >
-                                technical explanation here
+                                this video
                             </Link>
                         ),
                     },
