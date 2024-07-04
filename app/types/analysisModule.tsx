@@ -45,32 +45,17 @@ export interface AnalyticalStatementSummary {
 }
 
 export interface PillarSummary {
-    id: number;
+    id: string;
     title: string;
+    createdAt: string;
+    analysis: string;
+    analyzedEntriesCount: number;
+    entries?: {
+      totalCount?: number | null | undefined;
+    } | null | undefined;
     analyticalStatementCount: number;
-    analyticalStatements: AnalyticalStatementSummary[];
-    assigneeDetails: { displayName: string };
-    createdAt: string;
-    analyzedEntries?: number;
-}
-
-export interface AnalysisSummary {
-    id: number;
-    title: string;
-    pillars: PillarSummary[];
-    startDate?: string;
-    endDate: string;
-    createdAt: string;
-    modifiedAt: string;
-    teamLead: number;
-    teamLeadDetails: {
-        id: number;
-        displayName: string;
-    };
-    totalEntries: number;
-    totalSources: number;
-    analyzedEntries: number;
-    analyzedSources: number;
+    analyticalStatements: any[];
+    assigneeDetails: any;
 }
 
 export interface AnalysisElement {

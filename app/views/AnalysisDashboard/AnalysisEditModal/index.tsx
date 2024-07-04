@@ -146,7 +146,7 @@ interface AnalysisEditModalProps {
     className?: string;
     onSuccess: (value: AnalysisElement, isEditMode: boolean) => void;
     onModalClose: () => void;
-    analysisToEdit?: number;
+    analysisToEdit?: string;
     projectId: number;
 }
 

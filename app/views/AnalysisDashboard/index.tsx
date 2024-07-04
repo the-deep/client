@@ -4,6 +4,8 @@ import React, {
     useState,
     useCallback,
 } from 'react';
+
+import { gql, useQuery } from '@apollo/client';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -38,10 +40,7 @@ import {
     useModalState,
     Button,
 } from '@the-deep/deep-ui';
-import {
-    AnalysisSummary,
-    MultiResponse,
-} from '#types';
+
 import _ts from '#ts';
 import {
     convertDateToIsoDateTime,
@@ -50,16 +49,77 @@ import {
 } from '#utils/common';
 import { SubNavbarActions } from '#components/SubNavbar';
 
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
 import { ProjectContext } from '#base/context/ProjectContext';
 import RechartsLegend from '#components/RechartsLegend';
 import Timeline from '#components/Timeline';
+import {
+    AnalysisSummaryQuery,
+    AnalysisSummaryQueryVariables,
+} from '#generated/types';
 
 import Analysis from './Analysis';
 import AnalysisEditModal from './AnalysisEditModal';
 import styles from './styles.css';
 
-const analysisKeySelector = (d: AnalysisSummary) => d.id;
+const ANALYSIS_SUMMARY = gql`
+    query AnalysisSummary(
+        $project: ID!,
+        $createdAtGte: DateTime,
+        $modifiedAt: DateTime,
+        $createdAtLte: DateTime,
+    ) {
+        project(id: $project) {
+        analyses(
+            createdAtGte: $createdAtGte,
+            createdAtLte: $createdAtLte,
+            modifiedAt: $modifiedAt,
+        ) {
+        results {
+            id
+            analyzedEntriesCount
+            analyzedLeadsCount
+            modifiedAt
+            createdAt
+            startDate
+            endDate
+            title
+            teamLead {
+                id
+                displayName
+            }
+            pillars {
+                id
+                title
+                createdAt
+                analysis
+                analyzedEntriesCount
+                assignee {
+                    displayName
+                    id
+                }
+            }
+        }
+            totalCount
+        }
+        analysisOverview {
+            analyzedEntriesCount
+            analyzedLeadsCount
+            totalEntriesCount
+            totalLeadsCount
+            authoringOrganizations {
+                count
+                id
+                title
+            }
+        }
+    }
+}
+`;
+
+export type AnalysisSummaryType = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analyses']>['results']>[number];
+type AuthoringOrganizations = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analysisOverview']>['authoringOrganizations']>[number];
+
 const maxItemsPerPage = 5;
 
 const colorScheme = [
@@ -73,33 +133,27 @@ const colorScheme = [
     '#3f9fcf',
     '#5fd1ef',
 ];
+
 type Filter = {
     startDate: string;
     endDate: string;
 };
-interface AnalysisList {
-    id: number;
-    title: string;
-    createdAt: string;
-}
-interface AuthoringOrganizations {
-    count: number;
-    organizationTypeId: number;
-    organizationTypeTitle: string;
-}
-interface TimelineData {
-    key: number;
+
+type TimelineData = {
+    key: string;
     value: number;
     label: string;
-}
+};
 
-const labelSelector = (item: AuthoringOrganizations) => item.organizationTypeTitle;
+const analysisSummaryKeySelector = (d: AnalysisSummaryType) => d.id;
+
+const labelSelector = (item: AuthoringOrganizations) => item.title;
 const valueSelector = (item: AuthoringOrganizations) => item.count;
 const tickFormatter = (title: string) => title;
 
-const timelineLabelSelector = (item: TimelineData) => item.label;
-const timelineValueSelector = (item: TimelineData) => item.value;
-const timelineKeySelector = (item: TimelineData) => item.key;
+const timelineLabelSelector = (d: TimelineData): string => d.label;
+const timelineValueSelector = (d: TimelineData): number => d.value;
+const timelineKeySelector = (d: TimelineData): string => d.key;
 
 const timelineTickSelector = (d: number) => {
     const date = new Date(d);
@@ -108,14 +162,7 @@ const timelineTickSelector = (d: number) => {
 
     return `${year}-${shortMonthNamesMap[month]}`;
 };
-interface AnalysisOverview {
-    analysisList: AnalysisList[];
-    entriesTotal: number;
-    analyzedEntriesCount: number;
-    sourcesTotal: number;
-    analyzedSourceCount: number;
-    authoringOrganizations: AuthoringOrganizations[];
-}
+
 interface AnalysisDashboardProps {
     className?: string;
 }
@@ -140,52 +187,46 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
     const alert = useAlert();
 
     const [activePage, setActivePage] = useState(1);
-    const [analysisToEdit, setAnalysisToEdit] = useState<number | undefined>();
+    const [analysisToEdit, setAnalysisToEdit] = useState<string | undefined>();
     const [dateRangeFilter, setDateRangeFilter] = useState<Filter | undefined>(undefined);
 
-    const analysisQueryOptions = useMemo(() => ({
-        offset: (activePage - 1) * maxItemsPerPage,
-        limit: maxItemsPerPage,
-        created_at__gte: convertDateToIsoDateTime(dateRangeFilter?.startDate),
-        created_at__lte: convertDateToIsoDateTime(dateRangeFilter?.endDate, { endOfDay: true }),
-    }), [activePage, dateRangeFilter]);
-
-    const {
-        pending: pendingAnalyses,
-        response: analysesResponse,
-        retrigger: triggerGetAnalysis,
-    } = useRequest<MultiResponse<AnalysisSummary>>({
-        url: `server://projects/${activeProject}/analysis/summary/`,
-        method: 'GET',
-        query: analysisQueryOptions,
-        preserveResponse: true,
-    });
-
-    const {
-        response: overviewResponse,
-        retrigger: retriggerAnalysisOverview,
-    } = useRequest<AnalysisOverview>(
-        {
-            url: `server://projects/${activeProject}/analysis-overview/`,
-            method: 'GET',
-        },
+    const variables = useMemo(
+        () => ((project) ? ({
+            project: project.id,
+            page: activePage,
+            pageSize: maxItemsPerPage,
+            createdAtGte: convertDateToIsoDateTime(dateRangeFilter?.startDate),
+            createdAtLte: convertDateToIsoDateTime(dateRangeFilter?.endDate, { endOfDay: true }),
+        }) : undefined),
+        [
+            project,
+            activePage,
+            dateRangeFilter?.startDate,
+            dateRangeFilter?.endDate,
+        ],
     );
 
-    const handleRetriggers = useCallback(() => {
-        triggerGetAnalysis();
-        retriggerAnalysisOverview();
-    }, [triggerGetAnalysis, retriggerAnalysisOverview]);
+    const {
+        data: analysisSummaryData,
+        loading: analysisSummaryLoading,
+        refetch,
+    } = useQuery<AnalysisSummaryQuery, AnalysisSummaryQueryVariables>(
+        ANALYSIS_SUMMARY,
+        {
+            variables,
+        },
+    );
 
     const {
         pending: pendingAnalysisDelete,
         trigger: deleteAnalysisTrigger,
         context: analysisIdToDelete,
-    } = useLazyRequest<unknown, number>(
+    } = useLazyRequest<unknown, string>(
         {
             url: (ctx) => `server://projects/${activeProject}/analysis/${ctx}/`,
             method: 'DELETE',
             onSuccess: () => {
-                handleRetriggers();
+                refetch();
                 alert.show(
                     _ts('analysis', 'analysisDeleteSuccessful'),
                     {
@@ -197,28 +238,28 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
         },
     );
 
-    const piechartData = overviewResponse?.authoringOrganizations ?? [];
+    const piechartData = analysisSummaryData?.project?.analysisOverview?.authoringOrganizations
+        ?? [];
 
-    const timelineData: TimelineData[] = useMemo(
+    const timelineData = useMemo(
         () => (
-            overviewResponse?.analysisList?.map((d) => ({
+            analysisSummaryData?.project?.analyses?.results?.map((d) => ({
                 key: d.id,
                 value: new Date(d.createdAt).getTime(),
                 label: d.title,
             })) ?? []
         ),
-        [overviewResponse?.analysisList],
+        [analysisSummaryData?.project?.analyses?.results],
     );
 
     const handleAnalysisToDeleteClick = deleteAnalysisTrigger;
 
     const handleAnalysisEditSuccess = useCallback(() => {
-        triggerGetAnalysis();
-        retriggerAnalysisOverview();
+        refetch();
         setModalHidden();
-    }, [setModalHidden, triggerGetAnalysis, retriggerAnalysisOverview]);
+    }, [setModalHidden, refetch]);
 
-    const handleAnalysisEditClick = useCallback((analysisId: number | undefined) => {
+    const handleAnalysisEditClick = useCallback((analysisId: string | undefined) => {
         setAnalysisToEdit(analysisId);
         setModalVisible();
     }, [setModalVisible]);
@@ -228,32 +269,34 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
         setModalVisible();
     }, [setModalVisible]);
 
-    const analysisRendererParams = useCallback((key: number, data: AnalysisSummary) => ({
-        analysisId: key,
+    const analysisRendererParams = useCallback((id: string, data: AnalysisSummaryType) => ({
+        analysisId: id,
         onEdit: handleAnalysisEditClick,
         onDelete: handleAnalysisToDeleteClick,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
-        teamLeadName: data.teamLeadDetails?.displayName,
+        teamLeadName: data.teamLead?.displayName,
         createdAt: data.createdAt,
         modifiedAt: data.modifiedAt,
         pillars: data.pillars,
-        pillarsPending: pendingAnalyses,
-        analyzedSources: data.analyzedSources,
-        analyzedEntries: data.analyzedEntries,
-        totalSources: data.totalSources,
-        totalEntries: data.totalEntries,
-        onAnalysisCloseSuccess: handleRetriggers,
-        onAnalysisPillarDelete: handleRetriggers,
-        pendingAnalysisDelete: pendingAnalysisDelete && analysisIdToDelete === key,
+        pillarsPending: analysisSummaryLoading,
+        analyzedLeads: data.analyzedLeadsCount,
+        analyzedEntries: data.analyzedEntriesCount,
+        // FIX ME: Add `Total Lead count`
+        totalSources: data?.analyzedLeadsCount,
+        // FIX ME: Add `Total Entries count`
+        totalEntries: data?.analyzedEntriesCount,
+        onAnalysisCloseSuccess: refetch,
+        onAnalysisPillarDelete: refetch,
+        pendingAnalysisDelete: pendingAnalysisDelete && analysisIdToDelete === id,
     }), [
-        handleRetriggers,
+        refetch,
         handleAnalysisEditClick,
         handleAnalysisToDeleteClick,
         pendingAnalysisDelete,
         analysisIdToDelete,
-        pendingAnalyses,
+        analysisSummaryLoading,
     ]);
     const canTagEntry = project?.allowedPermissions?.includes('UPDATE_ENTRY');
 
@@ -283,20 +326,20 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
                         coloredBackground
                         icon={<IoDocumentTextOutline />}
                         label={_ts('analysis', 'totalSourcesLabel')}
-                        value={overviewResponse?.sourcesTotal}
+                        value={analysisSummaryData?.project?.analysisOverview?.totalLeadsCount}
                         variant="accent"
                     />
                     <InformationCard
                         coloredBackground
                         icon={<IoBookmarkOutline />}
                         label={_ts('analysis', 'totalEntriesLabel')}
-                        value={overviewResponse?.entriesTotal}
+                        value={analysisSummaryData?.project?.analysisOverview?.totalEntriesCount}
                         variant="complement1"
                     />
                     <PercentageInformationCard
                         value={calcPercent(
-                            overviewResponse?.analyzedSourceCount,
-                            overviewResponse?.sourcesTotal,
+                            analysisSummaryData?.project?.analysisOverview?.analyzedLeadsCount,
+                            analysisSummaryData?.project?.analysisOverview?.totalLeadsCount,
                         )}
                         label={_ts('analysis', 'sourcesAnalyzedLabel')}
                         variant="complement1"
@@ -304,8 +347,8 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
                     />
                     <PercentageInformationCard
                         value={calcPercent(
-                            overviewResponse?.analyzedEntriesCount,
-                            overviewResponse?.entriesTotal,
+                            analysisSummaryData?.project?.analysisOverview?.analyzedEntriesCount,
+                            analysisSummaryData?.project?.analysisOverview?.totalEntriesCount,
                         )}
                         variant="complement2"
                         label={_ts('analysis', 'entriesAnalyzedLabel')}
@@ -330,7 +373,7 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
                                         index: number,
                                     ) => (
                                         <Cell
-                                            key={entry.organizationTypeId}
+                                            key={entry.id}
                                             fill={colorScheme[
                                                 index % colorScheme.length
                                             ]}
@@ -385,7 +428,7 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
                 className={styles.allAnalyses}
                 contentClassName={styles.analysesContainer}
                 heading={_ts('analysis', 'allAnalyses')}
-                headingDescription={analysesResponse?.count}
+                headingDescription={analysisSummaryData?.project?.analyses?.totalCount}
                 headerDescriptionClassName={styles.headingDescription}
                 inlineHeadingDescription
                 headerActions={(
@@ -399,7 +442,7 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
                 footerActions={(
                     <Pager
                         activePage={activePage}
-                        itemsCount={analysesResponse?.count ?? 0}
+                        itemsCount={analysisSummaryData?.project?.analyses?.totalCount ?? 0}
                         maxItemsPerPage={maxItemsPerPage}
                         onActivePageChange={setActivePage}
                         itemsPerPageControlHidden
@@ -408,11 +451,11 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
             >
                 <ListView
                     className={styles.analysisList}
-                    data={analysesResponse?.results}
+                    data={analysisSummaryData?.project?.analyses?.results}
                     renderer={Analysis}
                     rendererParams={analysisRendererParams}
-                    keySelector={analysisKeySelector}
-                    pending={pendingAnalyses}
+                    keySelector={analysisSummaryKeySelector}
+                    pending={analysisSummaryLoading}
                     filtered={!!dateRangeFilter}
                     errored={false}
                     emptyMessage={_ts('analysis', 'noAnalysisCreatedLabel')}
