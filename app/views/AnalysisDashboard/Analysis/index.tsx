@@ -40,13 +40,14 @@ import {
 } from '#hooks/stateManagement';
 
 import {
+    AnalysisSummaryQuery,
     CreateAnalysisExportMutation,
     CreateAnalysisExportMutationVariables,
 } from '#generated/types';
 
 import _ts from '#ts';
 import PillarAnalysisList from './PillarList';
-import PillarAssignment from './PillarAssignment';
+import PillarAssignment, { type Props as PillarAssignmentItemProps } from './PillarAssignment';
 import AnalysisCloneModal from './AnalysisCloneModal';
 import ReportsModal from '../ReportsModal';
 
@@ -68,20 +69,7 @@ const CREATE_ANALYSIS_EXPORT = gql`
     }
 `;
 
-export interface PillarSummary {
-    id: string;
-    title: string;
-    createdAt: string;
-    analysis: string;
-    analyzedEntriesCount: number;
-    entries?: {
-        totalCount?: number | null | undefined;
-    } | null | undefined;
-    assignee: {
-        displayName?: string | null | undefined;
-        id: string;
-    } | null | undefined;
-};
+type PillarSummary = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analysisPillars']>['results']>[number];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderCustomizedLabel = (props: any) => {
@@ -113,7 +101,7 @@ const barChartMargin = {
 const BAR_TICK_COUNT = 5;
 const MAX_BAR_SIZE = 16;
 
-interface ComponentProps {
+export interface Props {
     analysisId: string;
     className?: string;
     title: string;
@@ -124,23 +112,21 @@ interface ComponentProps {
     onAnalysisCloseSuccess: () => void;
     teamLeadName?: string | null;
     createdAt: string;
-    modifiedAt: string;
-    onDelete: (value: string) => void;
+    onDelete: (analysisId: string) => void;
     pendingAnalysisDelete: boolean;
     pillars?: PillarSummary[] | null | undefined;
     pillarsPending: boolean;
-    totalEntries: number;
-    totalSources: number;
-    analyzedEntries: number;
-    analyzedLeads: number;
+    totalEntries: number | undefined;
+    totalSources: number | undefined;
+    analyzedEntries: number | undefined;
+    analyzedLeads: number | undefined;
 }
 
 const pillarSummaryKeySelector = (item: PillarSummary) => (item.id);
 
-function Analysis(props: ComponentProps) {
+function Analysis(props: Props) {
     const {
         title,
-        modifiedAt,
         className,
         startDate,
         endDate,
@@ -181,7 +167,7 @@ function Analysis(props: ComponentProps) {
     const alert = useAlert();
 
     const pillarAssignmentRendererParams = useCallback(
-        (_: number, data: PillarSummary) => ({
+        (_: string, data: PillarSummary): PillarAssignmentItemProps => ({
             assigneeName: data.assignee?.displayName,
             pillarTitle: data.title,
             analyzedEntries: data.analyzedEntriesCount,
@@ -244,14 +230,16 @@ function Analysis(props: ComponentProps) {
         onDelete(analysisId);
     }, [analysisId, onDelete]);
 
-    const barChartData = useMemo(() => (
-        pillars?.map((o) => ({
+    const barChartData = useMemo(() => {
+        if (!pillars || totalEntries === undefined) return [];
+
+        return pillars.map((o) => ({
             ...o,
             percent: Math.round(
                 ((o.analyzedEntriesCount ?? 0) / (totalEntries === 0 ? 1 : totalEntries)) * 10000,
             ) / 100,
-        }))
-    ), [pillars, totalEntries]);
+        }));
+    }, [pillars, totalEntries]);
 
     const disabled = pendingAnalysisDelete;
 
@@ -262,6 +250,11 @@ function Analysis(props: ComponentProps) {
 
     const canTagEntry = project?.analysisFramework?.id
         && project?.allowedPermissions?.includes('UPDATE_ENTRY');
+
+    const safeAnalyzedLeads = analyzedLeads ?? 0;
+    const safeTotalSource = totalSources ?? 1;
+    const safeAnalyzedEntries = analyzedEntries ?? 0;
+    const safeTotalEntries = totalEntries ?? 1;
 
     return (
         <ContainerCard
@@ -379,12 +372,12 @@ function Analysis(props: ComponentProps) {
                     contentClassName={styles.overviewContent}
                 >
                     <ProgressLine
-                        progress={(analyzedLeads / totalSources) * 100}
+                        progress={(safeAnalyzedLeads / safeTotalSource) * 100}
                         title={_ts('analysis', 'sourcesAnalyzedLabel')}
                         variant="complement1"
                     />
                     <ProgressLine
-                        progress={(analyzedEntries / totalEntries) * 100}
+                        progress={(safeAnalyzedEntries / safeTotalEntries) * 100}
                         title={_ts('analysis', 'entriesAnalyzedLabel')}
                         variant="complement2"
                     />
@@ -441,7 +434,7 @@ function Analysis(props: ComponentProps) {
             <ExpandableContainer
                 className={styles.pillarAnalyses}
                 headerClassName={styles.pillarAnalysesHeader}
-                heading={_ts('analysis', 'pillarAnalysisCount', { count: pillars?.length })}
+                heading={`Analysis ${pillars?.length}`}
                 headingSize="extraSmall"
                 alwaysMountedContent={false}
                 contentClassName={styles.pillarAnalysisList}
@@ -449,11 +442,12 @@ function Analysis(props: ComponentProps) {
                 {activeProject && (
                     <PillarAnalysisList
                         createdAt={createdAt}
-                        analysisId={Number(analysisId)}
-                        modifiedAt={modifiedAt}
+                        analysisId={analysisId}
                         activeProject={activeProject}
                         onAnalysisPillarDelete={onAnalysisPillarDelete}
                         totalEntries={totalEntries}
+                        pillars={pillars}
+                        pillarsPending={pillarsPending}
                     />
                 )}
             </ExpandableContainer>

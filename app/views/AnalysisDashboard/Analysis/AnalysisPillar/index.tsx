@@ -5,9 +5,9 @@ import {
     Container,
     Tag,
     QuickActionConfirmButton,
-    PendingMessage,
     TextOutput,
     List,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 import { FiEdit2 } from 'react-icons/fi';
 import {
@@ -15,32 +15,32 @@ import {
 } from 'react-icons/io5';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
-import {
-    PillarSummary,
-    AnalyticalStatementSummary,
-} from '#types';
+
 import routes from '#base/configs/routes';
 import { ProjectContext } from '#base/context/ProjectContext';
+import { AnalysisSummaryQuery } from '#generated/types';
 import { calcPercent } from '#utils/common';
 
 import _ts from '#ts';
 import styles from './styles.css';
 
-const statementKeySelector = (d: AnalyticalStatementSummary) => d.id;
+type PillarSummary = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analysisPillars']>['results']>[number];
+type AnalyticalStatement = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analyticalStatements']>['results']>[number];
+
+const statementKeySelector = (item: AnalyticalStatement) => Number(item.id);
 
 export interface Props {
-    analysisId: number;
-    assigneeName?: string;
-    statements?: AnalyticalStatementSummary[];
+    analysisId: string;
+    assigneeName?: string | null;
+    statements?: AnalyticalStatement[] | null;
     title: string;
     createdAt: string;
     onDelete: (value: number) => void;
-    pillarId: PillarSummary['id'];
-    projectId: string;
     pendingPillarDelete: boolean;
+    pillarId: PillarSummary['id']; projectId: string;
     className?: string;
-    totalEntries: number;
-    analyzedEntries?: number;
+    totalEntries: number | undefined;
+    analyzedEntries?: number | undefined;
 }
 
 function AnalysisPillar(props: Props) {
@@ -52,10 +52,10 @@ function AnalysisPillar(props: Props) {
         projectId,
         analysisId,
         createdAt,
-        pendingPillarDelete,
         statements,
         className,
-        totalEntries,
+        totalEntries = 0,
+        pendingPillarDelete,
         analyzedEntries = 0,
     } = props;
 
@@ -74,13 +74,12 @@ function AnalysisPillar(props: Props) {
         statusLabel = _ts('analysis', 'noAnalysisTagLabel');
     }
 
-    const disabled = pendingPillarDelete;
-
     const onDeleteConfirmClick = useCallback(() => {
-        onDelete(pillarId);
+        // TODO: Remove Number in pillarId
+        onDelete(Number(pillarId));
     }, [onDelete, pillarId]);
 
-    const statementRendererParams = useCallback((_: number, data: AnalyticalStatementSummary) => ({
+    const statementRendererParams = useCallback((_: number, data: AnalyticalStatement) => ({
         className: styles.statement,
         valueContainerClassName: styles.statementText,
         descriptionContainerClassName: styles.description,
@@ -93,6 +92,8 @@ function AnalysisPillar(props: Props) {
         ),
         value: data.statement,
     }), []);
+
+    const disabled = pendingPillarDelete;
 
     return (
         <Container

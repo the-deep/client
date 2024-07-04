@@ -101,7 +101,6 @@ import { ENTRY_FRAGMENT, FRAMEWORK_FRAGMENT } from '#gqlFragments';
 
 import _ts from '#ts';
 
-import { AnalysisPillars } from '#types';
 import { WidgetAttribute as WidgetAttributeFromEntry } from '#types/newEntry';
 import { FrameworkFilterType, Widget } from '#types/newAnalyticalFramework';
 
@@ -232,7 +231,11 @@ const PILLAR_ANALYSIS = gql`
         informationGap
         createdAt
         modifiedAt
-        filters
+        filters {
+            id
+            key
+            uniqueId
+        }
         statements {
             id
             clientId
@@ -531,9 +534,9 @@ function PillarAnalysis() {
                 }
 
                 const newFilters = listToGroupList(
-                    pillarData.filters as AnalysisPillars['filters'],
-                    (o) => o.key,
-                    (o) => o.id,
+                    pillarData.filters,
+                    (o) => o.key ?? '',
+                    (o) => o.id ?? '',
                 );
                 const filtersList = mapToList(
                     newFilters,

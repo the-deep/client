@@ -1,15 +1,15 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 
 import styles from './styles.css';
 
-interface Props {
+export interface Props {
     className?: string;
-    assigneeName?: string;
-    pillarTitle?: string;
-    analyzedEntries?: number;
+    assigneeName: string | null | undefined;
+    pillarTitle: string;
+    analyzedEntries: number;
     totalEntries?: number;
 }
 
@@ -34,7 +34,7 @@ function PillarAssignment(props: Props) {
         <div className={_cs(styles.pillarAssignment, className)}>
             <div
                 className={styles.assigneeName}
-                title={assigneeName}
+                title={isDefined(assigneeName) ? assigneeName : undefined}
             >
                 { assigneeName }
             </div>
