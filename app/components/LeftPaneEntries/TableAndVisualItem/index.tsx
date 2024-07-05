@@ -88,6 +88,7 @@ function TableAndVisualItem(props: Props) {
             <ImagePreview
                 alt="Preview Image"
                 src={attachment.filePreview?.url ?? undefined}
+                disableZoomOnScroll
             />
         </Container>
     );
