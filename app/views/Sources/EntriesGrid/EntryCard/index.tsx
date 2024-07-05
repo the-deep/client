@@ -223,10 +223,8 @@ function EntryCard(props: Props) {
                     entryType={entry.entryType}
                     value={entry.excerpt}
                     image={entry.image}
-                    // NOTE: no need to pass imageRaw and leadImageUrl as they
-                    // are not retrieved from server
                     imageRaw={undefined}
-                    leadImageUrl={undefined}
+                    entryAttachment={entry.entryAttachment}
                     // droppedExcerpt={entry.droppedExcerpt}
                     // tabularFieldData={entry.tabularFieldData}
                     readOnly
@@ -281,6 +279,7 @@ function EntryCard(props: Props) {
                         onEntryDataChange={onEntryDataChange}
                         geoAreaOptions={geoAreaOptions}
                         onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                        entryAttachment={entry.entryAttachment}
                     />
                 </>
             )}

@@ -34,6 +34,7 @@ import {
     DiscardedEntriesCreateMutation,
     DiscardedEntriesCreateMutationVariables,
     DiscardedEntryTagTypeEnum,
+    EntryType,
 } from '#generated/types';
 import routes from '#base/configs/routes';
 import {
@@ -90,6 +91,7 @@ export interface Props {
     excerpt: Entry['excerpt'];
     image: Entry['image'];
     entryType: Entry['entryType'];
+    entryAttachment: EntryType['entryAttachment'] | undefined;
 }
 
 function SourceEntryItem(props: Props) {
@@ -111,6 +113,7 @@ function SourceEntryItem(props: Props) {
         geoAreaOptions,
         setGeoAreaOptions,
         onEntryDataChange,
+        entryAttachment,
     } = props;
 
     const value = useMemo(() => ({ entryId }), [entryId]);
@@ -302,7 +305,7 @@ function SourceEntryItem(props: Props) {
                     image={image}
                     value={excerpt}
                     imageRaw={undefined}
-                    leadImageUrl={undefined}
+                    entryAttachment={entryAttachment}
                     readOnly
                 />
             )}
@@ -323,6 +326,7 @@ function SourceEntryItem(props: Props) {
                     onEntryDataChange={onEntryDataChange}
                     compact
                     noPaddingInWidgetContainer
+                    entryAttachment={entryAttachment}
                 />
             )}
         </DraggableContent>

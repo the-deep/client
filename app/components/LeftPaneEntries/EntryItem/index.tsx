@@ -28,8 +28,11 @@ import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 
 import { PartialEntryType as EntryInput } from '#components/entry/schema';
 import { Entry } from '#components/entry/types';
+import { LeadPreviewAttachmentType } from '#generated/types';
 
 import styles from './styles.css';
+
+export type EntryAttachmentsMap = { [key: string]: Entry['entryAttachment'] | undefined };
 
 interface ExcerptModalProps {
     title: string;
@@ -81,7 +84,10 @@ export function ExcerptModal(props: ExcerptModalProps) {
     );
 }
 
-interface EntryItemProps extends EntryInput {
+export interface EntryItemProps extends Pick<
+    EntryInput,
+    'droppedExcerpt' | 'excerpt' | 'entryType' | 'deleted' | 'stale' | 'imageRaw'
+> {
     entryId: string;
     isActive?: boolean;
     onClick?: (entryId: string) => void;
@@ -99,6 +105,8 @@ interface EntryItemProps extends EntryInput {
     projectId: string | undefined;
     entryServerId: string | undefined;
     draftEntry?: string;
+    leadAttachment?: LeadPreviewAttachmentType;
+    entryAttachment?: Entry['entryAttachment'];
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -120,12 +128,14 @@ function EntryItem(props: EntryItemProps) {
         disableClick,
         onEntryDelete,
         onEntryRestore,
-        imageRaw,
         entryImage,
         entryType,
         deleted,
         errored,
         stale,
+        leadAttachment,
+        entryAttachment,
+        imageRaw,
     } = props;
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
@@ -177,9 +187,8 @@ function EntryItem(props: EntryItemProps) {
                         <ExcerptInput
                             value={excerpt}
                             image={entryImage}
-                            imageRaw={imageRaw}
-                            // FIXME: pass this after image drag/drop is implemented
-                            leadImageUrl={undefined}
+                            imageRaw={imageRaw ?? leadAttachment?.filePreview?.url ?? undefined}
+                            entryAttachment={entryAttachment}
                             entryType={entryType}
                             readOnly
                         />
@@ -314,10 +323,10 @@ function EntryItem(props: EntryItemProps) {
                     value={excerpt}
                     // droppedExcerpt={droppedExcerpt}
                     image={entryImage}
-                    imageRaw={imageRaw}
-                    // FIXME: pass this after image drag/drop is implemented
-                    leadImageUrl={undefined}
+                    imageRaw={imageRaw ?? leadAttachment?.filePreview?.url ?? undefined}
                     entryType={entryType}
+                    entryAttachment={entryAttachment}
+                    leadAttachment={leadAttachment}
                     readOnly
                 />
             </div>

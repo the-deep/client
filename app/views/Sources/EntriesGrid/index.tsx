@@ -292,6 +292,7 @@ function EntriesGrid(props: Props) {
         onEntryDataChange: getEntries,
         geoAreaOptions,
         onGeoAreaOptionsChange: setGeoAreaOptions,
+        entryAttachment: entry.entryAttachment,
     }), [
         geoAreaOptions,
         getEntries,

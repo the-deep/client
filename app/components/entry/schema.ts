@@ -106,9 +106,10 @@ export const getEntrySchema = (widgets: Partial<Record<string, Widget>>): EntryS
         entryType: [],
         image: [], // NOTE: to send previously set image
         imageRaw: [defaultUndefinedType], // NOTE: to send url encoded image
-        leadImage: [defaultUndefinedType], // NOTE: to send images from lead
+        // leadImage: [defaultUndefinedType], // NOTE: to send images from lead
         tabularField: [],
         excerpt: [],
+        leadAttachment: [defaultUndefinedType],
         droppedExcerpt: [],
         // highlightHidden: [],
         attributes: getAttributesSchema(widgets),

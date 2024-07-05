@@ -268,9 +268,9 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                         value={entry.excerpt}
                         image={entry.image}
                         entryType={entry.entryType}
+                        entryAttachment={entry.entryAttachment}
                         readOnly
                         imageRaw={undefined}
-                        leadImageUrl={undefined}
                     />
                 )}
                 {entry && entryCardFlipped && (
@@ -299,6 +299,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                             geoAreaOptions={geoAreaOptions}
                             onGeoAreaOptionsChange={setGeoAreaOptions}
                             onEntryDataChange={onEntryDataChange}
+                            entryAttachment={entry.entryAttachment}
                             compact
                             noPaddingInWidgetContainer
                         />

@@ -25,6 +25,7 @@ import {
     organizationShortNameSelector,
     organizationTitleSelector,
 } from '#components/selections/NewOrganizationMultiSelectInput';
+import { EntryType } from '#generated/types';
 
 import _ts from '#ts';
 import { transformEntry } from '../../../context';
@@ -41,6 +42,7 @@ interface Props {
     geoAreaOptions: GeoArea[] | undefined | null;
     setGeoAreaOptions: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     onEntryDataChange: () => void;
+    entryAttachment: EntryType['entryAttachment'] | undefined;
 }
 
 function EntryCard(props: Props) {
@@ -54,6 +56,7 @@ function EntryCard(props: Props) {
         geoAreaOptions,
         setGeoAreaOptions,
         onEntryDataChange,
+        entryAttachment,
     } = props;
 
     const entryDate = entry?.createdAt;
@@ -156,7 +159,7 @@ function EntryCard(props: Props) {
                     entryType={entry.entryType}
                     readOnly
                     imageRaw={undefined}
-                    leadImageUrl={undefined}
+                    entryAttachment={entryAttachment}
                 />
             )}
             {entry && entryCardFlipped && (
@@ -185,6 +188,7 @@ function EntryCard(props: Props) {
                         geoAreaOptions={geoAreaOptions}
                         onGeoAreaOptionsChange={setGeoAreaOptions}
                         onEntryDataChange={onEntryDataChange}
+                        entryAttachment={entryAttachment}
                         compact
                         noPaddingInWidgetContainer
                     />

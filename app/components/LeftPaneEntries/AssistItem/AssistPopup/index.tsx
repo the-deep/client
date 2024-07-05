@@ -141,6 +141,9 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
                     excerptShown={excerptShown}
                     displayHorizontally={displayHorizontally}
                     relevant={relevant}
+                    // NOTE: Setting this as undefined as AssistPopup is only
+                    // used in textual entries
+                    entryAttachment={undefined}
                 />
             )}
         </Container>

@@ -1,6 +1,7 @@
 .tagged-excerpt {
     /* NOTE: when user select tagged excerpt, the add button will be visible */
     position: relative;
+    flex-shrink: 0;
     border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
     background-color: var(--dui-color-foreground);
     max-height: 360px;

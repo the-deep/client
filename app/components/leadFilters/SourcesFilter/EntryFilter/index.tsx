@@ -73,6 +73,7 @@ interface Props<K extends string> {
     entryTypeOptions?: EnumEntity<string>[] | null;
     frameworkFilters?: FrameworkFilterType[] | null;
     disabled?: boolean;
+    hideEntryTypeFilter?: boolean;
 }
 
 function EntryFilter<K extends string>(props: Props<K>) {
@@ -86,6 +87,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
         optionsDisabled,
         entryTypeOptions,
         frameworkFilters,
+        hideEntryTypeFilter,
     } = props;
 
     const setFieldValue = useFormObject(name, onChange, defaultValue);
@@ -207,22 +209,24 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 label="Has Comment"
                 disabled={disabled}
             />
-            <MultiSelectInput
-                variant="general"
-                className={_cs(
-                    styles.input,
-                    (doesObjectHaveNoData(value?.entryTypes) && !allFiltersVisible)
-                    && styles.hidden,
-                )}
-                name="entryTypes"
-                value={value?.entryTypes}
-                onChange={setFieldValue}
-                keySelector={enumKeySelector}
-                labelSelector={enumLabelSelector}
-                options={entryTypeOptions}
-                disabled={disabled || optionsDisabled}
-                label="Entry Type"
-            />
+            {!hideEntryTypeFilter && (
+                <MultiSelectInput
+                    variant="general"
+                    className={_cs(
+                        styles.input,
+                        (doesObjectHaveNoData(value?.entryTypes) && !allFiltersVisible)
+                        && styles.hidden,
+                    )}
+                    name="entryTypes"
+                    value={value?.entryTypes}
+                    onChange={setFieldValue}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    options={entryTypeOptions}
+                    disabled={disabled || optionsDisabled}
+                    label="Entry Type"
+                />
+            )}
             {frameworkFilters?.map((filter) => {
                 const filterValue = filterValuesMap[filter.key];
                 return (

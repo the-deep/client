@@ -1,12 +1,18 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { BsDownload } from 'react-icons/bs';
 import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
+import {
+    Container,
     ImagePreview,
     Message,
+    QuickActionLink,
 } from '@the-deep/deep-ui';
 import { genericMemo } from '#utils/common';
 
-import { EntryType } from '#generated/types';
+import { EntryType, LeadPreviewAttachmentType } from '#generated/types';
 import ExcerptTextArea from '#components/entry/ExcerptTextArea';
 import _ts from '#ts';
 
@@ -18,10 +24,15 @@ type Props<N extends string> = {
     excerptForImageClassName?: string;
     entryType: EntryType['entryType'];
     value: string | undefined | null;
-    // droppedExcerpt: EntryType['droppedExcerpt'] | undefined;
-    image: EntryType['image'] | undefined;
+
+    // temporary image (eg. image from unsaved screenshot or image from lead attachment)
     imageRaw: string | undefined;
-    leadImageUrl: string | undefined;
+
+    image: EntryType['image'] | undefined;
+    entryAttachment: EntryType['entryAttachment'] | undefined;
+
+    // For select few cases, we might need to override entryAttachment with leadAttachment
+    leadAttachment?: LeadPreviewAttachmentType;
 } & ({
     name: N;
     onChange: (newVal: string | undefined, name: N) => void;
@@ -33,21 +44,23 @@ type Props<N extends string> = {
 function ExcerptInput<N extends string>(props: Props<N>) {
     const {
         className,
-        // droppedValue,
-        // tabularFieldData,
         imageClassName,
         excerptForImageClassName,
         entryType,
         image,
         imageRaw,
-        leadImageUrl,
         value,
+        entryAttachment,
+        leadAttachment,
     } = props;
 
+    // Manually added images (e.g. using screenshot)
     if (entryType === 'IMAGE') {
-        const imageSrc = image?.file?.url ?? leadImageUrl ?? imageRaw;
+        const imageSrc = imageRaw ?? image?.file?.url;
         return (
-            <div className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}>
+            <Container
+                className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}
+            >
                 {imageSrc ? (
                     <ImagePreview
                         className={_cs(imageClassName, styles.image)}
@@ -80,7 +93,69 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                         {value}
                     </div>
                 )}
-            </div>
+            </Container>
+        );
+    }
+    // Manually added images (e.g. using screenshot)
+    if (entryType === 'ATTACHMENT') {
+        const filePreview = leadAttachment
+            ? leadAttachment.filePreview
+            : entryAttachment?.filePreview;
+
+        const fileType = leadAttachment
+            ? leadAttachment.type
+            : entryAttachment?.entryFileType;
+
+        const file = leadAttachment
+            ? leadAttachment.file
+            : entryAttachment?.file;
+
+        const attachmentSrc = imageRaw ?? filePreview?.url;
+        return (
+            <Container
+                className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}
+                headerActions={fileType === 'XLSX' && isDefined(file) && isDefined(file.url) && (
+                    <QuickActionLink
+                        title="Open external"
+                        to={file.url}
+                    >
+                        <BsDownload />
+                    </QuickActionLink>
+                )}
+            >
+                {attachmentSrc ? (
+                    <ImagePreview
+                        className={_cs(imageClassName, styles.image)}
+                        alt=""
+                        src={attachmentSrc}
+                    />
+                ) : (
+                    <Message
+                        className={_cs(excerptForImageClassName, styles.image)}
+                        message="Image data is not available."
+                    />
+                )}
+                {!props.readOnly && ( // eslint-disable-line react/destructuring-assignment
+                    <ExcerptTextArea
+                        label="Additional Context"
+                        className={_cs(
+                            excerptForImageClassName,
+                            styles.textAreaForImage,
+                        )}
+                        value={value}
+                        // eslint-disable-next-line react/destructuring-assignment
+                        name={props.name}
+                        // eslint-disable-next-line react/destructuring-assignment
+                        onChange={props.onChange}
+                        autoSize
+                    />
+                )}
+                {props.readOnly && value && ( // eslint-disable-line react/destructuring-assignment
+                    <div className={excerptForImageClassName}>
+                        {value}
+                    </div>
+                )}
+            </Container>
         );
     }
     if (entryType === 'EXCERPT') {

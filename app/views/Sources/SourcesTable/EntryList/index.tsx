@@ -271,6 +271,7 @@ function EntryList(props: Props) {
         onGeoAreaOptionsChange: setGeoAreaOptions,
         firstElementRef: data.id === entries?.[0].id ? ref : undefined,
         hideEntryId: true,
+        entryAttachment: data.entryAttachment,
     }), [
         geoAreaOptions,
         leadId,
