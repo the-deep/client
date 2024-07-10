@@ -40,6 +40,7 @@ const ANALYSIS_FRAMEWORK_MEMBERS = gql`
                 id
                 joinedAt
                 member {
+                    id
                     displayName
                     profile {
                         organization
