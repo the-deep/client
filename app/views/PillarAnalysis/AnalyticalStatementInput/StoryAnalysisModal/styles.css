@@ -45,15 +45,6 @@
                         font-size: var(--dui-font-size-large);
                         font-weight: var(--dui-font-weight-regular);
                     }
-                    .info {
-                        display: flex;
-                        align-self: center;
-                        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                        border-radius: 50%;
-                        padding: var(--dui-spacing-extra-small);
-                        font-size: var(--dui-font-size-medium);
-                    }
-
                     .brain-icon {
                         align-self: center;
                     }
@@ -140,10 +131,16 @@
                     gap: var(--dui-width-separator-thin);
 
                     .label-container {
+                        display: flex;
+                        justify-content: space-between;
                         padding-bottom: var(--dui-spacing-small);
                         color: var(--dui-color-text);
                         font-size: var(--dui-font-size-large);
                         font-weight: var(--dui-font-weight-bold);
+                    }
+
+                    .label-container-action {
+                        display: flex;
                     }
                 }
             }
@@ -206,5 +203,13 @@
                 overflow: auto;
             }
         }
+    }
+    .info {
+        display: flex;
+        align-self: center;
+        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        border-radius: 50%;
+        padding: var(--dui-spacing-extra-small);
+        font-size: var(--dui-font-size-medium);
     }
 }

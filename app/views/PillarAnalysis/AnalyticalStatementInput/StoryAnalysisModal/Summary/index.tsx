@@ -1,81 +1,31 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { isDefined } from '@togglecorp/fujs';
-import { gql, useQuery } from '@apollo/client';
 import {
     Kraken,
     Message,
     PendingMessage,
 } from '@the-deep/deep-ui';
 import {
-    AutomaticSummaryQuery,
-    AutomaticSummaryQueryVariables,
+    ApolloError,
+} from '@apollo/client';
+import {
+    AnalyticalInformationSummaryQuery,
 } from '#generated/types';
 
 import styles from './styles.css';
 
-const AUTOMATIC_SUMMARY = gql`
-query AutomaticSummary($projectId: ID!, $summaryId: ID!) {
-    project(id: $projectId) {
-        id
-        analysisAutomaticSummary(id: $summaryId) {
-            id
-            status
-            summary
-        }
-    }
-}
-`;
-
 interface Props {
-    projectId: string;
-    summaryId: string | undefined;
+    summaryData: AnalyticalInformationSummaryQuery | undefined;
+    error: ApolloError | undefined;
 }
 
 function Summary(props: Props) {
     const {
-        projectId,
-        summaryId,
+        summaryData,
+        error,
     } = props;
 
-    const {
-        data,
-        loading,
-        startPolling,
-        stopPolling,
-        error,
-    } = useQuery<AutomaticSummaryQuery, AutomaticSummaryQueryVariables>(
-        AUTOMATIC_SUMMARY,
-        {
-            skip: !summaryId,
-            variables: summaryId ? {
-                projectId,
-                summaryId,
-            } : undefined,
-        },
-    );
-
-    useEffect(
-        () => {
-            const shouldPoll = data?.project?.analysisAutomaticSummary?.status === 'PENDING'
-                || data?.project?.analysisAutomaticSummary?.status === 'STARTED';
-
-            if (shouldPoll) {
-                startPolling(5000);
-            } else {
-                stopPolling();
-            }
-            return (() => {
-                stopPolling();
-            });
-        },
-        [
-            data?.project?.analysisAutomaticSummary?.status,
-            startPolling,
-            stopPolling,
-        ],
-    );
-
-    if (data?.project?.analysisAutomaticSummary?.status === 'SEND_FAILED') {
+    if (summaryData?.project?.analysisAutomaticSummary?.status === 'SEND_FAILED') {
         return (
             <div className={styles.message}>
                 <Message
@@ -86,7 +36,7 @@ function Summary(props: Props) {
         );
     }
 
-    if (isDefined(error) || data?.project?.analysisAutomaticSummary?.status === 'FAILED') {
+    if (isDefined(error) || summaryData?.project?.analysisAutomaticSummary?.status === 'FAILED') {
         return (
             <div className={styles.message}>
                 <Message
@@ -97,9 +47,8 @@ function Summary(props: Props) {
         );
     }
 
-    const pending = loading
-        || data?.project?.analysisAutomaticSummary?.status === 'STARTED'
-        || data?.project?.analysisAutomaticSummary?.status === 'PENDING';
+    const pending = summaryData?.project?.analysisAutomaticSummary?.status === 'STARTED'
+        || summaryData?.project?.analysisAutomaticSummary?.status === 'PENDING';
 
     if (pending) {
         return (
@@ -109,9 +58,9 @@ function Summary(props: Props) {
 
     return (
         <div className={styles.summary}>
-            {(data?.project?.analysisAutomaticSummary?.summary?.length ?? 0) > 0 ? (
+            {(summaryData?.project?.analysisAutomaticSummary?.summary?.length ?? 0) > 0 ? (
                 <p className={styles.summaryText}>
-                    {data?.project?.analysisAutomaticSummary?.summary}
+                    {summaryData?.project?.analysisAutomaticSummary?.summary}
                 </p>
             ) : (
                 <div className={styles.message}>

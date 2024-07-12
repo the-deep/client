@@ -34,7 +34,6 @@ function MarkdownEditor<T extends string>(props: MarkdownEditorProps<T>) {
         labelContainerClassName,
         readOnly,
         uiMode,
-
         name,
         value,
         onChange,
