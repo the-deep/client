@@ -152,6 +152,9 @@ function TimeWidgetForm(props: TimeWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(time)"
+                headingContainerClassName={styles.headingDescription}
+                spacing="compact"
                 headerActions={(
                     <>
                         <Button

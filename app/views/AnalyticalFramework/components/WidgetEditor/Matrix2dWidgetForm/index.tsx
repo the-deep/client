@@ -1106,6 +1106,9 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(matrix 2d)"
+                headingContainerClassName={styles.headingDescription}
+                spacing="compact"
                 contentClassName={styles.editorContent}
                 withoutExternalPadding
                 ellipsizeHeading

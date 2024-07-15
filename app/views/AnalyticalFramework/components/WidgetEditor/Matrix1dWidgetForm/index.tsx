@@ -613,6 +613,9 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(matrix 1d)"
+                spacing="compact"
+                headingContainerClassName={styles.headingDescription}
                 contentClassName={styles.editorContent}
                 withoutExternalPadding
                 ellipsizeHeading

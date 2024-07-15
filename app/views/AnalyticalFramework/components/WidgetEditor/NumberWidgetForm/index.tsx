@@ -191,6 +191,9 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(number)"
+                headingContainerClassName={styles.headingDescription}
+                spacing="compact"
                 headerActions={(
                     <>
                         <Button

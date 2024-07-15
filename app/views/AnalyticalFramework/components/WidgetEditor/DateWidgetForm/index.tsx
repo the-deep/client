@@ -152,6 +152,9 @@ function DateWidgetForm(props: DateWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(date)"
+                headingContainerClassName={styles.headingDescription}
+                spacing="compact"
                 headerActions={(
                     <>
                         <Button

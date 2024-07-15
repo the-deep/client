@@ -94,6 +94,9 @@ function TimeRangeWidgetForm(props: TimeRangeWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(time range)"
+                headingContainerClassName={styles.headingDescription}
+                spacing="compact"
                 headerActions={(
                     <>
                         <Button

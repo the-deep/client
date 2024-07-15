@@ -389,6 +389,9 @@ function MultiSelectWidgetForm(props: MultiSelectWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(multi select)"
+                spacing="compact"
+                headingContainerClassName={styles.headingDescription}
                 contentClassName={styles.editorContent}
                 headerActions={(
                     <>

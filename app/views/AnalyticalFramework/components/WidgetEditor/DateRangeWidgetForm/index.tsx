@@ -92,6 +92,9 @@ function DateRangeWidgetForm(props: DateRangeWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(date range)"
+                headingContainerClassName={styles.headingDescription}
+                spacing="compact"
                 headerActions={(
                     <>
                         <Button

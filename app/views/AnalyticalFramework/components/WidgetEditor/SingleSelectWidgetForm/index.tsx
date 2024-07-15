@@ -388,7 +388,10 @@ function SingleSelectWidgetForm(props: SingleSelectWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(single select)"
+                headingContainerClassName={styles.headingDescription}
                 contentClassName={styles.editorContent}
+                spacing="compact"
                 headerActions={(
                     <>
                         <Button

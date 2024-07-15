@@ -1,6 +1,11 @@
 .date-range-widget-form {
     .container {
         background-color: var(--dui-color-foreground);
+
+        .heading-description {
+            color: var(--dui-color-accent);
+            font-weight: var(--dui-font-weight-bold);
+        }
     }
     .error,
     .input {

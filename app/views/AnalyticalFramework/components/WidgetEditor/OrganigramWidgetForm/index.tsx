@@ -514,6 +514,8 @@ function OrganigramWidgetForm(props: OrganigramWidgetFormProps) {
             <Container
                 className={styles.container}
                 heading={value.title ?? 'Unnamed'}
+                headingDescription="(organigram)"
+                headingContainerClassName={styles.headingDescription}
                 spacing="compact"
                 headerActions={(
                     <>
