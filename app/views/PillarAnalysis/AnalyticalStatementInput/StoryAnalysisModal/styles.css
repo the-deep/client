@@ -141,6 +141,11 @@
 
                     .label-container-action {
                         display: flex;
+
+                        .brain-icon {
+                            width: auto;
+                            height: var(--dui-font-size-extra-large);
+                        }
                     }
                 }
             }

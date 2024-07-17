@@ -18,6 +18,7 @@ import {
     QuickActionButton,
     QuickActionConfirmButton,
     SegmentInput,
+    Svg,
     Tab,
     TabList,
     TabPanel,
@@ -34,7 +35,6 @@ import {
     listToGroupList,
     isTruthyString,
 } from '@togglecorp/fujs';
-import { IoIosRefresh } from 'react-icons/io';
 import {
     IoChevronForward,
     IoChevronBackOutline,
@@ -52,6 +52,7 @@ import {
     AnalyticalInformationSummaryQuery,
     AnalyticalInformationSummaryQueryVariables,
 } from '#generated/types';
+import brainIcon from '#resources/img/brain.svg';
 import EntryCard from './EntryCard';
 import EntryContext from '../../context';
 import Summary from './Summary';
@@ -603,8 +604,12 @@ function StoryAnalysisModal(props: Props) {
                                                 message="You are about to auto generate information gap using NLP. This will replace the current information gap. Are you sure you want to continue?"
                                                 onConfirm={informationGapOnClick}
                                                 disabled={project?.isPrivate || pending}
+                                                variant="nlp-primary"
                                             >
-                                                <IoIosRefresh />
+                                                <Svg
+                                                    className={styles.brainIcon}
+                                                    src={brainIcon}
+                                                />
                                             </QuickActionConfirmButton>
                                             {project?.isPrivate && (
                                                 <div className={styles.info}>
@@ -667,8 +672,12 @@ function StoryAnalysisModal(props: Props) {
                                                 message="You are about to auto generate analytical statement using NLP. This will replace the current analytical statement. Are you sure you want to continue?"
                                                 onConfirm={analyticalStatementOnClick}
                                                 disabled={project?.isPrivate || pending}
+                                                variant="nlp-primary"
                                             >
-                                                <IoIosRefresh />
+                                                <Svg
+                                                    className={styles.brainIcon}
+                                                    src={brainIcon}
+                                                />
                                             </QuickActionConfirmButton>
                                             {project?.isPrivate && (
                                                 <div className={styles.info}>
@@ -705,8 +714,12 @@ function StoryAnalysisModal(props: Props) {
                                                 message="You are about to auto generate my analysis using NLP. This will use the current analytical statement, automatic summary, informations gap, entries and replace the current my analysis. Are you sure you want to continue?"
                                                 onConfirm={myAnalysisOnClick}
                                                 disabled={project?.isPrivate || pending}
+                                                variant="nlp-primary"
                                             >
-                                                <IoIosRefresh />
+                                                <Svg
+                                                    className={styles.brainIcon}
+                                                    src={brainIcon}
+                                                />
                                             </QuickActionConfirmButton>
                                             {project?.isPrivate && (
                                                 <div className={styles.info}>
