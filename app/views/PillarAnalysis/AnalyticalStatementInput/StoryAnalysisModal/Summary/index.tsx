@@ -6,7 +6,7 @@ import {
     PendingMessage,
 } from '@the-deep/deep-ui';
 import {
-    ApolloError,
+    type ApolloError,
 } from '@apollo/client';
 import {
     AnalyticalInformationSummaryQuery,

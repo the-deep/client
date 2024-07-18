@@ -33,7 +33,6 @@ import {
     _cs,
     unique,
     listToGroupList,
-    isTruthyString,
 } from '@togglecorp/fujs';
 import {
     IoChevronForward,
@@ -366,47 +365,49 @@ function StoryAnalysisModal(props: Props) {
     );
 
     const informationGapOnClick = useCallback(() => {
-        if (pristine) {
-            setPristine(false);
-        }
+        setPristine(false);
         const informationGapResponse = data?.project?.analysisAutomaticSummary?.informationGap;
         setInformationGaps(informationGapResponse);
-    }, [pristine, data?.project?.analysisAutomaticSummary]);
+    }, [data?.project?.analysisAutomaticSummary]);
 
-    const analyticalStatementOnClick = useCallback(() => {
-        if (pristine) {
-            setPristine(false);
-        }
+    const onStatementGenerateClick = useCallback(() => {
+        setPristine(false);
         const analyticalStatementResponse = data
             ?.project?.analysisAutomaticSummary?.analyticalStatement;
         setAnalyticalStatement(analyticalStatementResponse);
-    }, [pristine, data?.project?.analysisAutomaticSummary]);
+    }, [data?.project?.analysisAutomaticSummary]);
 
-    const myAnalysisOnClick = useCallback(() => {
-        if (pristine) {
-            setPristine(false);
-        }
-        const entriesText = originalEntries.map(
-            (entry) => entry.excerpt,
-        ).filter(isTruthyString).join('\n \n');
+    const onAnalysisGenerateClick = useCallback(() => {
+        setPristine(false);
+        const generatedReportText = originalEntries.map((entry) => generateReportText(entry)).join('\n\n');
 
         const summaryResponse = data?.project?.analysisAutomaticSummary?.summary;
 
+        const myAnalysisHeading = '**My Analysis** \n \n';
+
         const summaryText = summaryResponse
-            ? `${summaryResponse} \n \n`
+            ? `**Summary** \n \n ${summaryResponse} \n \n`
             : '';
 
         const informationGapText = informationGaps
-            ? `${informationGaps} \n \n`
+            ? `**Information Gaps** \n \n ${informationGaps} \n \n`
             : '';
 
         const analyticalStatementText = analyticalStatement
-            ? `${analyticalStatement} \n \n`
+            ? `**Analytical Statement** \n \n ${analyticalStatement} \n \n`
+            : '';
+        const entriesText = generatedReportText
+            ? `**Evidences** \n \n ${generatedReportText} \n \n`
             : '';
 
-        const myAnalysis = analyticalStatementText + summaryText + informationGapText + entriesText;
+        const myAnalysis = myAnalysisHeading
+            + analyticalStatementText
+            + summaryText
+            + informationGapText
+            + entriesText;
+
         setReportText(myAnalysis);
-    }, [pristine, informationGaps, analyticalStatement, originalEntries,
+    }, [informationGaps, analyticalStatement, originalEntries,
         data?.project?.analysisAutomaticSummary]);
 
     useEffect(
@@ -595,13 +596,13 @@ function StoryAnalysisModal(props: Props) {
                                 label={(
                                     <>
                                         <div>
-                                            Information Gap
+                                            Information Gaps
                                         </div>
                                         <div className={styles.labelContainerAction}>
                                             <QuickActionConfirmButton
                                                 name={undefined}
-                                                title="Auto generate information gap using NLP"
-                                                message="You are about to auto generate information gap using NLP. This will replace the current information gap. Are you sure you want to continue?"
+                                                title="Auto generate Information Gaps using NLP"
+                                                message="You are about to auto generate Information Gaps using NLP. This will replace the current information gaps. Are you sure you want to continue?"
                                                 onConfirm={informationGapOnClick}
                                                 disabled={project?.isPrivate || pending}
                                                 variant="nlp-primary"
@@ -668,9 +669,9 @@ function StoryAnalysisModal(props: Props) {
                                         <div className={styles.labelContainerAction}>
                                             <QuickActionConfirmButton
                                                 name={undefined}
-                                                title="Auto generate analytical statement using NLP"
-                                                message="You are about to auto generate analytical statement using NLP. This will replace the current analytical statement. Are you sure you want to continue?"
-                                                onConfirm={analyticalStatementOnClick}
+                                                title="Auto generate Analytical Statement using NLP"
+                                                message="You are about to auto generate Analytical Statement using NLP. This will replace the current Analytical Statement. Are you sure you want to continue?"
+                                                onConfirm={onStatementGenerateClick}
                                                 disabled={project?.isPrivate || pending}
                                                 variant="nlp-primary"
                                             >
@@ -710,9 +711,9 @@ function StoryAnalysisModal(props: Props) {
                                         <div className={styles.labelContainerAction}>
                                             <QuickActionConfirmButton
                                                 name={undefined}
-                                                title="Auto generate my analysis using NLP"
-                                                message="You are about to auto generate my analysis using NLP. This will use the current analytical statement, automatic summary, informations gap, entries and replace the current my analysis. Are you sure you want to continue?"
-                                                onConfirm={myAnalysisOnClick}
+                                                title="Auto generate My Analysis using NLP"
+                                                message="You are about to auto generate 'My Analysis' using NLP. This will use the current analytical statement, automatic summary, informations gap, entries and replace the current 'My analysis'. Are you sure you want to continue?"
+                                                onConfirm={onAnalysisGenerateClick}
                                                 disabled={project?.isPrivate || pending}
                                                 variant="nlp-primary"
                                             >
