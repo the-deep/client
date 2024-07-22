@@ -3,7 +3,12 @@ import React, {
     useCallback,
     useContext,
     useMemo,
+    useEffect,
 } from 'react';
+import {
+    gql,
+    useQuery,
+} from '@apollo/client';
 import {
     Button,
     CollapsibleContainer,
@@ -11,7 +16,9 @@ import {
     ListView,
     Modal,
     QuickActionButton,
+    QuickActionConfirmButton,
     SegmentInput,
+    Svg,
     Tab,
     TabList,
     TabPanel,
@@ -33,7 +40,6 @@ import {
     IoInformation,
 } from 'react-icons/io5';
 import { VscServerProcess } from 'react-icons/vsc';
-
 import WordTree from '#components/WordTree';
 import MarkdownEditor from '#components/MarkdownEditor';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
@@ -41,6 +47,11 @@ import { GeoArea } from '#components/GeoMultiSelectInput';
 import SourcesFilterContext from '#components/leadFilters/SourcesFilterContext';
 import ProjectContext from '#base/context/ProjectContext';
 
+import {
+    AnalyticalInformationSummaryQuery,
+    AnalyticalInformationSummaryQueryVariables,
+} from '#generated/types';
+import brainIcon from '#resources/img/brain.svg';
 import EntryCard from './EntryCard';
 import EntryContext from '../../context';
 import Summary from './Summary';
@@ -74,6 +85,21 @@ const sourceOptions: KeyLabel[] = [
         label: 'Analysis',
     },
 ];
+
+const ANALYTICAL_INFORMATION_SUMMARY = gql`
+query AnalyticalInformationSummary($projectId: ID!, $summaryId: ID!) {
+    project(id: $projectId) {
+        id
+        analysisAutomaticSummary(id: $summaryId) {
+            id
+            status
+            informationGap
+            analyticalStatement
+            summary
+        }
+    }
+}
+`;
 
 const keySelector = (d: KeyLabel) => d.key;
 const labelSelector = (d: KeyLabel) => d.label;
@@ -315,6 +341,100 @@ function StoryAnalysisModal(props: Props) {
         message: 'Looks like there are some changes that have not been saved yet. Are you sure you want to close?',
     });
 
+    const variables = useMemo(() => (
+        isDefined(automaticSummaryId)
+            ? {
+                projectId,
+                summaryId: automaticSummaryId,
+            }
+            : undefined
+    ), [projectId, automaticSummaryId]);
+
+    const {
+        data,
+        loading,
+        startPolling,
+        stopPolling,
+        error,
+    } = useQuery<AnalyticalInformationSummaryQuery, AnalyticalInformationSummaryQueryVariables>(
+        ANALYTICAL_INFORMATION_SUMMARY,
+        {
+            skip: !automaticSummaryId,
+            variables,
+        },
+    );
+
+    const informationGapOnClick = useCallback(() => {
+        setPristine(false);
+        const informationGapResponse = data?.project?.analysisAutomaticSummary?.informationGap;
+        setInformationGaps(informationGapResponse);
+    }, [data?.project?.analysisAutomaticSummary]);
+
+    const onStatementGenerateClick = useCallback(() => {
+        setPristine(false);
+        const analyticalStatementResponse = data
+            ?.project?.analysisAutomaticSummary?.analyticalStatement;
+        setAnalyticalStatement(analyticalStatementResponse);
+    }, [data?.project?.analysisAutomaticSummary]);
+
+    const onAnalysisGenerateClick = useCallback(() => {
+        setPristine(false);
+        const generatedReportText = originalEntries.map((entry) => generateReportText(entry)).join('\n\n');
+
+        const summaryResponse = data?.project?.analysisAutomaticSummary?.summary;
+
+        const myAnalysisHeading = '**My Analysis** \n \n';
+
+        const summaryText = summaryResponse
+            ? `**Summary** \n \n ${summaryResponse} \n \n`
+            : '';
+
+        const informationGapText = informationGaps
+            ? `**Information Gaps** \n \n ${informationGaps} \n \n`
+            : '';
+
+        const analyticalStatementText = analyticalStatement
+            ? `**Analytical Statement** \n \n ${analyticalStatement} \n \n`
+            : '';
+        const entriesText = generatedReportText
+            ? `**Evidences** \n \n ${generatedReportText} \n \n`
+            : '';
+
+        const myAnalysis = myAnalysisHeading
+            + analyticalStatementText
+            + summaryText
+            + informationGapText
+            + entriesText;
+
+        setReportText(myAnalysis);
+    }, [informationGaps, analyticalStatement, originalEntries,
+        data?.project?.analysisAutomaticSummary]);
+
+    useEffect(
+        () => {
+            const shouldPoll = data?.project?.analysisAutomaticSummary?.status === 'PENDING'
+                || data?.project?.analysisAutomaticSummary?.status === 'STARTED';
+
+            if (shouldPoll) {
+                startPolling(5000);
+            } else {
+                stopPolling();
+            }
+            return (() => {
+                stopPolling();
+            });
+        },
+        [
+            data?.project?.analysisAutomaticSummary,
+            startPolling,
+            stopPolling,
+        ],
+    );
+
+    const pending = loading
+        || data?.project?.analysisAutomaticSummary?.status === 'STARTED'
+        || data?.project?.analysisAutomaticSummary?.status === 'PENDING';
+
     return (
         <>
             <Modal
@@ -398,7 +518,7 @@ function StoryAnalysisModal(props: Props) {
                                         <div className={styles.info}>
                                             <IoInformation />
                                             <Tooltip>
-                                                Auto summary is not available
+                                                Automatic summary is not available
                                                 for private projects to
                                                 maintain document privacy.
                                             </Tooltip>
@@ -460,8 +580,8 @@ function StoryAnalysisModal(props: Props) {
                                 className={styles.tabPanel}
                             >
                                 <Summary
-                                    projectId={projectId}
-                                    summaryId={automaticSummaryId}
+                                    error={error}
+                                    summaryData={data}
                                 />
                             </TabPanel>
                         </Container>
@@ -473,7 +593,38 @@ function StoryAnalysisModal(props: Props) {
                             <MarkdownEditor
                                 className={styles.editor}
                                 labelContainerClassName={styles.labelContainer}
-                                label="Information Gaps"
+                                label={(
+                                    <>
+                                        <div>
+                                            Information Gaps
+                                        </div>
+                                        <div className={styles.labelContainerAction}>
+                                            <QuickActionConfirmButton
+                                                name={undefined}
+                                                title="Auto generate Information Gaps using NLP"
+                                                message="You are about to auto generate Information Gaps using NLP. This will replace the current information gaps. Are you sure you want to continue?"
+                                                onConfirm={informationGapOnClick}
+                                                disabled={project?.isPrivate || pending}
+                                                variant="nlp-primary"
+                                            >
+                                                <Svg
+                                                    className={styles.brainIcon}
+                                                    src={brainIcon}
+                                                />
+                                            </QuickActionConfirmButton>
+                                            {project?.isPrivate && (
+                                                <div className={styles.info}>
+                                                    <IoInformation />
+                                                    <Tooltip>
+                                                        Auto generate is not available
+                                                        for private projects to
+                                                        maintain document privacy.
+                                                    </Tooltip>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
                                 name="informationGap"
                                 value={informationGaps}
                                 onChange={handleInformationGapChange}
@@ -510,7 +661,38 @@ function StoryAnalysisModal(props: Props) {
                             <MarkdownEditor
                                 className={styles.editor}
                                 labelContainerClassName={styles.labelContainer}
-                                label="Analytical Statement"
+                                label={(
+                                    <>
+                                        <div>
+                                            Analytical Statament
+                                        </div>
+                                        <div className={styles.labelContainerAction}>
+                                            <QuickActionConfirmButton
+                                                name={undefined}
+                                                title="Auto generate Analytical Statement using NLP"
+                                                message="You are about to auto generate Analytical Statement using NLP. This will replace the current Analytical Statement. Are you sure you want to continue?"
+                                                onConfirm={onStatementGenerateClick}
+                                                disabled={project?.isPrivate || pending}
+                                                variant="nlp-primary"
+                                            >
+                                                <Svg
+                                                    className={styles.brainIcon}
+                                                    src={brainIcon}
+                                                />
+                                            </QuickActionConfirmButton>
+                                            {project?.isPrivate && (
+                                                <div className={styles.info}>
+                                                    <IoInformation />
+                                                    <Tooltip>
+                                                        Auto generate is not available
+                                                        for private projects to
+                                                        maintain document privacy.
+                                                    </Tooltip>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
                                 name="analyticalStatement"
                                 value={analyticalStatement}
                                 onChange={handleAnalyticalStatementChange}
@@ -521,7 +703,38 @@ function StoryAnalysisModal(props: Props) {
                                 className={styles.editor}
                                 labelContainerClassName={styles.labelContainer}
                                 inputSectionClassName={styles.inputSection}
-                                label="My Analysis"
+                                label={(
+                                    <>
+                                        <div>
+                                            My Analysis
+                                        </div>
+                                        <div className={styles.labelContainerAction}>
+                                            <QuickActionConfirmButton
+                                                name={undefined}
+                                                title="Auto generate My Analysis using NLP"
+                                                message="You are about to auto generate 'My Analysis' using NLP. This will use the current analytical statement, automatic summary, informations gap, entries and replace the current 'My analysis'. Are you sure you want to continue?"
+                                                onConfirm={onAnalysisGenerateClick}
+                                                disabled={project?.isPrivate || pending}
+                                                variant="nlp-primary"
+                                            >
+                                                <Svg
+                                                    className={styles.brainIcon}
+                                                    src={brainIcon}
+                                                />
+                                            </QuickActionConfirmButton>
+                                            {project?.isPrivate && (
+                                                <div className={styles.info}>
+                                                    <IoInformation />
+                                                    <Tooltip>
+                                                        Auto generate is not available
+                                                        for private projects to
+                                                        maintain document privacy.
+                                                    </Tooltip>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
                                 name="reportText"
                                 value={reportText}
                                 onChange={handleReportTextChange}
