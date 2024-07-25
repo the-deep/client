@@ -1,9 +1,24 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { FileInput, useAlert } from '@the-deep/deep-ui';
+import React,
+{
+    useState,
+    useCallback,
+    useMemo,
+} from 'react';
+import {
+    FileInput,
+    useAlert,
+} from '@the-deep/deep-ui';
 import { IoCloudUpload } from 'react-icons/io5';
-import { gql, useMutation } from '@apollo/client';
+import {
+    gql,
+    useMutation,
+} from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
-import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import {
     FileUploadMutation,

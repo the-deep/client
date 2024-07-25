@@ -26,30 +26,32 @@ import CustomGeoAddModal from './CustomGeoAddModal';
 
 import styles from './styles.css';
 
-type PartialAdminLevel = PartialForm<AdminLevelType>;
+type AdminLevelWithClientIdType = AdminLevelType & { clientId: string }
+type PartialAdminLevel = PartialForm<AdminLevelWithClientIdType>;
 
 const REGIONS_FOR_GEO_AREAS = gql`
-query RegionsForGeoAreas ($id: ID!) {
-    project (id: $id) {
-        regions {
-            id
-            isPublished
-            adminLevels {
+    query RegionsForGeoAreas ($id: ID!) {
+        project (id: $id) {
+            regions {
                 id
+                isPublished
+                adminLevels {
+                    id
+                    title
+                    level
+                    nameProp
+                    codeProp
+                    parentNameProp
+                    parentCodeProp
+                    parent
+                }
                 title
-                level
-                nameProp
-                codeProp
-                parentNameProp
-                parentCodeProp
-                parent
+                public
             }
-            title
-            public
         }
     }
-}
 `;
+
 type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
 type NewRegion = NonNullable<NonNullable<CreateRegionMutation['createRegion']>['result']>;
 

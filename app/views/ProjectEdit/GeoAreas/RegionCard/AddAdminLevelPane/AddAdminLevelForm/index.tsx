@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { isDefined } from '@togglecorp/fujs';
+import { isDefined, isFalsyString, isNotDefined } from '@togglecorp/fujs';
 import {
     Button,
     NumberInput,
@@ -18,6 +18,7 @@ import {
     useForm,
     getErrorObject,
     createSubmitHandler,
+    removeNull,
 } from '@togglecorp/toggle-form';
 import { gql, useMutation } from '@apollo/client';
 import {
@@ -29,44 +30,48 @@ import {
     GalleryFileType,
     AdminLevelType,
 } from '#generated/types';
+import {
+    ObjectError,
+    transformToFormError,
+} from '#base/utils/errorTransform';
 import NonFieldError from '#components/NonFieldError';
 import GalleryFileUpload from '#components/GalleryFileUpload';
 
 import styles from './styles.css';
 
+type AdminLevelWithClientIdType = AdminLevelType & { clientId: string };
+type PartialAdminLevel = PartialForm<AdminLevelWithClientIdType>;
 type AdminLevelInputTypeSafe = AdminLevelInputType & { id: string };
 type PartialAdminLevelInput = PartialForm<AdminLevelInputTypeSafe>;
 
 const CREATE_ADMIN_LEVEL = gql`
     mutation CreateAdminLevel(
-        $data: AdminLevelInputType!
+        $data: AdminLevelInputType!,
     ) {
-        createAdminLevel(
-            data: $data
-        ) {
-                ok
-                errors
-                result {
-                    tolerance
-                    title
-                    staleGeoAreas
-                    parentNameProp
-                    parentCodeProp
-                    codeProp
-                    nameProp
-                    geoShapeFile {
-                        file {
-                            url
-                        }
-                        id
-                        title
-                        mimeType
+        createAdminLevel(data: $data) {
+            ok
+            errors
+            result {
+                tolerance
+                title
+                staleGeoAreas
+                parentNameProp
+                parentCodeProp
+                codeProp
+                nameProp
+                geoShapeFile {
+                    file {
+                        url
                     }
-                    level
                     id
+                    title
+                    mimeType
                 }
+                level
+                id
             }
         }
+    }
 `;
 
 const UPDATE_ADMIN_LEVEL = gql`
@@ -123,11 +128,25 @@ const schema: FormSchema = {
 const adminLevelKeySelector = (d: AdminLevelType) => d.id;
 const adminLevelLabelSelector = (d: AdminLevelType) => d.title;
 
+function isGalleryFileValid(
+    galleryFile: Partial<GalleryFileType> | undefined | null,
+): galleryFile is GalleryFileType {
+    if (isNotDefined(galleryFile)) {
+        return false;
+    }
+
+    if (isNotDefined(galleryFile.id) || isFalsyString(galleryFile.title)) {
+        return false;
+    }
+
+    return true;
+}
+
 interface Props {
     regionId: string;
     onSave: (adminLevel: AdminLevelType) => void;
     onDelete: (id: string | undefined) => void;
-    value: AdminLevelType;
+    value: PartialAdminLevel;
     isPublished?: boolean;
     adminLevelOptions?: AdminLevelType[];
 }
@@ -153,11 +172,13 @@ function AddAdminLevelForm(props: Props) {
         ...remainingValues
     } = valueFromProps;
 
-    const initialFormValue: PartialAdminLevelInput = {
-        ...remainingValues,
-        geoShapeFile: geoShapeFile?.id,
-        region: regionId,
-    };
+    const initialFormValue: PartialAdminLevelInput = useMemo(() => (
+        {
+            ...remainingValues,
+            geoShapeFile: geoShapeFile?.id,
+            region: regionId,
+        }
+    ), [geoShapeFile?.id, regionId, remainingValues]);
 
     const {
         pristine,
@@ -169,7 +190,11 @@ function AddAdminLevelForm(props: Props) {
         setError,
     } = useForm(schema, initialFormValue);
 
-    const [option, setOption] = useState<GalleryFileType | undefined>(geoShapeFile ?? undefined);
+    const [option, setOption] = useState<GalleryFileType | undefined>(
+        isGalleryFileValid(geoShapeFile)
+            ? geoShapeFile
+            : undefined,
+    );
 
     const error = getErrorObject(riskyError);
     const alert = useAlert();
@@ -183,7 +208,7 @@ function AddAdminLevelForm(props: Props) {
         CREATE_ADMIN_LEVEL,
         {
             onCompleted: (response) => {
-                if (!response || !response.createAdminLevel || !response.createAdminLevel.result) {
+                if (!response || !response.createAdminLevel) {
                     return;
                 }
 
@@ -194,13 +219,11 @@ function AddAdminLevelForm(props: Props) {
                 } = response.createAdminLevel;
 
                 if (errors) {
-                    alert.show(
-                        'Failed to create admin level.',
-                        { variant: 'error' },
-                    );
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
                 }
 
-                if (ok) {
+                if (isDefined(result) && ok) {
                     alert.show(
                         'Admin level is successfully created!',
                         { variant: 'success' },
@@ -227,7 +250,7 @@ function AddAdminLevelForm(props: Props) {
         UPDATE_ADMIN_LEVEL,
         {
             onCompleted: (response) => {
-                if (!response || !response.updateAdminLevel || !response.updateAdminLevel.result) {
+                if (!response || !response.updateAdminLevel) {
                     return;
                 }
 
@@ -238,15 +261,13 @@ function AddAdminLevelForm(props: Props) {
                 } = response.updateAdminLevel;
 
                 if (errors) {
-                    alert.show(
-                        'Failed to update admin level.',
-                        { variant: 'error' },
-                    );
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
                 }
 
-                if (ok) {
+                if (isDefined(result) && ok) {
                     alert.show(
-                        'Admin level is successfully update!',
+                        'Admin level is successfully updated!',
                         { variant: 'success' },
                     );
                     onSave(result);
@@ -271,20 +292,36 @@ function AddAdminLevelForm(props: Props) {
                     updateAdminLevel({
                         variables: {
                             id: valueFromProps.id,
-                            data: val as AdminLevelInputType,
+                            data: {
+                                ...val,
+                                parentCodeProp: val.parentCodeProp ?? '',
+                                parentNameProp: val.parentNameProp ?? '',
+
+                            } as AdminLevelInputType,
                         },
                     });
                 } else {
                     createAdminLevel({
                         variables: {
-                            data: val as AdminLevelInputType,
+                            data: {
+                                ...val,
+                                parentCodeProp: val.parentCodeProp ?? '',
+                                parentNameProp: val.parentNameProp ?? '',
+
+                            } as AdminLevelInputType,
                         },
                     });
                 }
             },
         );
         submit();
-    }, [setError, validate, updateAdminLevel, createAdminLevel, valueFromProps.id]);
+    }, [
+        setError,
+        validate,
+        updateAdminLevel,
+        createAdminLevel,
+        valueFromProps.id,
+    ]);
 
     const pending = createAdminLevelPending || updateAdminLevelPending;
 

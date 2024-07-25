@@ -1,14 +1,29 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React,
+{
+    useCallback,
+    useMemo,
+    useState,
+} from 'react';
 import {
     _cs,
+    isNotDefined,
+    randomString,
 } from '@togglecorp/fujs';
-import { PartialForm } from '@togglecorp/toggle-form';
+import {
+    PartialForm,
+    internal,
+    removeNull,
+} from '@togglecorp/toggle-form';
 import {
     IoTrashBinOutline,
     IoInformationCircleOutline,
     IoAdd,
 } from 'react-icons/io5';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import {
+    gql,
+    useMutation,
+    useQuery,
+} from '@apollo/client';
 import {
     ListView,
     Message,
@@ -24,9 +39,6 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 import {
-    useLazyRequest,
-} from '#base/utils/restRequest';
-import {
     RegionsForGeoAreasQuery,
     PublishRegionMutation,
     PublishRegionMutationVariables,
@@ -35,15 +47,22 @@ import {
     AdminLevelsQueryVariables,
     DeleteRegionMutation,
     DeleteRegionMutationVariables,
+    DeleteAdminLevelMutation,
+    DeleteAdminLevelMutationVariables,
 } from '#generated/types';
+import {
+    ObjectError,
+    transformToFormError,
+} from '#base/utils/errorTransform';
 
 import AddAdminLevelPane from './AddAdminLevelPane';
 
 import styles from './styles.css';
 
-type PartialAdminLevel = PartialForm<AdminLevelType>;
+type AdminLevelWithClientIdType = AdminLevelType & { clientId: string };
+type PartialAdminLevel = PartialForm<AdminLevelWithClientIdType>;
 
-const tabKeySelector = (d: AdminLevelType) => d.id;
+const tabKeySelector = (d: AdminLevelWithClientIdType) => d.clientId;
 
 type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
 
@@ -95,6 +114,15 @@ const ADMIN_LEVELS = gql`
     }
 `;
 
+const DELETE_ADMIN_LEVEL = gql`
+    mutation DeleteAdminLevel($adminLevelId: ID!) {
+        deleteAdminLevel(adminLevelId: $adminLevelId) {
+            errors
+            ok
+        }
+    }
+`;
+
 interface Props {
     region: Region;
     className?: string;
@@ -135,40 +163,30 @@ function RegionCard(props: Props) {
     const [
         adminLevels,
         setAdminLevels,
-    ] = useState<AdminLevelType[]>([]);
+    ] = useState<AdminLevelWithClientIdType[]>([]);
     const alert = useAlert();
 
     const adminLevelsLength = adminLevels.length;
 
-    const adminLevelsWithTempAdminLevel: AdminLevelType[] = useMemo(
+    const adminLevelsWithTempAdminLevel: PartialAdminLevel[] = useMemo(
         () => {
-            if (!tempAdminLevel) {
+            if (isNotDefined(tempAdminLevel)) {
                 return adminLevels;
             }
 
-            return adminLevels.map((admin) => {
-                const {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    title,
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    level,
-                    ...otherProperties
-                } = admin;
-                return {
-                    title: tempAdminLevel?.title ?? 'title',
-                    level: tempAdminLevel?.level ?? 0,
-                    ...otherProperties,
-                };
-            });
+            return [
+                ...adminLevels,
+                tempAdminLevel,
+            ];
         },
         [adminLevels, tempAdminLevel],
     );
 
     const activeAdminLevelWithTempAdminLevel = tempAdminLevel
-        ? tempAdminLevel.id
+        ? tempAdminLevel.clientId
         : activeAdminLevel;
 
-    const adminLevelQuery = useMemo(
+    const adminLevelQueryVariables = useMemo(
         () => ({
             regionId: region.id,
         }),
@@ -177,21 +195,30 @@ function RegionCard(props: Props) {
 
     const {
         loading: adminLevelsPending,
-        refetch: getAdminLevels,
+        refetch: refetchAdminLevels,
     } = useQuery<AdminLevelsQuery, AdminLevelsQueryVariables>(
         ADMIN_LEVELS,
         {
             skip: !isExpanded,
-            variables: adminLevelQuery,
+            variables: adminLevelQueryVariables,
+            // NOTE: this prop is required for onCompleted to be
+            // called after refetch (https://github.com/apollographql/apollo-client/issues/11151#issuecomment-1680742854)
+            notifyOnNetworkStatusChange: true,
             onCompleted: (response) => {
                 const adminLevelResponse = response.region;
+
                 if (!adminLevelResponse || !adminLevelResponse.adminLevels) {
                     return;
                 }
+                // NOTE: this will be fixed on graphql endpoint
+                const adminLevelsWithClientId = adminLevelResponse.adminLevels.map((al) => ({
+                    ...al,
+                    clientId: al.id.toString(),
+                }));
 
-                setAdminLevels(adminLevelResponse.adminLevels);
+                setAdminLevels(adminLevelsWithClientId);
                 if (onActiveAdminLevelChange) {
-                    const [first] = adminLevelResponse.adminLevels;
+                    const [first] = adminLevelsWithClientId;
                     if (first) {
                         onActiveAdminLevelChange(first.id);
                     }
@@ -200,19 +227,47 @@ function RegionCard(props: Props) {
         },
     );
 
-    const {
-        pending: deleteAdminLevelPending,
-        trigger: deleteAdminLevel,
-    } = useLazyRequest<unknown, string>({
-        url: (ctx) => `server://admin-levels/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            getAdminLevels();
-            if (onAdminLevelUpdate) {
-                onAdminLevelUpdate();
-            }
+    const [
+        deleteAdminLevel,
+        {
+            loading: deleteAdminLevelPending,
         },
-    });
+    ] = useMutation<DeleteAdminLevelMutation, DeleteAdminLevelMutationVariables>(
+        DELETE_ADMIN_LEVEL,
+        {
+            onCompleted: (response) => {
+                if (!response.deleteAdminLevel) {
+                    return;
+                }
+
+                const { ok, errors } = response.deleteAdminLevel;
+
+                if (errors) {
+                    const formError = transformToFormError(
+                        removeNull(response.deleteAdminLevel.errors) as ObjectError[],
+                    );
+                    alert.show(
+                        formError?.[internal] as string,
+                        { variant: 'error' },
+                    );
+                }
+
+                if (ok) {
+                    refetchAdminLevels();
+
+                    if (onAdminLevelUpdate) {
+                        onAdminLevelUpdate();
+                    }
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to delete selected admin level.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const [
         deleteRegion,
@@ -234,7 +289,7 @@ function RegionCard(props: Props) {
 
                 if (errors) {
                     alert.show(
-                        'Failed to publish selected region.',
+                        'Failed to delete selected region.',
                         { variant: 'error' },
                     );
                 }
@@ -277,7 +332,10 @@ function RegionCard(props: Props) {
             if (!onTempAdminLevelChange) {
                 return;
             }
+
+            const clientId = randomString();
             const newAdminLevel: PartialAdminLevel = {
+                clientId,
                 title: `Admin Level ${adminLevelsLength}`,
                 level: adminLevelsLength,
             };
@@ -295,10 +353,14 @@ function RegionCard(props: Props) {
             setAdminLevels((oldAdminLevels) => {
                 const newAdminLevels = [...oldAdminLevels];
                 const index = newAdminLevels.findIndex((item) => item.id === value.id);
+                const valueWithClientId = {
+                    ...value,
+                    clientId: value.id.toString(),
+                };
                 if (index === -1) {
-                    newAdminLevels.push(value);
+                    newAdminLevels.push(valueWithClientId);
                 } else {
-                    newAdminLevels.splice(index, 1, value);
+                    newAdminLevels.splice(index, 1, valueWithClientId);
                 }
                 return newAdminLevels;
             });
@@ -321,7 +383,11 @@ function RegionCard(props: Props) {
                     onTempAdminLevelChange(undefined);
                 }
             } else {
-                deleteAdminLevel(id);
+                deleteAdminLevel({
+                    variables: {
+                        adminLevelId: id,
+                    },
+                });
             }
         },
         [onTempAdminLevelChange, deleteAdminLevel],
@@ -387,7 +453,7 @@ function RegionCard(props: Props) {
     );
 
     const tabPanelRendererParams = useCallback(
-        (key: string, data: AdminLevelType) => ({
+        (key: string, data: PartialAdminLevel) => ({
             name: key,
             value: data,
             onSave: handleAdminLevelSave,

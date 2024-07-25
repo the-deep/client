@@ -28,17 +28,16 @@ import styles from './styles.css';
 type NewRegion = NonNullable<NonNullable<CreateRegionMutation['createRegion']>['result']>;
 
 const CREATE_REGION = gql`
-mutation CreateRegion($data: RegionInputType!) {
-        createRegion(
-            data: $data
-        ) {
+    mutation CreateRegion(
+        $data: RegionInputType!,
+    ) {
+        createRegion(data: $data) {
             ok
             errors
             result {
                 id
                 isPublished
             }
-
         }
     }
 `;

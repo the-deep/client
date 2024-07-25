@@ -121,6 +121,7 @@ function RegionsMap(props: Props) {
     const handleAddRegionConfirm = useCallback(
         (value: number | undefined) => {
             if (value) {
+                // NOTE: Mutation only requires selected region for the patch not the entire list.
                 patchRegion({
                     variables: {
                         projectId,
