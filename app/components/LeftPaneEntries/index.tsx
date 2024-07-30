@@ -149,6 +149,7 @@ interface Props {
     entries: EntryInput[] | undefined | null;
     activeEntry?: string;
     onEntryClick?: (entryId: string) => void;
+    onAttachmentClick: (attachment: LeadPreviewAttachmentType) => void;
     onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;
     onEntryDelete?: (entryClientId: string) => void;
     onEntryRestore?: (entryClientId: string) => void;
@@ -165,6 +166,7 @@ interface Props {
     projectId: string | undefined;
     defaultTab?: 'entries' | 'simplified' | 'original' | 'visuals';
     frameworkDetails?: Framework;
+    leadAttachmentsMap: LeadAttachmentsMap;
     activeTabRef?: React.MutableRefObject<{
         setActiveTab: React.Dispatch<React.SetStateAction<TabOptions>>;
     } | null>;
@@ -201,6 +203,8 @@ function LeftPane(props: Props) {
         frameworkDetails,
         onAssistedEntryAdd,
         entryAttachmentsMap,
+        leadAttachmentsMap,
+        onAttachmentClick,
     } = props;
 
     const alert = useAlert();
@@ -231,8 +235,6 @@ function LeftPane(props: Props) {
             ? 'entries'
             : defaultTab,
     );
-
-    const [leadAttachmentsMap, setLeadAttachmentsMap] = useState<LeadAttachmentsMap>({});
 
     const [
         autoEntriesModalShown,
@@ -396,23 +398,6 @@ function LeftPane(props: Props) {
         }
     }, [leadId, onEntryCreate]);
 
-    const handleAttachmentClick = useCallback((attachment: LeadPreviewAttachmentType) => {
-        if (onEntryCreate) {
-            onEntryCreate({
-                clientId: randomString(),
-                entryType: 'ATTACHMENT',
-                lead: leadId,
-                leadAttachment: attachment.id,
-                excerpt: '',
-                droppedExcerpt: '',
-            });
-            setLeadAttachmentsMap((oldValue) => ({
-                ...oldValue,
-                [attachment.id]: attachment,
-            }));
-        }
-    }, [leadId, onEntryCreate]);
-
     const handleExcerptAddFromOriginal = useCallback((selectedText: string | undefined) => {
         if (onEntryCreate) {
             onEntryCreate({
@@ -506,12 +491,12 @@ function LeftPane(props: Props) {
 
         return ({
             type: 'visual-item' as const,
-            onClick: handleAttachmentClick,
+            onClick: onAttachmentClick,
             disableClick: isEntrySelectionActive,
             attachment,
         });
     }, [
-        handleAttachmentClick,
+        onAttachmentClick,
         onApproveButtonClick,
         onDiscardButtonClick,
         isEntrySelectionActive,

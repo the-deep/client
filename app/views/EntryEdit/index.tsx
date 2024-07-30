@@ -68,6 +68,8 @@ import {
     BulkUpdateEntriesMutationVariables,
     LeadUpdateMutation,
     LeadUpdateMutationVariables,
+    LeadPreviewForTextQuery,
+    LeadPreviewAttachmentType,
 } from '#generated/types';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
@@ -111,6 +113,9 @@ const UPDATE_LEN = 100;
 
 const entryKeySelector = (e: PartialEntryType) => e.clientId;
 export type Lead = NonNullable<NonNullable<LeadEntriesQuery['project']>['lead']>;
+
+type LeadAttachment = NonNullable<NonNullable<NonNullable<LeadPreviewForTextQuery['project']>['leadPreviewAttachments']>['results']>[number];
+export type LeadAttachmentsMap = { [key: string]: LeadAttachment | undefined };
 
 function transformEntry(entry: Entry): EntryInputType {
     // FIXME: make this re-usable
@@ -367,6 +372,8 @@ function EntryEdit(props: Props) {
         entryAttachmentsMap,
         setEntryAttachmentMap,
     ] = useState<EntryAttachmentsMap | undefined>();
+
+    const [leadAttachmentsMap, setLeadAttachmentsMap] = useState<LeadAttachmentsMap>({});
 
     const [
         updateLead,
@@ -1041,6 +1048,23 @@ function EntryEdit(props: Props) {
         [onEntryFieldChange, clearRestorePoint],
     );
 
+    const handleAttachmentClick = useCallback((attachment: LeadPreviewAttachmentType) => {
+        if (handleEntryCreate) {
+            handleEntryCreate({
+                clientId: randomString(),
+                entryType: 'ATTACHMENT',
+                lead: leadId,
+                leadAttachment: attachment.id,
+                excerpt: '',
+                droppedExcerpt: '',
+            });
+            setLeadAttachmentsMap((oldValue) => ({
+                ...oldValue,
+                [attachment.id]: attachment,
+            }));
+        }
+    }, [leadId, handleEntryCreate]);
+
     // NOTE: we are creating a map of index and value because we are iterating
     // over widgets but modifying attributes
     const attributesMap = useMemo(() => (
@@ -1639,6 +1663,7 @@ function EntryEdit(props: Props) {
                                     onEntryDelete={handleEntryDelete}
                                     onEntryRestore={handleEntryRestore}
                                     onExcerptChange={handleExcerptChange}
+                                    onAttachmentClick={handleAttachmentClick}
                                     lead={lead}
                                     leadId={leadId}
                                     listComponentRef={primaryPageListComponentRef}
@@ -1647,6 +1672,7 @@ function EntryEdit(props: Props) {
                                     isEntrySelectionActive={isEntrySelectionActive}
                                     entriesError={entriesErrorStateMap}
                                     frameworkDetails={frameworkDetails ?? undefined}
+                                    leadAttachmentsMap={leadAttachmentsMap}
                                 />
                                 <Container
                                     className={_cs(className, styles.sections)}
@@ -1739,6 +1765,8 @@ function EntryEdit(props: Props) {
                                     entriesError={entriesErrorStateMap}
                                     activeTabRef={secondaryPageLeftPaneRef}
                                     frameworkDetails={frameworkDetails ?? undefined}
+                                    onAttachmentClick={handleAttachmentClick}
+                                    leadAttachmentsMap={leadAttachmentsMap}
                                 />
                                 <Container
                                     className={styles.rightContainer}
