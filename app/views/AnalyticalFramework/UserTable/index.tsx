@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useMemo } from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import {
     Pager,
@@ -13,13 +13,10 @@ import {
     TableHeaderCell,
     TableHeaderCellProps,
 } from '@the-deep/deep-ui';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 
 import { createDateColumn } from '#components/tableHelpers';
-import { AnalysisFrameworkMembersQuery } from '#generated/types';
-import {
-    useLazyRequest,
-} from '#base/utils/restRequest';
+import { AnalysisFrameworkMembersQuery, AnalysisFrameworkMembershipDeleteMutation, AnalysisFrameworkMembershipDeleteMutationVariables } from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
 import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import _ts from '#ts';
@@ -50,6 +47,22 @@ const ANALYSIS_FRAMEWORK_MEMBERS = gql`
                     title
                     id
                 }
+            }
+        }
+    }
+`;
+
+const ANALYSIS_FRAMEWORK_MEMBERS_DELETE = gql`
+    mutation AnalysisFrameworkMembershipDelete(
+        $frameworkId: ID!,
+        $deleteIds: [ID!],
+    ) {
+        analysisFramework(id: $frameworkId) {
+            analysisFrameworkMembershipBulk(deleteIds: $deleteIds) {
+                deletedResult {
+                    id
+                }
+                errors
             }
         }
     }
@@ -101,23 +114,59 @@ function UserTable(props: Props) {
         hideUserAddModal,
     ] = useModalState(false);
 
-    const {
-        pending: pendingDeleteAction,
-        trigger: triggerUserRemove,
-    } = useLazyRequest<unknown, string>({
-        url: (ctx) => `server://framework-memberships/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            alert.show(
-                'Successfully removed user from the analytical framework.',
-                {
-                    variant: 'success',
-                },
-            );
-            analysisFrameworkMembersTrigger();
+    const [
+        deleteFrameworkMembership,
+        {
+            loading: deleteFrameworkMembershipLoading,
         },
-        failureMessage: 'Failed to remove user from the analytical framework.',
-    });
+    ] = useMutation<
+        AnalysisFrameworkMembershipDeleteMutation,
+        AnalysisFrameworkMembershipDeleteMutationVariables
+        >(
+            ANALYSIS_FRAMEWORK_MEMBERS_DELETE,
+            {
+                onCompleted: (response) => {
+                    if (!response.analysisFramework
+                        ?.analysisFrameworkMembershipBulk?.deletedResult) {
+                        return;
+                    }
+
+                    const {
+                        deletedResult,
+                        errors,
+                    } = response.analysisFramework.analysisFrameworkMembershipBulk;
+
+                    const ok = isDefined(deletedResult) && deletedResult?.length > 0;
+
+                    if (ok) {
+                        alert.show(
+                            'Successfully removed user from the analytical framework.',
+                            {
+                                variant: 'success',
+                            },
+                        );
+                        analysisFrameworkMembersTrigger();
+                    }
+
+                    if (errors && errors?.length > 0) {
+                        alert.show(
+                            'Failed to remove user from the analytical framework.',
+                            {
+                                variant: 'error',
+                            },
+                        );
+                    }
+                },
+                onError: () => {
+                    alert.show(
+                        'Failed to remove user from the analytical framework.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                },
+            },
+        );
 
     const [userToEdit, setUserToEdit] = useState<AnalysisFrameworkMember | undefined>(undefined);
 
@@ -140,6 +189,15 @@ function UserTable(props: Props) {
         showUserAddModal();
     }, [showUserAddModal]);
 
+    const handleUserDeleteClick = useCallback((userId: string) => {
+        deleteFrameworkMembership({
+            variables: {
+                frameworkId,
+                deleteIds: [userId],
+            },
+        });
+    }, [deleteFrameworkMembership, frameworkId]);
+
     const columns = useMemo(
         () => {
             const actionColumn: TableColumn<
@@ -158,7 +216,7 @@ function UserTable(props: Props) {
                 cellRendererParams: (userId, data) => ({
                     itemKey: userId,
                     onEditClick: handleUserEditClick,
-                    onDeleteClick: triggerUserRemove,
+                    onDeleteClick: handleUserDeleteClick,
                     disabled: data.id === activeUserId,
                     editButtonTitle: _ts('analyticalFramework', 'editUserLabel'),
                     deleteButtonTitle: _ts('analyticalFramework', 'deleteUserLabel'),
@@ -195,12 +253,12 @@ function UserTable(props: Props) {
                 actionColumn,
             ]);
         },
-        [handleUserEditClick, triggerUserRemove, activeUserId],
+        [handleUserEditClick, handleUserDeleteClick, activeUserId],
     );
 
     return (
         <>
-            {pendingDeleteAction && <PendingMessage />}
+            {deleteFrameworkMembershipLoading && <PendingMessage />}
             <Container
                 className={_cs(styles.tableContainer, className)}
                 heading={_ts('analyticalFramework', 'frameworkUsersHeading')}
