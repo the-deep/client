@@ -149,7 +149,7 @@ interface Props {
     entries: EntryInput[] | undefined | null;
     activeEntry?: string;
     onEntryClick?: (entryId: string) => void;
-    onAttachmentClick: (attachment: LeadPreviewAttachmentType) => void;
+    onAttachmentClick?: (attachment: LeadPreviewAttachmentType) => void;
     onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;
     onEntryDelete?: (entryClientId: string) => void;
     onEntryRestore?: (entryClientId: string) => void;
@@ -166,7 +166,7 @@ interface Props {
     projectId: string | undefined;
     defaultTab?: 'entries' | 'simplified' | 'original' | 'visuals';
     frameworkDetails?: Framework;
-    leadAttachmentsMap: LeadAttachmentsMap;
+    leadAttachmentsMap?: LeadAttachmentsMap;
     activeTabRef?: React.MutableRefObject<{
         setActiveTab: React.Dispatch<React.SetStateAction<TabOptions>>;
     } | null>;
@@ -177,7 +177,7 @@ interface Props {
 
 const MAX_ITEMS_PER_PAGE = 10;
 
-function LeftPane(props: Props) {
+function LeftPaneEntries(props: Props) {
     const {
         className,
         onEntryCreate,
@@ -995,4 +995,4 @@ function LeftPane(props: Props) {
     );
 }
 
-export default LeftPane;
+export default LeftPaneEntries;

@@ -88,7 +88,7 @@ import usePromptOnCloseAndRefresh from '#hooks/usePromptOnCloseAndRefresh';
 import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 import getSchema, { defaultFormValues, PartialEntryType, PartialFormType } from '#components/entry/schema';
 import { Entry, EntryInput as EntryInputType, Framework } from '#components/entry/types';
-import LeftPane, { TabOptions } from '#components/LeftPaneEntries';
+import LeftPaneEntries, { TabOptions } from '#components/LeftPaneEntries';
 import { createDefaultAttributes } from '#components/LeftPaneEntries/utils';
 import {
     PROJECT_FRAMEWORK,
@@ -1404,7 +1404,6 @@ function EntryEdit(props: Props) {
             secondaryTagging: frameworkDetails?.secondaryTagging,
             onAddButtonClick: handleAddButtonClick,
             primaryTagging: frameworkDetails?.primaryTagging,
-            entryAttachment: isDefined(datum.id) ? entryAttachmentsMap?.[datum.id] : undefined,
             excerptHeaderActions: datum.id && projectId && (
                 <>
                     <EntryVerification
@@ -1450,6 +1449,10 @@ function EntryEdit(props: Props) {
             ),
             disabled: !!selectedEntry,
             entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
+            entryAttachment: entryAttachmentsMap?.[entryId],
+            leadAttachment: datum.leadAttachment
+                ? leadAttachmentsMap?.[datum.leadAttachment]
+                : undefined,
             error: entriesError?.[entryId],
             geoAreaOptions,
             onGeoAreaOptionsChange: setGeoAreaOptions,
@@ -1474,6 +1477,7 @@ function EntryEdit(props: Props) {
             selectedEntry,
             entriesError,
             handleApplyToAll,
+            leadAttachmentsMap,
         ],
     );
 
@@ -1649,7 +1653,7 @@ function EntryEdit(props: Props) {
                             retainMount="eager"
                         >
                             <div className={styles.primaryTagging}>
-                                <LeftPane
+                                <LeftPaneEntries
                                     className={styles.sourcePreview}
                                     projectId={projectId}
                                     entries={formValue.entries}
@@ -1663,7 +1667,9 @@ function EntryEdit(props: Props) {
                                     onEntryDelete={handleEntryDelete}
                                     onEntryRestore={handleEntryRestore}
                                     onExcerptChange={handleExcerptChange}
+                                    // NOTE: These 2 are for handling attachment/images/tables
                                     onAttachmentClick={handleAttachmentClick}
+                                    leadAttachmentsMap={leadAttachmentsMap}
                                     lead={lead}
                                     leadId={leadId}
                                     listComponentRef={primaryPageListComponentRef}
@@ -1672,7 +1678,6 @@ function EntryEdit(props: Props) {
                                     isEntrySelectionActive={isEntrySelectionActive}
                                     entriesError={entriesErrorStateMap}
                                     frameworkDetails={frameworkDetails ?? undefined}
-                                    leadAttachmentsMap={leadAttachmentsMap}
                                 />
                                 <Container
                                     className={_cs(className, styles.sections)}
@@ -1740,7 +1745,7 @@ function EntryEdit(props: Props) {
                             retainMount="eager"
                         >
                             <div className={styles.secondaryTagging}>
-                                <LeftPane
+                                <LeftPaneEntries
                                     className={styles.sourcePreview}
                                     onAssistedEntryAdd={handleAssistedEntryAdd}
                                     projectId={projectId}
