@@ -217,7 +217,7 @@ function UserTable(props: Props) {
                     itemKey: userId,
                     onEditClick: handleUserEditClick,
                     onDeleteClick: handleUserDeleteClick,
-                    disabled: data.id === activeUserId,
+                    disabled: data.member.id === activeUserId,
                     editButtonTitle: _ts('analyticalFramework', 'editUserLabel'),
                     deleteButtonTitle: _ts('analyticalFramework', 'deleteUserLabel'),
                     deleteConfirmationMessage: _ts('analyticalFramework', 'removeUserConfirmation'),

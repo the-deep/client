@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import { isDefined, isNotDefined } from '@togglecorp/fujs';
+import { isDefined } from '@togglecorp/fujs';
 import {
     ObjectSchema,
     PartialForm,
@@ -36,29 +36,29 @@ type AnalysisFrameworkRolesType = NonNullable<NonNullable<AnalysisFrameworkRoles
 const roleKeySelector = (d: AnalysisFrameworkRolesType) => d.id;
 const roleLabelSelector = (d: AnalysisFrameworkRolesType) => d.title;
 
-type PartialAnalysisMemembershipForm = PartialForm<
-    BulkAnalysisFrameworkMembershipInputType & { frameworkId: string}
->
+type PartialAnalysisMembershipForm = PartialForm<BulkAnalysisFrameworkMembershipInputType>
 
-type FormSchema = ObjectSchema<PartialAnalysisMemembershipForm>;
+type FormSchema = ObjectSchema<PartialAnalysisMembershipForm>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>
 
 const schema: FormSchema = {
     fields: (value): FormSchemaFields => {
-        if (isDefined(value?.frameworkId)) {
+        if (isDefined(value?.id)) {
             return ({
-                member: [],
+                id: [requiredCondition],
+                member: [requiredCondition],
                 role: [requiredCondition],
             });
         }
         return ({
+            id: [],
             member: [requiredCondition],
             role: [requiredCondition],
         });
     },
 };
 
-const defaultFormValue: PartialAnalysisMemembershipForm = {};
+const defaultFormValue: PartialAnalysisMembershipForm = {};
 
 const ANALYSIS_MEMBERSHIP_ADD_EDIT = gql`
     mutation AnalysisMembershipAddEdit(
@@ -107,17 +107,16 @@ function AddUserModal(props: Props) {
         isPrivateFramework,
     } = props;
 
-    const initialFormValue: PartialAnalysisMemembershipForm = useMemo(() => {
+    const initialFormValue: PartialAnalysisMembershipForm = useMemo(() => {
         if (!userValue) {
             return defaultFormValue;
         }
         return ({
-            frameworkId,
             id: userValue.id,
             role: userValue.role.id,
             member: userValue.member.id,
         });
-    }, [userValue, frameworkId]);
+    }, [userValue]);
 
     const alert = useAlert();
 
@@ -208,15 +207,16 @@ function AddUserModal(props: Props) {
                 validate,
                 setError,
                 (val) => {
-                    if (isNotDefined(val.member)) {
-                        addEditFrameworkMembership({ variables: undefined });
-                    } else if (userValue?.id) {
+                    const finalVal = val as BulkAnalysisFrameworkMembershipInputType;
+
+                    // NOTE: In case the membership already exists
+                    if (userValue?.id) {
                         addEditFrameworkMembership({
                             variables: {
                                 frameworkId,
                                 items: [{
-                                    member: val.member,
-                                    role: val.role,
+                                    member: finalVal.member,
+                                    role: finalVal.role,
                                     id: userValue.id,
                                 }],
                             },
@@ -226,8 +226,8 @@ function AddUserModal(props: Props) {
                             variables: {
                                 frameworkId,
                                 items: [{
-                                    member: val.member,
-                                    role: val.role,
+                                    member: finalVal.member,
+                                    role: finalVal.role,
                                 }],
                             },
                         });
