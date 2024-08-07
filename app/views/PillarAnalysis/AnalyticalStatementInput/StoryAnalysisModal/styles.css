@@ -128,24 +128,10 @@
                 .editor {
                     display: flex;
                     flex-grow: 1;
-                    gap: var(--dui-width-separator-thin);
 
-                    .label-container {
-                        display: flex;
-                        justify-content: space-between;
-                        padding-bottom: var(--dui-spacing-small);
-                        color: var(--dui-color-text);
-                        font-size: var(--dui-font-size-large);
-                        font-weight: var(--dui-font-weight-bold);
-                    }
-
-                    .label-container-action {
-                        display: flex;
-
-                        .brain-icon {
-                            width: auto;
-                            height: var(--dui-font-size-extra-large);
-                        }
+                    .brain-icon {
+                        width: auto;
+                        height: var(--dui-font-size-extra-large);
                     }
                 }
             }
