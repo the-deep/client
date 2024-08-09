@@ -30,7 +30,7 @@ import {
 } from '@the-deep/deep-ui';
 import {
     isDefined,
-    encodeDate,
+    formatDateToString,
     _cs,
     unique,
     listToGroupList,
@@ -120,7 +120,8 @@ function generateReportText(entry: Entry) {
 
     const entryCreatedDate = new Date(entry.lead.publishedOn);
 
-    return `${entryText}([${organizations}](${url}), ${encodeDate(entryCreatedDate)}).`;
+    const formattedDate = formatDateToString(entryCreatedDate, 'dd/MM/yyyy');
+    return `${entryText}([${organizations}](${url}), ${formattedDate}).`;
 }
 
 interface Props {
