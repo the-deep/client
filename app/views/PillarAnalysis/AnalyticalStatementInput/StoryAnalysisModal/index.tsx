@@ -13,6 +13,7 @@ import {
     Button,
     CollapsibleContainer,
     Container,
+    Header,
     ListView,
     Modal,
     QuickActionButton,
@@ -397,7 +398,7 @@ function StoryAnalysisModal(props: Props) {
             ? `**Analytical Statement** \n \n ${analyticalStatement} \n \n`
             : '';
         const entriesText = generatedReportText
-            ? `**Evidences** \n \n ${generatedReportText} \n \n`
+            ? `**Evidence** \n \n ${generatedReportText} \n \n`
             : '';
 
         const myAnalysis = myAnalysisHeading
@@ -592,38 +593,39 @@ function StoryAnalysisModal(props: Props) {
                         <div className={styles.markdownContainer}>
                             <MarkdownEditor
                                 className={styles.editor}
-                                labelContainerClassName={styles.labelContainer}
                                 label={(
-                                    <>
-                                        <div>
-                                            Information Gaps
-                                        </div>
-                                        <div className={styles.labelContainerAction}>
-                                            <QuickActionConfirmButton
-                                                name={undefined}
-                                                title="Auto generate Information Gaps using NLP"
-                                                message="You are about to auto generate Information Gaps using NLP. This will replace the current information gaps. Are you sure you want to continue?"
-                                                onConfirm={informationGapOnClick}
-                                                disabled={project?.isPrivate || pending}
-                                                variant="nlp-primary"
-                                            >
-                                                <Svg
-                                                    className={styles.brainIcon}
-                                                    src={brainIcon}
-                                                />
-                                            </QuickActionConfirmButton>
-                                            {project?.isPrivate && (
-                                                <div className={styles.info}>
-                                                    <IoInformation />
-                                                    <Tooltip>
-                                                        Auto generate is not available
-                                                        for private projects to
-                                                        maintain document privacy.
-                                                    </Tooltip>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </>
+                                    <Header
+                                        actions={(
+                                            <>
+                                                <QuickActionConfirmButton
+                                                    name={undefined}
+                                                    title="Auto generate Information Gaps using NLP"
+                                                    message="You are about to auto generate Information Gaps using NLP. This will replace the current information gaps. Are you sure you want to continue?"
+                                                    onConfirm={informationGapOnClick}
+                                                    disabled={project?.isPrivate || pending}
+                                                    variant="nlp-primary"
+                                                >
+                                                    <Svg
+                                                        className={styles.brainIcon}
+                                                        src={brainIcon}
+                                                    />
+                                                </QuickActionConfirmButton>
+                                                {project?.isPrivate && (
+                                                    <div className={styles.info}>
+                                                        <IoInformation />
+                                                        <Tooltip>
+                                                            Auto generate is not available
+                                                            for private projects to
+                                                            maintain document privacy.
+                                                        </Tooltip>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                        headingSize="extraSmall"
+                                        spacing="comfortable"
+                                        heading="Information Gaps"
+                                    />
                                 )}
                                 name="informationGap"
                                 value={informationGaps}
@@ -662,36 +664,38 @@ function StoryAnalysisModal(props: Props) {
                                 className={styles.editor}
                                 labelContainerClassName={styles.labelContainer}
                                 label={(
-                                    <>
-                                        <div>
-                                            Analytical Statament
-                                        </div>
-                                        <div className={styles.labelContainerAction}>
-                                            <QuickActionConfirmButton
-                                                name={undefined}
-                                                title="Auto generate Analytical Statement using NLP"
-                                                message="You are about to auto generate Analytical Statement using NLP. This will replace the current Analytical Statement. Are you sure you want to continue?"
-                                                onConfirm={onStatementGenerateClick}
-                                                disabled={project?.isPrivate || pending}
-                                                variant="nlp-primary"
-                                            >
-                                                <Svg
-                                                    className={styles.brainIcon}
-                                                    src={brainIcon}
-                                                />
-                                            </QuickActionConfirmButton>
-                                            {project?.isPrivate && (
-                                                <div className={styles.info}>
-                                                    <IoInformation />
-                                                    <Tooltip>
-                                                        Auto generate is not available
-                                                        for private projects to
-                                                        maintain document privacy.
-                                                    </Tooltip>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </>
+                                    <Header
+                                        actions={(
+                                            <>
+                                                <QuickActionConfirmButton
+                                                    name={undefined}
+                                                    title="Auto generate Analytical Statement using NLP"
+                                                    message="You are about to auto generate Analytical Statement using NLP. This will replace the current Analytical Statement. Are you sure you want to continue?"
+                                                    onConfirm={onStatementGenerateClick}
+                                                    disabled={project?.isPrivate || pending}
+                                                    variant="nlp-primary"
+                                                >
+                                                    <Svg
+                                                        className={styles.brainIcon}
+                                                        src={brainIcon}
+                                                    />
+                                                </QuickActionConfirmButton>
+                                                {project?.isPrivate && (
+                                                    <div className={styles.info}>
+                                                        <IoInformation />
+                                                        <Tooltip>
+                                                            Auto generate is not available
+                                                            for private projects to
+                                                            maintain document privacy.
+                                                        </Tooltip>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                        headingSize="extraSmall"
+                                        spacing="comfortable"
+                                        heading="Analytical Statament"
+                                    />
                                 )}
                                 name="analyticalStatement"
                                 value={analyticalStatement}
@@ -704,36 +708,38 @@ function StoryAnalysisModal(props: Props) {
                                 labelContainerClassName={styles.labelContainer}
                                 inputSectionClassName={styles.inputSection}
                                 label={(
-                                    <>
-                                        <div>
-                                            My Analysis
-                                        </div>
-                                        <div className={styles.labelContainerAction}>
-                                            <QuickActionConfirmButton
-                                                name={undefined}
-                                                title="Auto generate My Analysis using NLP"
-                                                message="You are about to auto generate 'My Analysis' using NLP. This will use the current analytical statement, automatic summary, informations gap, entries and replace the current 'My analysis'. Are you sure you want to continue?"
-                                                onConfirm={onAnalysisGenerateClick}
-                                                disabled={project?.isPrivate || pending}
-                                                variant="nlp-primary"
-                                            >
-                                                <Svg
-                                                    className={styles.brainIcon}
-                                                    src={brainIcon}
-                                                />
-                                            </QuickActionConfirmButton>
-                                            {project?.isPrivate && (
-                                                <div className={styles.info}>
-                                                    <IoInformation />
-                                                    <Tooltip>
-                                                        Auto generate is not available
-                                                        for private projects to
-                                                        maintain document privacy.
-                                                    </Tooltip>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </>
+                                    <Header
+                                        actions={(
+                                            <>
+                                                <QuickActionConfirmButton
+                                                    name={undefined}
+                                                    title="Auto generate My Analysis using NLP"
+                                                    message="You are about to auto generate 'My Analysis' using NLP. This will use the current analytical statement, automatic summary, informations gap, entries and replace the current 'My analysis'. Are you sure you want to continue?"
+                                                    onConfirm={onAnalysisGenerateClick}
+                                                    disabled={project?.isPrivate || pending}
+                                                    variant="nlp-primary"
+                                                >
+                                                    <Svg
+                                                        className={styles.brainIcon}
+                                                        src={brainIcon}
+                                                    />
+                                                </QuickActionConfirmButton>
+                                                {project?.isPrivate && (
+                                                    <div className={styles.info}>
+                                                        <IoInformation />
+                                                        <Tooltip>
+                                                            Auto generate is not available
+                                                            for private projects to
+                                                            maintain document privacy.
+                                                        </Tooltip>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                        headingSize="extraSmall"
+                                        spacing="comfortable"
+                                        heading="My Analysis"
+                                    />
                                 )}
                                 name="reportText"
                                 value={reportText}
