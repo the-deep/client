@@ -584,6 +584,7 @@ function FrameworkDetail(props: Props) {
             </Tabs>
             {frameworkCloneModalShown && (
                 <CloneFrameworkModal
+                    projectId={projectId}
                     frameworkToClone={frameworkId}
                     frameworkTitle={frameworkDetails?.title}
                     frameworkDescription={frameworkDetails?.description}
