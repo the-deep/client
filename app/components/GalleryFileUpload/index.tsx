@@ -1,9 +1,24 @@
-import React, { useState, useCallback } from 'react';
-import { FileInput, useAlert } from '@the-deep/deep-ui';
+import React,
+{
+    useState,
+    useCallback,
+    useMemo,
+} from 'react';
+import {
+    FileInput,
+    useAlert,
+} from '@the-deep/deep-ui';
 import { IoCloudUpload } from 'react-icons/io5';
-import { gql, useMutation } from '@apollo/client';
+import {
+    gql,
+    useMutation,
+} from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import {
     FileUploadMutation,
@@ -40,6 +55,9 @@ interface Props {
     disabled?: boolean;
     projectIds?: string[];
     buttonOnly?: boolean;
+    option?: GalleryFileType;
+    setOption?: (value: GalleryFileType) => void;
+    status?: boolean;
 }
 
 function FileUpload(props: Props) {
@@ -50,6 +68,9 @@ function FileUpload(props: Props) {
         disabled,
         projectIds,
         buttonOnly,
+        option,
+        setOption,
+        status = false,
     } = props;
 
     const alert = useAlert();
@@ -85,6 +106,9 @@ function FileUpload(props: Props) {
                         resultRemoveNull,
                         uploadedFile,
                     );
+                    if (isDefined(setOption)) {
+                        setOption(result);
+                    }
                 }
             },
             onError: () => {
@@ -122,6 +146,21 @@ function FileUpload(props: Props) {
         ],
     );
 
+    const currentStatus = useMemo(() => {
+        if (isNotDefined(status)) {
+            return undefined;
+        }
+        if (loading) {
+            return 'Uploading file';
+        }
+
+        if (isDefined(option)) {
+            return option.title;
+        }
+
+        return 'No file selected';
+    }, [status, loading, option]);
+
     return (
         <FileInput
             className={_cs(
@@ -129,9 +168,9 @@ function FileUpload(props: Props) {
                 buttonOnly && styles.buttonOnly,
             )}
             name={undefined}
-            value={null}
+            value={undefined}
             onChange={handleFileInputChange}
-            status={undefined}
+            status={currentStatus}
             overrideStatus
             title={buttonOnly ? undefined : title}
             label={buttonOnly ? undefined : title}

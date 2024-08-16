@@ -1,21 +1,20 @@
 import React, { useCallback, useState } from 'react';
+import {
+    IoAdd,
+} from 'react-icons/io5';
 import { _cs } from '@togglecorp/fujs';
-import { PartialForm } from '@togglecorp/toggle-form';
 import { useQuery, gql } from '@apollo/client';
 import {
     Button,
     List,
     Container,
 } from '@the-deep/deep-ui';
-import {
-    IoAdd,
-} from 'react-icons/io5';
 
-import {
-    AdminLevelGeoArea,
-} from '#types';
+import { PartialForm } from '@togglecorp/toggle-form';
 import { useModalState } from '#hooks/stateManagement';
 import {
+    AdminLevelType,
+    CreateRegionMutation,
     RegionsForGeoAreasQuery,
     RegionsForGeoAreasQueryVariables,
 } from '#generated/types';
@@ -27,33 +26,36 @@ import CustomGeoAddModal from './CustomGeoAddModal';
 
 import styles from './styles.css';
 
+type AdminLevelWithClientIdType = AdminLevelType & { clientId: string }
+type PartialAdminLevel = PartialForm<AdminLevelWithClientIdType>;
+
 const REGIONS_FOR_GEO_AREAS = gql`
-query RegionsForGeoAreas ($id: ID!) {
-    project (id: $id) {
-        regions {
-            id
-            isPublished
-            adminLevels {
+    query RegionsForGeoAreas ($id: ID!) {
+        project (id: $id) {
+            regions {
                 id
+                isPublished
+                adminLevels {
+                    id
+                    title
+                    level
+                    nameProp
+                    codeProp
+                    parentNameProp
+                    parentCodeProp
+                    parent
+                }
                 title
-                level
-                nameProp
-                codeProp
-                parentNameProp
-                parentCodeProp
+                public
             }
-            title
-            public
         }
     }
-}
 `;
+
 type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
+type NewRegion = NonNullable<NonNullable<CreateRegionMutation['createRegion']>['result']>;
 
 const regionKeySelectorForRegionCard = (d: Region) => +d.id;
-
-type AdminLevel = AdminLevelGeoArea & { clientId: string };
-type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetails'>;
 
 interface Props {
     className?: string;
@@ -120,7 +122,7 @@ function GeoAreas(props: Props) {
     );
 
     const handleGeoAreaAddSuccess = useCallback(
-        (value: Region) => {
+        (value: NewRegion) => {
             handleRegionSet(value.id);
             regionsRefetch();
         },
@@ -150,14 +152,13 @@ function GeoAreas(props: Props) {
                 onAdminLevelUpdate: isExpanded ? updateMapTriggerId : undefined,
                 onRegionPublishSuccess: regionsRefetch,
                 onRegionRemoveSuccess: regionsRefetch,
-                regions: regions?.project?.regions ?? [],
                 navigationDisabled,
             };
         },
         [
             activeProject, activeRegion, activeAdminLevel,
             handleExpansion, tempAdminLevel, navigationDisabled,
-            updateMapTriggerId, regionsRefetch, regions?.project?.regions,
+            updateMapTriggerId, regionsRefetch,
         ],
     );
 

@@ -1,4 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
+import { gql, useMutation } from '@apollo/client';
+import { isDefined } from '@togglecorp/fujs';
 import {
     ObjectSchema,
     PartialForm,
@@ -12,22 +14,38 @@ import {
     Button,
     TextInput,
     Modal,
+    useAlert,
 } from '@the-deep/deep-ui';
-
 import NonFieldError from '#components/NonFieldError';
-import { useLazyRequest } from '#base/utils/restRequest';
-import { RegionsForGeoAreasQuery } from '#generated/types';
+import {
+    RegionInputType,
+    CreateRegionMutation,
+    CreateRegionMutationVariables,
+} from '#generated/types';
 
 import styles from './styles.css';
 
-type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['project']>['regions']>[number]>;
+type NewRegion = NonNullable<NonNullable<CreateRegionMutation['createRegion']>['result']>;
+
+const CREATE_REGION = gql`
+    mutation CreateRegion(
+        $data: RegionInputType!,
+    ) {
+        createRegion(data: $data) {
+            ok
+            errors
+            result {
+                id
+                isPublished
+            }
+        }
+    }
+`;
 
 type FormType = {
     title: string;
     project: string;
-    code?: string;
-    public?: boolean;
-    isPublished?: boolean;
+    code: string;
 };
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
@@ -37,14 +55,12 @@ const schema: FormSchema = {
         title: [requiredStringCondition],
         code: [requiredStringCondition],
         project: [requiredCondition],
-        public: [],
-        isPublished: [],
     }),
 };
 
 interface Props {
     projectId: string;
-    onSuccess: (value: Region) => void;
+    onSuccess: (value: NewRegion) => void;
     onModalClose: () => void;
 }
 
@@ -55,11 +71,10 @@ function CustomGeoAddModal(props: Props) {
         onModalClose,
     } = props;
 
+    const alert = useAlert();
     const defaultFormValue = useMemo(
         (): PartialForm<FormType> => ({
             project: projectId,
-            public: false,
-            isPublished: false,
         }),
         [projectId],
     );
@@ -75,30 +90,68 @@ function CustomGeoAddModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const {
-        trigger: addRegionsTrigger,
-        pending: addRegionsPending,
-    } = useLazyRequest<Region, Region>({
-        url: 'server://regions/',
-        method: 'POST',
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
-            onSuccess(response);
-            onModalClose();
+    const [
+        createRegion,
+        {
+            loading: createRegionPending,
         },
-        // TODO: add error handling
-    });
+    ] = useMutation<CreateRegionMutation, CreateRegionMutationVariables>(
+        CREATE_REGION,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.createRegion || !response.createRegion.result) {
+                    return;
+                }
+
+                const {
+                    ok,
+                    errors,
+                    result,
+                } = response.createRegion;
+
+                if (errors) {
+                    alert.show(
+                        'Failed to create custom geo area.',
+                        { variant: 'error' },
+                    );
+                }
+
+                if (ok) {
+                    alert.show(
+                        'Custom geo area is successfully created!',
+                        { variant: 'success' },
+                    );
+                    onSuccess(result);
+                    onModalClose();
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to create custom geo area.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const handleCustomGeoSubmitClick = useCallback(
         () => {
             const submit = createSubmitHandler(
                 validate,
                 setError,
-                (val) => addRegionsTrigger(val as Region),
+                (val) => {
+                    if (isDefined(val.title) && isDefined(val.code) && isDefined(val.project)) {
+                        createRegion({
+                            variables: {
+                                data: val as RegionInputType,
+                            },
+                        });
+                    }
+                },
             );
             submit();
         },
-        [setError, validate, addRegionsTrigger],
+        [setError, validate, createRegion],
     );
 
     return (
@@ -112,7 +165,7 @@ function CustomGeoAddModal(props: Props) {
                     name="submit"
                     type="submit"
                     onClick={handleCustomGeoSubmitClick}
-                    disabled={pristine || addRegionsPending}
+                    disabled={pristine || createRegionPending}
                 >
                     Add
                 </Button>
@@ -126,7 +179,7 @@ function CustomGeoAddModal(props: Props) {
                     onChange={setFieldValue}
                     error={error?.title}
                     label="Title"
-                    disabled={addRegionsPending}
+                    disabled={createRegionPending}
                 />
                 <TextInput
                     name="code"
@@ -134,7 +187,7 @@ function CustomGeoAddModal(props: Props) {
                     onChange={setFieldValue}
                     error={error?.code}
                     label="ISO3 Code"
-                    disabled={addRegionsPending}
+                    disabled={createRegionPending}
                 />
             </div>
         </Modal>

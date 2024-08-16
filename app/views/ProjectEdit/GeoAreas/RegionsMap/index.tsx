@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { _cs } from '@togglecorp/fujs';
 import { IoMapOutline } from 'react-icons/io5';
+import { gql, useMutation } from '@apollo/client';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     Tabs,
     Tab,
@@ -13,18 +14,28 @@ import {
     Kraken,
 } from '@the-deep/deep-ui';
 
-import {
-    ProjectDetails,
-} from '#types';
 import _ts from '#ts';
 import RegionSelectInput, { Region } from '#components/selections/RegionSelectInput';
-import { useLazyRequest } from '#base/utils/restRequest';
+import { PatchRegionMutation, PatchRegionMutationVariables } from '#generated/types';
 
 import RegionTabPanel from './RegionTabPanel';
 
 import styles from './styles.css';
 
 const regionKeySelector = (d: Region) => d.id;
+
+const PATCH_REGION = gql`
+    mutation PatchRegion($projectId: ID!, $regionId: [ID!]) {
+        project(id: $projectId) {
+            projectRegionBulk(regionsToAdd: $regionId) {
+                errors
+                result {
+                    id
+                }
+            }
+        }
+    }
+`;
 
 interface Props {
     className?: string;
@@ -63,44 +74,63 @@ function RegionsMap(props: Props) {
     const [regionOptions, setRegionOptions] = useState<Region[] | null | undefined>(undefined);
     const alert = useAlert();
 
-    interface RegionPatchCtx {
-        newRegion: number,
-        body: {
-            regions: { id: number | string }[],
+    const [
+        patchRegion,
+        {
+            loading: pendingPatchRegion,
         },
-    }
+    ] = useMutation<PatchRegionMutation, PatchRegionMutationVariables>(
+        PATCH_REGION,
+        {
+            onCompleted: (response) => {
+                if (!response.project?.projectRegionBulk) {
+                    return;
+                }
 
-    const {
-        trigger: regionPatchTrigger,
-    } = useLazyRequest<ProjectDetails, RegionPatchCtx>({
-        url: `server://projects/${projectId}/`,
-        method: 'PATCH',
-        body: (ctx) => ctx.body,
-        onSuccess: (_, ctx) => {
-            alert.show(
-                'Successfully added geo area to the project.',
-                { variant: 'success' },
-            );
-            onActiveRegionChange(ctx.newRegion.toString());
-            onRegionAdd();
+                const {
+                    result,
+                    errors,
+                } = response.project.projectRegionBulk;
+
+                if (errors) {
+                    alert.show(
+                        'Failed to publish selected region.',
+                        { variant: 'error' },
+                    );
+                }
+
+                const ok = isDefined(result) && result?.length > 0;
+
+                if (ok) {
+                    alert.show(
+                        'Region is successfully added!',
+                        { variant: 'success' },
+                    );
+                    onRegionAdd();
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to add selected region.',
+                    { variant: 'error' },
+                );
+            },
         },
-    });
+    );
 
     const handleAddRegionConfirm = useCallback(
         (value: number | undefined) => {
-            if (regions && value) {
-                regionPatchTrigger({
-                    newRegion: value,
-                    body: {
-                        regions: [
-                            ...regions.map((d) => ({ id: d.id })),
-                            { id: value },
-                        ],
+            if (value) {
+                // NOTE: Mutation only requires selected region for the patch not the entire list.
+                patchRegion({
+                    variables: {
+                        projectId,
+                        regionId: [String(value)],
                     },
                 });
             }
         },
-        [regionPatchTrigger, regions],
+        [patchRegion, projectId],
     );
 
     const [
@@ -160,7 +190,6 @@ function RegionsMap(props: Props) {
                         </TabList>
                     )}
                 >
-                    {/* FIXME: show pending message */}
                     <RegionSelectInput
                         className={styles.region}
                         name="regions"
@@ -168,6 +197,7 @@ function RegionsMap(props: Props) {
                         value={undefined}
                         onChange={onRegionSelect}
                         options={regionOptions}
+                        pending={pendingPatchRegion}
                         onOptionsChange={setRegionOptions}
                         placeholder="Add Geo area"
                         variant="general"
