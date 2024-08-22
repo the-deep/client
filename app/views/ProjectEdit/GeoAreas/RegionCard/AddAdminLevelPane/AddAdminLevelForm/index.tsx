@@ -52,6 +52,7 @@ const CREATE_ADMIN_LEVEL = gql`
             ok
             errors
             result {
+                clientId
                 tolerance
                 title
                 staleGeoAreas
@@ -86,6 +87,7 @@ const UPDATE_ADMIN_LEVEL = gql`
                 ok
                 errors
                 result {
+                    clientId
                     tolerance
                     title
                     staleGeoAreas
