@@ -15,48 +15,68 @@ import {
     Button,
     PendingMessage,
 } from '@the-deep/deep-ui';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 
-import { AnalysisFrameworkRolesQuery } from '#generated/types';
+import {
+    AnalysisFrameworkMembersQuery,
+    AnalysisFrameworkRolesQuery,
+    AnalysisMembershipAddEditMutation,
+    AnalysisMembershipAddEditMutationVariables,
+    BulkAnalysisFrameworkMembershipInputType,
+} from '#generated/types';
 import NonFieldError from '#components/NonFieldError';
-import { useLazyRequest } from '#base/utils/restRequest';
-import { Membership } from '#types';
 import NewUserSelectInput, { User } from '#components/selections/NewUserSelectInput';
 import _ts from '#ts';
 
 import styles from './styles.css';
 
-type Member = Pick<Membership, 'id' | 'member' | 'memberName' | 'role'>;
+type AnalysisFrameworkMember = NonNullable<NonNullable<AnalysisFrameworkMembersQuery['analysisFramework']>['members']>[number];
 type AnalysisFrameworkRolesType = NonNullable<NonNullable<AnalysisFrameworkRolesQuery>['analysisFrameworkRoles']>[number];
 
-const roleKeySelector = (d: AnalysisFrameworkRolesType) => Number(d.id);
+const roleKeySelector = (d: AnalysisFrameworkRolesType) => d.id;
 const roleLabelSelector = (d: AnalysisFrameworkRolesType) => d.title;
 
-type FormType = {
-    id?: number;
-    member?: string;
-    role: number;
-};
+type PartialAnalysisMembershipForm = PartialForm<BulkAnalysisFrameworkMembershipInputType>
 
-type FormSchema = ObjectSchema<PartialForm<FormType>>;
+type FormSchema = ObjectSchema<PartialAnalysisMembershipForm>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>
 
 const schema: FormSchema = {
     fields: (value): FormSchemaFields => {
         if (isDefined(value?.id)) {
             return ({
-                member: [],
+                id: [requiredCondition],
+                member: [requiredCondition],
                 role: [requiredCondition],
             });
         }
         return ({
+            id: [],
             member: [requiredCondition],
             role: [requiredCondition],
         });
     },
 };
 
-const defaultFormValue: PartialForm<FormType> = {};
+const defaultFormValue: PartialAnalysisMembershipForm = {};
+
+const ANALYSIS_MEMBERSHIP_ADD_EDIT = gql`
+    mutation AnalysisMembershipAddEdit(
+        $frameworkId: ID!
+        $items: [BulkAnalysisFrameworkMembershipInputType!], 
+    ){
+        analysisFramework(id: $frameworkId) {
+            analysisFrameworkMembershipBulk(
+                items: $items
+            ) {
+                result {
+                    id
+                }
+                errors
+            }
+        }
+    }
+`;
 
 const ANALYSIS_FRAMEWORK_ROLES = gql`
     query AnalysisFrameworkRoles {
@@ -70,18 +90,12 @@ const ANALYSIS_FRAMEWORK_ROLES = gql`
     }
 `;
 
-interface ValueToSend {
-    role: number;
-    member?: number;
-    framework: number;
-}
-
 interface Props {
     onModalClose: () => void;
-    frameworkId: number;
+    frameworkId: string;
     onTableReload: () => void;
     isPrivateFramework: boolean;
-    userValue?: Member;
+    userValue?: AnalysisFrameworkMember;
 }
 
 function AddUserModal(props: Props) {
@@ -93,15 +107,17 @@ function AddUserModal(props: Props) {
         isPrivateFramework,
     } = props;
 
-    const initialFormValue: PartialForm<FormType> = useMemo(() => {
+    const initialFormValue: PartialAnalysisMembershipForm = useMemo(() => {
         if (!userValue) {
             return defaultFormValue;
         }
         return ({
-            ...userValue,
-            member: String(userValue.member),
+            id: userValue.id,
+            role: userValue.role.id,
+            member: userValue.member.id,
         });
     }, [userValue]);
+
     const alert = useAlert();
 
     const [
@@ -120,6 +136,57 @@ function AddUserModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
+    const [
+        addEditFrameworkMembership,
+        {
+            loading: addEditFrameworkMembershipLoading,
+        },
+    ] = useMutation<AnalysisMembershipAddEditMutation, AnalysisMembershipAddEditMutationVariables>(
+        ANALYSIS_MEMBERSHIP_ADD_EDIT,
+        {
+            onCompleted: (response) => {
+                if (!response.analysisFramework?.analysisFrameworkMembershipBulk?.result) {
+                    return;
+                }
+
+                const {
+                    result,
+                } = response.analysisFramework.analysisFrameworkMembershipBulk;
+
+                const ok = isDefined(result) && result?.length > 0;
+
+                if (ok) {
+                    if (userValue?.id) {
+                        alert.show(
+                            'Successfully updated user to the analytical framework.',
+                            { variant: 'success' },
+                        );
+                    } else {
+                        alert.show(
+                            'Successfully added user to the analytical framework.',
+                            { variant: 'success' },
+                        );
+                    }
+                    onTableReload();
+                    onModalClose();
+                }
+            },
+            onError: () => {
+                if (userValue?.id) {
+                    alert.show(
+                        'Failed to update users to analytical framework.',
+                        { variant: 'error' },
+                    );
+                } else {
+                    alert.show(
+                        'Failed to add users to analytical framework.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+        },
+    );
+
     const {
         data: analysisFrameworkRolesResponse,
         loading: analysisFrameworkRolesLoading,
@@ -134,56 +201,49 @@ function AddUserModal(props: Props) {
             )
     ), [analysisFrameworkRolesResponse, isPrivateFramework]);
 
-    const {
-        pending: pendingAddAction,
-        trigger: triggerAddFrameworkMember,
-    } = useLazyRequest<unknown, ValueToSend>({
-        url: isDefined(userValue)
-            ? `server://framework-memberships/${userValue.id}/`
-            : 'server://framework-memberships/',
-        method: isDefined(userValue)
-            ? 'PATCH'
-            : 'POST',
-        body: (ctx) => ctx,
-        onSuccess: () => {
-            alert.show(
-                userValue?.id
-                    ? 'Successfully updated user permissions.'
-                    : 'Successfully added user to the analytical framework.',
-                {
-                    variant: 'success',
-                },
-            );
-            onTableReload();
-            onModalClose();
-        },
-        failureMessage: _ts('analyticalFramework.addUser', 'membershipPostFailed'),
-    });
-
     const handleSubmit = useCallback(
         () => {
             const submit = createSubmitHandler(
                 validate,
                 setError,
                 (val) => {
-                    const newVal = val.member ? { member: Number(val.member), ...val } : val;
-                    triggerAddFrameworkMember({
-                        ...newVal,
-                        framework: frameworkId,
-                    } as ValueToSend);
+                    const finalVal = val as BulkAnalysisFrameworkMembershipInputType;
+
+                    // NOTE: In case the membership already exists
+                    if (userValue?.id) {
+                        addEditFrameworkMembership({
+                            variables: {
+                                frameworkId,
+                                items: [{
+                                    member: finalVal.member,
+                                    role: finalVal.role,
+                                    id: userValue.id,
+                                }],
+                            },
+                        });
+                    } else {
+                        addEditFrameworkMembership({
+                            variables: {
+                                frameworkId,
+                                items: [{
+                                    member: finalVal.member,
+                                    role: finalVal.role,
+                                }],
+                            },
+                        });
+                    }
                 },
             );
             submit();
         },
-        [setError, validate, triggerAddFrameworkMember, frameworkId],
+        [setError, validate, addEditFrameworkMembership, frameworkId, userValue?.id],
     );
 
     const currentUser = useMemo(() => (userValue
         ? [
             {
-                id: String(userValue.member),
-                displayName: userValue.memberName,
-                // FIXME: Use graphql to fetch details for User
+                id: userValue.member.id,
+                displayName: userValue.member.displayName,
                 firstName: '',
                 lastName: '',
                 emailDisplay: '',
@@ -191,7 +251,7 @@ function AddUserModal(props: Props) {
         ] : []
     ), [userValue]);
 
-    const pendingRequests = analysisFrameworkRolesLoading;
+    const pendingRequests = analysisFrameworkRolesLoading || addEditFrameworkMembershipLoading;
 
     return (
         <Modal
@@ -210,19 +270,19 @@ function AddUserModal(props: Props) {
                     name="submit"
                     variant="primary"
                     type="submit"
-                    disabled={pristine || pendingRequests || pendingAddAction}
+                    disabled={pristine || pendingRequests}
                     onClick={handleSubmit}
                 >
                     {_ts('analyticalFramework.addUser', 'submitLabel')}
                 </Button>
             )}
         >
-            {pendingAddAction && (<PendingMessage />)}
+            {addEditFrameworkMembershipLoading && (<PendingMessage />)}
             <NonFieldError error={error} />
             <NewUserSelectInput
                 name="member"
                 readOnly={isDefined(userValue)}
-                value={value.member ? String(value.member) : undefined}
+                value={value.member}
                 onChange={setFieldValue}
                 options={userOptions ?? currentUser}
                 onOptionsChange={setUserOptions}

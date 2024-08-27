@@ -5,7 +5,7 @@ import {
     isDefined,
 } from '@togglecorp/fujs';
 import { generatePath } from 'react-router-dom';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import {
     IoCopyOutline,
     IoCheckmark,
@@ -35,6 +35,7 @@ import {
     TextOutput,
     RawButton,
     Button,
+    useAlert,
 } from '@the-deep/deep-ui';
 import { removeNull } from '@togglecorp/toggle-form';
 
@@ -44,14 +45,14 @@ import {
     DeepReplace,
 } from '#utils/types';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
-import { useLazyRequest } from '#base/utils/restRequest';
 import { ProjectContext } from '#base/context/ProjectContext';
 import { useModalState } from '#hooks/stateManagement';
 import routes from '#base/configs/routes';
 import Section from '#components/entry/Section';
 import _ts from '#ts';
-import { ProjectDetails } from '#types';
 import {
+    AnalyticalFrameworkPatchMutation,
+    AnalyticalFrameworkPatchMutationVariables,
     FrameworkDetailsQuery,
     FrameworkDetailsQueryVariables,
     WidgetType as WidgetRaw,
@@ -65,6 +66,25 @@ import styles from './styles.css';
 function noop() {}
 
 const emptyObject = {};
+
+const ANALYTICAL_FRAMEWORK_PATCH = gql`
+    mutation AnalyticalFrameworkPatch(
+        $projectId: ID!,
+        $frameworkId: ID,
+    ) {
+        project(id: $projectId) {
+            projectUpdate(data: {analysisFramework: $frameworkId}) {
+                ok
+                errors
+                result {
+                    analysisFramework {
+                        id
+                    }
+                }
+            }
+        }
+    }
+`;
 
 const FRAMEWORK_DETAILS = gql`
     ${FRAMEWORK_FRAGMENT}
@@ -155,6 +175,7 @@ function FrameworkDetail(props: Props) {
     const { setProject } = useContext(ProjectContext);
 
     const [activeTab, setActiveTab] = useState<'primary' | 'secondary' | undefined>('primary');
+    const alert = useAlert();
     const [selectedSection, setSelectedSection] = useState<string | undefined>();
 
     const variables = useMemo(
@@ -236,31 +257,50 @@ function FrameworkDetail(props: Props) {
         frameworkDetailsResponse?.projects,
     ]);
 
-    const {
-        pending: projectPatchPending,
-        trigger: projectPatch,
-    } = useLazyRequest<ProjectDetails>({
-        url: `server://projects/${projectId}/`,
-        method: 'PATCH',
-        body: ({
-            analysisFramework: frameworkId,
-        }),
-        onSuccess: (response) => {
-            setProject((oldProjectDetails) => {
-                const { analysisFramework } = response;
-                if (!oldProjectDetails || isNotDefined(analysisFramework)) {
-                    return oldProjectDetails;
-                }
-                return ({
-                    ...oldProjectDetails,
-                    analysisFramework: {
-                        id: String(analysisFramework),
-                    },
-                });
-            });
+    const [
+        projectPatch,
+        {
+            loading: projectPatchPending,
         },
-        failureMessage: _ts('projectEdit', 'projectDetailsLabel'),
-    });
+    ] = useMutation<AnalyticalFrameworkPatchMutation, AnalyticalFrameworkPatchMutationVariables>(
+        ANALYTICAL_FRAMEWORK_PATCH,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.project?.projectUpdate) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                    result,
+                } = response.project.projectUpdate;
+
+                const analysisFrameworkId = result?.analysisFramework?.id;
+
+                if (errors) {
+                    alert.show(
+                        'Failed to create assessment registry.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    if (!analysisFrameworkId) {
+                        return;
+                    }
+                    setProject((oldProjectDetails) => {
+                        if (!oldProjectDetails) {
+                            return oldProjectDetails;
+                        }
+                        return ({
+                            ...oldProjectDetails,
+                            analysisFramework: {
+                                id: analysisFrameworkId,
+                            },
+                        });
+                    });
+                }
+            },
+        },
+    );
 
     const itemRendererParams = useCallback((_: string, data: { title: string; id: string }) => ({
         className: styles.projectTitle,
@@ -275,8 +315,13 @@ function FrameworkDetail(props: Props) {
     ] = useModalState(false);
 
     const handleUseFrameworkClick = useCallback(() => {
-        projectPatch(null);
-    }, [projectPatch]);
+        projectPatch({
+            variables: {
+                projectId,
+                frameworkId,
+            },
+        });
+    }, [projectPatch, projectId, frameworkId]);
 
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: string) => {
         onFrameworkCreate(newFrameworkId);

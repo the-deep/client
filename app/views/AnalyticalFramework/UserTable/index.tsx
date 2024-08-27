@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useMemo } from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import {
     Pager,
@@ -13,17 +13,12 @@ import {
     TableHeaderCell,
     TableHeaderCellProps,
 } from '@the-deep/deep-ui';
+import { gql, useMutation, useQuery } from '@apollo/client';
 
 import { createDateColumn } from '#components/tableHelpers';
-import {
-    useRequest,
-    useLazyRequest,
-} from '#base/utils/restRequest';
+import { AnalysisFrameworkMembersQuery, AnalysisFrameworkMembershipDeleteMutation, AnalysisFrameworkMembershipDeleteMutationVariables } from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
 import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
-import {
-    MultiResponse,
-} from '#types';
 import _ts from '#ts';
 import UserContext from '#base/context/UserContext';
 
@@ -32,33 +27,50 @@ import { Framework } from '../types';
 import AddUserModal from './AddUserModal';
 import styles from './styles.css';
 
-interface User {
-    id: number;
-    member: number;
-    role: number;
-    roleDisplay: string;
-    joinedAt: string;
+const ANALYSIS_FRAMEWORK_MEMBERS = gql`
+    query AnalysisFrameworkMembers($frameworkId: ID!) {
+        analysisFramework(id: $frameworkId) {
+            members {
+                addedBy {
+                    displayName
+                }
+                id
+                joinedAt
+                member {
+                    id
+                    displayName
+                    profile {
+                        organization
+                    }
+                }
+                role {
+                    title
+                    id
+                }
+            }
+        }
+    }
+`;
 
-    memberDetails: {
-        displayName: string;
-        organizationTitle?: string;
-    };
-    roleDetails: {
-        title: string;
-    };
-    addedByDetails?: {
-        displayName: string;
-    };
-}
+const ANALYSIS_FRAMEWORK_MEMBERS_DELETE = gql`
+    mutation AnalysisFrameworkMembershipDelete(
+        $frameworkId: ID!,
+        $deleteIds: [ID!],
+    ) {
+        analysisFramework(id: $frameworkId) {
+            analysisFrameworkMembershipBulk(deleteIds: $deleteIds) {
+                deletedResult {
+                    id
+                }
+                errors
+            }
+        }
+    }
+`;
 
-interface UserToEdit {
-    id: number;
-    member: number;
-    memberName: string;
-    role: number;
-}
+type AnalysisFrameworkMember = NonNullable<NonNullable<AnalysisFrameworkMembersQuery['analysisFramework']>['members']>[number];
 
-const userKeySelector = (user: User) => user.id;
+const userKeySelector = (user: AnalysisFrameworkMember) => user.id;
 const maxItemsPerPage = 10;
 
 interface Props {
@@ -77,28 +89,24 @@ function UserTable(props: Props) {
     } = useContext(UserContext);
     const alert = useAlert();
 
-    const activeUserId = user ? +user.id : undefined;
+    const activeUserId = user ? user.id : undefined;
 
     const [activePage, setActivePage] = useState(1);
 
-    const frameworkUsersQuery = useMemo(() => ({
-        offset: (activePage - 1) * maxItemsPerPage,
-        limit: maxItemsPerPage,
-    }), [activePage]);
-
-    const frameworkId = +framework.id;
+    const frameworkId = framework.id;
 
     const {
-        pending: frameworkUsersGetPending,
-        response: frameworkUsers,
-        retrigger: triggerMembersList,
-    } = useRequest<MultiResponse<User>>({
-        skip: isNotDefined(frameworkId),
-        url: `server://analysis-frameworks/${frameworkId}/memberships/`,
-        query: frameworkUsersQuery,
-        method: 'GET',
-        preserveResponse: true,
-    });
+        data: analysisFrameworkMembersResponse,
+        loading: analysisFrameworkMembersLoading,
+        refetch: analysisFrameworkMembersTrigger,
+    } = useQuery<AnalysisFrameworkMembersQuery>(
+        ANALYSIS_FRAMEWORK_MEMBERS,
+        {
+            variables: {
+                frameworkId,
+            },
+        },
+    );
 
     const [
         addUserModalShown,
@@ -106,49 +114,97 @@ function UserTable(props: Props) {
         hideUserAddModal,
     ] = useModalState(false);
 
-    const {
-        pending: pendingDeleteAction,
-        trigger: triggerUserRemove,
-    } = useLazyRequest<unknown, number>({
-        url: (ctx) => `server://framework-memberships/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            alert.show(
-                'Successfully removed user from the analytical framework.',
-                {
-                    variant: 'success',
-                },
-            );
-            triggerMembersList();
+    const [
+        deleteFrameworkMembership,
+        {
+            loading: deleteFrameworkMembershipLoading,
         },
-        failureMessage: 'Failed to remove user from the analytical framework.',
-    });
+    ] = useMutation<
+        AnalysisFrameworkMembershipDeleteMutation,
+        AnalysisFrameworkMembershipDeleteMutationVariables
+        >(
+            ANALYSIS_FRAMEWORK_MEMBERS_DELETE,
+            {
+                onCompleted: (response) => {
+                    if (!response.analysisFramework
+                        ?.analysisFrameworkMembershipBulk?.deletedResult) {
+                        return;
+                    }
 
-    const [userToEdit, setUserToEdit] = useState<UserToEdit | undefined>(undefined);
+                    const {
+                        deletedResult,
+                        errors,
+                    } = response.analysisFramework.analysisFrameworkMembershipBulk;
 
-    const handleUserEditClick = useCallback((userId: number) => {
-        const selectedUser = frameworkUsers?.results?.find((u) => u.id === userId);
+                    const ok = isDefined(deletedResult) && deletedResult?.length > 0;
+
+                    if (ok) {
+                        alert.show(
+                            'Successfully removed user from the analytical framework.',
+                            {
+                                variant: 'success',
+                            },
+                        );
+                        analysisFrameworkMembersTrigger();
+                    }
+
+                    if (errors && errors?.length > 0) {
+                        alert.show(
+                            'Failed to remove user from the analytical framework.',
+                            {
+                                variant: 'error',
+                            },
+                        );
+                    }
+                },
+                onError: () => {
+                    alert.show(
+                        'Failed to remove user from the analytical framework.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                },
+            },
+        );
+
+    const [userToEdit, setUserToEdit] = useState<AnalysisFrameworkMember | undefined>(undefined);
+
+    const handleUserEditClick = useCallback((userId: string) => {
+        if (isNotDefined(analysisFrameworkMembersResponse?.analysisFramework?.members)) {
+            return;
+        }
+        const selectedUser = analysisFrameworkMembersResponse
+            ?.analysisFramework?.members.find((u) => u.id === userId);
+
         if (!selectedUser) {
             return;
         }
-        setUserToEdit({
-            id: selectedUser.id,
-            member: selectedUser.member,
-            memberName: selectedUser.memberDetails?.displayName,
-            role: selectedUser.role,
-        });
+        setUserToEdit(selectedUser);
         showUserAddModal();
-    }, [frameworkUsers?.results, showUserAddModal]);
+    }, [analysisFrameworkMembersResponse, showUserAddModal]);
 
     const handleUserAddClick = useCallback(() => {
         setUserToEdit(undefined);
         showUserAddModal();
     }, [showUserAddModal]);
 
+    const handleUserDeleteClick = useCallback((userId: string) => {
+        deleteFrameworkMembership({
+            variables: {
+                frameworkId,
+                deleteIds: [userId],
+            },
+        });
+    }, [deleteFrameworkMembership, frameworkId]);
+
     const columns = useMemo(
         () => {
             const actionColumn: TableColumn<
-                User, number, ActionCellProps<number>, TableHeaderCellProps
+                AnalysisFrameworkMember,
+                string,
+                ActionCellProps<string>,
+                TableHeaderCellProps
             > = {
                 id: 'action',
                 title: 'Actions',
@@ -160,8 +216,8 @@ function UserTable(props: Props) {
                 cellRendererParams: (userId, data) => ({
                     itemKey: userId,
                     onEditClick: handleUserEditClick,
-                    onDeleteClick: triggerUserRemove,
-                    disabled: data.member === activeUserId,
+                    onDeleteClick: handleUserDeleteClick,
+                    disabled: data.member.id === activeUserId,
                     editButtonTitle: _ts('analyticalFramework', 'editUserLabel'),
                     deleteButtonTitle: _ts('analyticalFramework', 'deleteUserLabel'),
                     deleteConfirmationMessage: _ts('analyticalFramework', 'removeUserConfirmation'),
@@ -169,40 +225,40 @@ function UserTable(props: Props) {
             };
 
             return ([
-                createStringColumn<User, number>(
+                createStringColumn<AnalysisFrameworkMember, string>(
                     'name',
                     'Name',
-                    (item) => item?.memberDetails?.displayName,
+                    (item) => item?.member?.displayName,
                 ),
-                createStringColumn<User, number>(
+                createStringColumn<AnalysisFrameworkMember, string>(
                     'organization',
                     'Organization',
-                    (item) => item?.memberDetails?.organizationTitle,
+                    (item) => item?.member?.profile.organization,
                 ),
-                createStringColumn<User, number>(
+                createStringColumn<AnalysisFrameworkMember, string>(
                     'added_by',
                     'Added By',
-                    (item) => item?.addedByDetails?.displayName,
+                    (item) => item?.addedBy?.displayName,
                 ),
-                createDateColumn<User, number>(
+                createDateColumn<AnalysisFrameworkMember, string>(
                     'joined_at',
                     'Joined By',
                     (item) => item?.joinedAt,
                 ),
-                createStringColumn<User, number>(
+                createStringColumn<AnalysisFrameworkMember, string>(
                     'role',
                     'Assigned Role',
-                    (item) => item?.roleDetails?.title,
+                    (item) => item?.role?.title,
                 ),
                 actionColumn,
             ]);
         },
-        [handleUserEditClick, triggerUserRemove, activeUserId],
+        [handleUserEditClick, handleUserDeleteClick, activeUserId],
     );
 
     return (
         <>
-            {pendingDeleteAction && <PendingMessage />}
+            {deleteFrameworkMembershipLoading && <PendingMessage />}
             <Container
                 className={_cs(styles.tableContainer, className)}
                 heading={_ts('analyticalFramework', 'frameworkUsersHeading')}
@@ -218,7 +274,10 @@ function UserTable(props: Props) {
                 footerActions={(
                     <Pager
                         activePage={activePage}
-                        itemsCount={frameworkUsers?.count ?? 0}
+                        itemsCount={
+                            analysisFrameworkMembersResponse?.analysisFramework?.members?.length
+                                ?? 0
+                        }
                         maxItemsPerPage={maxItemsPerPage}
                         onActivePageChange={setActivePage}
                         itemsPerPageControlHidden
@@ -226,11 +285,11 @@ function UserTable(props: Props) {
                 )}
             >
                 <TableView
-                    data={frameworkUsers?.results}
+                    data={analysisFrameworkMembersResponse?.analysisFramework?.members}
                     keySelector={userKeySelector}
                     columns={columns}
                     rowClassName={styles.tableRow}
-                    pending={frameworkUsersGetPending}
+                    pending={analysisFrameworkMembersLoading}
                     errored={false}
                     filtered={false}
                     emptyMessage="No users found"
@@ -241,7 +300,7 @@ function UserTable(props: Props) {
                 <AddUserModal
                     frameworkId={frameworkId}
                     onModalClose={hideUserAddModal}
-                    onTableReload={triggerMembersList}
+                    onTableReload={analysisFrameworkMembersTrigger}
                     isPrivateFramework={framework.isPrivate}
                     userValue={userToEdit}
                 />
