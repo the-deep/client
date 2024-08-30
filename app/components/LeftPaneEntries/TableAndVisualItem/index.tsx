@@ -18,6 +18,8 @@ import {
 
 import EntryItem, { EntryItemProps } from '../EntryItem';
 
+import styles from './styles.css';
+
 interface EntryProps extends EntryItemProps {
     type: 'entry-item'
 }
@@ -63,6 +65,7 @@ function TableAndVisualItem(props: Props) {
 
     return (
         <Container
+            className={styles.tableAndVisualItem}
             headerActions={(
                 <>
                     <QuickActionButton
