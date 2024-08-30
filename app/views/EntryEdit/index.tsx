@@ -68,6 +68,8 @@ import {
     BulkUpdateEntriesMutationVariables,
     LeadUpdateMutation,
     LeadUpdateMutationVariables,
+    LeadPreviewForTextQuery,
+    LeadPreviewAttachmentType,
 } from '#generated/types';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
@@ -86,7 +88,7 @@ import usePromptOnCloseAndRefresh from '#hooks/usePromptOnCloseAndRefresh';
 import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 import getSchema, { defaultFormValues, PartialEntryType, PartialFormType } from '#components/entry/schema';
 import { Entry, EntryInput as EntryInputType, Framework } from '#components/entry/types';
-import LeftPane, { TabOptions } from '#components/LeftPaneEntries';
+import LeftPaneEntries, { TabOptions } from '#components/LeftPaneEntries';
 import { createDefaultAttributes } from '#components/LeftPaneEntries/utils';
 import {
     PROJECT_FRAMEWORK,
@@ -111,6 +113,9 @@ const UPDATE_LEN = 100;
 
 const entryKeySelector = (e: PartialEntryType) => e.clientId;
 export type Lead = NonNullable<NonNullable<LeadEntriesQuery['project']>['lead']>;
+
+type LeadAttachment = NonNullable<NonNullable<NonNullable<LeadPreviewForTextQuery['project']>['leadPreviewAttachments']>['results']>[number];
+export type LeadAttachmentsMap = { [key: string]: LeadAttachment | undefined };
 
 function transformEntry(entry: Entry): EntryInputType {
     // FIXME: make this re-usable
@@ -367,6 +372,8 @@ function EntryEdit(props: Props) {
         entryAttachmentsMap,
         setEntryAttachmentMap,
     ] = useState<EntryAttachmentsMap | undefined>();
+
+    const [leadAttachmentsMap, setLeadAttachmentsMap] = useState<LeadAttachmentsMap>({});
 
     const [
         updateLead,
@@ -1041,6 +1048,23 @@ function EntryEdit(props: Props) {
         [onEntryFieldChange, clearRestorePoint],
     );
 
+    const handleAttachmentClick = useCallback((attachment: LeadPreviewAttachmentType) => {
+        if (handleEntryCreate) {
+            handleEntryCreate({
+                clientId: randomString(),
+                entryType: 'ATTACHMENT',
+                lead: leadId,
+                leadAttachment: attachment.id,
+                excerpt: '',
+                droppedExcerpt: '',
+            });
+            setLeadAttachmentsMap((oldValue) => ({
+                ...oldValue,
+                [attachment.id]: attachment,
+            }));
+        }
+    }, [leadId, handleEntryCreate]);
+
     // NOTE: we are creating a map of index and value because we are iterating
     // over widgets but modifying attributes
     const attributesMap = useMemo(() => (
@@ -1380,7 +1404,6 @@ function EntryEdit(props: Props) {
             secondaryTagging: frameworkDetails?.secondaryTagging,
             onAddButtonClick: handleAddButtonClick,
             primaryTagging: frameworkDetails?.primaryTagging,
-            entryAttachment: isDefined(datum.id) ? entryAttachmentsMap?.[datum.id] : undefined,
             excerptHeaderActions: datum.id && projectId && (
                 <>
                     <EntryVerification
@@ -1426,6 +1449,10 @@ function EntryEdit(props: Props) {
             ),
             disabled: !!selectedEntry,
             entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
+            entryAttachment: entryAttachmentsMap?.[entryId],
+            leadAttachment: datum.leadAttachment
+                ? leadAttachmentsMap?.[datum.leadAttachment]
+                : undefined,
             error: entriesError?.[entryId],
             geoAreaOptions,
             onGeoAreaOptionsChange: setGeoAreaOptions,
@@ -1450,6 +1477,7 @@ function EntryEdit(props: Props) {
             selectedEntry,
             entriesError,
             handleApplyToAll,
+            leadAttachmentsMap,
         ],
     );
 
@@ -1625,7 +1653,7 @@ function EntryEdit(props: Props) {
                             retainMount="eager"
                         >
                             <div className={styles.primaryTagging}>
-                                <LeftPane
+                                <LeftPaneEntries
                                     className={styles.sourcePreview}
                                     projectId={projectId}
                                     entries={formValue.entries}
@@ -1639,6 +1667,9 @@ function EntryEdit(props: Props) {
                                     onEntryDelete={handleEntryDelete}
                                     onEntryRestore={handleEntryRestore}
                                     onExcerptChange={handleExcerptChange}
+                                    // NOTE: These 2 are for handling attachment/images/tables
+                                    onAttachmentClick={handleAttachmentClick}
+                                    leadAttachmentsMap={leadAttachmentsMap}
                                     lead={lead}
                                     leadId={leadId}
                                     listComponentRef={primaryPageListComponentRef}
@@ -1714,7 +1745,7 @@ function EntryEdit(props: Props) {
                             retainMount="eager"
                         >
                             <div className={styles.secondaryTagging}>
-                                <LeftPane
+                                <LeftPaneEntries
                                     className={styles.sourcePreview}
                                     onAssistedEntryAdd={handleAssistedEntryAdd}
                                     projectId={projectId}
@@ -1739,6 +1770,8 @@ function EntryEdit(props: Props) {
                                     entriesError={entriesErrorStateMap}
                                     activeTabRef={secondaryPageLeftPaneRef}
                                     frameworkDetails={frameworkDetails ?? undefined}
+                                    onAttachmentClick={handleAttachmentClick}
+                                    leadAttachmentsMap={leadAttachmentsMap}
                                 />
                                 <Container
                                     className={styles.rightContainer}

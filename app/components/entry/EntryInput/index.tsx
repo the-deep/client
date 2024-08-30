@@ -24,7 +24,7 @@ import NonFieldError from '#components/NonFieldError';
 import {
     WidgetType as WidgetRaw,
     AnalysisFrameworkDetailType,
-    EntryType,
+    LeadPreviewAttachmentType,
 } from '#generated/types';
 
 // FIXME: move this component
@@ -85,7 +85,8 @@ interface EntryInputProps<T extends string | number | undefined> {
     rightComponent?: React.ReactNode;
     noPaddingInWidgetContainer?: boolean;
 
-    entryAttachment: EntryType['entryAttachment'] | undefined;
+    entryAttachment: Entry['entryAttachment'] | undefined;
+    leadAttachment?: LeadPreviewAttachmentType;
 
     excerptShown?: boolean;
     displayHorizontally?: boolean;
@@ -124,6 +125,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         displayHorizontally = false,
         relevant = true,
         entryAttachment,
+        leadAttachment,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -257,9 +259,12 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                             value={value.excerpt}
                             // droppedExcerpt={value.droppedExcerpt}
                             image={entryImage}
-                            imageRaw={value.imageRaw}
+                            imageRaw={
+                                value.imageRaw ?? leadAttachment?.filePreview?.url ?? undefined
+                            }
                             readOnly={readOnly}
                             entryAttachment={entryAttachment}
+                            leadAttachment={leadAttachment}
                         />
                     </Container>
                 )}
