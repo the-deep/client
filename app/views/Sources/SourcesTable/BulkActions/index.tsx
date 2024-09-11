@@ -24,7 +24,7 @@ interface Props {
     selectedLeads: Lead[];
     onClearSelection: () => void;
     activeProject: string;
-    onRemoveClick: (leadsToDelete: string[]) => void;
+    onRemoveClick: (selectedLeadIds: string[]) => void;
 }
 
 function BulkActions(props: Props) {
@@ -49,15 +49,16 @@ function BulkActions(props: Props) {
         selectedLeads.filter((lead) => isDefined(lead.assessmentId)).length
     ), [selectedLeads]);
 
-    const onRemoveBulkLead = useCallback(() => {
-        if (onRemoveClick) {
-            onRemoveClick(selectedLeads.map((lead) => lead.id));
-        }
-    }, [onRemoveClick, selectedLeads]);
-
     const selectedLeadsIds = useMemo(() => (
         selectedLeads.map((lead) => lead.id)
     ), [selectedLeads]);
+
+    const onRemoveBulkLead = useCallback(() => {
+        onRemoveClick(selectedLeadsIds);
+    }, [
+        onRemoveClick,
+        selectedLeadsIds,
+    ]);
 
     return (
         <div className={styles.bulkActionsBar}>
