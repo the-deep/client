@@ -128,6 +128,7 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                         className={_cs(imageClassName, styles.image)}
                         alt=""
                         src={attachmentSrc}
+                        disableZoomOnScroll
                     />
                 ) : (
                     <Message
