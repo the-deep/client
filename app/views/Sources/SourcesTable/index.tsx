@@ -27,6 +27,7 @@ import {
 import {
     useMutation,
     useQuery,
+    gql,
 } from '@apollo/client';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
@@ -36,10 +37,11 @@ import {
     DeleteLeadMutation,
     DeleteLeadMutationVariables,
     LeadOrderingEnum,
+    BulkDeleteLeadsMutation,
+    BulkDeleteLeadsMutationVariables,
 } from '#generated/types';
 import _ts from '#ts';
 import { createDateColumn } from '#components/tableHelpers';
-import { useLazyRequest } from '#base/utils/restRequest';
 import { useModalState } from '#hooks/stateManagement';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import OrganizationLink, { Props as OrganizationLinkProps } from '#components/OrganizationLink';
@@ -96,6 +98,22 @@ const statusVariantMap: Record<Lead['status'], 'default' | 'gradient1' | 'comple
     TAGGED: 'complement1',
 };
 
+const BULK_DELETE_LEADS = gql`
+    mutation BulkDeleteLeads(
+        $projectId: ID!,
+        $leadIdsToDelete: [ID!],
+    ){
+        project(id: $projectId) {
+            leadBulk(deleteIds: $leadIdsToDelete) {
+                errors
+                result {
+                    id
+                    title
+                }
+            }
+        }
+    }
+`;
 const defaultMaxItemsPerPage = 10;
 
 interface Props {
@@ -221,23 +239,43 @@ function SourcesTable(props: Props) {
     const sourcesResponse = projectSourcesResponse?.project?.leads;
     const sources = sourcesResponse?.results;
 
-    const {
-        pending: bulkDeletePending,
-        trigger: bulkLeadDeleteTrigger,
-    } = useLazyRequest<unknown, string[]>({
-        url: `server://project/${projectId}/leads/bulk-delete/`,
-        method: 'POST',
-        body: (ctx) => ({ leads: ctx }),
-        onSuccess: () => {
-            alert.show(
-                'Successfully deleted sources!',
-                { variant: 'success' },
-            );
-            setSelectedLeads([]);
-            getProjectSources();
+    const [
+        bulkDeleteLeads,
+        { loading: bulkDeletePending },
+    ] = useMutation<BulkDeleteLeadsMutation, BulkDeleteLeadsMutationVariables>(
+        BULK_DELETE_LEADS,
+        {
+            onCompleted: (response) => {
+                if (isDefined(response.project?.leadBulk?.result)) {
+                    alert.show(
+                        'Successfully deleted sources!',
+                        { variant: 'success' },
+                    );
+                    setSelectedLeads([]);
+                    getProjectSources();
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to delete leads',
+                    { variant: 'error' },
+                );
+            },
+
         },
-        failureMessage: 'Failed to delete leads.',
-    });
+    );
+
+    const handleBulkDeleteLeads = useCallback((selectedLeadIds: string[]) => {
+        bulkDeleteLeads({
+            variables: {
+                projectId,
+                leadIdsToDelete: selectedLeadIds,
+            },
+        });
+    }, [
+        bulkDeleteLeads,
+        projectId,
+    ]);
 
     const clearSelection = useCallback(() => {
         setSelectedLeads([]);
@@ -613,7 +651,7 @@ function SourcesTable(props: Props) {
                 <BulkActions
                     selectedLeads={selectedLeads}
                     activeProject={projectId}
-                    onRemoveClick={bulkLeadDeleteTrigger}
+                    onRemoveClick={handleBulkDeleteLeads}
                     onClearSelection={clearSelection}
                 />
             )}
