@@ -381,7 +381,10 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $createdAtLte: DateTime,
             $createdBy: [ID!],
             $usedEntries: [ID!],
+            $hasComment: Boolean,
             $filterableData: [EntryFilterDataInputType!]
+            $leadTitle: String,
+            $search: String,
             $leadAssignees: [ID!],
             $leadCreatedBy: [ID!],
             $leadConfidentialities: [LeadConfidentialityEnum!],
@@ -406,7 +409,10 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                     page: $page,
                     pageSize: $pageSize,
                     controlled: $controlled,
+                    leadTitle: $leadTitle,
+                    search: $search,
                     createdAtGte: $createdAtGte,
+                    hasComment: $hasComment,
                     createdAtLte: $createdAtLte,
                     createdBy: $createdBy,
                     # NOTE: Filtering out all non-textual entries as they are not
