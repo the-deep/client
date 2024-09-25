@@ -1,0 +1,16 @@
+.export-option {
+    display: flex;
+    justify-content: space-around;
+    padding: var(--dui-spacing-extra-large);
+}
+.png-export-modal {
+    background-color: var(--dui-color-foreground);
+
+    .section-title {
+        border: var(--dui-color-accent) solid var(--dui-width-separator-thin);
+        background-color: var(--dui-color-background-information);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+        color: var(--dui-color-accent);
+        font-weight: var(--dui-font-weight-bold);
+    }
+}

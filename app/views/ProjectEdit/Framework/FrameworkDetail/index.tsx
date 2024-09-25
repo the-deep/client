@@ -60,6 +60,7 @@ import {
 import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
 
 import CloneFrameworkModal from '../CloneFrameworkModal';
+import ExportModal from './ExportModal';
 import styles from './styles.css';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -145,7 +146,7 @@ const FRAMEWORK_DETAILS = gql`
 // FIXME: 'key' is thought to be mandatory from server.
 // Remove this DeepMandatory transformation after server sends key as mandatory
 type FrameworkRaw = DeepMandatory<NonNullable<FrameworkDetailsQuery['analysisFramework']>, 'key'>;
-type Framework = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, Widget>;
+export type Framework = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, Widget>;
 
 interface ProjectItem {
     id: string;
@@ -314,6 +315,12 @@ function FrameworkDetail(props: Props) {
         hideFrameworkCloneModal,
     ] = useModalState(false);
 
+    const [
+        exportModalShown,
+        showExportModalShown,
+        hideExportModalShown,
+    ] = useModalState(false);
+
     const handleUseFrameworkClick = useCallback(() => {
         projectPatch({
             variables: {
@@ -331,6 +338,10 @@ function FrameworkDetail(props: Props) {
     const handleFrameworkCloneClick = useCallback(() => {
         showFrameworkCloneModal();
     }, [showFrameworkCloneModal]);
+
+    const handleExportClick = useCallback(() => {
+        showExportModalShown();
+    }, [showExportModalShown]);
 
     const disableAllButtons = projectPatchPending;
     const frameworkRoute = generatePath(routes.analyticalFrameworkEdit.path, {
@@ -420,13 +431,14 @@ function FrameworkDetail(props: Props) {
                                     </Tag>
                                 )}
                                 {isDefined(exportLink) && (
-                                    <QuickActionLink
-                                        to={exportLink}
+                                    <QuickActionButton
+                                        name=""
+                                        onClick={handleExportClick}
                                         variant="secondary"
                                         title="Export framework"
                                     >
                                         <IoDownloadOutline />
-                                    </QuickActionLink>
+                                    </QuickActionButton>
                                 )}
                                 {canEditFramework && (
                                     <QuickActionLink
@@ -627,6 +639,14 @@ function FrameworkDetail(props: Props) {
                     </Card>
                 </ContainerCard>
             </Tabs>
+            {exportModalShown && (
+                <ExportModal
+                    title={frameworkDetails?.title}
+                    sections={sections}
+                    exportLink={exportLink}
+                    onModalClose={hideExportModalShown}
+                />
+            )}
             {frameworkCloneModalShown && (
                 <CloneFrameworkModal
                     projectId={projectId}
