@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from 'react';
-import { Modal, ButtonLikeLink, Button, Container } from '@the-deep/deep-ui';
+import React, { useCallback } from 'react';
+import { BiDownload } from 'react-icons/bi';
+import html2canvas from 'html2canvas';
+import { Modal, ButtonLikeLink, Button, Container, Heading, useModalState } from '@the-deep/deep-ui';
 import { isDefined, isNotDefined } from '@togglecorp/fujs';
 import Section from '#components/entry/Section';
 
-import html2canvas from 'html2canvas';
 import { type Framework } from '..';
 
 import styles from './styles.css';
@@ -12,14 +13,12 @@ function noop() {}
 
 const emptyObject = {};
 
-type Sections = Framework['primaryTagging']
-
 interface Props {
     title?: string;
     className?: string;
     exportLink: string | undefined;
     onModalClose: () => void;
-    sections: Sections | undefined;
+    framework: Framework | undefined;
 }
 function ExportModal(props: Props) {
     const {
@@ -27,13 +26,13 @@ function ExportModal(props: Props) {
         onModalClose,
         className,
         exportLink,
-        sections,
+        framework,
     } = props;
-    const [isPngExport, setPngExport] = useState(false);
 
-    const handlePngExportClick = useCallback(() => (
-        setPngExport(true)
-    ), []);
+    const [
+        pngExport,
+        showPngExport,
+    ] = useModalState(false);
 
     const handleExportButtonClick = useCallback(() => {
         const sectionsContainer = document.querySelector('#section') as HTMLElement;
@@ -51,25 +50,34 @@ function ExportModal(props: Props) {
     return (
         <Modal
             className={className}
-            headingDescription={!isPngExport && 'Choose any one file type for export'}
-            heading={isPngExport ? 'Preview' : 'Export'}
-            size={isPngExport ? 'large' : 'extraSmall'}
+            heading={pngExport ? 'Preview' : 'Export'}
+            size={pngExport ? 'cover' : 'free'}
             onCloseButtonClick={onModalClose}
         >
-            {!isPngExport ? (
+            {!pngExport ? (
                 <div className={styles.exportOption}>
                     {isDefined(exportLink) && (
                         <ButtonLikeLink
                             to={exportLink}
+                            variant="tertiary"
+                            className={styles.exportButtons}
+                            childrenContainerClassName={styles.exportButtonsChildren}
+                            title="Export framework in CSV format"
                         >
-                            .csv
+                            <BiDownload />
+                            csv
                         </ButtonLikeLink>
                     )}
                     <Button
                         name=""
-                        onClick={handlePngExportClick}
+                        onClick={showPngExport}
+                        variant="tertiary"
+                        className={styles.exportButtons}
+                        childrenContainerClassName={styles.exportButtonsChildren}
+                        title="Export framework image"
                     >
-                        PNG
+                        <BiDownload />
+                        IMAGE
                     </Button>
                 </div>
             ) : (
@@ -87,26 +95,56 @@ function ExportModal(props: Props) {
                     <div
                         id="section"
                     >
-                        {sections?.map((section) => (
-                            <React.Fragment
-                                key={section.clientId}
-                            >
-                                <div className={styles.sectionTitle}>
-                                    {section.title}
-                                </div>
+                        {framework?.primaryTagging && framework.primaryTagging.length > 0 && (
+                            <>
+                                <Heading
+                                    size="extraSmall"
+                                    className={styles.heading}
+                                >
+                                    Primary Tagging
+                                </Heading>
+                                {framework?.primaryTagging?.map((section) => (
+                                    <React.Fragment
+                                        key={section.clientId}
+                                    >
+                                        <div className={styles.sectionTitle}>
+                                            {section.title}
+                                        </div>
+                                        <Section
+                                            allWidgets={undefined}
+                                            widgets={section.widgets}
+                                            onAttributeChange={noop}
+                                            attributesMap={emptyObject}
+                                            error={undefined}
+                                            readOnly
+                                            onGeoAreaOptionsChange={noop}
+                                            geoAreaOptions={undefined}
+                                            disabled
+                                        />
+                                    </React.Fragment>
+                                ))}
+                            </>
+                        )}
+                        {framework?.secondaryTagging && framework?.secondaryTagging?.length > 0 && (
+                            <>
+                                <Heading
+                                    size="extraSmall"
+                                    className={styles.heading}
+                                >
+                                    Secondary Tagging
+                                </Heading>
                                 <Section
                                     allWidgets={undefined}
-                                    widgets={section.widgets}
+                                    widgets={framework?.secondaryTagging}
                                     onAttributeChange={noop}
                                     attributesMap={emptyObject}
                                     error={undefined}
-                                    readOnly
                                     onGeoAreaOptionsChange={noop}
                                     geoAreaOptions={undefined}
                                     disabled
                                 />
-                            </React.Fragment>
-                        ))}
+                            </>
+                        )}
                     </div>
                 </Container>
             )}

@@ -339,10 +339,6 @@ function FrameworkDetail(props: Props) {
         showFrameworkCloneModal();
     }, [showFrameworkCloneModal]);
 
-    const handleExportClick = useCallback(() => {
-        showExportModalShown();
-    }, [showExportModalShown]);
-
     const disableAllButtons = projectPatchPending;
     const frameworkRoute = generatePath(routes.analyticalFrameworkEdit.path, {
         frameworkId,
@@ -433,7 +429,7 @@ function FrameworkDetail(props: Props) {
                                 {isDefined(exportLink) && (
                                     <QuickActionButton
                                         name=""
-                                        onClick={handleExportClick}
+                                        onClick={showExportModalShown}
                                         variant="secondary"
                                         title="Export framework"
                                     >
@@ -642,7 +638,7 @@ function FrameworkDetail(props: Props) {
             {exportModalShown && (
                 <ExportModal
                     title={frameworkDetails?.title}
-                    sections={sections}
+                    framework={frameworkDetails}
                     exportLink={exportLink}
                     onModalClose={hideExportModalShown}
                 />
