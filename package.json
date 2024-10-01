@@ -65,6 +65,7 @@
         "d3-selection": "^3.0.0",
         "graphql": "^16.2.0",
         "history": "^4.9.0",
+        "html2canvas": "^1.4.1",
         "immer": "^9.0.5",
         "localforage": "^1.10.0",
         "mapbox-gl": "^2.4.1",

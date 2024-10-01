@@ -1,0 +1,30 @@
+.export-option {
+    display: flex;
+    gap: var(--base-spacing);
+
+    .export-buttons {
+        --border-radius: 0;
+        flex-grow: 1;
+        padding: var(--dui-spacing-super-large);
+
+        .export-buttons-children {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
+.png-export-modal {
+    background-color: var(--dui-color-foreground);
+
+    .heading {
+        padding: var(--dui-spacing-large) 0;
+    }
+
+    .section-title {
+        border: var(--dui-color-accent) solid var(--dui-width-separator-thin);
+        background-color: var(--dui-color-background-information);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+        color: var(--dui-color-accent);
+        font-weight: var(--dui-font-weight-bold);
+    }
+}
