@@ -95,6 +95,7 @@ const LEAD_PREVIEW = gql`
         $page: Int,
         $pageSize: Int,
         $excludeAttachmentIds: [ID!],
+        $excludeWithEntries: Boolean,
     ) {
         project(id: $projectId) {
             id
@@ -103,6 +104,7 @@ const LEAD_PREVIEW = gql`
                 page: $page,
                 pageSize: $pageSize,
                 excludeAttachmentIds: $excludeAttachmentIds,
+                excludeWithEntries: $excludeWithEntries,
             ) {
                 results {
                     id
@@ -240,7 +242,7 @@ function LeftPaneEntries(props: Props) {
         autoEntriesModalShown,
         showAutoEntriesModal,
         hideAutoEntriesModal,
-    ] = useModalState(false);
+    ] = useModalState(true);
 
     useEffect(() => {
         if (activeTabRef) {
@@ -292,6 +294,7 @@ function LeftPaneEntries(props: Props) {
             excludeAttachmentIds: attachmentsWithEntriesHidden
                 ? leadAttachmentIdsWithEntries
                 : [],
+            excludeWithEntries: attachmentsWithEntriesHidden,
         }) : undefined),
         [
             leadId,
@@ -899,14 +902,12 @@ function LeftPaneEntries(props: Props) {
                     activeClassName={styles.visualsTab}
                     retainMount="lazy"
                 >
-                    {isDefined(leadPreviewCount) && (leadPreviewCount > 0) && (
-                        <Switch
-                            name="hide attachments"
-                            label="Hide Created entries"
-                            value={attachmentsWithEntriesHidden}
-                            onChange={setAttachmentsWithEntriesHidden}
-                        />
-                    )}
+                    <Switch
+                        name="hide attachments"
+                        label="Hide Created entries"
+                        value={attachmentsWithEntriesHidden}
+                        onChange={setAttachmentsWithEntriesHidden}
+                    />
                     <ListView
                         spacing="comfortable"
                         direction="vertical"
