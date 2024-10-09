@@ -36,11 +36,6 @@ export const sentryAppDsn = process.env.REACT_APP_SENTRY_DSN;
 export const sentryTraceSampleRate = Number(process.env.REACT_APP_SENTRY_TRACES_SAMPLE_RATE) || 0.2;
 export const sentryNormalizeDepth = Number(process.env.REACT_APP_SENTRY_NORMALIZE_DEPTH) || 5;
 
-// Humanitarian ID
-export const hidClientId = process.env.REACT_APP_HID_CLIENT_ID || 'deep-local';
-export const hidRedirectUrl = process.env.REACT_APP_HID_CLIENT_REDIRECT_URL || 'http://localhost:3000/login/';
-export const hidAuthUrl = process.env.REACT_APP_HID_AUTH_URI || 'https://api2.dev.humanitarian.id';
-
 // Hcaptcha
 export const hCaptchaKey = process.env.REACT_APP_HCATPCHA_SITEKEY || '10000000-ffff-ffff-ffff-000000000001';
 
