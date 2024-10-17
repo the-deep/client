@@ -6,6 +6,7 @@ import React, {
 import {
     _cs,
     randomString,
+    listToMap,
     isDefined,
     compareDate,
 } from '@togglecorp/fujs';
@@ -47,6 +48,8 @@ import {
     AnalysisInputType,
     FrameworkDetailsForAnalysisQuery,
     FrameworkDetailsForAnalysisQueryVariables,
+    CreateAnalysisMutation,
+    CreateAnalysisMutationVariables,
     UpdateAnalysisMutation,
     UpdateAnalysisMutationVariables,
     UserMembersQuery,
@@ -77,6 +80,49 @@ const FRAMEWORK_DETAILS_FOR_ANALYSIS = gql`
     }
 `;
 
+const CREATE_ANALYSIS = gql`
+    mutation CreateAnalysis(
+        $projectId: ID!,
+        $data: AnalysisInputType!,
+    ) {
+        project(id: $projectId) {
+            analysisCreate(
+                data: $data,
+            ) {
+                ok
+                errors
+                result {
+                    id
+                    title
+                    endDate
+                    startDate
+                    pillars {
+                        id
+                        assignee {
+                            id
+                            displayName
+                            emailDisplay
+                        }
+                        analysisId
+                        clientId
+                        title
+                        filters {
+                            id
+                            key
+                            uniqueId
+                        }
+                    }
+                    teamLead {
+                        id
+                        displayName
+                        emailDisplay
+                    }
+                }
+            }
+        }
+    }
+`;
+
 const UPDATE_ANALYSIS = gql`
     mutation UpdateAnalysis(
         $projectId: ID!,
@@ -96,6 +142,7 @@ const UPDATE_ANALYSIS = gql`
                     endDate
                     startDate
                     pillars {
+                        id
                         assignee {
                             id
                             displayName
@@ -138,6 +185,7 @@ const ANALYSIS_DETAIL = gql`
                 startDate
                 endDate
                 pillars {
+                    id
                     title
                     analysisId
                     clientId
@@ -203,6 +251,7 @@ type AnalysisPillarSchema = ObjectSchema<PartialForm<AnalysisPillarType>, Partia
 type AnalysisPillarSchemaFields = ReturnType<AnalysisPillarSchema['fields']>;
 const analysisPillarSchema: AnalysisPillarSchema = {
     fields: (): AnalysisPillarSchemaFields => ({
+        id: [defaultUndefinedType],
         clientId: [defaultUndefinedType],
         title: [requiredStringCondition],
         assignee: [requiredCondition],
@@ -254,7 +303,7 @@ interface AnalysisEditModalProps {
     className?: string;
     onSuccess: () => void;
     onModalClose: () => void;
-    analysisToEdit: string;
+    analysisToEdit: string | undefined;
     projectId: string;
 }
 
@@ -319,15 +368,21 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
 
     const alert = useAlert();
 
+    const analysisDetailVariables = useMemo(() => (analysisToEdit ? ({
+        projectId,
+        analysisId: analysisToEdit,
+    }) : undefined), [
+        projectId,
+        analysisToEdit,
+    ]);
+
     const {
         loading: analysisDetailLoading,
     } = useQuery<AnalysisDetailQuery, AnalysisDetailQueryVariables>(
         ANALYSIS_DETAIL,
         {
-            variables: {
-                projectId,
-                analysisId: analysisToEdit,
-            },
+            skip: !analysisDetailVariables,
+            variables: analysisDetailVariables,
             onCompleted: (response) => {
                 const {
                     analysis,
@@ -342,6 +397,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                     endDate: analysis?.endDate,
                     teamLead: analysis.teamLead.id,
                     analysisPillar: analysis.pillars?.map((pillar: AnalysisPillar) => ({
+                        id: pillar.id,
                         analysisId: pillar.analysisId,
                         clientId: pillar.clientId,
                         title: pillar.title,
@@ -373,8 +429,55 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     );
 
     const [
+        triggerAnalysisCreate,
+        { loading: createAnalysisPending },
+    ] = useMutation<CreateAnalysisMutation, CreateAnalysisMutationVariables>(
+        CREATE_ANALYSIS,
+        {
+            refetchQueries: [
+                {
+                    query: ANALYSIS_DETAIL,
+                    variables: {
+                        projectId,
+                        analysisId: analysisToEdit,
+                    },
+                }],
+            onCompleted: (response) => {
+                const updateDraftAnalysisResponse = response?.project?.analysisCreate;
+                if (!response) {
+                    return;
+                }
+                if (updateDraftAnalysisResponse?.ok) {
+                    onSuccess();
+                    alert.show(
+                        'Successfully created new analysis.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                } else {
+                    alert.show(
+                        'Failed to create the analysis.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to change the analysis.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
+    const [
         triggerAnalysisEdit,
-        { loading: UpdateAnalysisPending },
+        { loading: updateAnalysisPending },
     ] = useMutation<UpdateAnalysisMutation, UpdateAnalysisMutationVariables>(
         UPDATE_ANALYSIS,
         {
@@ -420,7 +523,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     );
 
     const pending = pendingFramework || pendingUsersList
-        || UpdateAnalysisPending || analysisDetailLoading;
+        || updateAnalysisPending || analysisDetailLoading || createAnalysisPending;
 
     const {
         setValue: onRowChange,
@@ -457,27 +560,47 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             validate,
             setError,
             (val) => {
+                const matrixMap = listToMap(
+                    matrixPillars,
+                    (d) => d.uniqueId,
+                    (d) => ({
+                        id: d.id,
+                        key: d.key,
+                        uniqueId: d.uniqueId,
+                    }),
+                );
                 const cleanedData = {
                     ...val,
                     analysisPillar: val.analysisPillar?.map((pillar) => ({
                         ...pillar,
-                        assignee: pillar.assignee,
-                        clientId: pillar.clientId,
+                        filters: pillar.filters?.map((f) => matrixMap[f]),
                     })),
-                } as unknown as AnalysisInputType;
-                triggerAnalysisEdit({
-                    variables: {
-                        data: cleanedData,
-                        projectId,
-                        analysisId: analysisToEdit,
-                    },
-                });
+                } as AnalysisInputType;
+
+                if (isDefined(analysisToEdit)) {
+                    triggerAnalysisEdit({
+                        variables: {
+                            data: cleanedData,
+                            projectId,
+                            analysisId: analysisToEdit,
+                        },
+                    });
+                } else {
+                    triggerAnalysisCreate({
+                        variables: {
+                            data: cleanedData,
+                            projectId,
+                        },
+                    });
+                }
             },
         );
         submit();
     }, [
+        matrixPillars,
         validate,
         setError,
+        triggerAnalysisCreate,
         triggerAnalysisEdit,
         projectId,
         analysisToEdit,

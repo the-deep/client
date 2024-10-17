@@ -6,76 +6,130 @@ import {
     ListView,
     Kraken,
 } from '@the-deep/deep-ui';
+import { gql, useQuery } from '@apollo/client';
 
-import { AnalysisSummaryQuery } from '#generated/types';
+import {
+    AnalysisPillarsQuery,
+    AnalysisPillarsQueryVariables,
+} from '#generated/types';
 
 import AnalysisPillar, { Props as PillarComponentProps } from '../AnalysisPillar';
 
 import styles from './styles.css';
 
-type PillarSummary = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analysisPillars']>['results']>[number];
+type PillarItem = NonNullable<NonNullable<NonNullable<AnalysisPillarsQuery['project']>['analysisPillars']>['results']>[number];
+
+export const ANALYSIS_PILLARS = gql`
+    query AnalysisPillars(
+        $projectId: ID!,
+        $page: Int,
+        $analysisId: ID!,
+        $pageSize: Int,
+    ) {
+        project(id: $projectId) {
+            analysisPillars(
+                page: $page,
+                analyses: [$analysisId],
+                pageSize: $pageSize,
+            ) {
+                results {
+                    id
+                    title
+                    createdAt
+                    analysisId
+                    analyzedEntriesCount
+                    assignee {
+                        displayName
+                        id
+                    }
+                    statements {
+                        id
+                        statement
+                        entriesCount
+                    }
+                }
+                totalCount
+            }
+        }
+    }
+`;
 
 const MAX_ITEMS_PER_PAGE = 5;
-const keySelector = (item: PillarSummary) => item.id;
+const keySelector = (item: PillarItem) => item.id;
 
 interface Props {
     className?: string;
     createdAt: string;
-    activeProject: string;
-    onAnalysisPillarDelete: () => void;
+    projectId: string;
     analysisId: string;
     totalEntries: number | undefined;
-    pillars: PillarSummary[] | null | undefined;
-    pillarsPending: boolean;
 }
 
 function AnalysisDetails(props: Props) {
     const {
         className,
         createdAt,
-        activeProject,
-        onAnalysisPillarDelete,
+        projectId,
         analysisId,
         totalEntries,
-        pillars,
-        pillarsPending,
     } = props;
 
     const [activePage, setActivePage] = useState(1);
 
+    const handleAnalysisPillarDelete = useCallback(() => {
+        console.log('here');
+    }, []);
+
+    const {
+        data: analysisPillarsData,
+        loading: pillarsPending,
+    } = useQuery<AnalysisPillarsQuery, AnalysisPillarsQueryVariables>(
+        ANALYSIS_PILLARS,
+        {
+            variables: {
+                page: activePage,
+                analysisId,
+                projectId,
+                pageSize: MAX_ITEMS_PER_PAGE,
+            },
+        },
+    );
+
     const analysisPillarRendererParams = useCallback(
-        (_: string, data: PillarSummary): PillarComponentProps => ({
+        (_: string, data: PillarItem): PillarComponentProps => ({
             className: styles.pillar,
             analysisId,
             assigneeName: data.assignee?.displayName,
             createdAt,
-            onDelete: onAnalysisPillarDelete,
+            onDelete: handleAnalysisPillarDelete,
             statements: data.statements,
             pillarId: data.id,
             analyzedEntries: data.analyzedEntriesCount,
-            projectId: activeProject,
+            projectId,
             title: data.title,
             totalEntries,
             pendingPillarDelete: pillarsPending,
         }), [
-            onAnalysisPillarDelete,
+            handleAnalysisPillarDelete,
             totalEntries,
             createdAt,
             analysisId,
-            activeProject,
+            projectId,
             pillarsPending,
         ],
     );
+
+    const pillars = analysisPillarsData?.project?.analysisPillars;
 
     return (
         <Container
             className={_cs(className, styles.container)}
             spacing="none"
             contentClassName={styles.content}
-            footerActions={((pillars?.length ?? 0) / MAX_ITEMS_PER_PAGE) > 1 ? (
+            footerActions={((pillars?.totalCount ?? 0) / MAX_ITEMS_PER_PAGE) > 1 ? (
                 <Pager
                     activePage={activePage}
-                    itemsCount={pillars?.length ?? 0}
+                    itemsCount={pillars?.totalCount ?? 0}
                     maxItemsPerPage={MAX_ITEMS_PER_PAGE}
                     onActivePageChange={setActivePage}
                     itemsPerPageControlHidden
@@ -84,7 +138,7 @@ function AnalysisDetails(props: Props) {
         >
             <ListView
                 className={styles.pillarList}
-                data={pillars}
+                data={analysisPillarsData?.project?.analysisPillars?.results}
                 keySelector={keySelector}
                 renderer={AnalysisPillar}
                 rendererParams={analysisPillarRendererParams}

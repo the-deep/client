@@ -1,5 +1,8 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import { IoClose } from 'react-icons/io5';
 import {
     QuickActionButton,
@@ -110,8 +113,8 @@ function PillarAnalysisRow(props: Props) {
                 className={styles.button}
                 name={index}
                 onClick={onRemove}
-                title="Remove"
-                disabled={pending}
+                title={isDefined(value.id) ? 'This cannot be removed from here. Please delete is individually from the list.' : 'Remove'}
+                disabled={pending || isDefined(value.id)}
             >
                 <IoClose />
             </QuickActionButton>
