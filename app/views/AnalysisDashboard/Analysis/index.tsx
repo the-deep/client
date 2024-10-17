@@ -69,7 +69,9 @@ const CREATE_ANALYSIS_EXPORT = gql`
     }
 `;
 
-type PillarSummary = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analysisPillars']>['results']>[number];
+type PillarSummary = NonNullable<NonNullable<NonNullable<NonNullable<
+AnalysisSummaryQuery['project']
+>['analyses']>['results']>[number]['pillars']>[number];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderCustomizedLabel = (props: any) => {
@@ -108,7 +110,6 @@ export interface Props {
     startDate?: string | null;
     endDate: string;
     onEdit: (analysisId: string) => void;
-    onAnalysisPillarDelete: () => void;
     onAnalysisCloseSuccess: () => void;
     teamLeadName?: string | null;
     createdAt: string;
@@ -132,7 +133,6 @@ function Analysis(props: Props) {
         endDate,
         analysisId,
         teamLeadName,
-        onAnalysisPillarDelete,
         onAnalysisCloseSuccess,
         pillars,
         pillarsPending,
@@ -443,11 +443,8 @@ function Analysis(props: Props) {
                     <PillarAnalysisList
                         createdAt={createdAt}
                         analysisId={analysisId}
-                        activeProject={activeProject}
-                        onAnalysisPillarDelete={onAnalysisPillarDelete}
+                        projectId={activeProject}
                         totalEntries={totalEntries}
-                        pillars={pillars}
-                        pillarsPending={pillarsPending}
                     />
                 )}
             </ExpandableContainer>

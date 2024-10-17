@@ -127,24 +127,6 @@ export const ANALYSIS_SUMMARY = gql`
                     statement
                 }
             }
-            analysisPillars {
-                results {
-                    assignee {
-                        displayName
-                        id
-                    }
-                        title
-                        analyzedEntriesCount
-                        analysisId
-                        id
-                        createdAt
-                        statements {
-                            id
-                            statement
-                            entriesCount
-                        }
-                    }
-            }
         }
     }
 `;
@@ -374,7 +356,6 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
             totalSources: totalLeadsCount,
             totalEntries: totalEntriesCount,
             onAnalysisCloseSuccess: getProjectAnalysis,
-            onAnalysisPillarDelete: getProjectAnalysis,
             pendingAnalysisDelete: deleteAnalysisPending && data.id === id,
         }), [
             analyzedEntriesCount,
@@ -403,7 +384,7 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
                             <IoAdd />
                         )}
                     >
-                        {_ts('analysis', 'setupNewAnalysisButtonLabel')}
+                        Setup a new analysis
                     </Button>
                 )}
             </SubNavbarActions>
@@ -560,7 +541,7 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
                     messageShown
                 />
             </Container>
-            {showAnalysisAddModal && activeProject && analysisToEdit && (
+            {showAnalysisAddModal && activeProject && (
                 <AnalysisEditModal
                     onSuccess={handleAnalysisEditSuccess}
                     onModalClose={setModalHidden}

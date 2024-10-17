@@ -24,7 +24,6 @@ import { calcPercent } from '#utils/common';
 import _ts from '#ts';
 import styles from './styles.css';
 
-type PillarSummary = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analysisPillars']>['results']>[number];
 type AnalyticalStatement = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analyticalStatements']>['results']>[number];
 
 const statementKeySelector = (item: AnalyticalStatement) => Number(item.id);
@@ -37,7 +36,8 @@ export interface Props {
     createdAt: string;
     onDelete: (value: number) => void;
     pendingPillarDelete: boolean;
-    pillarId: PillarSummary['id']; projectId: string;
+    pillarId: string;
+    projectId: string;
     className?: string;
     totalEntries: number | undefined;
     analyzedEntries?: number | undefined;
