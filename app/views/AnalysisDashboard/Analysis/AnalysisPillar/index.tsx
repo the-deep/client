@@ -18,13 +18,13 @@ import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 
 import routes from '#base/configs/routes';
 import { ProjectContext } from '#base/context/ProjectContext';
-import { AnalysisSummaryQuery } from '#generated/types';
+import { AnalysisPillarsQuery } from '#generated/types';
 import { calcPercent } from '#utils/common';
 
 import _ts from '#ts';
 import styles from './styles.css';
 
-type AnalyticalStatement = NonNullable<NonNullable<NonNullable<AnalysisSummaryQuery['project']>['analyticalStatements']>['results']>[number];
+type AnalyticalStatement = NonNullable<NonNullable<NonNullable<NonNullable<NonNullable<AnalysisPillarsQuery['project']>['analysisPillars']>['results']>[number]>['statements']>[number];
 
 const statementKeySelector = (item: AnalyticalStatement) => Number(item.id);
 
@@ -34,7 +34,7 @@ export interface Props {
     statements?: AnalyticalStatement[] | null;
     title: string;
     createdAt: string;
-    onDelete: (value: number) => void;
+    onDelete: (value: string) => void;
     pendingPillarDelete: boolean;
     pillarId: string;
     projectId: string;
@@ -75,8 +75,7 @@ function AnalysisPillar(props: Props) {
     }
 
     const onDeleteConfirmClick = useCallback(() => {
-        // TODO: Remove Number in pillarId
-        onDelete(Number(pillarId));
+        onDelete(pillarId);
     }, [onDelete, pillarId]);
 
     const statementRendererParams = useCallback((_: number, data: AnalyticalStatement) => ({
