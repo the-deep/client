@@ -1,5 +1,8 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import { IoClose } from 'react-icons/io5';
 import {
     QuickActionButton,
@@ -7,7 +10,6 @@ import {
     SelectInput,
     MultiSelectInput,
 } from '@the-deep/deep-ui';
-
 import {
     useFormObject,
     PartialForm,
@@ -17,41 +19,32 @@ import {
     getErrorString,
 } from '@togglecorp/toggle-form';
 
-import {
-    UserMini,
-} from '#types';
-
 import _ts from '#ts';
 
 import { MatrixPillar } from '../utils';
+import { AnalysisPillarForm, UserMembersType } from '..';
 
 import styles from './styles.css';
-
-export interface PillarAnalysisFields {
-    title: string;
-    assignee: UserMini['id'];
-    filters: MatrixPillar['uniqueId'][];
-}
 
 const idSelector = (d: MatrixPillar) => d.uniqueId;
 const labelSelector = (d: MatrixPillar) => d.altTitle ?? d.title;
 
-const userKeySelector = (u: UserMini) => u.id;
-const userLabelSelector = (u: UserMini) => u.displayName;
+const userKeySelector = (user: UserMembersType) => user.member.id;
+const userLabelSelector = (user: UserMembersType) => user.member?.displayName ?? '';
 
-type Value = PartialForm<PillarAnalysisFields>
+type Value = PartialForm<AnalysisPillarForm>
 const defaultValue: Value = {
-    filters: ['1'],
+    filters: [],
 };
 
 export interface Props {
     className?: string;
-    error: Error<PillarAnalysisFields> | undefined;
+    error: Error<AnalysisPillarForm> | undefined;
     index: number;
     matrixPillars?: MatrixPillar[];
     onChange: (value: SetValueArg<Value>, index: number) => void;
     onRemove: (index: number) => void;
-    usersList: UserMini[];
+    usersList: UserMembersType[];
     value: Value;
     pending: boolean;
 }
@@ -110,6 +103,7 @@ function PillarAnalysisRow(props: Props) {
                 onChange={onFieldChange}
                 options={matrixPillars}
                 placeholder={_ts('analysis.editModal', 'matrixPillarsPlaceholder')}
+                // FIXME: Need to fix
                 value={value.filters}
                 disabled={pending}
                 optionsPopupClassName={styles.optionsPopup}
@@ -119,8 +113,8 @@ function PillarAnalysisRow(props: Props) {
                 className={styles.button}
                 name={index}
                 onClick={onRemove}
-                title="Remove"
-                disabled={pending}
+                title={isDefined(value.id) ? 'This cannot be removed from here. Please delete is individually from the list.' : 'Remove'}
+                disabled={pending || isDefined(value.id)}
             >
                 <IoClose />
             </QuickActionButton>

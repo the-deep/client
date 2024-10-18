@@ -103,7 +103,6 @@ const PILLARS_FOR_REPORT = gql`
                     mainStatement
                     modifiedAt
                     title
-                    filters
                     clientId
                     statements {
                         id

@@ -1,131 +1,203 @@
-import React, { useEffect, useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Pager,
     Container,
+    useAlert,
     ListView,
     Kraken,
-    useAlert,
 } from '@the-deep/deep-ui';
-
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import {
+    gql,
+    useQuery,
+    useMutation,
+} from '@apollo/client';
 
 import {
-    MultiResponse,
-    PillarSummary,
-} from '#types';
+    AnalysisPillarsQuery,
+    AnalysisPillarsQueryVariables,
+    DeletePillarAnalysisMutation,
+    DeletePillarAnalysisMutationVariables,
+} from '#generated/types';
 
 import AnalysisPillar, { Props as PillarComponentProps } from '../AnalysisPillar';
 
 import styles from './styles.css';
 
+type PillarItem = NonNullable<NonNullable<NonNullable<AnalysisPillarsQuery['project']>['analysisPillars']>['results']>[number];
+
+export const ANALYSIS_PILLARS = gql`
+    query AnalysisPillars(
+        $projectId: ID!,
+        $page: Int,
+        $analysisId: ID!,
+        $pageSize: Int,
+    ) {
+        project(id: $projectId) {
+            analysisPillars(
+                page: $page,
+                analyses: [$analysisId],
+                pageSize: $pageSize,
+            ) {
+                results {
+                    id
+                    title
+                    createdAt
+                    analysisId
+                    analyzedEntriesCount
+                    assignee {
+                        displayName
+                        id
+                    }
+                    statements {
+                        id
+                        statement
+                        entriesCount
+                    }
+                }
+                totalCount
+            }
+        }
+    }
+`;
+
+const DELETE_PILLAR_ANALYSIS = gql`
+    mutation DeletePillarAnalysis(
+        $projectId: ID!,
+        $analysisPillarId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            analysisPillarDelete(id: $analysisPillarId) {
+                ok
+                errors
+            }
+        }
+    }
+`;
+
 const MAX_ITEMS_PER_PAGE = 5;
-const keySelector = (item: PillarSummary) => item.id;
+const keySelector = (item: PillarItem) => item.id;
 
 interface Props {
     className?: string;
     createdAt: string;
-    modifiedAt: string;
-    activeProject: string;
-    onAnalysisPillarDelete: () => void;
-    analysisId: number;
-    totalEntries: number;
+    projectId: string;
+    analysisId: string;
+    totalEntries: number | undefined;
 }
 
 function AnalysisDetails(props: Props) {
     const {
         className,
         createdAt,
-        modifiedAt,
-        activeProject,
-        onAnalysisPillarDelete,
+        projectId,
         analysisId,
         totalEntries,
     } = props;
 
     const [activePage, setActivePage] = useState(1);
 
+    const {
+        data: analysisPillarsData,
+        loading: pillarsPending,
+        refetch: refetchPillarAnalyses,
+    } = useQuery<AnalysisPillarsQuery, AnalysisPillarsQueryVariables>(
+        ANALYSIS_PILLARS,
+        {
+            variables: {
+                page: activePage,
+                analysisId,
+                projectId,
+                pageSize: MAX_ITEMS_PER_PAGE,
+            },
+        },
+    );
+
     const alert = useAlert();
 
-    const queryOptions = useMemo(() => ({
-        offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
-        limit: MAX_ITEMS_PER_PAGE,
-    }), [activePage]);
-
-    const {
-        pending: pillarPending,
-        response: pillarResponse,
-        retrigger: pillarGetTrigger,
-    } = useRequest<MultiResponse<PillarSummary>>(
+    const [
+        deletePillarAnalysis,
         {
-            url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/summary/`,
-            method: 'GET',
-            query: queryOptions,
-            preserveResponse: true,
+            loading: deletePillarAnalysisPending,
         },
-    );
-
-    // NOTE: Whenever the details of the analysis is changed,
-    // the modifiedAt field from parent changes and we refetch all the pillar
-    // analysis of that analysis
-    useEffect(() => {
-        pillarGetTrigger();
-    }, [pillarGetTrigger, modifiedAt]);
-
-    const {
-        pending: pendingPillarDelete,
-        trigger: triggerPillarDelete,
-        context: deletePillarId,
-    } = useLazyRequest<unknown, number>(
+    ] = useMutation<DeletePillarAnalysisMutation, DeletePillarAnalysisMutationVariables>(
+        DELETE_PILLAR_ANALYSIS,
         {
-            url: (ctx) => `server://projects/${activeProject}/analysis/${analysisId}/pillars/${ctx}/`,
-            method: 'DELETE',
-            onSuccess: () => {
-                onAnalysisPillarDelete();
-                pillarGetTrigger();
+            onCompleted: (response) => {
+                if (response?.project?.analysisPillarDelete?.ok) {
+                    alert.show(
+                        'Successfully deleted pillar analysis.',
+                        { variant: 'success' },
+                    );
+                    refetchPillarAnalyses();
+                } else {
+                    alert.show(
+                        'Failed to delete pillar analysis.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
+            },
+            onError: () => {
                 alert.show(
-                    'Successfully deleted pillar analysis.',
-                    { variant: 'success' },
+                    'Failed to delete pillar analysis.',
+                    {
+                        variant: 'error',
+                    },
                 );
             },
-            failureMessage: 'Failed to delete the pillar analysis.',
         },
     );
 
+    const handleAnalysisPillarDelete = useCallback((analysisPillarId: string) => {
+        deletePillarAnalysis({
+            variables: {
+                projectId,
+                analysisPillarId,
+            },
+        });
+    }, [
+        projectId,
+        deletePillarAnalysis,
+    ]);
+
     const analysisPillarRendererParams = useCallback(
-        (_: number, data: PillarSummary): PillarComponentProps => ({
+        (_: string, data: PillarItem): PillarComponentProps => ({
             className: styles.pillar,
             analysisId,
-            assigneeName: data.assigneeDetails?.displayName,
+            assigneeName: data.assignee?.displayName,
             createdAt,
-            onDelete: triggerPillarDelete,
-            statements: data.analyticalStatements,
+            onDelete: handleAnalysisPillarDelete,
+            statements: data.statements,
             pillarId: data.id,
-            analyzedEntries: data.analyzedEntries,
-            projectId: activeProject,
+            analyzedEntries: data.analyzedEntriesCount,
+            projectId,
             title: data.title,
-            pendingPillarDelete: pendingPillarDelete && data.id === deletePillarId,
             totalEntries,
+            pendingPillarDelete: deletePillarAnalysisPending,
         }), [
+            deletePillarAnalysisPending,
+            handleAnalysisPillarDelete,
             totalEntries,
-            triggerPillarDelete,
             createdAt,
             analysisId,
-            activeProject,
-            pendingPillarDelete,
-            deletePillarId,
+            projectId,
         ],
     );
+
+    const pillars = analysisPillarsData?.project?.analysisPillars;
 
     return (
         <Container
             className={_cs(className, styles.container)}
             spacing="none"
             contentClassName={styles.content}
-            footerActions={((pillarResponse?.count ?? 0) / MAX_ITEMS_PER_PAGE) > 1 ? (
+            footerActions={((pillars?.totalCount ?? 0) / MAX_ITEMS_PER_PAGE) > 1 ? (
                 <Pager
                     activePage={activePage}
-                    itemsCount={pillarResponse?.count ?? 0}
+                    itemsCount={pillars?.totalCount ?? 0}
                     maxItemsPerPage={MAX_ITEMS_PER_PAGE}
                     onActivePageChange={setActivePage}
                     itemsPerPageControlHidden
@@ -134,12 +206,12 @@ function AnalysisDetails(props: Props) {
         >
             <ListView
                 className={styles.pillarList}
-                data={pillarResponse?.results}
+                data={analysisPillarsData?.project?.analysisPillars?.results}
                 keySelector={keySelector}
-                pending={pillarPending}
                 renderer={AnalysisPillar}
                 rendererParams={analysisPillarRendererParams}
                 filtered={false}
+                pending={pillarsPending}
                 errored={false}
                 emptyIcon={(
                     <Kraken
