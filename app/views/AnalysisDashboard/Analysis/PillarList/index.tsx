@@ -3,14 +3,21 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Pager,
     Container,
+    useAlert,
     ListView,
     Kraken,
 } from '@the-deep/deep-ui';
-import { gql, useQuery } from '@apollo/client';
+import {
+    gql,
+    useQuery,
+    useMutation,
+} from '@apollo/client';
 
 import {
     AnalysisPillarsQuery,
     AnalysisPillarsQueryVariables,
+    DeletePillarAnalysisMutation,
+    DeletePillarAnalysisMutationVariables,
 } from '#generated/types';
 
 import AnalysisPillar, { Props as PillarComponentProps } from '../AnalysisPillar';
@@ -54,6 +61,21 @@ export const ANALYSIS_PILLARS = gql`
     }
 `;
 
+const DELETE_PILLAR_ANALYSIS = gql`
+    mutation DeletePillarAnalysis(
+        $projectId: ID!,
+        $analysisPillarId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            analysisPillarDelete(id: $analysisPillarId) {
+                ok
+                errors
+            }
+        }
+    }
+`;
+
 const MAX_ITEMS_PER_PAGE = 5;
 const keySelector = (item: PillarItem) => item.id;
 
@@ -76,13 +98,10 @@ function AnalysisDetails(props: Props) {
 
     const [activePage, setActivePage] = useState(1);
 
-    const handleAnalysisPillarDelete = useCallback(() => {
-        console.log('here');
-    }, []);
-
     const {
         data: analysisPillarsData,
         loading: pillarsPending,
+        refetch: refetchPillarAnalyses,
     } = useQuery<AnalysisPillarsQuery, AnalysisPillarsQueryVariables>(
         ANALYSIS_PILLARS,
         {
@@ -94,6 +113,55 @@ function AnalysisDetails(props: Props) {
             },
         },
     );
+
+    const alert = useAlert();
+
+    const [
+        deletePillarAnalysis,
+        {
+            loading: deletePillarAnalysisPending,
+        },
+    ] = useMutation<DeletePillarAnalysisMutation, DeletePillarAnalysisMutationVariables>(
+        DELETE_PILLAR_ANALYSIS,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.analysisPillarDelete?.ok) {
+                    alert.show(
+                        'Successfully deleted pillar analysis.',
+                        { variant: 'success' },
+                    );
+                    refetchPillarAnalyses();
+                } else {
+                    alert.show(
+                        'Failed to delete pillar analysis.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to delete pillar analysis.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
+    const handleAnalysisPillarDelete = useCallback((analysisPillarId: string) => {
+        deletePillarAnalysis({
+            variables: {
+                projectId,
+                analysisPillarId,
+            },
+        });
+    }, [
+        projectId,
+        deletePillarAnalysis,
+    ]);
 
     const analysisPillarRendererParams = useCallback(
         (_: string, data: PillarItem): PillarComponentProps => ({
@@ -108,14 +176,14 @@ function AnalysisDetails(props: Props) {
             projectId,
             title: data.title,
             totalEntries,
-            pendingPillarDelete: pillarsPending,
+            pendingPillarDelete: deletePillarAnalysisPending,
         }), [
+            deletePillarAnalysisPending,
             handleAnalysisPillarDelete,
             totalEntries,
             createdAt,
             analysisId,
             projectId,
-            pillarsPending,
         ],
     );
 

@@ -120,13 +120,6 @@ export const ANALYSIS_SUMMARY = gql`
                     title
                 }
             }
-            analyticalStatements {
-                results {
-                    id
-                    entriesCount
-                    statement
-                }
-            }
         }
     }
 `;
