@@ -20,6 +20,7 @@ const REGION_LIST = gql`
         $pageSize: Int,
         $page: Int,
         $public: Boolean,
+        $isPublished: Boolean,
     ) {
         regions(
             excludeProject: $excludeProject,
@@ -27,6 +28,7 @@ const REGION_LIST = gql`
             pageSize: $pageSize,
             page: $page,
             public: $public,
+            isPublished: $isPublished,
         ) {
             page
             results {
@@ -73,6 +75,7 @@ function RegionSelectInput<K extends string, GK extends string>(
         excludeProject: [projectId],
         search: debouncedSearchText,
         public: true,
+        isPublished: true,
         page: 1,
         pageSize: 10,
     }), [
