@@ -70,9 +70,34 @@ export const sourceSchema:SourceFormSchema = {
             case 'UNHCR': {
                 const params: ObjectSchema<PartialForm<UnhcrParams>> = {
                     fields: () => ({
+                        country: [],
                         date_from: [],
                         date_to: [],
-                        country: [],
+                    }),
+                    validation: (paramsValue) => {
+                        if (
+                            paramsValue
+                            && paramsValue.date_to
+                            && paramsValue.date_from
+                            && new Date(paramsValue.date_from) > new Date(paramsValue.date_to)
+                        ) {
+                            return '"From" date should be smaller than "To" date';
+                        }
+                        return undefined;
+                    },
+                };
+                return {
+                    ...baseSchema,
+                    params,
+                };
+            }
+            case 'KOBO': {
+                const params: ObjectSchema<PartialForm<UnhcrParams>> = {
+                    fields: () => ({
+                        date_from: [],
+                        date_to: [],
+                        project_id: [requiredStringCondition],
+                        token: [requiredStringCondition],
                     }),
                     validation: (paramsValue) => {
                         if (
@@ -140,6 +165,7 @@ export const sourceSchema:SourceFormSchema = {
                         'url-field': [requiredStringCondition],
                     }),
                 };
+
                 return {
                     ...baseSchema,
                     params,

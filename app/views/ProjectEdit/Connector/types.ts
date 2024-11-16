@@ -711,6 +711,13 @@ export interface AtomFeedParams {
     'url-field': string;
 }
 
+export interface KoboParams {
+    project_id?: string;
+    token?: string;
+    date_from?: string;
+    date_to?: string;
+}
+
 export interface HumanitarianResponseParams {
     country?: string;
 }
@@ -745,6 +752,9 @@ export type SourceInput = Omit<DeepMandatory<PurgeNull<ConnectorSourceGqInputTyp
 } | {
     source: 'UNHCR';
     params: UnhcrParams;
+} | {
+    source: 'KOBO';
+    params: KoboParams;
 });
 
 export type ConnectorInputType = DeepReplace<

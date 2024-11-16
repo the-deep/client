@@ -22,6 +22,7 @@ import AtomFeedParamsInput from './AtomFeedParamsInput';
 import UnhcrParams from './UnhcrParamsInput';
 import HumanitarianResponseParamsInput from './HumanitarianResponseParamsInput';
 import PdnaParamsInput from './PdnaParamsInput';
+import KoboParamsInput from './KoboToolboxParamsInput';
 
 import styles from './styles.css';
 
@@ -84,6 +85,15 @@ function ConnectorSourceForm<T extends number>(props: Props<T>) {
             )}
             {value.source === 'UNHCR' && (
                 <UnhcrParams
+                    name="params"
+                    value={value.params}
+                    onChange={setFieldValue}
+                    error={error?.params}
+                    disabled={disabled}
+                />
+            )}
+            {value.source === 'KOBO' && (
+                <KoboParamsInput
                     name="params"
                     value={value.params}
                     onChange={setFieldValue}

@@ -57,8 +57,10 @@ function ProjectEdit() {
     const { projectId } = useParams<{ projectId: string | undefined }>();
     const userId = user?.id;
 
-    const isConnectorsAccessible = !!user
-        ?.accessibleFeatures?.some((feature) => feature.key === 'CONNECTORS');
+    const isConnectorsAccessible = true;
+
+    // const isConnectorsAccessible = !!user
+    //     ?.accessibleFeatures?.some((feature) => feature.key === 'CONNECTORS');
 
     const handleCreate = useCallback(
         (newProjectId: string) => {

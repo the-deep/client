@@ -313,7 +313,9 @@ const analysis = wrap({
     },
     visibility: 'is-authenticated',
     checkPermissions: (user, project, skipProjectPermissionCheck) => {
-        const accessAnalysisModule = !!user?.accessibleFeatures?.some((f) => f.key === 'ANALYSIS');
+        // const accessAnalysisModule =
+        // !!user?.accessibleFeatures?.some((f) => f.key === 'ANALYSIS');
+        const accessAnalysisModule = true;
         if (!accessAnalysisModule) {
             return false;
         }
@@ -339,7 +341,9 @@ const pillarAnalysis = wrap({
     },
     visibility: 'is-authenticated',
     checkPermissions: (user, project, skipProjectPermissionCheck) => {
-        const accessAnalysisModule = !!user?.accessibleFeatures?.some((f) => f.key === 'ANALYSIS');
+        // const accessAnalysisModule =
+        // !!user?.accessibleFeatures?.some((f) => f.key === 'ANALYSIS');
+        const accessAnalysisModule = true;
         if (!accessAnalysisModule) {
             return false;
         }

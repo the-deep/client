@@ -49,8 +49,8 @@ import ConnectorSourceForm from './ConnectorSourceForm';
 
 import styles from './styles.css';
 
-type SupportedSource = 'RELIEF_WEB' | 'UNHCR' | 'RSS_FEED' | 'ATOM_FEED' | 'HUMANITARIAN_RESP' | 'PDNA';
-const supportedSources = ['RELIEF_WEB', 'UNHCR', 'RSS_FEED', 'ATOM_FEED', 'HUMANITARIAN_RESP', 'PDNA'];
+type SupportedSource = 'RELIEF_WEB' | 'UNHCR' | 'RSS_FEED' | 'ATOM_FEED' | 'HUMANITARIAN_RESP' | 'PDNA' | 'KOBO';
+const supportedSources = ['RELIEF_WEB', 'UNHCR', 'RSS_FEED', 'ATOM_FEED', 'HUMANITARIAN_RESP', 'PDNA', 'KOBO'];
 
 const sourcesLabel: { [key in SupportedSource]: string } = {
     RELIEF_WEB: 'Relief Web',
@@ -59,6 +59,7 @@ const sourcesLabel: { [key in SupportedSource]: string } = {
     ATOM_FEED: 'ATOM Feed',
     HUMANITARIAN_RESP: 'Humanitarian Response',
     PDNA: 'PDNA',
+    KOBO: 'KoboToolbox',
 };
 
 const sourceKeySelector = (item: SupportedSource) => item;

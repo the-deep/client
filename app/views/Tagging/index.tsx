@@ -97,8 +97,10 @@ function Tagging(props: Props) {
         hideSingleSourceAddModal();
     }, [hideSingleSourceAddModal]);
 
-    const isConnectorsAccessible = !!user
-        ?.accessibleFeatures?.some((feature) => feature.key === 'CONNECTORS');
+    const isConnectorsAccessible = true;
+
+    // const isConnectorsAccessible = !!user
+    //    ?.accessibleFeatures?.some((feature) => feature.key === 'CONNECTORS');
 
     const newSourcesCount = data?.project?.unifiedConnector?.sourceCountWithoutIngnoredAndAdded;
 

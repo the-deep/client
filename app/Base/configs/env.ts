@@ -1,8 +1,8 @@
 export const myApp = process.env.MY_APP_ID;
 export const appCommitHash = process.env.REACT_APP_COMMITHASH;
 
-export const deepEnvironment = process.env.REACT_APP_DEEP_ENVIRONMENT || 'dev';
-export const isDebugMode = process.env.REACT_APP_DEBUG_MODE?.toLowerCase() === 'true';
+export const deepEnvironment = process.env.REACT_APP_DEEP_ENVIRONMENT || 'prod';
+export const isDebugMode = process.env.REACT_APP_DEBUG_MODE?.toLowerCase() === 'false';
 
 // Endpoints
 // TODO: Make api endpoint environment variables consistent with protocol and domain

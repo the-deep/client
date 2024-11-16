@@ -29,3 +29,5 @@ yarn-error.log*
 
 .eslintcache
 tsconfig.tsbuildinfo
+
+.idea 
