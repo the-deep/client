@@ -40,16 +40,14 @@ import {
 } from '#hooks/stateManagement';
 
 import {
-    PillarSummary,
-} from '#types';
-import {
+    AnalysisSummaryQuery,
     CreateAnalysisExportMutation,
     CreateAnalysisExportMutationVariables,
 } from '#generated/types';
 
 import _ts from '#ts';
 import PillarAnalysisList from './PillarList';
-import PillarAssignment from './PillarAssignment';
+import PillarAssignment, { type Props as PillarAssignmentItemProps } from './PillarAssignment';
 import AnalysisCloneModal from './AnalysisCloneModal';
 import ReportsModal from '../ReportsModal';
 
@@ -70,6 +68,10 @@ const CREATE_ANALYSIS_EXPORT = gql`
         }
     }
 `;
+
+type PillarSummary = NonNullable<NonNullable<NonNullable<NonNullable<
+AnalysisSummaryQuery['project']
+>['analyses']>['results']>[number]['pillars']>[number];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderCustomizedLabel = (props: any) => {
@@ -101,40 +103,36 @@ const barChartMargin = {
 const BAR_TICK_COUNT = 5;
 const MAX_BAR_SIZE = 16;
 
-interface ComponentProps {
-    analysisId: number;
+export interface Props {
+    analysisId: string;
     className?: string;
     title: string;
-    startDate?: string;
+    startDate?: string | null;
     endDate: string;
-    onEdit: (analysisId: number) => void;
-    onAnalysisPillarDelete: () => void;
+    onEdit: (analysisId: string) => void;
     onAnalysisCloseSuccess: () => void;
-    teamLeadName: string;
+    teamLeadName?: string | null;
     createdAt: string;
-    modifiedAt: string;
-    onDelete: (value: number) => void;
+    onDelete: (analysisId: string) => void;
     pendingAnalysisDelete: boolean;
-    pillars: PillarSummary[];
+    pillars?: PillarSummary[] | null | undefined;
     pillarsPending: boolean;
-    totalEntries: number;
-    totalSources: number;
-    analyzedEntries: number;
-    analyzedSources: number;
+    totalEntries: number | undefined;
+    totalSources: number | undefined;
+    analyzedEntries: number | undefined;
+    analyzedLeads: number | undefined;
 }
 
 const pillarSummaryKeySelector = (item: PillarSummary) => (item.id);
 
-function Analysis(props: ComponentProps) {
+function Analysis(props: Props) {
     const {
         title,
-        modifiedAt,
         className,
         startDate,
         endDate,
         analysisId,
         teamLeadName,
-        onAnalysisPillarDelete,
         onAnalysisCloseSuccess,
         pillars,
         pillarsPending,
@@ -143,7 +141,7 @@ function Analysis(props: ComponentProps) {
         onDelete,
         pendingAnalysisDelete,
         analyzedEntries,
-        analyzedSources,
+        analyzedLeads,
         totalEntries,
         totalSources,
     } = props;
@@ -169,10 +167,10 @@ function Analysis(props: ComponentProps) {
     const alert = useAlert();
 
     const pillarAssignmentRendererParams = useCallback(
-        (_: number, data: PillarSummary) => ({
-            assigneeName: data.assigneeDetails.displayName,
+        (_: string, data: PillarSummary): PillarAssignmentItemProps => ({
+            assigneeName: data.assignee?.displayName,
             pillarTitle: data.title,
-            analyzedEntries: data.analyzedEntries,
+            analyzedEntries: data.analyzedEntriesCount,
             totalEntries,
         }),
         [totalEntries],
@@ -218,7 +216,7 @@ function Analysis(props: ComponentProps) {
             variables: {
                 projectId: activeProject,
                 data: {
-                    analysis: String(analysisId),
+                    analysis: analysisId,
                     exportType: 'EXCEL' as const,
                     format: 'XLSX' as const,
                     type: 'ANALYSES' as const,
@@ -232,14 +230,16 @@ function Analysis(props: ComponentProps) {
         onDelete(analysisId);
     }, [analysisId, onDelete]);
 
-    const barChartData = useMemo(() => (
-        pillars.map((o) => ({
+    const barChartData = useMemo(() => {
+        if (!pillars || totalEntries === undefined) return [];
+
+        return pillars.map((o) => ({
             ...o,
             percent: Math.round(
-                ((o.analyzedEntries ?? 0) / (totalEntries === 0 ? 1 : totalEntries)) * 10000,
+                ((o.analyzedEntriesCount ?? 0) / (totalEntries === 0 ? 1 : totalEntries)) * 10000,
             ) / 100,
-        }))
-    ), [pillars, totalEntries]);
+        }));
+    }, [pillars, totalEntries]);
 
     const disabled = pendingAnalysisDelete;
 
@@ -250,6 +250,11 @@ function Analysis(props: ComponentProps) {
 
     const canTagEntry = project?.analysisFramework?.id
         && project?.allowedPermissions?.includes('UPDATE_ENTRY');
+
+    const safeAnalyzedLeads = analyzedLeads ?? 0;
+    const safeTotalSource = totalSources ?? 1;
+    const safeAnalyzedEntries = analyzedEntries ?? 0;
+    const safeTotalEntries = totalEntries ?? 1;
 
     return (
         <ContainerCard
@@ -367,12 +372,12 @@ function Analysis(props: ComponentProps) {
                     contentClassName={styles.overviewContent}
                 >
                     <ProgressLine
-                        progress={(analyzedSources / totalSources) * 100}
+                        progress={(safeAnalyzedLeads / safeTotalSource) * 100}
                         title={_ts('analysis', 'sourcesAnalyzedLabel')}
                         variant="complement1"
                     />
                     <ProgressLine
-                        progress={(analyzedEntries / totalEntries) * 100}
+                        progress={(safeAnalyzedEntries / safeTotalEntries) * 100}
                         title={_ts('analysis', 'entriesAnalyzedLabel')}
                         variant="complement2"
                     />
@@ -429,7 +434,7 @@ function Analysis(props: ComponentProps) {
             <ExpandableContainer
                 className={styles.pillarAnalyses}
                 headerClassName={styles.pillarAnalysesHeader}
-                heading={_ts('analysis', 'pillarAnalysisCount', { count: pillars.length })}
+                heading={`Analysis ${pillars?.length}`}
                 headingSize="extraSmall"
                 alwaysMountedContent={false}
                 contentClassName={styles.pillarAnalysisList}
@@ -438,9 +443,7 @@ function Analysis(props: ComponentProps) {
                     <PillarAnalysisList
                         createdAt={createdAt}
                         analysisId={analysisId}
-                        modifiedAt={modifiedAt}
-                        activeProject={activeProject}
-                        onAnalysisPillarDelete={onAnalysisPillarDelete}
+                        projectId={activeProject}
                         totalEntries={totalEntries}
                     />
                 )}
@@ -456,7 +459,7 @@ function Analysis(props: ComponentProps) {
             {reportsModalVisible && activeProject && (
                 <ReportsModal
                     onCloseButtonClick={hideReportsModal}
-                    analysisId={String(analysisId)}
+                    analysisId={analysisId}
                     projectId={activeProject}
                 />
             )}

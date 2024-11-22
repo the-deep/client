@@ -19,10 +19,9 @@ import {
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
-import { AnalysisElement } from '#types/analysisModule';
 
 import styles from './styles.css';
 
@@ -64,7 +63,7 @@ interface CloneProperties {
 interface Props {
     onClose: () => void;
     projectId: string;
-    analysisId: number;
+    analysisId: string;
     onClone: () => void;
 }
 
@@ -85,24 +84,9 @@ function AnalysisCloneModal(props: Props) {
         setFieldValue,
         validate,
         setError,
-        setValue,
     } = useForm(schema, defaultFormValue);
 
     const error = getErrorObject(riskyError);
-
-    const {
-        pending: pendingAnalysisGet,
-    } = useRequest<AnalysisElement>({
-        url: `server://projects/${projectId}/analysis/${analysisId}/`,
-        method: 'GET',
-        onSuccess: (response) => {
-            setValue({
-                title: response.title,
-                startDate: response.startDate,
-                endDate: response.endDate,
-            });
-        },
-    });
 
     const {
         pending: pendingAnalysisClone,
@@ -132,7 +116,7 @@ function AnalysisCloneModal(props: Props) {
         submit();
     }, [triggerAnalysisClone, setError, validate]);
 
-    const pending = pendingAnalysisClone || pendingAnalysisGet;
+    const pending = pendingAnalysisClone;
 
     return (
         <Modal
