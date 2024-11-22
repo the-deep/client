@@ -1,0 +1,8 @@
+.alert-content {
+    display: flex;
+    align-items: flex-start;
+
+    .close-button {
+        flex-shrink: 0;
+    }
+}
