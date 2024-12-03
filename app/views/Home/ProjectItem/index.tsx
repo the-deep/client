@@ -8,6 +8,7 @@ import {
 import {
     IoBookmarkOutline,
     IoLockOpenOutline,
+    IoEllipsisVertical,
 } from 'react-icons/io5';
 import {
     RiPushpinFill,
@@ -36,6 +37,8 @@ import {
     Kraken,
     QuickActionButton,
     useAlert,
+    QuickActionDropdownMenu,
+    DropdownMenuItem,
 } from '@the-deep/deep-ui';
 import { useMutation, gql } from '@apollo/client';
 
@@ -54,6 +57,8 @@ import {
     PinProjectMutationVariables,
     UnpinProjectMutation,
     UnpinProjectMutationVariables,
+    LeaveProjectMutation,
+    LeaveProjectMutationVariables,
 } from '#generated/types';
 
 import _ts from '#ts';
@@ -81,6 +86,17 @@ mutation UnpinProject ($projectId: ID!) {
         errors
         ok
     }
+}
+`;
+
+const LEAVE_PROJECT = gql`
+mutation LeaveProject($projectId: ID!) {
+  project(id: $projectId) {
+    leaveProject {
+      errors
+      ok
+    }
+  }
 }
 `;
 
@@ -213,6 +229,35 @@ function ProjectItem(props: RecentProjectItemProps) {
         },
     );
 
+    const [
+        leaveProject,
+    ] = useMutation<LeaveProjectMutation, LeaveProjectMutationVariables>(
+        LEAVE_PROJECT,
+        {
+            onCompleted: (response) => {
+                const leaveProjectResponse = response?.project?.leaveProject;
+                if (leaveProjectResponse?.ok) {
+                    onProjectPinChange();
+                    alert.show(
+                        'Project successfully left.',
+                        { variant: 'success' },
+                    );
+                } else {
+                    alert.show(
+                        'An error occured while leaving a project.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'An error occured while leaving a project.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
     const activeUserRendererParams = useCallback((_: unknown, data: UserEntityDateType) => ({
         className: styles.recentlyActiveItem,
         label: data.name,
@@ -277,6 +322,14 @@ function ProjectItem(props: RecentProjectItemProps) {
     }, [
         pinProject,
     ]);
+
+    const handleLeaveProject = useCallback((id: string) => (
+        leaveProject({
+            variables: {
+                projectId: id,
+            },
+        })
+    ), [leaveProject]);
 
     if (isNotDefined(projectId)) {
         return null;
@@ -349,6 +402,16 @@ function ProjectItem(props: RecentProjectItemProps) {
                     >
                         Open Project
                     </SmartButtonLikeLink>
+                    <QuickActionDropdownMenu
+                        label={<IoEllipsisVertical />}
+                    >
+                        <DropdownMenuItem
+                            name={projectId}
+                            onClick={handleLeaveProject}
+                        >
+                            Leave Project
+                        </DropdownMenuItem>
+                    </QuickActionDropdownMenu>
                 </>
             )}
             contentClassName={styles.content}
