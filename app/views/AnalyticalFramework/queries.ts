@@ -91,18 +91,3 @@ export const UPDATE_FRAMEWORK = gql`
         }
     }
 `;
-
-export const ASSISTED_PREDICTION_TAGS_QUERY = gql`
-    query AssistedPredictionTags {
-        assistedTagging {
-            predictionTags {
-                id
-                name
-                tagId
-                group
-                hideInAnalysisFrameworkMapping
-                isCategory
-            }
-        }
-    }
-`;

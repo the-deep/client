@@ -17,46 +17,22 @@ type FormType = FrameworkInput & {
 };
 // NOTE: they will be handled internally
 // FIXME: should previewImage be added here?
-export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging' | 'previewImage' | 'predictionTagsMapping'>;
+export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging' | 'previewImage'>;
 
 export type WidgetsType = NonNullable<PartialFormType['secondaryTagging']>;
 export type SectionsType = NonNullable<PartialFormType['primaryTagging']>;
 export type PropertiesType = NonNullable<PartialFormType['properties']>;
 export type StatsConfigType = NonNullable<NonNullable<PartialFormType['properties']>['statsConfig']>;
-export type PredictionTagMappingsType = NonNullable<PartialFormType['predictionTagsMapping']>;
 
 export type PartialWidgetsType = WidgetsType;
 export type PartialSectionsType = SectionsType;
-export type PartialPredictionTagMappingsType = PredictionTagMappingsType;
 
 // NOTE: These are not partials widget types even if it's on the name
 type PartialWidgetType = WidgetsType[number];
 type PartialSectionType = SectionsType[number];
-type PartialPredictionTagMappingType = PredictionTagMappingsType[number];
 
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
-
-type PredictionTagMappingSchema = ObjectSchema<PartialPredictionTagMappingType, PartialFormType>;
-type PredictionTagMappingSchemaFields = ReturnType<PredictionTagMappingSchema['fields']>;
-const predictionTagMappingSchema: PredictionTagMappingSchema = {
-    fields: (): PredictionTagMappingSchemaFields => ({
-        association: [],
-        tag: [],
-
-        widget: [],
-        widgetType: [],
-        clientId: [],
-        id: [defaultUndefinedType],
-    }),
-};
-
-type PredictionTagMappingsSchema = ArraySchema<PartialPredictionTagMappingType, PartialFormType>;
-type PredictionTagMappingsSchemaMember = ReturnType<PredictionTagMappingsSchema['member']>;
-const predictionTagMappingsSchema: PredictionTagMappingsSchema = {
-    keySelector: (col) => col.clientId,
-    member: (): PredictionTagMappingsSchemaMember => predictionTagMappingSchema,
-};
 
 type WidgetSchema = ObjectSchema<PartialWidgetType, PartialFormType>;
 type WidgetSchemaFields = ReturnType<WidgetSchema['fields']>;
@@ -132,8 +108,6 @@ const schema: FormSchema = {
 
             primaryTagging: sectionsSchema,
             secondaryTagging: widgetsSchema,
-
-            predictionTagsMapping: predictionTagMappingsSchema,
         };
 
         if (value?.isVisualizationEnabled) {

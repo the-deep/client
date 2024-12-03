@@ -34,18 +34,6 @@ import {
 import { mergeLists } from '#utils/common';
 import { type Framework } from '#components/entry/types';
 import { type GeoArea } from '#components/GeoMultiSelectInput';
-import {
-    mappingsSupportedWidgets,
-    isCategoricalMappings,
-    WidgetHint,
-    filterMatrix1dMappings,
-    filterMatrix2dMappings,
-    filterScaleMappings,
-    filterSelectMappings,
-    filterMultiSelectMappings,
-    filterOrganigramMappings,
-    type MappingsItem,
-} from '#types/newAnalyticalFramework';
 import getSchema, {
     defaultFormValues,
     PartialEntryType,
@@ -61,16 +49,17 @@ import {
     UpdateDraftEntryMutation,
     UpdateDraftEntryMutationVariables,
 } from '#generated/types';
+import {
+    ModelTagsType,
+    Matrix1dValue,
+    Matrix2dValue,
+} from '#types/newAnalyticalFramework';
 import AssistPopup from '../AssistItem/AssistPopup';
 import { createDefaultAttributes } from '../utils';
 import {
-    createOrganigramAttr,
-    createMatrix1dAttr,
-    createMatrix2dAttr,
-    createScaleAttr,
-    createSelectAttr,
-    createMultiSelectAttr,
-    createGeoAttr,
+    isValidObject,
+    createMatrix1dAttrFromTags,
+    createMatrix2dAttrFromTags,
 } from '../AssistItem/utils';
 
 import styles from './styles.css';
@@ -103,17 +92,9 @@ const AUTO_ENTRIES_FOR_LEAD = gql`
                         excerpt
                         predictionReceivedAt
                         predictionStatus
-                        predictionTags {
+                        tags {
                             id
-                            draftEntry
-                            tag
-                            dataTypeDisplay
-                            dataType
-                            category
-                            isSelected
-                            prediction
-                            threshold
-                            value
+                            modelTags
                         }
                         geoAreas {
                             adminLevelLevel
@@ -184,190 +165,6 @@ const UPDATE_DRAFT_ENTRY = gql`
     }
 `;
 
-interface EntryAttributes {
-    predictions: {
-        tags: string[];
-        locations: GeoArea[];
-    };
-    mappings: MappingsItem[] | null | undefined;
-    filteredWidgets: NonNullable<Framework['primaryTagging']>[number]['widgets']
-    | NonNullable<Framework['secondaryTagging']>;
-}
-
-function handleMappingsFetch(entryAttributes: EntryAttributes) {
-    const {
-        predictions,
-        mappings,
-        filteredWidgets,
-    } = entryAttributes;
-
-    if (predictions.tags.length <= 0 && predictions.locations.length <= 0) {
-        // setMessageText('DEEP could not provide any recommendations for the selected text.');
-        return {};
-    }
-
-    if (isNotDefined(filteredWidgets)) {
-        return {};
-    }
-
-    const matchedMappings = mappings
-        ?.filter(isCategoricalMappings)
-        .filter((m) => m.tag && predictions.tags.includes(m.tag));
-
-    const supportedGeoWidgets = mappings
-        ?.filter((mappingItem) => mappingItem.widgetType === 'GEO')
-        ?.map((mappingItem) => mappingItem.widget);
-
-    const {
-        tempAttrs: recommendedAttributes,
-        tempHints: widgetsHints,
-    } = filteredWidgets.reduce(
-        (
-            acc: { tempAttrs: PartialAttributeType[]; tempHints: WidgetHint[]; },
-            widget,
-        ) => {
-            const {
-                tempAttrs: oldTempAttrs,
-                tempHints: oldTempHints,
-            } = acc;
-
-            if (widget.widgetId === 'MATRIX1D') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widget === widget.id)
-                    .filter(filterMatrix1dMappings);
-
-                const attr = createMatrix1dAttr(supportedTags, widget);
-                return {
-                    tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                    tempHints: oldTempHints,
-                };
-            }
-
-            if (widget.widgetId === 'MATRIX2D') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widget === widget.id)
-                    .filter(filterMatrix2dMappings);
-
-                const attr = createMatrix2dAttr(supportedTags, widget);
-
-                return {
-                    tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                    tempHints: oldTempHints,
-                };
-            }
-            if (widget.widgetId === 'SCALE') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widget === widget.id)
-                    .filter(filterScaleMappings);
-
-                const {
-                    attr,
-                    hints,
-                } = createScaleAttr(supportedTags, widget);
-
-                const hintsWithInfo: WidgetHint | undefined = hints ? {
-                    widgetPk: widget.id,
-                    widgetType: 'SCALE',
-                    hints,
-                } : undefined;
-
-                return {
-                    tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                    tempHints: hintsWithInfo
-                        ? [...oldTempHints, hintsWithInfo]
-                        : oldTempHints,
-                };
-            }
-            if (widget.widgetId === 'SELECT') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widget === widget.id)
-                    .filter(filterSelectMappings);
-
-                const {
-                    attr,
-                    hints,
-                } = createSelectAttr(supportedTags, widget);
-
-                const hintsWithInfo: WidgetHint | undefined = hints ? {
-                    widgetPk: widget.id,
-                    widgetType: 'SELECT',
-                    hints,
-                } : undefined;
-
-                return {
-                    tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                    tempHints: hintsWithInfo
-                        ? [...oldTempHints, hintsWithInfo]
-                        : oldTempHints,
-                };
-            }
-            if (widget.widgetId === 'MULTISELECT') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widget === widget.id)
-                    .filter(filterMultiSelectMappings);
-
-                const attr = createMultiSelectAttr(
-                    supportedTags,
-                    widget,
-                );
-
-                return {
-                    tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                    tempHints: oldTempHints,
-                };
-            }
-            if (widget.widgetId === 'ORGANIGRAM') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widget === widget.id)
-                    .filter(filterOrganigramMappings);
-
-                const attr = createOrganigramAttr(
-                    supportedTags,
-                    widget,
-                );
-
-                return {
-                    tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                    tempHints: oldTempHints,
-                };
-            }
-            if (
-                widget.widgetId === 'GEO'
-            && predictions.locations.length > 0
-            && supportedGeoWidgets?.includes(widget.id)
-            ) {
-                const attr = createGeoAttr(
-                    predictions.locations,
-                    widget,
-                );
-
-                return {
-                    tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                    tempHints: oldTempHints,
-                };
-            }
-            return acc;
-        },
-        {
-            tempAttrs: [],
-            tempHints: [],
-        },
-    );
-
-    if (recommendedAttributes.length <= 0 && widgetsHints.length <= 0) {
-        // setMessageText(
-        // 'The provided recommendations for this text did not fit any tags in this project.',
-        // );
-        return {};
-    }
-
-    return {
-        hints: widgetsHints,
-        recommendations: recommendedAttributes,
-        geoAreas: predictions.locations,
-    };
-}
-
 const MAX_ITEMS_PER_PAGE = 20;
 
 const entryKeySelector = (entry: PartialEntryType) => entry.clientId;
@@ -403,10 +200,12 @@ function AutoEntriesModal(props: Props) {
     ] = useState<EntriesTabType | undefined>('extracted');
 
     const [activePage, setActivePage] = useState<number>(1);
+    const [recommendations, setRecommendations] = useState<
+        Record<string, PartialAttributeType[]>
+    >();
 
     const {
         allWidgets,
-        filteredWidgets,
     } = useMemo(() => {
         const widgetsFromPrimary = frameworkDetails?.primaryTagging?.flatMap(
             (item) => (item.widgets ?? []),
@@ -418,7 +217,6 @@ function AutoEntriesModal(props: Props) {
         ];
         return {
             allWidgets: widgets,
-            filteredWidgets: widgets.filter((w) => mappingsSupportedWidgets.includes(w.widgetId)),
         };
     }, [
         frameworkDetails,
@@ -566,17 +364,6 @@ function AutoEntriesModal(props: Props) {
         setRelevantEntries,
     ] = useState<Record<string, boolean> | undefined>(undefined);
 
-    const [
-        allRecommendations,
-        setAllRecommendations,
-    ] = useState<Record<string, PartialAttributeType[] | undefined> | undefined>(undefined);
-
-    const [allHints, setAllHints] = useState<
-        Record<string, WidgetHint[] | undefined> | undefined
-    >(undefined);
-
-    const mappings = frameworkDetails?.predictionTagsMapping;
-
     const autoEntriesVariables = useMemo(() => ({
         projectId,
         leadId,
@@ -591,6 +378,26 @@ function AutoEntriesModal(props: Props) {
         selectedTab,
         activePage,
     ]);
+
+    const generateAttributesForEntry = useCallback((recommendedTags: Record<string, unknown>) => {
+        const newAttributes = allWidgets?.map((widget) => {
+            if (widget.widgetId === 'MATRIX1D') {
+                return createMatrix1dAttrFromTags(
+                    recommendedTags[widget.key] as Matrix1dValue,
+                    widget,
+                );
+            }
+            if (widget.widgetId === 'MATRIX2D') {
+                return createMatrix2dAttrFromTags(
+                    recommendedTags[widget.key] as Matrix2dValue,
+                    widget,
+                );
+            }
+            return undefined;
+        }).filter(isDefined);
+
+        return newAttributes;
+    }, [allWidgets]);
 
     const {
         data: autoEntries,
@@ -608,27 +415,13 @@ function AutoEntriesModal(props: Props) {
             onCompleted: (response) => {
                 const entries = response.project?.assistedTagging?.draftEntries?.results;
                 const transformedEntries = (entries ?? [])?.map((entry) => {
-                    const validPredictions = entry.predictionTags?.filter(isDefined);
-                    const categoricalTags = validPredictions?.filter(
-                        (prediction) => prediction.isSelected,
-                    ).map(
-                        (prediction) => prediction.tag,
-                    ).filter(isDefined) ?? [];
-
-                    const entryAttributeData: EntryAttributes = {
-                        predictions: {
-                            tags: categoricalTags,
-                            locations: entry.geoAreas?.filter(isDefined) ?? [],
-                        },
-                        mappings,
-                        filteredWidgets,
-                    };
-
-                    const {
-                        hints: entryHints,
-                        recommendations: entryRecommendations,
-                        geoAreas: entryGeoAreas,
-                    } = handleMappingsFetch(entryAttributeData);
+                    const modelTags = entry?.tags?.modelTags;
+                    if (!isValidObject(modelTags)) {
+                        return undefined;
+                    }
+                    const entryRecommendations = generateAttributesForEntry(
+                        modelTags as ModelTagsType,
+                    );
 
                     const entryId = randomString();
                     const requiredEntry = {
@@ -638,41 +431,23 @@ function AutoEntriesModal(props: Props) {
                         excerpt: entry.excerpt,
                         draftEntry: entry.id,
                         droppedExcerpt: entry.excerpt,
-                        attributes: entryRecommendations?.map((attr) => {
-                            if (attr.widgetType !== 'GEO') {
-                                return attr;
-                            }
-                            // NOTE: Selecting only the 1st recommendation
-                            return ({
-                                ...attr,
-                                data: {
-                                    value: attr?.data?.value.slice(0, 1) ?? [],
-                                },
-                            });
-                        }),
+                        attributes: entryRecommendations,
                     };
 
                     return {
                         entryId,
-                        geoLocations: entryGeoAreas,
-                        recommendations: entryRecommendations,
-                        hints: entryHints,
                         entry: requiredEntry,
-                        relevant: !!entryHints || !!entryRecommendations || !!entryGeoAreas,
+                        geoLocations: entry.geoAreas,
+                        relevant: !!entryRecommendations,
                     };
-                });
+                }).filter(isDefined);
                 const requiredDraftEntries = transformedEntries?.map(
                     (draftEntry) => draftEntry.entry,
                 );
                 const entryRecommendations = listToMap(
                     transformedEntries,
                     (item) => item.entryId,
-                    (item) => item.recommendations,
-                );
-                const entryHints = listToMap(
-                    transformedEntries,
-                    (item) => item.entryId,
-                    (item) => item.hints,
+                    (item) => item.entry.attributes,
                 );
                 const entryGeoAreas = listToMap(
                     transformedEntries,
@@ -687,9 +462,8 @@ function AutoEntriesModal(props: Props) {
                 setValue({
                     entries: requiredDraftEntries,
                 });
-                setAllRecommendations(entryRecommendations);
+                setRecommendations(entryRecommendations);
                 setRelevantEntries(tempRelevantEntries);
-                setAllHints(entryHints);
                 setGeoAreaOptionsByEntryId(entryGeoAreas);
                 setGeoAreaOptions(Object.values(entryGeoAreas).flat().filter(isDefined));
             },
@@ -697,10 +471,6 @@ function AutoEntriesModal(props: Props) {
     );
 
     const handleEntryCreateButtonClick = useCallback((entryId: string) => {
-        if (!allRecommendations?.[entryId]) {
-            return;
-        }
-
         const selectedEntry = value?.entries?.find((item) => item.clientId === entryId);
         if (onAssistedEntryAdd && selectedEntry) {
             const duplicateEntryCheck = createdEntries?.find(
@@ -759,7 +529,6 @@ function AutoEntriesModal(props: Props) {
         value?.entries,
         allWidgets,
         geoAreaOptionsByEntryId,
-        allRecommendations,
         onAssistedEntryAdd,
         createdEntries,
     ]);
@@ -878,12 +647,11 @@ function AutoEntriesModal(props: Props) {
             frameworkDetails,
             value: datum,
             className: styles.listItem,
+            recommendations: recommendations?.[entryId],
             entryInputClassName: styles.entryInput,
             name: index,
             onChange: onEntryChange,
             leadId,
-            hints: allHints?.[entryId],
-            recommendations: allRecommendations?.[entryId],
             geoAreaOptions,
             onGeoAreaOptionsChange: setGeoAreaOptions,
             predictionsLoading: false,
@@ -897,13 +665,12 @@ function AutoEntriesModal(props: Props) {
             relevant: relevantEntries?.[entryId],
         });
     }, [
+        recommendations,
         geoAreaOptions,
         relevantEntries,
         value?.entries,
         handleEntryCreateButtonClick,
         onEntryChange,
-        allHints,
-        allRecommendations,
         frameworkDetails,
         leadId,
         handleUpdateDraftEntryClick,

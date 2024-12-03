@@ -1,5 +1,4 @@
 import React, {
-    useContext,
     useState,
     useMemo,
     useEffect,
@@ -57,7 +56,6 @@ import {
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
-import { UserContext } from '#base/context/UserContext';
 import {
     LeadPreviewForTextQuery,
     LeadPreviewForTextQueryVariables,
@@ -210,8 +208,6 @@ function LeftPaneEntries(props: Props) {
     } = props;
 
     const alert = useAlert();
-    const { user } = useContext(UserContext);
-
     const entriesMappingByAttachment = useMemo(() => (
         listToMap(
             entries?.map((entry) => {
@@ -228,9 +224,6 @@ function LeftPaneEntries(props: Props) {
             (item) => item,
         )
     ), [entries]);
-
-    const isAssistedTaggingAccessible = !!user
-        ?.accessibleFeatures?.some((feature) => feature.key === 'ASSISTED');
 
     const [activeTab, setActiveTab] = useState<TabOptions>(
         (hideSimplifiedPreview && defaultTab === 'simplified') || (hideOriginalPreview && defaultTab === 'original')
@@ -721,12 +714,7 @@ function LeftPaneEntries(props: Props) {
         });
     }, []);
 
-    const assistedTaggingShown = isAssistedTaggingAccessible
-        && frameworkDetails?.assistedTaggingEnabled
-        && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
-
-    const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId)
-        && assistedTaggingShown;
+    const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId);
 
     const errorMessageForAutoExtraction = useMemo(() => {
         if (isAutoExtractionCompatible) {
@@ -789,7 +777,7 @@ function LeftPaneEntries(props: Props) {
                     >
                         <>
                             <div className={styles.simplifiedHeader}>
-                                {!isEntrySelectionActive && assistedTaggingShown && (
+                                {!isEntrySelectionActive && (
                                     <div className={styles.extraction}>
                                         <Button
                                             className={styles.autoEntriesButton}
@@ -854,7 +842,6 @@ function LeftPaneEntries(props: Props) {
                                     onEntryRestore={onEntryRestore}
                                     disableAddButton={isEntrySelectionActive}
                                     disableExcerptClick={isEntrySelectionActive}
-                                    assistedTaggingEnabled={!!assistedTaggingShown}
                                     frameworkDetails={frameworkDetails}
                                     leadId={leadId}
                                     textZoomValue={textZoomValue}

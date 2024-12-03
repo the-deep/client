@@ -102,14 +102,6 @@ export const FRAMEWORK_FRAGMENT = gql`
             width
             version
         }
-        predictionTagsMapping {
-            id
-            tag
-            widget
-            widgetType
-            clientId
-            association
-        }
     }
 `;
 
