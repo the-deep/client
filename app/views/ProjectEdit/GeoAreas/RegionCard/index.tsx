@@ -17,6 +17,7 @@ import {
     IoTrashBinOutline,
     IoInformationCircleOutline,
     IoAdd,
+    IoReload,
 } from 'react-icons/io5';
 import {
     gql,
@@ -37,6 +38,7 @@ import {
     List,
     useAlert,
 } from '@the-deep/deep-ui';
+import NonFieldError from '#components/NonFieldError';
 import {
     RegionsForGeoAreasQuery,
     PublishRegionMutation,
@@ -48,6 +50,8 @@ import {
     DeleteRegionMutationVariables,
     DeleteAdminLevelMutation,
     DeleteAdminLevelMutationVariables,
+    RetriggerRegionMutation,
+    RetriggerRegionMutationVariables,
 } from '#generated/types';
 import {
     ObjectError,
@@ -68,6 +72,15 @@ type Region = NonNullable<NonNullable<NonNullable<RegionsForGeoAreasQuery['proje
 const PUBLISH_REGION = gql`
     mutation PublishRegion($regionId: ID!) {
         publishRegion(id: $regionId) {
+            ok
+            errors
+        }
+    }
+`;
+
+const RETRIGGER_REGION = gql`
+    mutation RetriggerRegion($regionId: ID!) {
+        retriggerRegion(regionId: $regionId) {
             ok
             errors
         }
@@ -122,7 +135,7 @@ const DELETE_ADMIN_LEVEL = gql`
     }
 `;
 
-interface Props {
+export interface Props {
     region: Region;
     className?: string;
     activeProject: string;
@@ -135,8 +148,10 @@ interface Props {
     onAdminLevelUpdate?: () => void;
     navigationDisabled?: boolean;
     isPublished: boolean;
+    onAdminLevelAddSuccess: () => void;
+    onRegionRetriggerSuccess: () => void;
     onRegionPublishSuccess: () => void;
-    onRegionRemoveSuccess: () => void;
+    onRegionDeleteSuccess: () => void;
 }
 
 function RegionCard(props: Props) {
@@ -153,8 +168,10 @@ function RegionCard(props: Props) {
         onTempAdminLevelChange,
         navigationDisabled,
         onAdminLevelUpdate,
+        onAdminLevelAddSuccess,
+        onRegionRetriggerSuccess,
         onRegionPublishSuccess,
-        onRegionRemoveSuccess,
+        onRegionDeleteSuccess,
     } = props;
 
     // setting this so that when user add an admin level, it is updated
@@ -222,6 +239,48 @@ function RegionCard(props: Props) {
                         onActiveAdminLevelChange(first.id);
                     }
                 }
+            },
+        },
+    );
+
+    const [
+        retriggerRegion,
+        {
+            loading: retriggerRegionPending,
+        },
+    ] = useMutation<RetriggerRegionMutation, RetriggerRegionMutationVariables>(
+        RETRIGGER_REGION,
+        {
+            onCompleted: (response) => {
+                if (!response.retriggerRegion) {
+                    return;
+                }
+
+                const { ok, errors } = response.retriggerRegion;
+
+                if (errors) {
+                    const formError = transformToFormError(
+                        removeNull(response.retriggerRegion.errors) as ObjectError[],
+                    );
+                    alert.show(
+                        formError?.[internal] as string,
+                        { variant: 'error' },
+                    );
+                }
+
+                if (ok) {
+                    alert.show(
+                        'Selected region retrigger successfully',
+                        { variant: 'success' },
+                    );
+                    onRegionRetriggerSuccess();
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to retrigger region.',
+                    { variant: 'error' },
+                );
             },
         },
     );
@@ -300,7 +359,7 @@ function RegionCard(props: Props) {
                         'Region is successfully deleted!',
                         { variant: 'success' },
                     );
-                    onRegionRemoveSuccess();
+                    onRegionDeleteSuccess();
                 }
             },
             onError: () => {
@@ -310,6 +369,19 @@ function RegionCard(props: Props) {
                 );
             },
         },
+    );
+
+    const handleRegionRetriggerClick = useCallback(
+        () => {
+            if (region.id) {
+                retriggerRegion({
+                    variables: {
+                        regionId: region.id,
+                    },
+                });
+            }
+        },
+        [retriggerRegion, region],
     );
 
     const handleDeleteRegionClick = useCallback(
@@ -460,6 +532,7 @@ function RegionCard(props: Props) {
             isPublished,
             adminLevelOptions: adminLevels,
             regionId: region.id,
+            onAdminLevelAddSuccess,
         }),
         [
             region.id,
@@ -467,6 +540,7 @@ function RegionCard(props: Props) {
             adminLevels,
             handleAdminLevelSave,
             handleAdminLevelDelete,
+            onAdminLevelAddSuccess,
         ],
     );
 
@@ -497,20 +571,36 @@ function RegionCard(props: Props) {
             onExpansionChange={handleExpansion}
             expansionTriggerArea="arrow"
             headerActions={(
-                <QuickActionConfirmButton
-                    name="deleteButton"
-                    title="Remove geo area from this project"
-                    onConfirm={handleDeleteRegionClick}
-                    message="Removing the geo area will remove all the tagged geo data under your project.
-                    The removal of tags cannot be undone.
-                    Are you sure you want to remove this geo area from the project?"
-                    showConfirmationInitially={false}
-                    disabled={navigationDisabled}
-                >
-                    <IoTrashBinOutline />
-                </QuickActionConfirmButton>
+                <>
+                    {!isPublished && region.status === 'FAILED' && (
+                        <QuickActionConfirmButton
+                            name="retrigger"
+                            title="Retrigger region"
+                            message="Are you sure you want to retrigger the selected region?"
+                            onConfirm={handleRegionRetriggerClick}
+                            disabled={retriggerRegionPending}
+                        >
+                            <IoReload />
+                        </QuickActionConfirmButton>
+                    )}
+                    <QuickActionConfirmButton
+                        name="deleteButton"
+                        title="Remove geo area from this project"
+                        onConfirm={handleDeleteRegionClick}
+                        message="Removing the geo area will remove all the tagged geo data under your project.
+                        The removal of tags cannot be undone.
+                        Are you sure you want to remove this geo area from the project?"
+                        showConfirmationInitially={false}
+                        disabled={navigationDisabled}
+                    >
+                        <IoTrashBinOutline />
+                    </QuickActionConfirmButton>
+                </>
             )}
         >
+            {!isPublished && region.status === 'FAILED' && (
+                <NonFieldError error="An error occurred. Please check all values and retrigger the action" />
+            )}
             {!isPublished && (
                 <Message
                     icon={(<IoInformationCircleOutline />)}
@@ -547,6 +637,7 @@ function RegionCard(props: Props) {
                             navigationDisabled
                             || pendingPublishRegion
                             || adminLevels.length < 1
+                            || region.status === 'FAILED'
                         )}
                     >
                         Publish Area

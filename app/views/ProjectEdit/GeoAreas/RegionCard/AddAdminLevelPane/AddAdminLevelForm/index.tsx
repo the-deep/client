@@ -151,6 +151,7 @@ interface Props {
     value: PartialAdminLevel;
     isPublished?: boolean;
     adminLevelOptions?: AdminLevelType[];
+    onAdminLevelAddSuccess: () => void;
 }
 
 function AddAdminLevelForm(props: Props) {
@@ -160,6 +161,7 @@ function AddAdminLevelForm(props: Props) {
         onSave,
         value: valueFromProps,
         isPublished,
+        onAdminLevelAddSuccess,
         onDelete,
     } = props;
 
@@ -268,6 +270,7 @@ function AddAdminLevelForm(props: Props) {
                 }
 
                 if (isDefined(result) && ok) {
+                    onAdminLevelAddSuccess();
                     alert.show(
                         'Admin level is successfully updated!',
                         { variant: 'success' },

@@ -18,6 +18,7 @@ interface Props {
     adminLevelOptions?: AdminLevelType[];
     name: string;
     regionId: string;
+    onAdminLevelAddSuccess: () => void;
 }
 
 function AddAdminLevelPane(props: Props) {
@@ -28,6 +29,7 @@ function AddAdminLevelPane(props: Props) {
         isPublished,
         adminLevelOptions,
         name,
+        onAdminLevelAddSuccess,
         regionId,
     } = props;
 
@@ -36,6 +38,7 @@ function AddAdminLevelPane(props: Props) {
             name={name}
         >
             <AddAdminLevelForm
+                onAdminLevelAddSuccess={onAdminLevelAddSuccess}
                 regionId={regionId}
                 value={value}
                 onSave={onSave}
