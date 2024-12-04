@@ -39,12 +39,17 @@ import {
     useAlert,
     QuickActionDropdownMenu,
     DropdownMenuItem,
+    useConfirmation,
 } from '@the-deep/deep-ui';
 import { useMutation, gql } from '@apollo/client';
+import { removeNull } from '@togglecorp/toggle-form';
 
+import _ts from '#ts';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import SmartQuickActionLink from '#base/components/SmartQuickActionLink';
+import { ObjectError, transformToFormError } from '#base/utils/errorTransform';
 import ProgressLine from '#components/ProgressLine';
+import NonFieldError from '#components/NonFieldError';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import routes from '#base/configs/routes';
 
@@ -60,8 +65,6 @@ import {
     LeaveProjectMutation,
     LeaveProjectMutationVariables,
 } from '#generated/types';
-
-import _ts from '#ts';
 
 import styles from './styles.css';
 
@@ -236,22 +239,34 @@ function ProjectItem(props: RecentProjectItemProps) {
         {
             onCompleted: (response) => {
                 const leaveProjectResponse = response?.project?.leaveProject;
-                if (leaveProjectResponse?.ok) {
+                if (!leaveProjectResponse) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                } = leaveProjectResponse;
+
+                if (ok) {
                     onProjectPinChange();
                     alert.show(
                         'Project successfully left.',
                         { variant: 'success' },
                     );
-                } else {
+                } else if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     alert.show(
-                        'An error occured while leaving a project.',
+                        <NonFieldError
+                            className={styles.alertError}
+                            error={formError}
+                        />,
                         { variant: 'error' },
                     );
                 }
             },
-            onError: () => {
+            onError: (gqlError) => {
                 alert.show(
-                    'An error occured while leaving a project.',
+                    gqlError.message ?? 'An error occurred while leaving a project.',
                     { variant: 'error' },
                 );
             },
@@ -323,13 +338,24 @@ function ProjectItem(props: RecentProjectItemProps) {
         pinProject,
     ]);
 
-    const handleLeaveProject = useCallback((id: string) => (
-        leaveProject({
-            variables: {
-                projectId: id,
-            },
-        })
-    ), [leaveProject]);
+    const handleLeaveProject = useCallback((id: string | undefined) => {
+        if (id) {
+            leaveProject({
+                variables: {
+                    projectId: id,
+                },
+            });
+        }
+    }, [leaveProject]);
+
+    const [
+        modal,
+        onleaveProjectClick,
+    ] = useConfirmation<string>({
+        showConfirmationInitially: false,
+        onConfirm: handleLeaveProject,
+        message: 'Are you sure you want to leave this project?',
+    });
 
     if (isNotDefined(projectId)) {
         return null;
@@ -407,7 +433,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                     >
                         <DropdownMenuItem
                             name={projectId}
-                            onClick={handleLeaveProject}
+                            onClick={onleaveProjectClick}
                         >
                             Leave Project
                         </DropdownMenuItem>
@@ -584,6 +610,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                     </ResponsiveContainer>
                 </ContainerCard>
             </div>
+            {modal}
         </ContainerCard>
     );
 }

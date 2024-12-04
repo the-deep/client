@@ -110,3 +110,7 @@
         font-weight: var(--font-weight-bold);
     }
 }
+
+.alert-error {
+    color: var(--dui-color-white);
+}

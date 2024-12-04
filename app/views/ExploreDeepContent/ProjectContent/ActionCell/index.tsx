@@ -12,10 +12,16 @@ import { useModalState } from '#hooks/stateManagement';
 import {
     CancelJoinProjectMutation,
     CancelJoinProjectMutationVariables,
+    LeaveProjectMutation,
+    LeaveProjectMutationVariables,
 } from '#generated/types';
 
 import ProjectJoinModal from '#components/general/ProjectJoinModal';
 
+import { ObjectError, transformToFormError } from '#base/utils/errorTransform';
+import { removeNull } from '@togglecorp/toggle-form';
+
+import NonFieldError from '#components/NonFieldError';
 import styles from './styles.css';
 
 export interface Props {
@@ -30,6 +36,17 @@ export interface Props {
     onMemberStatusChange: () => void;
     variant?: ButtonProps<string>['variant'];
 }
+
+const LEAVE_PROJECT = gql`
+mutation LeaveProject($projectId: ID!) {
+  project(id: $projectId) {
+    leaveProject {
+      errors
+      ok
+    }
+  }
+}
+`;
 
 const CANCEL_JOIN_PROJECT = gql`
     mutation CancelJoinProject(
@@ -92,19 +109,68 @@ function ActionCell(props: Props) {
         },
     );
 
+    const [
+        leaveProject,
+    ] = useMutation<LeaveProjectMutation, LeaveProjectMutationVariables>(
+        LEAVE_PROJECT,
+        {
+            onCompleted: (response) => {
+                const leaveProjectResponse = response?.project?.leaveProject;
+                if (!leaveProjectResponse) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                } = leaveProjectResponse;
+
+                if (ok) {
+                    alert.show(
+                        'Project successfully left.',
+                        { variant: 'success' },
+                    );
+                    onMemberStatusChange();
+                } else if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    alert.show(
+                        <NonFieldError
+                            className={styles.alertError}
+                            error={formError}
+                        />,
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message ?? 'An error occurred while leaving a project.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const handleLeaveProject = useCallback(() => (
+        leaveProject({
+            variables: {
+                projectId,
+            },
+        })
+    ), [leaveProject, projectId]);
+
     const handleCancelJoinProjectClick = useCallback(() => {
         cancelJoinProject({
             variables: { projectId },
         });
     }, [projectId, cancelJoinProject]);
 
-    if (isMember || isRejected) {
+    if (isRejected) {
         return null;
     }
 
     return (
         <div className={_cs(styles.actionCell, className)}>
-            {!membershipPending ? (
+            {!isMember && !membershipPending && (
                 <Button
                     name={undefined}
                     onClick={showJoinModal}
@@ -114,7 +180,8 @@ function ActionCell(props: Props) {
                 >
                     Join
                 </Button>
-            ) : (
+            )}
+            {membershipPending && (
                 <ConfirmButton
                     name={undefined}
                     onConfirm={handleCancelJoinProjectClick}
@@ -125,6 +192,18 @@ function ActionCell(props: Props) {
                 >
                     Cancel Join
                 </ConfirmButton>
+            )}
+            {isMember && (
+                <ConfirmButton
+                    name={undefined}
+                    onConfirm={handleLeaveProject}
+                    message="Are you sure you want to leave this project?"
+                    variant="secondary"
+                    spacing="compact"
+                >
+                    Leave Project
+                </ConfirmButton>
+
             )}
             {projectJoinModalShown && (
                 <ProjectJoinModal
