@@ -8,6 +8,7 @@ import {
 import {
     IoBookmarkOutline,
     IoLockOpenOutline,
+    IoEllipsisVertical,
 } from 'react-icons/io5';
 import {
     RiPushpinFill,
@@ -36,12 +37,19 @@ import {
     Kraken,
     QuickActionButton,
     useAlert,
+    QuickActionDropdownMenu,
+    DropdownMenuItem,
+    useConfirmation,
 } from '@the-deep/deep-ui';
 import { useMutation, gql } from '@apollo/client';
+import { removeNull } from '@togglecorp/toggle-form';
 
+import _ts from '#ts';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import SmartQuickActionLink from '#base/components/SmartQuickActionLink';
+import { ObjectError, transformToFormError } from '#base/utils/errorTransform';
 import ProgressLine from '#components/ProgressLine';
+import NonFieldError from '#components/NonFieldError';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import routes from '#base/configs/routes';
 
@@ -54,9 +62,9 @@ import {
     PinProjectMutationVariables,
     UnpinProjectMutation,
     UnpinProjectMutationVariables,
+    LeaveProjectMutation,
+    LeaveProjectMutationVariables,
 } from '#generated/types';
-
-import _ts from '#ts';
 
 import styles from './styles.css';
 
@@ -81,6 +89,17 @@ mutation UnpinProject ($projectId: ID!) {
         errors
         ok
     }
+}
+`;
+
+const LEAVE_PROJECT = gql`
+mutation LeaveProject($projectId: ID!) {
+  project(id: $projectId) {
+    leaveProject {
+      errors
+      ok
+    }
+  }
 }
 `;
 
@@ -213,6 +232,47 @@ function ProjectItem(props: RecentProjectItemProps) {
         },
     );
 
+    const [
+        leaveProject,
+    ] = useMutation<LeaveProjectMutation, LeaveProjectMutationVariables>(
+        LEAVE_PROJECT,
+        {
+            onCompleted: (response) => {
+                const leaveProjectResponse = response?.project?.leaveProject;
+                if (!leaveProjectResponse) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                } = leaveProjectResponse;
+
+                if (ok) {
+                    onProjectPinChange();
+                    alert.show(
+                        'Project successfully left.',
+                        { variant: 'success' },
+                    );
+                } else if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    alert.show(
+                        <NonFieldError
+                            className={styles.alertError}
+                            error={formError}
+                        />,
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message ?? 'An error occurred while leaving a project.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
     const activeUserRendererParams = useCallback((_: unknown, data: UserEntityDateType) => ({
         className: styles.recentlyActiveItem,
         label: data.name,
@@ -277,6 +337,25 @@ function ProjectItem(props: RecentProjectItemProps) {
     }, [
         pinProject,
     ]);
+
+    const handleLeaveProject = useCallback((id: string | undefined) => {
+        if (id) {
+            leaveProject({
+                variables: {
+                    projectId: id,
+                },
+            });
+        }
+    }, [leaveProject]);
+
+    const [
+        modal,
+        onleaveProjectClick,
+    ] = useConfirmation<string>({
+        showConfirmationInitially: false,
+        onConfirm: handleLeaveProject,
+        message: 'Are you sure you want to leave this project?',
+    });
 
     if (isNotDefined(projectId)) {
         return null;
@@ -349,6 +428,16 @@ function ProjectItem(props: RecentProjectItemProps) {
                     >
                         Open Project
                     </SmartButtonLikeLink>
+                    <QuickActionDropdownMenu
+                        label={<IoEllipsisVertical />}
+                    >
+                        <DropdownMenuItem
+                            name={projectId}
+                            onClick={onleaveProjectClick}
+                        >
+                            Leave Project
+                        </DropdownMenuItem>
+                    </QuickActionDropdownMenu>
                 </>
             )}
             contentClassName={styles.content}
@@ -521,6 +610,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                     </ResponsiveContainer>
                 </ContainerCard>
             </div>
+            {modal}
         </ContainerCard>
     );
 }
