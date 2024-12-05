@@ -86,8 +86,18 @@
         overflow: auto;
         gap: var(--dui-spacing-medium);
 
+        .switch {
+            flex-shrink: 0;
+        }
+
+        .visual-entry-list {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
         .pager {
-            justify-content: center;
+            flex-shrink: 0;
+            justify-content: flex-end;
         }
     }
 
@@ -119,8 +129,4 @@
             }
         }
     }
-    .entry-list {
-        overflow: unset;
-    }
-
 }

@@ -95,6 +95,7 @@ const LEAD_PREVIEW = gql`
         $page: Int,
         $pageSize: Int,
         $excludeAttachmentIds: [ID!],
+        $excludeLeadattachmentCreatedEntries: Boolean,
     ) {
         project(id: $projectId) {
             id
@@ -103,6 +104,7 @@ const LEAD_PREVIEW = gql`
                 page: $page,
                 pageSize: $pageSize,
                 excludeAttachmentIds: $excludeAttachmentIds,
+                excludeLeadattachmentCreatedEntries: $excludeLeadattachmentCreatedEntries,
             ) {
                 results {
                     id
@@ -292,6 +294,7 @@ function LeftPaneEntries(props: Props) {
             excludeAttachmentIds: attachmentsWithEntriesHidden
                 ? leadAttachmentIdsWithEntries
                 : [],
+            excludeLeadattachmentCreatedEntries: !attachmentsWithEntriesHidden,
         }) : undefined),
         [
             leadId,
@@ -899,21 +902,20 @@ function LeftPaneEntries(props: Props) {
                     activeClassName={styles.visualsTab}
                     retainMount="lazy"
                 >
-                    {isDefined(leadPreviewCount) && (leadPreviewCount > 0) && (
-                        <Switch
-                            name="hide attachments"
-                            label="Hide Created entries"
-                            value={attachmentsWithEntriesHidden}
-                            onChange={setAttachmentsWithEntriesHidden}
-                        />
-                    )}
+                    <Switch
+                        className={styles.switch}
+                        name="hide attachments"
+                        label="Hide Created entries"
+                        value={attachmentsWithEntriesHidden}
+                        onChange={setAttachmentsWithEntriesHidden}
+                    />
                     <ListView
                         spacing="comfortable"
                         direction="vertical"
                         data={leadPreviewAttachments}
                         renderer={TablesAndVisualsItem}
                         rendererParams={leadAttachmentItemRendererParams}
-                        className={styles.entryList}
+                        className={styles.visualEntryList}
                         keySelector={leadAttachmentKeySelector}
                         filtered={false}
                         errored={false}
