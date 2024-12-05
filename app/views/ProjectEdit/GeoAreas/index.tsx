@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     IoAdd,
 } from 'react-icons/io5';
@@ -21,7 +21,7 @@ import {
 import _ts from '#ts';
 
 import RegionsMap from './RegionsMap';
-import RegionCard from './RegionCard';
+import RegionCard, { Props as RegionCardProps } from './RegionCard';
 import CustomGeoAddModal from './CustomGeoAddModal';
 
 import styles from './styles.css';
@@ -47,6 +47,7 @@ const REGIONS_FOR_GEO_AREAS = gql`
                 }
                 title
                 public
+                status
             }
         }
     }
@@ -97,6 +98,8 @@ function GeoAreas(props: Props) {
         data: regions,
         loading: regionsLoading,
         refetch: regionsRefetch,
+        startPolling,
+        stopPolling,
     } = useQuery<RegionsForGeoAreasQuery, RegionsForGeoAreasQueryVariables>(
         REGIONS_FOR_GEO_AREAS,
         {
@@ -104,6 +107,21 @@ function GeoAreas(props: Props) {
                 id: activeProject,
             },
         },
+    );
+
+    const shouldPoll = useMemo(() => regions?.project?.regions?.some(
+        (region) => region.status === 'INITIATED',
+    ), [regions?.project?.regions]);
+
+    useEffect(
+        () => {
+            if (shouldPoll) {
+                startPolling(500);
+            } else {
+                stopPolling();
+            }
+        },
+        [shouldPoll, startPolling, stopPolling],
     );
 
     const handleRegionSet = useCallback(
@@ -137,7 +155,7 @@ function GeoAreas(props: Props) {
     );
 
     const regionRendererParams = useCallback(
-        (_: number, data: Region) => {
+        (_: number, data: Region): RegionCardProps => {
             const isExpanded = data.id === activeRegion;
             return {
                 region: data,
@@ -151,7 +169,9 @@ function GeoAreas(props: Props) {
                 onTempAdminLevelChange: isExpanded ? setTempAdminLevel : undefined,
                 onAdminLevelUpdate: isExpanded ? updateMapTriggerId : undefined,
                 onRegionPublishSuccess: regionsRefetch,
-                onRegionRemoveSuccess: regionsRefetch,
+                onRegionDeleteSuccess: regionsRefetch,
+                onAdminLevelAddSuccess: regionsRefetch,
+                onRegionRetriggerSuccess: regionsRefetch,
                 navigationDisabled,
             };
         },
