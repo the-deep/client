@@ -1,11 +1,23 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, {
+    useContext,
+    useState,
+    useCallback,
+    useMemo,
+    useEffect,
+} from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
+import {
+    useAlert,
+    QuickActionButton,
+} from '@the-deep/deep-ui';
+import { IoClose } from 'react-icons/io5';
 
 import { UserContext } from '#base/context/UserContext';
 import PreloadMessage from '#base/components/PreloadMessage';
 import { checkErrorCode } from '#base/utils/apollo';
 import localforageInstance from '#base/configs/localforage';
+import useLocalStorage from '#hooks/useLocalStorage';
 
 import {
     ProjectContext,
@@ -17,6 +29,8 @@ import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import { LAST_ACTIVE_PROJECT_FRAGMENT } from '#gqlFragments';
 
 import { MeQuery } from '#generated/types';
+
+import styles from './styles.css';
 
 const ME = gql`
     ${LAST_ACTIVE_PROJECT_FRAGMENT}
@@ -49,6 +63,55 @@ function Init(props: Props) {
     const [ready, setReady] = useState(false);
     const [errored, setErrored] = useState(false);
     const [project, setProject] = useState<Project | undefined>(undefined);
+    const alert = useAlert();
+    const [
+        seenIncompatibleBrowserAlert,
+        setSeenIncompatibleBrowserAlert,
+    ] = useLocalStorage<string | undefined>('incompatible-browser-alert', undefined);
+
+    const handleRemoveAlert = useCallback(() => {
+        alert.hide('incompatible-browser-alert');
+        setSeenIncompatibleBrowserAlert('true');
+    }, [
+        alert,
+        setSeenIncompatibleBrowserAlert,
+    ]);
+
+    useEffect(() => {
+        if (seenIncompatibleBrowserAlert === 'true') {
+            return;
+        }
+        const isChrome = navigator.userAgent.toLowerCase().includes('chrome');
+        if (!isChrome) {
+            alert.show(
+                (
+                    <div className={styles.alertContent}>
+                        The DEEP platform is optimized for Google Chrome. For the
+                        best experience and to ensure all
+                        features work as intended, please switch to Chrome.
+                        <QuickActionButton
+                            className={styles.closeButton}
+                            name={undefined}
+                            onClick={handleRemoveAlert}
+                            variant="action"
+                        >
+                            <IoClose />
+                        </QuickActionButton>
+                    </div>
+                ),
+                {
+                    name: 'incompatible-browser-alert',
+                    variant: 'info',
+                    duration: Infinity,
+                    nonDismissable: true,
+                },
+            );
+        }
+    }, [
+        seenIncompatibleBrowserAlert,
+        alert,
+        handleRemoveAlert,
+    ]);
 
     const {
         setUser,
