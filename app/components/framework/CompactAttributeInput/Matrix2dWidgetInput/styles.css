@@ -66,6 +66,20 @@
                         }
                     }
 
+                    .sub-column-select-wrapper {
+                        display: flex;
+                        align-items: center;
+                        gap: var(--dui-spacing-extra-small);
+
+                        .input {
+                            flex-grow: 1;
+                        }
+
+                        .button {
+                            flex-shrink: 0;
+                        }
+                    }
+
                     .selected-values {
                         color: var(--dui-color-accent);
                     }

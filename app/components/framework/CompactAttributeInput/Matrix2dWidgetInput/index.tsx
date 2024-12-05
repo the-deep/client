@@ -9,10 +9,15 @@ import {
     Modal,
     QuickActionButton,
 } from '@the-deep/deep-ui';
-import { IoChevronForward, IoOpenOutline } from 'react-icons/io5';
+import {
+    IoChevronForward,
+    IoOpenOutline,
+    IoClose,
+} from 'react-icons/io5';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { useModalState } from '#hooks/stateManagement';
 import { sortByOrder } from '#utils/common';
+import { removeUndefinedKeys, removeEmptyObject } from '#utils/unsafeCommon';
 
 import NonFieldError from '#components/NonFieldError';
 import { Matrix2dWidget } from '#types/newAnalyticalFramework';
@@ -121,6 +126,19 @@ function Column(props: ColumnProps) {
         value,
     ]);
 
+    const handleColumnRemove = useCallback((columnKey: string) => {
+        onSubColumnsChange(
+            rowId,
+            subRowId,
+            columnKey,
+            undefined,
+        );
+    }, [
+        onSubColumnsChange,
+        rowId,
+        subRowId,
+    ]);
+
     return (
         <div className={styles.column}>
             <div
@@ -173,15 +191,26 @@ function Column(props: ColumnProps) {
                     </div>
                 )}
                 {!readOnly && !suggestionMode && (
-                    <MultiSelectInput
-                        name={column.key}
-                        value={value?.[column.key]}
-                        disabled={disabled}
-                        labelSelector={subColumnLabelSelector}
-                        onChange={handleSubColumnValueChange}
-                        options={orderedSubColumns}
-                        keySelector={subColumnKeySelector}
-                    />
+                    <div className={styles.subColumnSelectWrapper}>
+                        <MultiSelectInput
+                            className={styles.input}
+                            name={column.key}
+                            value={value?.[column.key]}
+                            disabled={disabled}
+                            labelSelector={subColumnLabelSelector}
+                            onChange={handleSubColumnValueChange}
+                            options={orderedSubColumns}
+                            keySelector={subColumnKeySelector}
+                        />
+                        <QuickActionButton
+                            className={styles.button}
+                            name={column.key}
+                            onClick={handleColumnRemove}
+                            variant="secondary"
+                        >
+                            <IoClose />
+                        </QuickActionButton>
+                    </div>
                 )}
                 {readOnly && (
                     <div className={styles.selectedValues}>
@@ -432,7 +461,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             columnId: string,
             newSubColValue: string[] | undefined,
         ) => {
-            const newValue = {
+            const newValue = removeEmptyObject(removeUndefinedKeys({
                 ...value?.value,
                 [rowId]: {
                     ...value?.value?.[rowId],
@@ -441,7 +470,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
                         [columnId]: newSubColValue,
                     },
                 },
-            };
+            }));
             onChange(newValue, name);
         },
         [value, name, onChange],
