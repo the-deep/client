@@ -15,6 +15,7 @@ import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import { PartialEntryType as EntryInput } from '#components/entry/schema';
 import { Framework } from '#components/entry/types';
+import ProjectContext from '#base/context/ProjectContext';
 
 import useTextSelection from './useTextSelection';
 import EntryItem from '../EntryItem';
@@ -207,6 +208,8 @@ function SimplifiedTextView(props: Props) {
         setTextToAssist(undefined);
     }, []);
 
+    const { project } = React.useContext(ProjectContext);
+
     let children: React.ReactNode = null;
     if (!text || splits.length === 0) {
         children = text;
@@ -360,7 +363,7 @@ function SimplifiedTextView(props: Props) {
                             <IoAdd />
                         </QuickActionButton>
                     )}
-                    {isDefined(onAssistedEntryAdd) && (
+                    {isDefined(onAssistedEntryAdd) && !project?.isPrivate && (
                         <QuickActionButton
                             title="Assist"
                             name={textContent}

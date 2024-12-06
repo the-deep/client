@@ -28,16 +28,12 @@ type OrganigramWidgetAttribute = getType<PartialAttributeType, { widgetType: 'OR
 type GeoLocationWidgetAttribute = getType<PartialAttributeType, { widgetType: 'GEO' }>;
 */
 
-export function isValidObject(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && !Array.isArray(value) && value !== null && value !== undefined;
+export function isValidObject(value: unknown | undefined): value is Record<string, unknown> {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-export function isValidStringArray(value: unknown): value is string[] {
-    const isArray = typeof value === 'object' && Array.isArray(value) && value !== null && value !== undefined;
-    if (!isArray) {
-        return false;
-    }
-    return value.every((item) => typeof item === 'string');
+export function isValidStringArray(value: unknown | undefined): value is string[] {
+    return Array.isArray(value) && value.every((item) => typeof item === 'string');
 }
 
 // TODO: Write tests

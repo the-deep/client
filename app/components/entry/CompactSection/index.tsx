@@ -16,7 +16,6 @@ import { IoAdd } from 'react-icons/io5';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import {
     Widget,
-    WidgetHint,
     getHiddenWidgetIds,
 } from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
@@ -50,7 +49,6 @@ export interface Props {
     addButtonHidden?: boolean;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
-    widgetsHints?: WidgetHint[];
     recommendations?: PartialAttributeType[];
     emptyMessageHidden?: boolean;
     suggestionMode?: boolean;
@@ -78,7 +76,6 @@ function CompactSection(props: Props) {
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onApplyToAll,
-        widgetsHints,
         emptyMessageHidden,
         suggestionMode,
         recommendations,
@@ -102,15 +99,6 @@ function CompactSection(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const hintsMap = useMemo(
-        () => listToMap(
-            widgetsHints?.filter((widgetHint) => widgetHint.hints.length > 0),
-            (widgetHint) => widgetHint.widgetPk,
-            (widgetHint) => widgetHint,
-        ),
-        [widgetsHints],
-    );
-
     const recommendationsMap = useMemo(
         () => listToMap(
             recommendations,
@@ -127,9 +115,6 @@ function CompactSection(props: Props) {
         return filteredWidgets?.filter(
             // FIXME: should only check into data, not value
             (widget) => {
-                if ((hintsMap?.[widget.id]?.hints.length ?? 0) > 0) {
-                    return true;
-                }
                 if (widget.widgetId === 'MATRIX1D') {
                     const hasValue = !doesObjectHaveNoData(
                         attributesMap?.[widget.clientId]?.value?.data?.value,
@@ -160,7 +145,6 @@ function CompactSection(props: Props) {
         );
     }, [
         recommendationsMap,
-        hintsMap,
         emptyValueHidden,
         attributesMap,
         filteredWidgets,
@@ -204,7 +188,6 @@ function CompactSection(props: Props) {
                 applyButtonsHidden: !onApplyToAll,
                 onApplyBelowClick: handleApplyBelowClick,
                 onApplyAllClick: handleApplyAllClick,
-                widgetsHints,
                 recommendations,
                 suggestionMode,
                 rightComponent,
@@ -213,7 +196,6 @@ function CompactSection(props: Props) {
         [
             recommendations,
             suggestionMode,
-            widgetsHints,
             onApplyToAll,
             onAttributeChange,
             attributesMap,

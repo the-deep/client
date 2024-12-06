@@ -3,6 +3,7 @@ import React, {
     useMemo,
     useEffect,
     useCallback,
+    useContext,
     useRef,
 } from 'react';
 import {
@@ -55,6 +56,7 @@ import {
 
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import LeadPreview from '#components/lead/LeadPreview';
+import { ProjectContext } from '#base/context/ProjectContext';
 import Screenshot from '#components/Screenshot';
 import {
     LeadPreviewForTextQuery,
@@ -207,6 +209,7 @@ function LeftPaneEntries(props: Props) {
         onAttachmentClick,
     } = props;
 
+    const { project } = useContext(ProjectContext);
     const alert = useAlert();
     const entriesMappingByAttachment = useMemo(() => (
         listToMap(
@@ -270,11 +273,22 @@ function LeftPaneEntries(props: Props) {
         setAttachmentsWithEntriesHidden,
     ] = useState<boolean>(false);
 
-    const leadAttachmentIdsWithEntries = useMemo(() => (
-        Object.values(entryAttachmentsMap ?? {})
-            .map((entry) => entry?.leadAttachmentId)
-            .filter(isDefined)
-    ), [
+    const currentEntryClientIds = useMemo(() => (
+        entries?.map((item) => item.clientId)
+    ), [entries]);
+
+    const leadAttachmentIdsWithEntries = useMemo(() => {
+        if (!entryAttachmentsMap) {
+            return [];
+        }
+        return (
+            Object.keys(entryAttachmentsMap)
+                .filter((item) => currentEntryClientIds?.includes(item))
+                .map((entry) => entryAttachmentsMap[entry]?.leadAttachmentId)
+                .filter(isDefined)
+        );
+    }, [
+        currentEntryClientIds,
         entryAttachmentsMap,
     ]);
 
@@ -714,11 +728,15 @@ function LeftPaneEntries(props: Props) {
         });
     }, []);
 
-    const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId);
+    const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId)
+        && !project?.isPrivate;
 
     const errorMessageForAutoExtraction = useMemo(() => {
         if (isAutoExtractionCompatible) {
             return undefined;
+        }
+        if (project?.isPrivate) {
+            return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source because the project is private.';
         }
         if (isDefined(leadPreviewData?.project?.lead?.connectorLead)) {
             return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The connector associated with the chosen source may be outdated or incompatible with the NLP extraction functionality.';
@@ -729,6 +747,7 @@ function LeftPaneEntries(props: Props) {
         return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The selected source appears to be outdated, and the NLP extraction feature is not compatible with older content formats.';
     }, [
         isAutoExtractionCompatible,
+        project?.isPrivate,
         leadPreviewData?.project?.lead,
     ]);
 

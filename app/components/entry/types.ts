@@ -9,7 +9,6 @@ import {
 
     WidgetType as WidgetRaw,
     BulkEntryInputType,
-    AnalysisFrameworkPredictionMappingType as MappingsItemRaw,
     AttributeType as WidgetAttributeRaw,
     AttributeGqInputType as WidgetInputAttributeRaw,
 } from '#generated/types';
@@ -20,7 +19,6 @@ import {
 import { WidgetAttribute as WidgetAttributeFromEntry } from '#types/newEntry';
 import {
     Widget as WidgetFromAF,
-    MappingsItem,
 } from '#types/newAnalyticalFramework';
 
 export type EntryRaw = EntryResponseFragment;
@@ -38,7 +36,6 @@ export type EntryInput = DeepReplace<EntryInputRaw, WidgetInputAttributeRaw, Wid
 // FIXME: 'key' is thought to be mandatory from server.
 // Remove this DeepMandatory transformation after server sends key as mandatory
 export type FrameworkRaw = DeepMandatory<FrameworkResponseFragment, 'key'>;
-export type FrameworkWithWidgets = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, WidgetFromAF>;
-export type Framework = DeepReplace<FrameworkWithWidgets, MappingsItemRaw, MappingsItem>;
+export type Framework = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, WidgetFromAF>;
 export type Section = NonNullable<Framework['primaryTagging']>[number];
 export type Widget = WidgetFromAF;

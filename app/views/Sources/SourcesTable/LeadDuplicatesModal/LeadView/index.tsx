@@ -61,7 +61,6 @@ function LeadView(props: Props) {
                     <SimplifiedTextView
                         projectId={projectId}
                         text={textExtract}
-                        assistedTaggingEnabled={false}
                         leadId={leadId}
                     />
                 </TabPanel>

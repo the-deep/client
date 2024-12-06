@@ -152,6 +152,7 @@ export interface Props {
     onRegionRetriggerSuccess: () => void;
     onRegionPublishSuccess: () => void;
     onRegionDeleteSuccess: () => void;
+    onAdminRemoveSuccess: () => void;
 }
 
 function RegionCard(props: Props) {
@@ -172,6 +173,7 @@ function RegionCard(props: Props) {
         onRegionRetriggerSuccess,
         onRegionPublishSuccess,
         onRegionDeleteSuccess,
+        onAdminRemoveSuccess,
     } = props;
 
     // setting this so that when user add an admin level, it is updated
@@ -312,6 +314,7 @@ function RegionCard(props: Props) {
 
                 if (ok) {
                     refetchAdminLevels();
+                    onAdminRemoveSuccess();
 
                     if (onAdminLevelUpdate) {
                         onAdminLevelUpdate();
