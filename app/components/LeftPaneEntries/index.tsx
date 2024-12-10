@@ -1,9 +1,9 @@
 import React, {
-    useContext,
     useState,
     useMemo,
     useEffect,
     useCallback,
+    useContext,
     useRef,
 } from 'react';
 import {
@@ -56,8 +56,8 @@ import {
 
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import LeadPreview from '#components/lead/LeadPreview';
+import { ProjectContext } from '#base/context/ProjectContext';
 import Screenshot from '#components/Screenshot';
-import { UserContext } from '#base/context/UserContext';
 import {
     LeadPreviewForTextQuery,
     LeadPreviewForTextQueryVariables,
@@ -209,9 +209,8 @@ function LeftPaneEntries(props: Props) {
         onAttachmentClick,
     } = props;
 
+    const { project } = useContext(ProjectContext);
     const alert = useAlert();
-    const { user } = useContext(UserContext);
-
     const entriesMappingByAttachment = useMemo(() => (
         listToMap(
             entries?.map((entry) => {
@@ -228,9 +227,6 @@ function LeftPaneEntries(props: Props) {
             (item) => item,
         )
     ), [entries]);
-
-    const isAssistedTaggingAccessible = !!user
-        ?.accessibleFeatures?.some((feature) => feature.key === 'ASSISTED');
 
     const [activeTab, setActiveTab] = useState<TabOptions>(
         (hideSimplifiedPreview && defaultTab === 'simplified') || (hideOriginalPreview && defaultTab === 'original')
@@ -277,11 +273,22 @@ function LeftPaneEntries(props: Props) {
         setAttachmentsWithEntriesHidden,
     ] = useState<boolean>(false);
 
-    const leadAttachmentIdsWithEntries = useMemo(() => (
-        Object.values(entryAttachmentsMap ?? {})
-            .map((entry) => entry?.leadAttachmentId)
-            .filter(isDefined)
-    ), [
+    const currentEntryClientIds = useMemo(() => (
+        entries?.map((item) => item.clientId)
+    ), [entries]);
+
+    const leadAttachmentIdsWithEntries = useMemo(() => {
+        if (!entryAttachmentsMap) {
+            return [];
+        }
+        return (
+            Object.keys(entryAttachmentsMap)
+                .filter((item) => currentEntryClientIds?.includes(item))
+                .map((entry) => entryAttachmentsMap[entry]?.leadAttachmentId)
+                .filter(isDefined)
+        );
+    }, [
+        currentEntryClientIds,
         entryAttachmentsMap,
     ]);
 
@@ -721,16 +728,15 @@ function LeftPaneEntries(props: Props) {
         });
     }, []);
 
-    const assistedTaggingShown = isAssistedTaggingAccessible
-        && frameworkDetails?.assistedTaggingEnabled
-        && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
-
     const isAutoExtractionCompatible = isDefined(leadPreview?.textExtractionId)
-        && assistedTaggingShown;
+        && !project?.isPrivate;
 
     const errorMessageForAutoExtraction = useMemo(() => {
         if (isAutoExtractionCompatible) {
             return undefined;
+        }
+        if (project?.isPrivate) {
+            return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source because the project is private.';
         }
         if (isDefined(leadPreviewData?.project?.lead?.connectorLead)) {
             return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The connector associated with the chosen source may be outdated or incompatible with the NLP extraction functionality.';
@@ -741,6 +747,7 @@ function LeftPaneEntries(props: Props) {
         return 'The feature to extract entries through Natural Language Processing (NLP) is currently unavailable for the selected source. The selected source appears to be outdated, and the NLP extraction feature is not compatible with older content formats.';
     }, [
         isAutoExtractionCompatible,
+        project?.isPrivate,
         leadPreviewData?.project?.lead,
     ]);
 
@@ -789,7 +796,7 @@ function LeftPaneEntries(props: Props) {
                     >
                         <>
                             <div className={styles.simplifiedHeader}>
-                                {!isEntrySelectionActive && assistedTaggingShown && (
+                                {!isEntrySelectionActive && (
                                     <div className={styles.extraction}>
                                         <Button
                                             className={styles.autoEntriesButton}
@@ -854,7 +861,6 @@ function LeftPaneEntries(props: Props) {
                                     onEntryRestore={onEntryRestore}
                                     disableAddButton={isEntrySelectionActive}
                                     disableExcerptClick={isEntrySelectionActive}
-                                    assistedTaggingEnabled={!!assistedTaggingShown}
                                     frameworkDetails={frameworkDetails}
                                     leadId={leadId}
                                     textZoomValue={textZoomValue}

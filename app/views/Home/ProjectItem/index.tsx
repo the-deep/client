@@ -142,6 +142,7 @@ export interface RecentProjectItemProps {
     isPinned?: boolean;
     pinnedId: string | undefined;
     onProjectPinChange: () => void;
+    onProjectLeaveSuccess: () => void;
     disablePinButton: boolean;
 }
 
@@ -169,6 +170,7 @@ function ProjectItem(props: RecentProjectItemProps) {
         recentActiveUsers,
         isPinned,
         onProjectPinChange,
+        onProjectLeaveSuccess,
         disablePinButton,
     } = props;
 
@@ -248,7 +250,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                 } = leaveProjectResponse;
 
                 if (ok) {
-                    onProjectPinChange();
+                    onProjectLeaveSuccess();
                     alert.show(
                         'Project successfully left.',
                         { variant: 'success' },

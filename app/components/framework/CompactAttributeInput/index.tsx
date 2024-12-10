@@ -23,7 +23,6 @@ import {
 import {
     Widget,
     getWidgetVersion,
-    WidgetHint,
 } from '#types/newAnalyticalFramework';
 
 import { PartialEntryType } from '#components/entry/schema';
@@ -45,8 +44,6 @@ import OrganigramWidgetInput from './OrganigramWidgetInput';
 import GeoLocationWidgetInput from './GeoLocationWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
 import {
-    filterSelectHints,
-    filterScaleHints,
     filterGeoRecommendations,
     filterMultiSelectRecommendations,
     filterOrganigramRecommendations,
@@ -102,7 +99,6 @@ export interface Props<N extends string | number | undefined> {
     onApplyAllClick?: (widgetId: string) => void;
 
     applyButtonsHidden?: boolean;
-    widgetsHints?: WidgetHint[];
     recommendations?: PartialAttributeType[];
     suggestionMode?: boolean;
 
@@ -128,7 +124,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         onApplyAllClick,
 
         applyButtonsHidden = true,
-        widgetsHints,
         recommendations,
 
         suggestionMode,
@@ -290,9 +285,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'SCALE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
-        const widgetHints = widgetsHints
-            ?.filter(filterScaleHints)
-            ?.find((hint) => hint.widgetPk === widget.id);
 
         component = (
             <ScaleWidgetInput
@@ -306,7 +298,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
-                widgetHints={widgetHints?.hints}
             />
         );
     } else if (widget.widgetId === 'MULTISELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -334,9 +325,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'SELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
-        const widgetHints = widgetsHints
-            ?.filter(filterSelectHints)
-            ?.find((hint) => hint.widgetPk === widget.id);
 
         component = (
             <SingleSelectWidgetInput
@@ -350,7 +338,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
-                widgetHints={widgetHints?.hints}
                 suggestionMode={suggestionMode}
             />
         );

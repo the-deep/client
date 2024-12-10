@@ -73,7 +73,6 @@ const FRAMEWORK_DETAILS_FOR_ANALYSIS = gql`
         project(id: $projectId) {
             id
             analysisFramework {
-                # NOTE: Does not need predictionTagsMapping from FrameworkResponse
                 ...FrameworkResponse
             }
         }

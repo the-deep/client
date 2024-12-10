@@ -2,7 +2,6 @@ import React, { useMemo, useState, useCallback, useEffect, useContext } from 're
 import {
     _cs,
     isDefined,
-    listToGroupList,
 } from '@togglecorp/fujs';
 import {
     useParams,
@@ -52,13 +51,8 @@ import NewOrganizationSelectInput, { BasicOrganization } from '#components/selec
 import PreloadMessage from '#base/components/PreloadMessage';
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import SubNavbarContext from '#components/SubNavbar/context';
-import {
-    MappingsItem,
-    categoricalWidgets,
-} from '#types/newAnalyticalFramework';
 import _ts from '#ts';
 import {
-    AssistedPredictionTagsQuery,
     CurrentFrameworkQuery,
     CurrentFrameworkQueryVariables,
     UpdateFrameworkMutation,
@@ -82,14 +76,7 @@ import {
     CURRENT_FRAMEWORK,
     UPDATE_FRAMEWORK,
     CREATE_FRAMEWORK,
-    ASSISTED_PREDICTION_TAGS_QUERY,
 } from './queries';
-import {
-    getMatrix2dPossibleMappings,
-    getMatrix1dPossibleMappings,
-    getOptionTypePossibleMappings,
-    getOrganigramPossibleMappings,
-} from './AssistedTagging/utils';
 import PrivacyInput from './components/PrivacyInput';
 import UserTable from './UserTable';
 import UploadImage from './UploadImage';
@@ -97,117 +84,7 @@ import PrimaryTagging from './PrimaryTagging';
 import Properties from './Properties';
 import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
-import AssistedTagging from './AssistedTagging';
 import styles from './styles.css';
-
-const stripGhostAssociations = (
-    newWidgets: WidgetsType | undefined,
-    currentMapping: MappingsItem[] | undefined,
-) => {
-    const newCatWidgets = newWidgets
-        ?.filter((widget) => (
-            isDefined(widget.id) && categoricalWidgets.includes(widget.widgetId)
-        ));
-    const newGeoWidgets = newWidgets
-        ?.filter((widget) => (
-            isDefined(widget.id) && widget.widgetId === 'GEO'
-        ));
-    const possibleTagsInFramework = listToGroupList(
-        newCatWidgets?.map((widget) => {
-            if (widget.widgetId === 'MATRIX2D') {
-                return getMatrix2dPossibleMappings(widget);
-            }
-            if (widget.widgetId === 'MATRIX1D') {
-                return getMatrix1dPossibleMappings(widget);
-            }
-            if (
-                widget.widgetId === 'SCALE'
-            || widget.widgetId === 'SELECT'
-            || widget.widgetId === 'MULTISELECT'
-            ) {
-                return getOptionTypePossibleMappings(widget);
-            }
-            if (widget.widgetId === 'ORGANIGRAM') {
-                return getOrganigramPossibleMappings(widget);
-            }
-            return [];
-        }).flat(),
-        (item) => item.widget,
-        (item) => item,
-    );
-
-    const filteredMappings = currentMapping?.filter(
-        (item) => {
-            const possibleAssociations = possibleTagsInFramework?.[item.widget];
-            if (item.widgetType === 'MATRIX1D') {
-                return possibleAssociations?.some((possibleTag) => {
-                    if (possibleTag.widgetType === 'MATRIX1D') {
-                        return (
-                            possibleTag.association.rowKey === item.association.rowKey
-                            && possibleTag.association.subRowKey === item.association.subRowKey
-                        );
-                    }
-                    return false;
-                });
-            }
-            if (item.widgetType === 'MATRIX2D') {
-                return possibleAssociations?.some((possibleTag) => {
-                    if (possibleTag.widgetType === 'MATRIX2D') {
-                        return (
-                            item.association.type === 'SUB_ROW' && possibleTag.association.type === 'SUB_ROW'
-                            && possibleTag.association.rowKey === item.association.rowKey
-                            && possibleTag.association.subRowKey === item.association.subRowKey
-                        ) || (
-                            item.association.type === 'SUB_COLUMN' && possibleTag.association.type === 'SUB_COLUMN'
-                            && possibleTag.association.columnKey === item.association.columnKey
-                            && possibleTag
-                                .association.subColumnKey === item.association.subColumnKey
-                        ) || (
-                            item.association.type === 'COLUMN' && possibleTag.association.type === 'COLUMN'
-                            && possibleTag.association.columnKey === item.association.columnKey
-                        );
-                    }
-                    return false;
-                });
-            }
-            if (
-                item.widgetType === 'SCALE'
-            || item.widgetType === 'SELECT'
-            || item.widgetType === 'MULTISELECT'
-            ) {
-                return possibleAssociations?.some((possibleTag) => {
-                    if (
-                        possibleTag.widgetType === 'SCALE'
-                    || possibleTag.widgetType === 'SELECT'
-                    || possibleTag.widgetType === 'MULTISELECT'
-                    ) {
-                        return (
-                            possibleTag.association.optionKey === item.association.optionKey
-                        );
-                    }
-                    return false;
-                });
-            }
-            if (item.widgetType === 'ORGANIGRAM') {
-                return possibleAssociations?.some((possibleTag) => {
-                    if (possibleTag.widgetType === 'ORGANIGRAM') {
-                        return (
-                            possibleTag.association.optionKey === item.association.optionKey
-                        );
-                    }
-                    return false;
-                });
-            }
-            if (item.widgetType === 'GEO') {
-                return newGeoWidgets?.some(
-                    (possibleTag) => item.widget === possibleTag.id,
-                );
-            }
-            return false;
-        },
-    );
-    return filteredMappings;
-};
 
 function getTimestamp(dateString: string | undefined) {
     if (!dateString) {
@@ -226,7 +103,6 @@ function transformFramework(framework: Framework): FrameworkInput {
         secondaryTagging,
         properties,
         modifiedAt,
-        predictionTagsMapping,
         assistedTaggingEnabled,
     } = framework;
 
@@ -237,7 +113,6 @@ function transformFramework(framework: Framework): FrameworkInput {
         organization: organization?.id,
         primaryTagging,
         secondaryTagging,
-        predictionTagsMapping,
         assistedTaggingEnabled,
         properties,
         isVisualizationEnabled: isDefined(properties),
@@ -250,7 +125,6 @@ interface Stored {
     pristine: boolean,
     primaryTaggingPristine: boolean,
     secondaryTaggingPristine: boolean,
-    predictionTagsMappingPristine: boolean,
     framework: PartialFormType,
     frameworkImage: Framework['previewImage'],
     organizationOptions: BasicOrganization[] | null | undefined,
@@ -292,9 +166,6 @@ function AnalyticalFramework(props: Props) {
     const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
     const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
 
-    const isAssistedTaggingAccessible = !!user
-        ?.accessibleFeatures?.some((feature) => feature.key === 'ASSISTED');
-
     const [
         isNavigationDisabled,
         setNavigationDisableState,
@@ -307,10 +178,6 @@ function AnalyticalFramework(props: Props) {
     const [
         secondaryTaggingPristine,
         setSecondaryTaggingPristine,
-    ] = useState(true);
-    const [
-        predictionTagsMappingPristine,
-        setPredictionTagsMappingPristine,
     ] = useState(true);
 
     const [
@@ -351,7 +218,6 @@ function AnalyticalFramework(props: Props) {
                 setOrganizationOptions(storedAfArg.organizationOptions);
                 setPrimaryTaggingPristine(storedAfArg.primaryTaggingPristine);
                 setSecondaryTaggingPristine(storedAfArg.secondaryTaggingPristine);
-                setPredictionTagsMappingPristine(storedAfArg.predictionTagsMappingPristine);
 
                 setCacheUsed(true);
             }
@@ -399,7 +265,6 @@ function AnalyticalFramework(props: Props) {
                     setPristine(true);
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
-                    setPredictionTagsMappingPristine(true);
 
                     if (storedData) {
                         // NOTE: clearing out stored af after new data is fetched
@@ -447,7 +312,6 @@ function AnalyticalFramework(props: Props) {
                     setPristine(true);
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
-                    setPredictionTagsMappingPristine(true);
 
                     const path = generatePath(
                         routes.analyticalFrameworkEdit.path,
@@ -502,7 +366,6 @@ function AnalyticalFramework(props: Props) {
                     setValue(transformFramework(result as Framework));
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
-                    setPredictionTagsMappingPristine(true);
                 }
             },
             onError: (error) => {
@@ -613,7 +476,6 @@ function AnalyticalFramework(props: Props) {
                 pristine,
                 primaryTaggingPristine,
                 secondaryTaggingPristine,
-                predictionTagsMappingPristine,
                 framework: value,
                 frameworkImage,
                 organizationOptions,
@@ -627,7 +489,6 @@ function AnalyticalFramework(props: Props) {
             value,
             primaryTaggingPristine,
             secondaryTaggingPristine,
-            predictionTagsMappingPristine,
             frameworkImage,
             organizationOptions,
         ],
@@ -636,66 +497,15 @@ function AnalyticalFramework(props: Props) {
     const handlePrimaryTaggingChange = useCallback(
         (val: SetValueArg<SectionsType | undefined>) => {
             setPrimaryTaggingPristine(false);
-            setPredictionTagsMappingPristine(false);
-            setValue((oldVal) => {
-                const newData = (typeof val === 'function') ? val(oldVal.primaryTagging) : val;
-                const primaryTaggingWidgets = newData?.map(
-                    (item) => item.widgets,
-                ).flat().filter(isDefined) ?? [];
-                const newMappings = stripGhostAssociations(
-                    [
-                        ...(oldVal.secondaryTagging ?? []),
-                        ...primaryTaggingWidgets,
-                    ],
-                    oldVal.predictionTagsMapping,
-                );
-                return {
-                    ...oldVal,
-                    primaryTagging: newData,
-                    predictionTagsMapping: newMappings,
-                };
-            }, true);
+            setFieldValue(val, 'primaryTagging');
         },
-        [setValue],
+        [setFieldValue],
     );
 
     const handleSecondaryTaggingChange = useCallback(
         (val: SetValueArg<WidgetsType | undefined>) => {
             setSecondaryTaggingPristine(false);
-            setPredictionTagsMappingPristine(false);
-            setValue((oldVal) => {
-                const newData = (typeof val === 'function') ? val(oldVal.secondaryTagging) : val;
-                const primaryTaggingWidgets = oldVal.primaryTagging?.map(
-                    (item) => item.widgets,
-                ).flat().filter(isDefined) ?? [];
-                const newMappings = stripGhostAssociations(
-                    [
-                        ...primaryTaggingWidgets,
-                        ...(newData ?? []),
-                    ],
-                    oldVal.predictionTagsMapping,
-                );
-                return {
-                    ...oldVal,
-                    secondaryTagging: newData,
-                    predictionTagsMapping: newMappings,
-                };
-            }, true);
-        },
-        [setValue],
-    );
-
-    const handlePredictionTagsMappings = useCallback(
-        (val: SetValueArg<MappingsItem[] | undefined>, name: 'predictionTagsMapping') => {
-            setPredictionTagsMappingPristine(false);
-            setFieldValue(val, name);
-        },
-        [setFieldValue],
-    );
-
-    const handleAssistedTaggingStatusChange = useCallback(
-        (val: boolean) => {
-            setFieldValue(val, 'assistedTaggingEnabled');
+            setFieldValue(val, 'secondaryTagging');
         },
         [setFieldValue],
     );
@@ -744,12 +554,6 @@ function AnalyticalFramework(props: Props) {
                                     parentWidgetType: undefined,
                                 } : null,
                             })),
-                        predictionTagsMapping: predictionTagsMappingPristine
-                            ? undefined
-                            : val.predictionTagsMapping?.map((item) => ({
-                                ...item,
-                                widgetType: undefined,
-                            })),
                     };
 
                     const data = newData as AnalysisFrameworkInputType;
@@ -781,19 +585,11 @@ function AnalyticalFramework(props: Props) {
         [
             setError, validate, frameworkId,
             primaryTaggingPristine, secondaryTaggingPristine,
-            predictionTagsMappingPristine,
             updateAnalysisFramework, createAnalysisFramework,
         ],
     );
 
-    const {
-        data: assistedTagsResponse,
-        loading: assistedTagsPending,
-    } = useQuery<AssistedPredictionTagsQuery>(
-        ASSISTED_PREDICTION_TAGS_QUERY,
-    );
-
-    const pending = creatingAnalysisFramework || updatingAnalysisFramework || assistedTagsPending;
+    const pending = creatingAnalysisFramework || updatingAnalysisFramework;
 
     const error = getErrorObject(riskyError);
 
@@ -801,7 +597,6 @@ function AnalyticalFramework(props: Props) {
         detailsErrored,
         primaryTaggingErrored,
         secondaryTaggingErrored,
-        predictionTagsMappingErrored,
         propertiesErrored,
     ] = useMemo(
         () => {
@@ -809,13 +604,11 @@ function AnalyticalFramework(props: Props) {
             delete errorWithoutTaggings.primaryTagging;
             delete errorWithoutTaggings.secondaryTagging;
             delete errorWithoutTaggings.properties;
-            delete errorWithoutTaggings.predictionTagsMapping;
 
             return [
                 analyzeErrors(errorWithoutTaggings),
                 analyzeErrors(error?.primaryTagging),
                 analyzeErrors(error?.secondaryTagging),
-                analyzeErrors(error?.predictionTagsMapping),
                 analyzeErrors(error?.properties),
             ];
         },
@@ -948,18 +741,6 @@ function AnalyticalFramework(props: Props) {
                                 >
                                     {_ts('analyticalFramework', 'review')}
                                 </Tab>
-                                {isAssistedTaggingAccessible && (
-                                    <Tab
-                                        name="assisted-tagging"
-                                        transparentBorder
-                                        className={_cs(
-                                            predictionTagsMappingErrored && styles.erroredTab,
-                                        )}
-                                        disabled={isNavigationDisabled}
-                                    >
-                                        Assisted Tagging
-                                    </Tab>
-                                )}
                                 {value.isVisualizationEnabled && (
                                     <Tab
                                         name="viz-settings"
@@ -1107,30 +888,6 @@ function AnalyticalFramework(props: Props) {
                                     secondaryTagging={value.secondaryTagging}
                                 />
                             </TabPanel>
-                            {isAssistedTaggingAccessible && (
-                                <TabPanel
-                                    activeClassName={styles.tabPanel}
-                                    name="assisted-tagging"
-                                    retainMount="lazy"
-                                >
-                                    <AssistedTagging
-                                        name="predictionTagsMapping"
-                                        error={error?.predictionTagsMapping}
-                                        className={styles.view}
-                                        allWidgets={allWidgets}
-                                        value={value.predictionTagsMapping}
-                                        onChange={handlePredictionTagsMappings}
-                                        assistedTaggingEnabled={value.assistedTaggingEnabled}
-                                        assistedPredictionTags={(
-                                            assistedTagsResponse
-                                                ?.assistedTagging?.predictionTags
-                                        )}
-                                        onAssistedTaggingStatusChange={
-                                            handleAssistedTaggingStatusChange
-                                        }
-                                    />
-                                </TabPanel>
-                            )}
                             {value.isVisualizationEnabled && (
                                 <TabPanel
                                     activeClassName={styles.tabPanel}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import {
     _cs,
@@ -15,6 +15,7 @@ import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import { PartialEntryType as EntryInput } from '#components/entry/schema';
 import { Framework } from '#components/entry/types';
+import ProjectContext from '#base/context/ProjectContext';
 
 import useTextSelection from './useTextSelection';
 import EntryItem from '../EntryItem';
@@ -60,7 +61,6 @@ interface Props {
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
     disableAddButton?: boolean;
-    assistedTaggingEnabled: boolean;
     projectId: string | undefined;
     frameworkDetails?: Framework;
     textZoomValue?: number | undefined;
@@ -75,7 +75,6 @@ function SimplifiedTextView(props: Props) {
         onAssistedEntryAdd,
         onExcerptChange,
         activeEntryClientId,
-        assistedTaggingEnabled,
         onExcerptClick,
         onApproveButtonClick,
         leadId,
@@ -95,15 +94,6 @@ function SimplifiedTextView(props: Props) {
     const scrollTopRef = React.useRef<number | undefined>();
     const [charactersLoaded, setCharactersLoaded] = useState(CHARACTER_PER_PAGE);
     const [textToAssist, setTextToAssist] = useState<string | undefined>();
-
-    useEffect(() => {
-        if (textToAssist && !assistedTaggingEnabled) {
-            setTextToAssist(undefined);
-        }
-    }, [
-        textToAssist,
-        assistedTaggingEnabled,
-    ]);
 
     const text = useMemo(() => {
         if (textFromProps) {
@@ -217,6 +207,8 @@ function SimplifiedTextView(props: Props) {
     const handleAssistCancelButtonClick = useCallback(() => {
         setTextToAssist(undefined);
     }, []);
+
+    const { project } = React.useContext(ProjectContext);
 
     let children: React.ReactNode = null;
     if (!text || splits.length === 0) {
@@ -360,46 +352,30 @@ function SimplifiedTextView(props: Props) {
                     className={styles.actionsPopup}
                     style={position ? ({ ...position }) : undefined}
                 >
-                    {assistedTaggingEnabled ? (
-                        <>
-                            {isDefined(onAddButtonClick) && (
-                                <QuickActionButton
-                                    title="Add entry"
-                                    name={textContent}
-                                    variant="primary"
-                                    className={styles.addButton}
-                                    onClick={handleAddButtonClick}
-                                >
-                                    <IoAdd />
-                                </QuickActionButton>
-                            )}
-                            {isDefined(onAssistedEntryAdd) && (
-                                <QuickActionButton
-                                    title="Assist"
-                                    name={textContent}
-                                    variant="nlp-primary"
-                                    className={styles.addButton}
-                                    onClick={handleAssistButtonClick}
-                                >
-                                    <Svg
-                                        className={styles.brainIcon}
-                                        src={brainIcon}
-                                    />
-                                </QuickActionButton>
-                            )}
-                        </>
-                    ) : (
-                        isDefined(onAddButtonClick) && (
-                            <QuickActionButton
-                                title="Add entry"
-                                name={textContent}
-                                variant="primary"
-                                className={styles.addButton}
-                                onClick={handleAddButtonClick}
-                            >
-                                <IoAdd />
-                            </QuickActionButton>
-                        )
+                    {isDefined(onAddButtonClick) && (
+                        <QuickActionButton
+                            title="Add entry"
+                            name={textContent}
+                            variant="primary"
+                            className={styles.addButton}
+                            onClick={handleAddButtonClick}
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
+                    )}
+                    {isDefined(onAssistedEntryAdd) && !project?.isPrivate && (
+                        <QuickActionButton
+                            title="Assist"
+                            name={textContent}
+                            variant="nlp-primary"
+                            className={styles.addButton}
+                            onClick={handleAssistButtonClick}
+                        >
+                            <Svg
+                                className={styles.brainIcon}
+                                src={brainIcon}
+                            />
+                        </QuickActionButton>
                     )}
                 </div>
             )}

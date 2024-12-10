@@ -1,7 +1,4 @@
 import {
-    WidgetHint,
-} from '#types/newAnalyticalFramework';
-import {
     PartialAttributeType,
 } from '#components/entry/schema';
 import {
@@ -44,22 +41,4 @@ export function filterGeoRecommendations(
     recommendation: PartialAttributeType,
 ): recommendation is GeoWidgetAttribute {
     return recommendation.widgetType === 'GEO';
-}
-
-export function filterGeoHints(
-    hint: WidgetHint,
-): hint is { hints: string[]; widgetPk: string; widgetType: 'GEO' } {
-    return hint.widgetType === 'GEO';
-}
-
-export function filterScaleHints(
-    hint: WidgetHint,
-): hint is { hints: string[]; widgetPk: string; widgetType: 'SCALE' } {
-    return hint.widgetType === 'SCALE';
-}
-
-export function filterSelectHints(
-    hint: WidgetHint,
-): hint is { hints: string[]; widgetPk: string; widgetType: 'SELECT' } {
-    return hint.widgetType === 'SELECT';
 }

@@ -38,7 +38,6 @@ import { GeoArea } from '#components/GeoMultiSelectInput';
 import ExcerptInput from '#components/entry/ExcerptInput';
 import {
     Widget,
-    WidgetHint,
 } from '#types/newAnalyticalFramework';
 import { DeepReplace } from '#utils/types';
 
@@ -63,7 +62,6 @@ interface EntryInputProps<T extends string | number | undefined> {
     addButtonHidden?: boolean;
     hideEntryId?: boolean;
 
-    widgetsHints?: WidgetHint[];
     recommendations?: PartialAttributeType[];
 
     sectionContainerClassName?: string;
@@ -112,7 +110,6 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         leadId,
         variant = 'normal',
         entryImage,
-        widgetsHints,
         error: riskyError,
         geoAreaOptions,
         onGeoAreaOptionsChange,
@@ -172,7 +169,6 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         onAddButtonClick,
         addButtonHidden,
         entryClientId: value.clientId,
-        widgetsHints,
         recommendations,
         geoAreaOptions,
         onGeoAreaOptionsChange,
@@ -185,7 +181,6 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
     }), [
         variant,
         allWidgets,
-        widgetsHints,
         recommendations,
         geoAreaOptions,
         onGeoAreaOptionsChange,
@@ -299,7 +294,6 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                     onApplyToAll={onApplyToAll}
                     entryClientId={value.clientId}
                     allWidgets={allWidgets}
-                    widgetsHints={widgetsHints}
                     recommendations={recommendations}
                     emptyMessageHidden={variant === 'nlp'}
                     suggestionMode={variant === 'nlp'}

@@ -12,11 +12,10 @@ import {
 
 import EntryInput from '#components/entry/EntryInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
-import { WidgetHint } from '#types/newAnalyticalFramework';
 import { Framework } from '#components/entry/types';
 import {
-    PartialEntryType,
     PartialAttributeType,
+    PartialEntryType,
 } from '#components/entry/schema';
 
 import styles from './styles.css';
@@ -35,8 +34,7 @@ interface Props<NAME extends string | number | undefined> {
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     predictionsLoading?: boolean;
-    hints: WidgetHint[] | undefined;
-    recommendations: PartialAttributeType[] | undefined;
+    recommendations?: PartialAttributeType[] | undefined;
     predictionsErrored: boolean;
     name: NAME;
     messageText: string | undefined;
@@ -62,7 +60,6 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
         geoAreaOptions,
         onGeoAreaOptionsChange,
         predictionsLoading,
-        hints,
         predictionsErrored,
         messageText,
         recommendations,
@@ -133,7 +130,6 @@ function AssistPopup<NAME extends string | number | undefined>(props: Props<NAME
                     geoAreaOptions={geoAreaOptions}
                     onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                     allWidgets={allWidgets}
-                    widgetsHints={hints}
                     recommendations={recommendations}
                     emptyValueHidden
                     addButtonHidden

@@ -171,6 +171,7 @@ function GeoAreas(props: Props) {
                 onRegionPublishSuccess: regionsRefetch,
                 onRegionDeleteSuccess: regionsRefetch,
                 onAdminLevelAddSuccess: regionsRefetch,
+                onAdminRemoveSuccess: regionsRefetch,
                 onRegionRetriggerSuccess: regionsRefetch,
                 navigationDisabled,
             };

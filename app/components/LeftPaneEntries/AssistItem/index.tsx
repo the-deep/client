@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 import {
     listToMap,
-    isDefined,
     _cs,
+    isDefined,
     randomString,
 } from '@togglecorp/fujs';
 import {
@@ -23,17 +23,6 @@ import { FiEdit2 } from 'react-icons/fi';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import brainIcon from '#resources/img/brain.svg';
 import {
-    mappingsSupportedWidgets,
-    isCategoricalMappings,
-    WidgetHint,
-    filterMatrix1dMappings,
-    filterMatrix2dMappings,
-    filterScaleMappings,
-    filterSelectMappings,
-    filterMultiSelectMappings,
-    filterOrganigramMappings,
-} from '#types/newAnalyticalFramework';
-import {
     mergeLists,
 } from '#utils/common';
 import {
@@ -44,25 +33,26 @@ import {
 } from '#generated/types';
 
 import {
-    PartialEntryType as EntryInput,
     PartialAttributeType,
+    PartialEntryType as EntryInput,
     getEntrySchema,
 } from '#components/entry/schema';
 import { Framework } from '#components/entry/types';
+import {
+    ModelTagsType,
+    Matrix1dValue,
+    Matrix2dValue,
+} from '#types/newAnalyticalFramework';
 
 import AssistPopup from './AssistPopup';
 import {
-    createOrganigramAttr,
-    createMatrix1dAttr,
-    createMatrix2dAttr,
-    createScaleAttr,
-    createSelectAttr,
-    createMultiSelectAttr,
-    createGeoAttr,
-} from './utils';
-import {
     createDefaultAttributes,
 } from '../utils';
+import {
+    isValidObject,
+    createMatrix1dAttrFromTags,
+    createMatrix2dAttrFromTags,
+} from './utils';
 
 import styles from './styles.css';
 
@@ -81,17 +71,9 @@ const CREATE_DRAFT_ENTRY = gql`
                     result {
                         id
                         predictionStatus
-                        predictionTags {
-                            category
-                            dataType
-                            dataTypeDisplay
-                            draftEntry
+                        tags {
                             id
-                            isSelected
-                            prediction
-                            tag
-                            threshold
-                            value
+                            modelTags
                         }
                         geoAreas {
                             adminLevelLevel
@@ -119,17 +101,9 @@ const PROJECT_DRAFT_ENTRY = gql`
                 draftEntry(id: $draftEntryId) {
                     id
                     predictionStatus
-                    predictionTags {
-                        category
-                        dataType
-                        dataTypeDisplay
-                        draftEntry
+                    tags {
+                        modelTags
                         id
-                        isSelected
-                        prediction
-                        tag
-                        threshold
-                        value
                     }
                     geoAreas {
                         adminLevelLevel
@@ -176,7 +150,6 @@ function AssistItem(props: Props) {
 
     const {
         allWidgets,
-        filteredWidgets,
     } = useMemo(() => {
         const widgetsFromPrimary = frameworkDetails?.primaryTagging?.flatMap(
             (item) => (item.widgets ?? []),
@@ -188,20 +161,12 @@ function AssistItem(props: Props) {
         ];
         return {
             allWidgets: widgets,
-            filteredWidgets: widgets.filter((w) => mappingsSupportedWidgets.includes(w.widgetId)),
         };
     }, [
         frameworkDetails,
     ]);
 
-    const mappings = frameworkDetails?.predictionTagsMapping;
     const alert = useAlert();
-    const [
-        allRecommendations,
-        setAllRecommendations,
-    ] = useState<PartialAttributeType[] | undefined>(undefined);
-
-    const [allHints, setAllHints] = useState<WidgetHint[] | undefined>(undefined);
 
     const assistPopupRef = useRef<
         { setShowPopup: React.Dispatch<React.SetStateAction<boolean>> }
@@ -260,214 +225,7 @@ function AssistItem(props: Props) {
         error,
     } = useForm(schema, emptyEntry);
 
-    const [messageText, setMessageText] = useState<string | undefined>();
-
-    const handleMappingsFetch = useCallback((
-        predictions: { tags: string[]; locations: GeoArea[]; },
-    ) => {
-        if (predictions.tags.length <= 0 && predictions.locations.length <= 0) {
-            setMessageText('DEEP could not provide any recommendations for the selected text.');
-            return;
-        }
-
-        setGeoAreaOptions(predictions.locations);
-
-        const matchedMappings = mappings
-            ?.filter(isCategoricalMappings)
-            .filter((m) => m.tag && predictions.tags.includes(m.tag));
-
-        const supportedGeoWidgets = mappings
-            ?.filter((mappingItem) => mappingItem.widgetType === 'GEO')
-            ?.map((mappingItem) => mappingItem.widget);
-
-        const {
-            tempAttrs: recommendedAttributes,
-            tempHints: widgetsHints,
-        } = filteredWidgets.reduce(
-            (
-                acc: { tempAttrs: PartialAttributeType[]; tempHints: WidgetHint[]; },
-                widget,
-            ) => {
-                const {
-                    tempAttrs: oldTempAttrs,
-                    tempHints: oldTempHints,
-                } = acc;
-
-                if (widget.widgetId === 'MATRIX1D') {
-                    const supportedTags = matchedMappings
-                        ?.filter((m) => m.widget === widget.id)
-                        .filter(filterMatrix1dMappings);
-
-                    const attr = createMatrix1dAttr(supportedTags, widget);
-                    return {
-                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                        tempHints: oldTempHints,
-                    };
-                }
-                if (widget.widgetId === 'MATRIX2D') {
-                    const supportedTags = matchedMappings
-                        ?.filter((m) => m.widget === widget.id)
-                        .filter(filterMatrix2dMappings);
-
-                    const attr = createMatrix2dAttr(supportedTags, widget);
-
-                    return {
-                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                        tempHints: oldTempHints,
-                    };
-                }
-                if (widget.widgetId === 'SCALE') {
-                    const supportedTags = matchedMappings
-                        ?.filter((m) => m.widget === widget.id)
-                        .filter(filterScaleMappings);
-
-                    const {
-                        attr,
-                        hints,
-                    } = createScaleAttr(supportedTags, widget);
-
-                    const hintsWithInfo: WidgetHint | undefined = hints ? {
-                        widgetPk: widget.id,
-                        widgetType: 'SCALE',
-                        hints,
-                    } : undefined;
-
-                    return {
-                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                        tempHints: hintsWithInfo ? [...oldTempHints, hintsWithInfo] : oldTempHints,
-                    };
-                }
-                if (widget.widgetId === 'SELECT') {
-                    const supportedTags = matchedMappings
-                        ?.filter((m) => m.widget === widget.id)
-                        .filter(filterSelectMappings);
-
-                    const {
-                        attr,
-                        hints,
-                    } = createSelectAttr(supportedTags, widget);
-
-                    const hintsWithInfo: WidgetHint | undefined = hints ? {
-                        widgetPk: widget.id,
-                        widgetType: 'SELECT',
-                        hints,
-                    } : undefined;
-
-                    return {
-                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                        tempHints: hintsWithInfo ? [...oldTempHints, hintsWithInfo] : oldTempHints,
-                    };
-                }
-                if (widget.widgetId === 'MULTISELECT') {
-                    const supportedTags = matchedMappings
-                        ?.filter((m) => m.widget === widget.id)
-                        .filter(filterMultiSelectMappings);
-
-                    const attr = createMultiSelectAttr(
-                        supportedTags,
-                        widget,
-                    );
-
-                    return {
-                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                        tempHints: oldTempHints,
-                    };
-                }
-                if (widget.widgetId === 'ORGANIGRAM') {
-                    const supportedTags = matchedMappings
-                        ?.filter((m) => m.widget === widget.id)
-                        .filter(filterOrganigramMappings);
-
-                    const attr = createOrganigramAttr(
-                        supportedTags,
-                        widget,
-                    );
-
-                    return {
-                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                        tempHints: oldTempHints,
-                    };
-                }
-                if (
-                    widget.widgetId === 'GEO'
-                    && predictions.locations.length > 0
-                    && supportedGeoWidgets?.includes(widget.id)
-                ) {
-                    const attr = createGeoAttr(
-                        predictions.locations,
-                        widget,
-                    );
-
-                    return {
-                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
-                        tempHints: oldTempHints,
-                    };
-                }
-                return acc;
-            },
-            {
-                tempAttrs: [],
-                tempHints: [],
-            },
-        );
-
-        if (recommendedAttributes.length <= 0 && widgetsHints.length <= 0) {
-            setMessageText('The provided recommendations for this text did not fit any tags in this project.');
-            return;
-        }
-
-        setAllHints(widgetsHints);
-        setAllRecommendations(recommendedAttributes);
-
-        setValue(
-            (oldEntry) => {
-                if (!oldEntry) {
-                    return {
-                        clientId: randomString(),
-                        entryType: 'EXCERPT',
-                        lead: leadId,
-                        excerpt: text,
-                        droppedExcerpt: text,
-                        attributes: recommendedAttributes.map((attr) => {
-                            if (attr.widgetType !== 'GEO') {
-                                return attr;
-                            }
-                            // NOTE: Selecting only the 1st recommendation
-                            return ({
-                                ...attr,
-                                data: {
-                                    value: attr?.data?.value.slice(0, 1) ?? [],
-                                },
-                            });
-                        }),
-                    };
-                }
-
-                return {
-                    ...oldEntry,
-                    attributes: recommendedAttributes.map((attr) => {
-                        if (attr.widgetType !== 'GEO') {
-                            return attr;
-                        }
-                        // NOTE: Selecting only the 1st recommendation
-                        return ({
-                            ...attr,
-                            data: {
-                                value: attr?.data?.value.slice(0, 1) ?? [],
-                            },
-                        });
-                    }),
-                };
-            },
-            undefined,
-        );
-    }, [
-        text,
-        leadId,
-        mappings,
-        setValue,
-        filteredWidgets,
-    ]);
+    const [messageText] = useState<string | undefined>();
 
     const [draftEntryId, setDraftEntryId] = useState<string | undefined>(undefined);
     // FIXME: randomId is used to create different query variables after each poll
@@ -488,6 +246,52 @@ function AssistItem(props: Props) {
     ]);
 
     const [isErrored, setIsErrored] = useState(false);
+    const [recommendations, setRecommendations] = useState<PartialAttributeType[]>();
+
+    const handleTagsFetch = useCallback((recommendedTags: ModelTagsType) => {
+        const newAttributes = allWidgets?.map((widget) => {
+            if (widget.widgetId === 'MATRIX1D') {
+                return createMatrix1dAttrFromTags(
+                    recommendedTags[widget.key] as Matrix1dValue,
+                    widget,
+                );
+            }
+            if (widget.widgetId === 'MATRIX2D') {
+                return createMatrix2dAttrFromTags(
+                    recommendedTags[widget.key] as Matrix2dValue,
+                    widget,
+                );
+            }
+            return undefined;
+        }).filter(isDefined);
+
+        setRecommendations(newAttributes);
+        setValue(
+            (oldEntry) => {
+                if (!oldEntry) {
+                    return {
+                        clientId: randomString(),
+                        entryType: 'EXCERPT',
+                        lead: leadId,
+                        excerpt: text,
+                        droppedExcerpt: text,
+                        attributes: newAttributes,
+                    };
+                }
+
+                return {
+                    ...oldEntry,
+                    attributes: newAttributes,
+                };
+            },
+            undefined,
+        );
+    }, [
+        allWidgets,
+        leadId,
+        setValue,
+        text,
+    ]);
 
     const {
         loading: draftEntryFetchPending,
@@ -519,24 +323,12 @@ function AssistItem(props: Props) {
                     return;
                 }
 
-                const validPredictions = result?.predictionTags?.filter(isDefined);
+                const modelTags = result?.tags?.modelTags;
+                if (!isValidObject(modelTags)) {
+                    return;
+                }
 
-                /*
-                const geoPredictions = validPredictions?.map(
-                    (prediction) => prediction.value,
-                ) ?? [];
-                */
-
-                const categoricalTags = validPredictions?.filter(
-                    (prediction) => prediction.isSelected,
-                ).map(
-                    (prediction) => prediction.tag,
-                ).filter(isDefined) ?? [];
-
-                handleMappingsFetch({
-                    tags: categoricalTags,
-                    locations: result.geoAreas?.filter(isDefined) ?? [],
-                });
+                handleTagsFetch(modelTags as ModelTagsType);
             },
             onError: () => {
                 alert.show(
@@ -604,10 +396,6 @@ function AssistItem(props: Props) {
     ]);
 
     const handleEntryCreateButtonClick = useCallback(() => {
-        if (!allRecommendations) {
-            return;
-        }
-
         const submit = createSubmitHandler(
             validate,
             setError,
@@ -646,7 +434,6 @@ function AssistItem(props: Props) {
         data,
         allWidgets,
         geoAreaOptions,
-        allRecommendations,
         validate,
         setError,
         onAssistedEntryAdd,
@@ -735,12 +522,11 @@ function AssistItem(props: Props) {
                         <AssistPopup
                             frameworkDetails={frameworkDetails}
                             value={value}
+                            recommendations={recommendations}
                             onChange={setValue}
                             name={undefined}
                             error={error}
                             leadId={leadId}
-                            hints={allHints}
-                            recommendations={allRecommendations}
                             geoAreaOptions={geoAreaOptions}
                             onGeoAreaOptionsChange={setGeoAreaOptions}
                             predictionsLoading={

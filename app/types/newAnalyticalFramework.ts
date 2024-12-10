@@ -11,8 +11,6 @@ import {
 import {
     // NOTE: Taking WidgetType instead of WidgetInputType
     WidgetType as WidgetRaw,
-    AssistedPredictionTagsQuery,
-    AnalysisFrameworkPredictionMappingType as MappingsItemRaw,
     WidgetWidgetTypeEnum as WidgetTypes,
     AnalysisFrameworkFilterType as AnalysisFrameworkFilterTypeRaw,
 } from '#generated/types';
@@ -411,6 +409,7 @@ interface GeoLocationProperties extends BaseProperties<GeoLocationValue> {
 export interface Matrix1dRows extends KeyLabelColorEntity {
     cells: KeyLabelEntity[]
 }
+
 interface Matrix1dProperties extends BaseProperties<undefined> {
     rows: Matrix1dRows[]
 }
@@ -720,6 +719,13 @@ const widgetVersionMappings: {
     MATRIX1D: MATRIX1D_WIDGET_VERSION,
     MATRIX2D: MATRIX2D_WIDGET_VERSION,
 };
+
+export type ModelTagsType = {
+    [key: string]: Matrix1dValue
+    | Matrix2dValue
+    | GeoLocationValue;
+};
+
 /*
 const supportedWidgetTypes: Widget['widgetId'][] = [
     'NUMBER',
@@ -1301,175 +1307,4 @@ export function getHiddenWidgetIds(
         (item) => item.id,
         () => true,
     );
-}
-
-export interface AssistedTag {
-    id: string;
-    name: string; // Example: 'Context'
-    groupName: string; // Example: 'Context Group 1'
-}
-
-// NOTE: id should not be nullable for Query and nullable for Mutation
-type MappingsItemBase = Omit<MappingsItemRaw, 'association' | 'widgetType'>;
-
-export type PredictionTag = NonNullable<NonNullable<NonNullable<AssistedPredictionTagsQuery>['assistedTagging']>['predictionTags']>[number];
-
-export interface Matrix1dMappingsItem extends MappingsItemBase {
-    tag: string;
-    widgetType: 'MATRIX1D';
-    association: {
-        rowKey: string;
-        subRowKey: string;
-    }
-}
-
-export interface Matrix2dMappingsItem extends MappingsItemBase {
-    tag: string;
-    widgetType: 'MATRIX2D';
-    association: {
-        type: 'SUB_ROW';
-        rowKey: string;
-        subRowKey: string;
-    } | {
-        type: 'COLUMN';
-        columnKey: string;
-    } | {
-        type: 'SUB_COLUMN';
-        columnKey: string;
-        subColumnKey: string;
-    };
-}
-
-export interface ScaleMappingsItem extends MappingsItemBase {
-    tag: string;
-    widgetType: 'SCALE';
-    association: {
-        optionKey: string;
-    };
-}
-
-export interface SelectMappingsItem extends MappingsItemBase {
-    tag: string;
-    widgetType: 'SELECT';
-    association: {
-        optionKey: string;
-    };
-}
-
-export interface OrganigramMappingsItem extends MappingsItemBase {
-    tag: string;
-    widgetType: 'ORGANIGRAM';
-    association: {
-        optionKey: string;
-    };
-}
-
-export interface MultiSelectMappingsItem extends MappingsItemBase {
-    tag: string;
-    widgetType: 'MULTISELECT';
-    association: {
-        optionKey: string;
-    };
-}
-
-export interface GeoMappingsItem extends Omit<MappingsItemBase, 'tag'> {
-    widgetType: 'GEO';
-}
-
-export type MappingsItem = Matrix1dMappingsItem
-    | Matrix2dMappingsItem
-    | ScaleMappingsItem
-    | SelectMappingsItem
-    | OrganigramMappingsItem
-    | MultiSelectMappingsItem
-    | GeoMappingsItem;
-
-export type CategoricalMappingsItem = Exclude<MappingsItem, GeoMappingsItem>;
-
-export function isCategoricalMappings(
-    value: MappingsItem,
-): value is CategoricalMappingsItem {
-    return value.widgetType !== 'GEO';
-}
-
-type WidgetType = 'NUMBER'
-    | 'TEXT'
-    | 'DATE'
-    | 'TIME'
-    | 'TIME_RANGE'
-    | 'DATE_RANGE'
-    | 'GEO'
-    | 'SELECT'
-    | 'MULTISELECT'
-    | 'MATRIX1D'
-    | 'MATRIX2D'
-    | 'ORGANIGRAM'
-    | 'SCALE';
-
-export const mappingsSupportedWidgets: WidgetType[] = [
-    'MATRIX1D',
-    'MATRIX2D',
-    'SCALE',
-    'MULTISELECT',
-    'SELECT',
-    'GEO',
-    'ORGANIGRAM',
-];
-
-export const categoricalWidgets: WidgetType[] = [
-    'MATRIX1D',
-    'MATRIX2D',
-    'SCALE',
-    'MULTISELECT',
-    'SELECT',
-    'ORGANIGRAM',
-];
-
-export type WidgetHint = {
-    widgetPk: string;
-} & ({
-    widgetType: 'SCALE';
-    hints: string[];
-} | {
-    widgetType: 'SELECT';
-    hints: string[];
-} | {
-    widgetType: 'GEO';
-    hints: string[];
-});
-
-export function filterMatrix1dMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is Matrix1dMappingsItem {
-    return mappingsItem.widgetType === 'MATRIX1D';
-}
-
-export function filterMatrix2dMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is Matrix2dMappingsItem {
-    return mappingsItem.widgetType === 'MATRIX2D';
-}
-
-export function filterScaleMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is ScaleMappingsItem {
-    return mappingsItem.widgetType === 'SCALE';
-}
-
-export function filterSelectMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is SelectMappingsItem {
-    return mappingsItem.widgetType === 'SELECT';
-}
-
-export function filterOrganigramMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is OrganigramMappingsItem {
-    return mappingsItem.widgetType === 'ORGANIGRAM';
-}
-
-export function filterMultiSelectMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is MultiSelectMappingsItem {
-    return mappingsItem.widgetType === 'MULTISELECT';
 }

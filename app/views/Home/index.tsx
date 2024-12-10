@@ -133,6 +133,7 @@ function Home(props: ViewProps) {
     const {
         data: recentProjectsResponse,
         loading: recentProjectsPending,
+        refetch: retriggerRecentProjects,
     } = useQuery<RecentProjectsQuery, RecentProjectsQueryVariables>(
         RECENT_PROJECTS,
     );
@@ -209,6 +210,14 @@ function Home(props: ViewProps) {
         selectedProjectResponse,
     ]);
 
+    const handleProjectLeaveSuccess = useCallback(() => {
+        retriggerPinnedProjectsList();
+        retriggerRecentProjects();
+    }, [
+        retriggerPinnedProjectsList,
+        retriggerRecentProjects,
+    ]);
+
     const recentProjectsRendererParams = useCallback(
         (_: string, data: ProjectDetail): RecentProjectItemProps => ({
             projectId: data?.id,
@@ -232,11 +241,13 @@ function Home(props: ViewProps) {
             pinnedId: pinnedProjectsList?.find((item) => item.project.id === data?.id)?.id,
             isPinned: data?.isProjectPinned,
             onProjectPinChange: retriggerPinnedProjectsList,
+            onProjectLeaveSuccess: handleProjectLeaveSuccess,
             disablePinButton: pinButtonDisabled,
         }),
         [
             pinnedProjectsList,
             retriggerPinnedProjectsList,
+            handleProjectLeaveSuccess,
             pinButtonDisabled,
         ],
     );
@@ -264,9 +275,11 @@ function Home(props: ViewProps) {
             pinnedId: data.id,
             isPinned: true,
             onProjectPinChange: retriggerPinnedProjectsList,
+            onProjectLeaveSuccess: handleProjectLeaveSuccess,
             disablePinButton: pinButtonDisabled,
         }),
         [
+            handleProjectLeaveSuccess,
             retriggerPinnedProjectsList,
             pinButtonDisabled,
         ],
@@ -352,6 +365,7 @@ function Home(props: ViewProps) {
                         allowedPermissions={selectedProjectDetail?.allowedPermissions}
                         recentActiveUsers={selectedProjectDetail?.recentActiveUsers}
                         isPinned={selectedProjectDetail?.isProjectPinned}
+                        onProjectLeaveSuccess={handleProjectLeaveSuccess}
                         onProjectPinChange={retriggerPinnedProjectsList}
                         disablePinButton={pinButtonDisabled}
                     />
