@@ -225,7 +225,7 @@ function AssistItem(props: Props) {
         error,
     } = useForm(schema, emptyEntry);
 
-    const [messageText] = useState<string | undefined>();
+    const [messageText, setMessageText] = useState<string | undefined>();
 
     const [draftEntryId, setDraftEntryId] = useState<string | undefined>(undefined);
     // FIXME: randomId is used to create different query variables after each poll
@@ -249,7 +249,7 @@ function AssistItem(props: Props) {
     const [recommendations, setRecommendations] = useState<PartialAttributeType[]>();
 
     const handleTagsFetch = useCallback((recommendedTags: ModelTagsType) => {
-        const newAttributes = allWidgets?.map((widget) => {
+        const newAttributes = allWidgets.map((widget) => {
             if (widget.widgetId === 'MATRIX1D') {
                 return createMatrix1dAttrFromTags(
                     recommendedTags[widget.key] as Matrix1dValue,
@@ -264,6 +264,11 @@ function AssistItem(props: Props) {
             }
             return undefined;
         }).filter(isDefined);
+
+        if (newAttributes.length < 1) {
+            setIsErrored(true);
+            setMessageText('DEEP could not provide any recommendations for the selected text.');
+        }
 
         setRecommendations(newAttributes);
         setValue(
@@ -325,6 +330,8 @@ function AssistItem(props: Props) {
 
                 const modelTags = result?.tags?.modelTags;
                 if (!isValidObject(modelTags)) {
+                    setIsErrored(true);
+                    setMessageText('DEEP could not provide any recommendations for the selected text.');
                     return;
                 }
 
