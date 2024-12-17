@@ -114,6 +114,7 @@ import {
     defaultFormValues,
     PartialAnalyticalStatementType,
 } from './schema';
+import DocumentGeneratorModal from './DocumentGeneratorModal';
 
 import EntryContext from './context';
 import AutoClustering from './AutoClustering';
@@ -655,6 +656,12 @@ function PillarAnalysis() {
         statementAndInfoGapsShown,
         , , ,
         toggleStatementAndInfoGaps,
+    ] = useBooleanState(false);
+
+    const [
+        docxModalShown,
+        showDocxModal,
+        hideDocxModal,
     ] = useBooleanState(false);
 
     const [
@@ -1210,6 +1217,13 @@ function PillarAnalysis() {
                     <>
                         <Button
                             name={undefined}
+                            onClick={showDocxModal}
+                            variant="tertiary"
+                        >
+                            Generate Docx
+                        </Button>
+                        <Button
+                            name={undefined}
                             onClick={toggleStatementAndInfoGaps}
                             className={styles.statementAndInfoGapsButton}
                             variant="action"
@@ -1288,6 +1302,13 @@ function PillarAnalysis() {
                                 />
                             </div>
                         </div>
+                    )}
+                    {docxModalShown && (
+                        <DocumentGeneratorModal
+                            title={analysisPillarDetails?.title}
+                            value={value}
+                            onClose={hideDocxModal}
+                        />
                     )}
                     <div className={styles.filterContainer}>
                         <Button
