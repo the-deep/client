@@ -1,7 +1,11 @@
-import React, { useCallback } from 'react';
+import React, {
+    useCallback,
+    useMemo,
+} from 'react';
 import {
     compareDate,
 } from '@togglecorp/fujs';
+import { gql, useMutation } from '@apollo/client';
 import {
     Modal,
     Button,
@@ -11,6 +15,7 @@ import {
     PendingMessage,
 } from '@the-deep/deep-ui';
 import {
+    removeNull,
     useForm,
     ObjectSchema,
     PartialForm,
@@ -19,19 +24,36 @@ import {
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
-import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import _ts from '#ts';
+import {
+    AnalysisCloneInputType,
+    AnalysisCloneMutation,
+    AnalysisCloneMutationVariables,
+} from '#generated/types';
 
 import styles from './styles.css';
 
-type FormType = {
-    title: string;
-    startDate: string;
-    endDate: string;
-};
+const CLONE_ANALYSIS = gql`
+mutation AnalysisClone(
+    $projectId: ID!,
+    $data: AnalysisCloneInputType!,
+) {
+    project(id: $projectId) {
+        analysisClone(data: $data) {
+            ok
+            errors
+            result {
+                id
+            }
+        }
+    }
+}
+`;
 
-type FormSchema = ObjectSchema<PartialForm<FormType>>;
+type FormType = PartialForm<AnalysisCloneInputType>;
+type FormSchema = ObjectSchema<PartialForm<AnalysisCloneInputType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
@@ -52,19 +74,14 @@ const schema: FormSchema = {
     },
 };
 
-const defaultFormValue: PartialForm<FormType> = {};
-
-interface CloneProperties {
-    title: string;
-    endDate: string;
-    startDate: string;
-}
-
 interface Props {
-    onClose: () => void;
     projectId: string;
     analysisId: string;
     onClone: () => void;
+    onClose: () => void;
+    title: string;
+    startDate: string | null | undefined;
+    endDate: string;
 }
 
 function AnalysisCloneModal(props: Props) {
@@ -73,9 +90,22 @@ function AnalysisCloneModal(props: Props) {
         projectId,
         analysisId,
         onClone,
+        title,
+        startDate,
+        endDate,
     } = props;
 
     const alert = useAlert();
+
+    const defaultFormValues: PartialForm<FormType> = useMemo(() => ({
+        title: `${title} (cloned)`,
+        startDate,
+        endDate,
+    }), [
+        title,
+        startDate,
+        endDate,
+    ]);
 
     const {
         pristine,
@@ -84,37 +114,76 @@ function AnalysisCloneModal(props: Props) {
         setFieldValue,
         validate,
         setError,
-    } = useForm(schema, defaultFormValue);
+    } = useForm(schema, defaultFormValues);
 
     const error = getErrorObject(riskyError);
 
-    const {
-        pending: pendingAnalysisClone,
-        trigger: triggerAnalysisClone,
-    } = useLazyRequest<CloneProperties, FormType>({
-        url: `server://projects/${projectId}/analysis/${analysisId}/clone/`,
-        method: 'POST',
-        body: (ctx) => ctx,
-        onSuccess: () => {
-            alert.show(
-                _ts('analysis.cloneModal', 'analysisCloneSuccessful'),
-                {
-                    variant: 'success',
-                },
-            );
-            onClone();
+    const [
+        triggerAnalysisClone,
+        {
+            loading: pendingAnalysisClone,
         },
-        failureMessage: _ts('analysis.cloneModal', 'analysisCloneFailed'),
-    });
+    ] = useMutation<AnalysisCloneMutation, AnalysisCloneMutationVariables>(
+        CLONE_ANALYSIS,
+        {
+            onCompleted: (response) => {
+                const {
+                    ok,
+                    errors,
+                } = response?.project?.analysisClone ?? {};
+
+                if (ok) {
+                    alert.show(
+                        _ts('analysis.cloneModal', 'analysisCloneSuccessful'),
+                        {
+                            variant: 'success',
+                        },
+                    );
+                    onClone();
+                }
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                }
+            },
+            onError: () => {
+                alert.show(
+                    _ts('analysis.cloneModal', 'analysisCloneFailed'),
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
 
     const handleSubmitButtonClick = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
             setError,
-            (val) => triggerAnalysisClone(val as FormType),
+            (val) => {
+                const finalValue = val as AnalysisCloneInputType;
+                triggerAnalysisClone({
+                    variables: {
+                        data: {
+                            analysisId,
+                            endDate: finalValue.endDate,
+                            startDate: finalValue.startDate,
+                            title: finalValue.title,
+                        },
+                        projectId,
+                    },
+                });
+            },
         );
         submit();
-    }, [triggerAnalysisClone, setError, validate]);
+    }, [
+        analysisId,
+        projectId,
+        triggerAnalysisClone,
+        setError,
+        validate,
+    ]);
 
     const pending = pendingAnalysisClone;
 

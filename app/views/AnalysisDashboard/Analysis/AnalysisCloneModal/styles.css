@@ -1,17 +1,12 @@
 .modal {
     .body {
-        padding: calc(var(--dui-spacing-medium) - var(--spacing-small));
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
 
-        .title {
-            margin: 0 var(--spacing-small);
-        }
         .inline {
             display: flex;
-            margin-top: var(--spacing-medium);
-
-            .date {
-                margin: 0 var(--spacing-small);
-            }
+            gap: var(--dui-spacing-medium);
         }
     }
 }
