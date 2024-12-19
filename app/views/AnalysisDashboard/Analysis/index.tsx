@@ -453,6 +453,9 @@ function Analysis(props: Props) {
                     onClose={setModalHidden}
                     projectId={activeProject}
                     analysisId={analysisId}
+                    title={title}
+                    startDate={startDate}
+                    endDate={endDate}
                     onClone={handleCloneSuccess}
                 />
             )}
