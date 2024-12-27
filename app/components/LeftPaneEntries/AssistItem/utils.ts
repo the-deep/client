@@ -6,8 +6,16 @@ import {
 import {
     Matrix1dWidget,
     Matrix1dValue,
-    Matrix2dValue,
     Matrix2dWidget,
+    Matrix2dValue,
+    SingleSelectWidget,
+    SingleSelectValue,
+    MultiSelectWidget,
+    MultiSelectValue,
+    ScaleWidget,
+    ScaleValue,
+    OrganigramWidget,
+    OrganigramValue,
 } from '#types/newAnalyticalFramework';
 
 import {
@@ -17,14 +25,17 @@ import {
 import {
     PartialAttributeType,
 } from '#components/entry/schema';
+import {
+    getOrganigramFlatOptions,
+} from '#components/framework/CompactAttributeInput/OrganigramWidgetInput/utils';
 
 type Matrix1dWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MATRIX1D' }>;
 type Matrix2dWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MATRIX2D' }>;
-/*
-type ScaleWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SCALE' }>;
 type SingleSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SELECT' }>;
 type MultiSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MULTISELECT' }>;
 type OrganigramWidgetAttribute = getType<PartialAttributeType, { widgetType: 'ORGANIGRAM' }>;
+type ScaleWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SCALE' }>;
+/*
 type GeoLocationWidgetAttribute = getType<PartialAttributeType, { widgetType: 'GEO' }>;
 */
 
@@ -161,5 +172,110 @@ export function createMatrix2dAttrFromTags(
         widgetVersion: widget.version,
         widgetType: 'MATRIX2D',
         data: { value },
+    };
+}
+
+// TODO: Write tests
+export function createSingleSelectAttrFromTags(
+    unsafeMapping: SingleSelectValue | undefined,
+    widget: SingleSelectWidget,
+): SingleSelectWidgetAttribute | undefined {
+    const mapping = unsafeMapping as unknown;
+    if (!mapping || typeof mapping !== 'string') {
+        return undefined;
+    }
+
+    const valueOption = widget.properties?.options.find((item) => item.key === mapping);
+
+    if (!valueOption) {
+        return undefined;
+    }
+
+    return {
+        clientId: randomString(),
+        widget: widget.id,
+        widgetVersion: widget.version,
+        widgetType: 'SELECT',
+        data: { value: mapping },
+    };
+}
+
+// TODO: Write tests
+export function createMultiSelectAttrFromTags(
+    unsafeMapping: MultiSelectValue | undefined,
+    widget: MultiSelectWidget,
+): MultiSelectWidgetAttribute | undefined {
+    const mapping = unsafeMapping as unknown;
+    if (!mapping || !isValidStringArray(mapping)) {
+        return undefined;
+    }
+
+    const validKeys = widget.properties?.options?.map((item) => item.key);
+
+    const validOptions = mapping.filter((item) => validKeys?.includes(item));
+
+    if (validOptions.length < 1) {
+        return undefined;
+    }
+
+    return {
+        clientId: randomString(),
+        widget: widget.id,
+        widgetVersion: widget.version,
+        widgetType: 'MULTISELECT',
+        data: { value: mapping },
+    };
+}
+
+// TODO: Write tests
+export function createScaleAttrFromTags(
+    unsafeMapping: ScaleValue | undefined,
+    widget: ScaleWidget,
+): ScaleWidgetAttribute | undefined {
+    const mapping = unsafeMapping as unknown;
+    if (!mapping || typeof mapping !== 'string') {
+        return undefined;
+    }
+
+    const valueOption = widget.properties?.options.find((item) => item.key === mapping);
+
+    if (!valueOption) {
+        return undefined;
+    }
+
+    return {
+        clientId: randomString(),
+        widget: widget.id,
+        widgetVersion: widget.version,
+        widgetType: 'SCALE',
+        data: { value: mapping },
+    };
+}
+
+// TODO: Write tests
+export function createOrganigramAttrFromTags(
+    unsafeMapping: OrganigramValue | undefined,
+    widget: OrganigramWidget,
+): OrganigramWidgetAttribute | undefined {
+    const mapping = unsafeMapping as unknown;
+    if (!mapping || !isValidStringArray(mapping)) {
+        return undefined;
+    }
+
+    const validKeys = getOrganigramFlatOptions(widget.properties?.options)
+        .map((item) => item.key);
+
+    const validOptions = mapping.filter((item) => validKeys?.includes(item));
+
+    if (validOptions.length < 1) {
+        return undefined;
+    }
+
+    return {
+        clientId: randomString(),
+        widget: widget.id,
+        widgetVersion: widget.version,
+        widgetType: 'ORGANIGRAM',
+        data: { value: mapping },
     };
 }
