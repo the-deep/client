@@ -53,6 +53,10 @@ import {
     ModelTagsType,
     Matrix1dValue,
     Matrix2dValue,
+    SingleSelectValue,
+    MultiSelectValue,
+    ScaleValue,
+    OrganigramValue,
 } from '#types/newAnalyticalFramework';
 import AssistPopup from '../AssistItem/AssistPopup';
 import { createDefaultAttributes } from '../utils';
@@ -60,6 +64,10 @@ import {
     isValidObject,
     createMatrix1dAttrFromTags,
     createMatrix2dAttrFromTags,
+    createSingleSelectAttrFromTags,
+    createMultiSelectAttrFromTags,
+    createScaleAttrFromTags,
+    createOrganigramAttrFromTags,
 } from '../AssistItem/utils';
 
 import styles from './styles.css';
@@ -390,6 +398,30 @@ function AutoEntriesModal(props: Props) {
             if (widget.widgetId === 'MATRIX2D') {
                 return createMatrix2dAttrFromTags(
                     recommendedTags[widget.key] as Matrix2dValue,
+                    widget,
+                );
+            }
+            if (widget.widgetId === 'MULTISELECT') {
+                return createMultiSelectAttrFromTags(
+                    recommendedTags[widget.key] as MultiSelectValue,
+                    widget,
+                );
+            }
+            if (widget.widgetId === 'SELECT') {
+                return createSingleSelectAttrFromTags(
+                    recommendedTags[widget.key] as unknown as SingleSelectValue,
+                    widget,
+                );
+            }
+            if (widget.widgetId === 'SCALE') {
+                return createScaleAttrFromTags(
+                    recommendedTags[widget.key] as unknown as ScaleValue,
+                    widget,
+                );
+            }
+            if (widget.widgetId === 'ORGANIGRAM') {
+                return createOrganigramAttrFromTags(
+                    recommendedTags[widget.key] as OrganigramValue,
                     widget,
                 );
             }
