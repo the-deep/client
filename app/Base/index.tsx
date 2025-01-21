@@ -1,13 +1,25 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, {
+    useState,
+    useMemo,
+    useCallback,
+} from 'react';
 import localforage from 'localforage';
+import { IoRemove } from 'react-icons/io5';
 import { Router } from 'react-router-dom';
-import { init, ErrorBoundary, setUser as setUserOnSentry, withProfiler } from '@sentry/react';
 import { unique, _cs } from '@togglecorp/fujs';
+import {
+    init,
+    ErrorBoundary,
+    setUser as setUserOnSentry,
+    withProfiler,
+} from '@sentry/react';
 import {
     AlertContainer,
     AlertContext,
     AlertOptions,
     Button,
+    QuickActionButton,
+    useModalState,
 } from '@the-deep/deep-ui';
 import { ApolloProvider } from '@apollo/client';
 import { setMapboxToken } from '@togglecorp/re-map';
@@ -20,17 +32,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import Init from '#base/components/Init';
 import browserHistory from '#base/configs/history';
 import sentryConfig from '#base/configs/sentry';
-import { UserContext, UserContextInterface } from '#base/context/UserContext';
-import {
-    openZendeskFeedback,
-    setUserOnZendesk,
-} from '#base/utils/zendesk';
 import { NavbarContext, NavbarContextInterface } from '#base/context/NavbarContext';
 import AuthPopup from '#base/components/AuthPopup';
-import { sync } from '#base/hooks/useAuthSync';
 import Navbar from '#base/components/Navbar';
 import Routes from '#base/components/Routes';
-import { User } from '#base/types/user';
 import {
     processDeepUrls,
     processDeepOptions,
@@ -44,7 +49,9 @@ import { apolloClient } from '#base/configs/apollo';
 import localforageInstance from '#base/configs/localforage';
 import { mapboxToken } from '#base/configs/env';
 import { trackingId, gaConfig } from '#base/configs/googleAnalytics';
-
+import { UserContext, UserContextInterface } from '#base/context/UserContext';
+import { sync } from '#base/hooks/useAuthSync';
+import { User } from '#base/types/user';
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 
 import styles from './styles.css';
@@ -74,6 +81,12 @@ if (trackingId) {
 function Base() {
     const [user, setUser] = useState<User | undefined>();
 
+    const [
+        showMondayForm,
+        setMondayFormVisible,
+        setMondayFormHidden,
+    ] = useModalState(false);
+
     const [navbarState, setNavbarState] = useState<{
         path: string;
         visibility: boolean;
@@ -81,7 +94,7 @@ function Base() {
 
     const authenticated = !!user;
 
-    const setUserWithSentryAndZendesk: typeof setUser = useCallback(
+    const setUserWithSentry: typeof setUser = useCallback(
         (u) => {
             if (typeof u === 'function') {
                 setUser((oldUser) => {
@@ -90,7 +103,6 @@ function Base() {
                     const sanitizedUser = newUser;
                     sync(!!sanitizedUser, sanitizedUser?.id);
                     setUserOnSentry(sanitizedUser ?? null);
-                    setUserOnZendesk(sanitizedUser ?? null);
 
                     return newUser;
                 });
@@ -98,7 +110,6 @@ function Base() {
                 const sanitizedUser = u;
                 sync(!!sanitizedUser, sanitizedUser?.id);
                 setUserOnSentry(sanitizedUser ?? null);
-                setUserOnZendesk(sanitizedUser ?? null);
                 setUser(u);
             }
         },
@@ -109,12 +120,12 @@ function Base() {
         () => ({
             authenticated,
             user,
-            setUser: setUserWithSentryAndZendesk,
+            setUser: setUserWithSentry,
         }),
         [
             authenticated,
             user,
-            setUserWithSentryAndZendesk,
+            setUserWithSentry,
         ],
     );
 
@@ -261,14 +272,36 @@ function Base() {
                 </RequestContext.Provider>
             </ErrorBoundary>
             <Button
+                className={styles.mondayHelpButton}
                 name={undefined}
-                title="Bug/Feedback?"
+                title="Bug / Feedback?"
                 variant="action"
-                className={styles.zendeskHelpButton}
-                onClick={openZendeskFeedback}
+                onClick={setMondayFormVisible}
             >
                 Bug / Feedback?
             </Button>
+
+            {showMondayForm && (
+                <div className={styles.formOverlay}>
+                    <div className={styles.formContent}>
+                        <div className={styles.formTopBar}>
+                            <p>Leave us a message</p>
+                            <QuickActionButton
+                                name={undefined}
+                                onClick={setMondayFormHidden}
+                                variant="transparent"
+                            >
+                                <IoRemove />
+                            </QuickActionButton>
+                        </div>
+                        <iframe
+                            className={styles.iframe}
+                            src="https://forms.monday.com/forms/embed/6438474a471702280d54bd27e87f5855?r=apse2"
+                            title="Monday Form"
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
