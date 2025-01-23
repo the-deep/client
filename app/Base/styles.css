@@ -39,7 +39,7 @@
         width: 24rem;
     }
 
-    .zendesk-help-button {
+    .monday-help-button {
         position: fixed;
         bottom: var(--dui-spacing-extra-large);
         left: 0;
@@ -53,6 +53,40 @@
         padding: 0 var(--dui-spacing-small);
         font-size: var(--dui-font-size-extra-small);
         font-weight: var(--dui-font-weight-regular);
+    }
+
+    .form-overlay {
+        display: flex;
+        position: fixed;
+        bottom: var(--dui-spacing-large);
+        left: var(--dui-spacing-large);
+    }
+
+    .form-content {
+        position: relative;
+        z-index: 1000;
+        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        border-radius: var(--dui-border-radius-card);
+        background-color: var(--dui-color-white);
+    }
+
+    .form-top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top-left-radius: var(--dui-border-radius-card);
+        border-top-right-radius: var(--dui-border-radius-card);
+        background-color: var(--dui-color-accent);
+        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+        width: 100%;
+        color: var(--dui-color-white);
+    }
+
+    .iframe {
+        flex-grow: 1;
+        border: none;
+        width: 330px;
+        height: 490px;
     }
 }
 
